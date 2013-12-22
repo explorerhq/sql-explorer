@@ -1,0 +1,10 @@
+/.idea/
+*.pyc
+*.db
+/project/
+/dist
+*.egg-info
+.DS_Store
+/build
+*#
+*~

@@ -1,0 +1,2 @@
+recursive-include health_check/templates *
+include README.md
