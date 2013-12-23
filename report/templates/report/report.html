@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Report {{ report.title }}</title>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/codemirror.min.css" rel="stylesheet">
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
@@ -15,36 +16,12 @@
     <div class="navbar navbar-default navbar-static-top" role="navigation">
       <div class="container">
         <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Project name</a>
+          <a class="navbar-brand" href="#">SQL Report</a>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
-              <ul class="dropdown-menu">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li class="divider"></li>
-                <li class="dropdown-header">Nav header</li>
-                <li><a href="#">Separated link</a></li>
-                <li><a href="#">One more separated link</a></li>
-              </ul>
-            </li>
-          </ul>
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="../navbar/">Default</a></li>
-            <li class="active"><a href="./">Static top</a></li>
-            <li><a href="../navbar-fixed-top/">Fixed top</a></li>
+            <li class="active"><a href="#">Report Detail</a></li>
+            <li><a href="#about">View in Admin</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -55,7 +32,6 @@
       <div class="jumbotron">
         <h1>{{ report.title }}</h1>
         <p>{{ message }}</p>
-
         <div>
             <form role="form" action="/report/{{ report.id }}/" method="post">{% csrf_token %}
                 {{ form.non_field_errors }}
@@ -66,18 +42,23 @@
                     </div>
                 {% endfor %}
                 <div>
-                    <input type="submit" value="Submit" />
+                    <input type="submit" value="Save" />
                 </div>
             </form>
         </div>
-
       </div>
-
     </div> <!-- /container -->
 
 
     <script src="https://code.jquery.com/jquery.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/codemirror.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/mode/sql/sql.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+    <script>
+        var editor = CodeMirror.fromTextArea(document.getElementById('id_sql'), {
+            mode: "text/x-sql"
+        });
+    </script>
 </body>
 
 </html>
