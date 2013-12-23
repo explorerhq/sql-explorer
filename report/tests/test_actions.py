@@ -4,7 +4,7 @@ from report.tests.factories import SimpleReportFactory
 from report import app_settings
 import StringIO
 from zipfile import ZipFile
-from utils import passes_blacklist
+from report.utils import passes_blacklist
 
 
 class test_sql_reports(TestCase):
@@ -14,7 +14,7 @@ class test_sql_reports(TestCase):
         expected_csv = 'two\r\n2\r\n'
 
         r = SimpleReportFactory()
-        result = _get_report(r)
+        result = r.csv_report()
 
         self.assertIsNotNone(result, "Report '%s' returned None." % r.title)
         self.assertEqual(result.lower(), expected_csv)
