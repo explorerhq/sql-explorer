@@ -22,7 +22,14 @@ class ReportView(View):
 
     def get(self, request, report_id):
         message = "Here is your report"
+
         report, form = self.get_instance_and_form(request, report_id, Http404)
+
+        rows = request.GET.get('rows', None)
+        if rows:
+            pass
+            #go get rows
+
         return self.render(request, report, form, message)
 
     def post(self, request, report_id):
