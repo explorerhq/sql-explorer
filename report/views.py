@@ -8,6 +8,15 @@ from report.forms import ReportForm
 import datetime
 
 
+@staff_member_required
+def download_report(request, report_id):
+    try:
+        report = Report.objects.get(pk=report_id)
+
+    except Report.DoesNotExist:
+        raise Http404
+
+
 class ReportView(View):
 
     def get(self, request, report_id):

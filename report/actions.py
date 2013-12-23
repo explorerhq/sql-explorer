@@ -9,19 +9,17 @@ from django.core.servers.basehttp import FileWrapper
 import logging
 from collections import defaultdict
 import functools
+import app_settings
 
 logger = logging.getLogger('django')
 
 _ = lambda x: x
 
-SQL_WRITE_BLACKLIST = ('ALTER', 'RENAME ', 'DROP', 'TRUNCATE', 'INSERT INTO', 'UPDATE', 'REPLACE', 'DELETE')
-SQL_WHITELIST = ('DROP FUNCTION', 'REPLACE FUNCTION', 'DROP VIEW', 'REPLACE VIEW', 'CREATED', 'DELETED')  # no other way to manage these in django
-
 
 def generate_report_action(description="Generate CSV file from SQL report",):
 
     def generate_report(modeladmin, request, queryset):
-        results = [report for report in queryset if _is_read_only(report.sql)]
+        results = [report for report in queryset if _passes_blacklist(report.sql)]
         reports = (len(results) > 0 and _package(results)) or defaultdict(int)
         response = HttpResponse(reports["data"], content_type=reports["content_type"])
         response['Content-Disposition'] = reports["filename"]
@@ -75,6 +73,6 @@ def _get_report(report):
     return csv_report.getvalue()
 
 
-def _is_read_only(sql):
-    cleansed = functools.reduce(lambda sql, term: sql.upper().replace(term, ""), SQL_WHITELIST, sql)
-    return not any(write_word in cleansed.upper() for write_word in SQL_WRITE_BLACKLIST)
+def _passes_blacklist(sql):
+    cleansed = functools.reduce(lambda sql, term: sql.upper().replace(term, ""), app_settings.SQL_WHITELIST, sql)
+    return not any(write_word in cleansed.upper() for write_word in app_settings.SQL_BLACKLIST)

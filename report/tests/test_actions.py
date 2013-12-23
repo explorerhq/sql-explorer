@@ -1,6 +1,7 @@
 from django.test import TestCase
-from report.actions import _get_report, generate_report_action, _is_read_only
+from report.actions import _get_report, generate_report_action, _passes_blacklist
 from report.tests.factories import SimpleReportFactory
+from report import app_settings
 import StringIO
 from zipfile import ZipFile
 
@@ -40,20 +41,33 @@ class test_sql_reports(TestCase):
         self.assertEqual(z.namelist()[0], '%s.csv' % r.title)
         self.assertEqual(got_csv.lower(), expected_csv)
 
-    def test_reports_are_read_only(self):
-        r = SimpleReportFactory(sql="delete * from table;")
+
+class test_sql_blacklist(TestCase):
+
+    def test_overriding_blacklist(self):
+        tmp = app_settings.SQL_BLACKLIST
+        app_settings.SQL_BLACKLIST = []
+        r = SimpleReportFactory(sql="SELECT 1+1 AS \"DELETE\";")
+        fn = generate_report_action()
+        result = fn(None, None, [r, ])
+        app_settings.SQL_BLACKLIST = tmp
+        self.assertEqual(result.content, 'DELETE\r\n2\r\n')
+
+
+    def test_default_blacklist_prevents_deletes(self):
+        r = SimpleReportFactory(sql="SELECT 1+1 AS \"DELETE\";")
         fn = generate_report_action()
         result = fn(None, None, [r, ])
         self.assertEqual(result.content, '0')
 
     def test_reports_modifying_functions_are_ok(self):
         sql = "SELECT 1+1 AS TWO; drop view foo;"
-        self.assertTrue(_is_read_only(sql))
+        self.assertTrue(_passes_blacklist(sql))
 
     def test_reports_deleting_stuff_are_not_ok(self):
-        sql = "'distraction'; delete * from table; SELECT 1+1 AS TWO; drop view foo;"
-        self.assertFalse(_is_read_only(sql))
+        sql = "'distraction'; delete from table; SELECT 1+1 AS TWO; drop view foo;"
+        self.assertFalse(_passes_blacklist(sql))
 
     def test_reports_dropping_views_is_ok_and_not_case_sensitive(self):
         sql = "SELECT 1+1 AS TWO; drop ViEw foo;"
-        self.assertTrue(_is_read_only(sql))
+        self.assertTrue(_passes_blacklist(sql))
