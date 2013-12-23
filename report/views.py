@@ -1,18 +1,19 @@
 from django.shortcuts import render_to_response
-from django.template import loader, RequestContext
-from django.http import Http404, HttpResponseServerError, HttpResponse
+from django.template import RequestContext
+from django.http import Http404, HttpResponseServerError
+from report.actions import generate_report_action
 from django.views.generic.base import View
 from django.contrib.admin.views.decorators import staff_member_required
 from report.models import Report
 from report.forms import ReportForm
-import datetime
 
 
 @staff_member_required
 def download_report(request, report_id):
     try:
         report = Report.objects.get(pk=report_id)
-
+        fn = generate_report_action()
+        return fn(None, None, [report, ])
     except Report.DoesNotExist:
         raise Http404
 
