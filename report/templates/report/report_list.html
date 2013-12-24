@@ -1,0 +1,17 @@
+{% extends "report/base.html" %}
+{% block content %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Reports</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for object in object_list %}
+            <tr>
+                <td><a href="{{ object.id }}/">{{ object }}</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,9 +1,10 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.http import Http404, HttpResponseServerError
+from django.http import Http404, HttpResponseServerError, HttpResponse
 from report.actions import generate_report_action
 from django.views.generic.base import View
 from django.contrib.admin.views.decorators import staff_member_required
+from django.utils.decorators import method_decorator
 from report.models import Report
 from report.forms import ReportForm
 
@@ -20,16 +21,13 @@ def download_report(request, report_id):
 
 class ReportView(View):
 
+    @method_decorator(staff_member_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ReportView, self).dispatch(*args, **kwargs)
+
     def get(self, request, report_id):
         message = "Here is your report"
-
         report, form = self.get_instance_and_form(request, report_id, Http404)
-
-        rows = request.GET.get('rows', None)
-        if rows:
-            pass
-            #go get rows
-
         return self.render(request, report, form, message)
 
     def post(self, request, report_id):
@@ -46,5 +44,7 @@ class ReportView(View):
         return report, form
 
     def render(self, request, report, form, message):
-        c = RequestContext(request, {'report': report, 'form': form, 'message': message})
+        headers, data = report.headers_and_data()
+        data = data[:100]
+        c = RequestContext(request, {'report': report, 'form': form, 'message': message, 'data': data, 'headers': headers})
         return render_to_response('report/report.html', c)
