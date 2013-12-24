@@ -44,7 +44,15 @@ class ReportView(View):
         return report, form
 
     def render(self, request, report, form, message):
+        rows = int(request.GET.get("rows", "100"))
         headers, data = report.headers_and_data()
-        data = data[:100]
-        c = RequestContext(request, {'report': report, 'form': form, 'message': message, 'data': data, 'headers': headers})
+        c = RequestContext(request, {
+            'report': report,
+            'form': form,
+            'message': message,
+            'data': data[:rows],
+            'headers': headers,
+            'rows': rows,
+            'total_rows': len(data)}
+        )
         return render_to_response('report/report.html', c)

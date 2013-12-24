@@ -1,7 +1,7 @@
 {% extends "report/base.html" %}
 {% block content %}
 <h2>{{ report.title }}</h2>
-<p>{{ message }}</p>
+<p class="lead">{{ message }}</p>
 <div>
     <form role="form" action="/report/{{ report.id }}/" method="post">{% csrf_token %}
         {{ form.non_field_errors }}
@@ -12,15 +12,13 @@
             </div>
         {% endfor %}
         <div>
-            <input type="submit" value="Save" />
-            <a href="download">Download</a>
-            <input type="submit" value="Run" />
+            <input type="submit" value="Save & Re-run" />
             <input type="submit" value="Clone" />
         </div>
     </form>
     <div>
-        <h3>Preview</h3>
-        <p>First {{ rows }} rows</p>
+        <h2>Preview</h2>
+        <p>First {{ rows }} of {{ total_rows }} total rows. <a href="download">Download CSV</a></p>
         <div style="overflow: auto; height: 500px;" id="overflow_wrapper">
             <table class="table table-striped table-hover" id="preview">
                 <thead style="background: white;">
