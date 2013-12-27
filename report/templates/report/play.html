@@ -20,6 +20,7 @@
 
         <div>
             <input type="submit" value="Run" />
+            <input type="submit" value="Create Report" id="create_button" />
         </div>
     </form>
     {% include 'report/preview_pane.html' %}
@@ -35,9 +36,9 @@
         });
 
         $(function() {
-            $("#buttonA").click(function() {
-                $(this).closest("form").attr('action', 'fileA.php');
-              });
+            $("#create_button").click(function() {
+                $(this).closest("form").attr('action', '/report/new/');
+            });
         });
     </script>
 {% endblock %}
