@@ -73,12 +73,12 @@ class ReportView(View):
 
     def get(self, request, report_id):
         report, form = ReportView.get_instance_and_form(request, report_id, Http404)
-        return ReportView.render(request, report, form, "Here is your report")
+        return ReportView.render(request, report, form, None)
 
     def post(self, request, report_id):
         report, form = ReportView.get_instance_and_form(request, report_id, HttpResponseServerError)
-        message = "Report saved" if form.save() else "There were errors while saving the report"
-        return ReportView.render(request, report, form, message)
+        success = form.save() if form.is_valid() else None
+        return ReportView.render(request, report, form, "Report saved." if success else None)
 
     @staticmethod
     def get_instance_and_form(request, report_id, ex):

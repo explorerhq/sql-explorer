@@ -3,25 +3,29 @@
 {% block navlinks %}
     <li{% if not report %} class="active" {% endif %}><a href="../new/">New Report</a></li>
     <li><a href="../play/">Playground</a></li>
-    <li{% if report %} class="active" {% endif %}><a href="">Report Detail</a></li>
+    {% if report %}<li class="active"><a href="">Report Detail</a></li>{% endif %}
 {% endblock %}
 
 {% block content %}
-<h2>{{ title }}</h2>
-<p class="lead">{{ message }}</p>
+<h2>{% firstof title "New Report" %}</h2>
+{% if message %}
+    <div class="alert alert-info">{{ message }}</div>
+{% endif %}
 <div>
-    <form role="form" action="/report/{% firstof report.id 'new' %}/" method="post">{% csrf_token %}
+    <form role="form" action="../{% firstof report.id 'new' %}/" method="post">{% csrf_token %}
+
         {{ form.non_field_errors }}
-        {% if error %}
-            <div class="alert alert-danger">{{ error }}</div>
-        {% endif %}
         <div class="form-group">
-            {{ form.title.errors }}
+            {% if form.title.errors %}{% for error in form.title.errors %}
+                <div class="alert alert-danger">{{ error|escape }}</div>
+            {% endfor %}{% endif %}
             {{ form.title.label_tag }}
             <input class="form-control" id="id_title" maxlength="255" name="title" type="text" value="{{ form.title.value|default_if_none:"" }}" />
         </div>
         <div class="form-group">
-            {{ form.sql.errors }}
+            {% if form.sql.errors %}{% for error in form.sql.errors %}
+                <div class="alert alert-danger">{{ error|escape }}</div>
+            {% endfor %}{% endif %}
             {{ form.sql.label_tag }}
             <textarea class="form-control" cols="40" id="id_sql" name="sql" rows="10">{{ form.sql.value|default_if_none:"" }}</textarea>
         </div>
@@ -38,7 +42,7 @@
         <div>
             <input type="submit" value="Save & Run" />
             {% if report %}
-                <a target="_blank" href="../play/?report_id={{ report.id }}">Playground</a>
+                <a target="_blank" href="../play/?report_id={{ report.id }}"> Edit in Playground</a>
             {%  endif %}
         </div>
     </form>
