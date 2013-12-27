@@ -1,0 +1,22 @@
+{% if data %}
+    <script src="//rawgithub.com/mkoryak/floatThead/master/jquery.floatThead.js"></script>
+    <script>
+        $(document).ready( function () {
+            var $table = $('#preview');
+            $table.floatThead({
+                scrollContainer: function($table){
+                    return $table.closest('#overflow_wrapper');
+                }
+            });
+            var $rows = $('#rows');
+            var showRows = function() {
+                var rows = $rows.val();
+                window.location.href = '?rows=' + rows;
+            }
+            $rows.change(showRows);
+            $rows.keyup(function(event){
+                if(event.keyCode == 13){ showRows(); }
+            });
+        } );
+    </script>
+{%  endif %}
