@@ -4,7 +4,7 @@
         {% if rows > total_rows %}
             <p>Showing {{ total_rows }} of {{ total_rows }} total rows. <a href="download">Download CSV</a></p>
         {% else %}
-            <p>First {{ rows }} of {{ total_rows }} total rows. <a href="download">Download CSV</a></p>
+            <p>First <input style="text-align: center; width: 40px;" type="text" name="rows" id="rows" value="{{ rows }}" /> of {{ total_rows }} total rows. <a href="download">Download CSV</a></p>
         {% endif %}
         <div style="overflow: auto; height: 500px;" id="overflow_wrapper">
             <table class="table table-striped table-hover" id="preview">
@@ -36,6 +36,15 @@
                 scrollContainer: function($table){
                     return $table.closest('#overflow_wrapper');
                 }
+            });
+            var $rows = $('#rows');
+            var showRows = function() {
+                var rows = $rows.val();
+                window.location.href = '?rows=' + rows;
+            }
+            $rows.change(showRows);
+            $rows.keyup(function(event){
+                if(event.keyCode == 13){ showRows(); }
             });
         } );
     </script>
