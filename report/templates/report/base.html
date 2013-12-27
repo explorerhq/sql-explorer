@@ -19,8 +19,7 @@
             </div>
             <div class="navbar-collapse collapse">
               <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Report Detail</a></li>
-                <li><a href="{% url 'admin:report_report_change' report.id %}">View in Admin</a></li>
+                {% block navlinks %}{% endblock %}
               </ul>
             </div><!--/.nav-collapse -->
           </div>
