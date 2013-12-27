@@ -10,7 +10,7 @@ class Report(models.Model):
     sql = models.TextField()
     description = models.TextField(null=True, blank=True)
     created_by = models.CharField(max_length=255, null=True, blank=True)
-    #created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ['title']
