@@ -1,30 +1,31 @@
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
-from django.http import Http404, HttpResponseServerError, HttpResponse
-from report.actions import generate_report_action
 from django.views.generic.base import View
 from django.views.generic.edit import CreateView
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
+
+from report.actions import generate_report_action
 from report.models import Report
 from report.forms import ReportForm
-from report.utils import get_object_or_None, url_get_rows, url_get_report_id
+from report.utils import url_get_rows, url_get_report_id
 
 
 @staff_member_required
 def download_report(request, report_id):
-    report = get_object_or_None(Report, pk=report_id)
-    if not report:
-        raise Http404
+    report = get_object_or_404(Report, pk=report_id)
     fn = generate_report_action()
     return fn(None, None, [report, ])
 
 
 class CreateReportView(CreateView):
 
+    @method_decorator(staff_member_required)
+    def dispatch(self, *args, **kwargs):
+        return super(CreateReportView, self).dispatch(*args, **kwargs)
+
     form_class = ReportForm
     template_name = 'report/report.html'
-    model = Report
 
 
 class PlayReportView(View):
@@ -35,34 +36,34 @@ class PlayReportView(View):
 
     def get(self, request):
         if not url_get_report_id(request):
-            return PlayReportView.render(request, {})
-        report = get_object_or_None(Report, pk=url_get_report_id(request))
-        return PlayReportView.render_with_sql(request, report.sql, url_get_rows(request))
+            return PlayReportView.render(request)
+        report = get_object_or_404(Report, pk=url_get_report_id(request))
+        return PlayReportView.render_with_sql(request, report.sql)
 
     def post(self, request):
         sql = request.POST.get('sql', None)
         if not sql:
-            return PlayReportView.render(request, {'error': 'No SQL provided'})
-        return PlayReportView.render_with_sql(request, sql, url_get_rows(request))
+            return PlayReportView.render(request)
+        return PlayReportView.render_with_sql(request, sql)
 
     @staticmethod
-    def render(request, context):
-        c = RequestContext(request, context)
-        c.update({'title': 'playground'})
+    def render(request):
+        c = RequestContext(request, {'title': 'Playground'})
         return render_to_response('report/play.html', c)
 
     @staticmethod
-    def render_with_sql(request, sql, rows):
+    def render_with_sql(request, sql):
         report = Report(sql=sql)
         headers, data, error = report.headers_and_data()
-        c = {'error': error,
-             'title': 'playground',
-             'sql': sql,
-             'data': data[:rows],
-             'headers': headers,
-             'rows': rows,
-             'total_rows': len(data)}
-        return PlayReportView.render(request, c)
+        c = RequestContext(request, {
+            'error': error,
+            'title': 'Playground',
+            'sql': sql,
+            'data': data[:url_get_rows(request)],
+            'headers': headers,
+            'rows': url_get_rows(request),
+            'total_rows': len(data)})
+        return render_to_response('report/play.html', c)
 
 
 class ReportView(View):
@@ -72,19 +73,17 @@ class ReportView(View):
         return super(ReportView, self).dispatch(*args, **kwargs)
 
     def get(self, request, report_id):
-        report, form = ReportView.get_instance_and_form(request, report_id, Http404)
+        report, form = ReportView.get_instance_and_form(request, report_id)
         return ReportView.render(request, report, form, None)
 
     def post(self, request, report_id):
-        report, form = ReportView.get_instance_and_form(request, report_id, HttpResponseServerError)
+        report, form = ReportView.get_instance_and_form(request, report_id)
         success = form.save() if form.is_valid() else None
         return ReportView.render(request, report, form, "Report saved." if success else None)
 
     @staticmethod
-    def get_instance_and_form(request, report_id, ex):
-        report = get_object_or_None(Report, pk=report_id)
-        if not report:
-            raise ex
+    def get_instance_and_form(request, report_id):
+        report = get_object_or_404(Report, pk=report_id)
         form = ReportForm(request.POST if len(request.POST) else None, instance=report)
         return report, form
 

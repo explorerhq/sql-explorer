@@ -8,15 +8,6 @@ def passes_blacklist(sql):
     return not any(write_word in clean.upper() for write_word in app_settings.SQL_BLACKLIST)
 
 
-# enthusiastically borrowed from django-annoying
-def get_object_or_None(klass, *args, **kwargs):
-    queryset = _get_queryset(klass)
-    try:
-        return queryset.get(*args, **kwargs)
-    except queryset.model.DoesNotExist:
-        return None
-
-
 def safe_cast(val, to_type, default=None):
     try:
         return to_type(val)

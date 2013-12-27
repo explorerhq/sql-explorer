@@ -1,12 +1,8 @@
-from django.db import models
 from report.utils import passes_blacklist
-from report import app_settings
-import logging
+from django.db import connection, DatabaseError, models
+from django.core.urlresolvers import reverse
 import csv
 import cStringIO
-from django.db import connection, DatabaseError
-
-logger = logging.getLogger(app_settings.REPORT_LOGGER_NAME)
 
 
 class Report(models.Model):
@@ -14,7 +10,7 @@ class Report(models.Model):
     sql = models.TextField()
     description = models.TextField(null=True, blank=True)
     created_by = models.CharField(max_length=255, null=True, blank=True)
-    #created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ['title']
@@ -39,12 +35,10 @@ class Report(models.Model):
         try:
             cursor.execute(self.sql)
         except DatabaseError, e:
-            logger.exception("Error while running report %s (ID: %s): %s" % (self.title, self.id, e))
             return [], [], e.message
         headers = [d[0] for d in cursor.description]
         data = [[x.encode('utf-8') if type(x) is unicode else x for x in list(r)] for r in cursor.fetchall()]
         return headers, data, None
 
     def get_absolute_url(self):
-        from django.core.urlresolvers import reverse
         return reverse("report_detail", kwargs={'report_id': self.id})
