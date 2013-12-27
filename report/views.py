@@ -27,6 +27,32 @@ class CreateReportView(CreateView):
     model = Report
 
 
+class PlayReportView(View):
+
+    @method_decorator(staff_member_required)
+    def dispatch(self, *args, **kwargs):
+        return super(PlayReportView, self).dispatch(*args, **kwargs)
+
+    def get(self, request):
+        c = RequestContext(request)
+        return render_to_response('report/play.html', c)
+
+    def post(self, request):
+        sql = request.POST.get('sql', None)
+        if sql:
+            report = Report(sql=sql)
+            rows = int(request.GET.get("rows", "100"))
+            headers, data, error = report.headers_and_data()
+            c = RequestContext(request, {
+                'error': error,
+                'sql': sql,
+                'data': data[:rows],
+                'headers': headers,
+                'rows': rows,
+                'total_rows': len(data)}
+            )
+        return render_to_response('report/play.html', c)
+
 class ReportView(View):
 
     @method_decorator(staff_member_required)
@@ -59,6 +85,7 @@ class ReportView(View):
         c = RequestContext(request, {
             'error': error,
             'report': report,
+            'title': report.title,
             'form': form,
             'message': message,
             'data': data[:rows],
