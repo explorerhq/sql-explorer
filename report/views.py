@@ -3,6 +3,7 @@ from django.template import RequestContext
 from django.http import Http404, HttpResponseServerError, HttpResponse
 from report.actions import generate_report_action
 from django.views.generic.base import View
+from django.views.generic.edit import CreateView
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
 from report.models import Report
@@ -17,6 +18,13 @@ def download_report(request, report_id):
         return fn(None, None, [report, ])
     except Report.DoesNotExist:
         raise Http404
+
+
+class CreateReportView(CreateView):
+
+    form_class = ReportForm
+    template_name = 'report/report.html'
+    model = Report
 
 
 class ReportView(View):
@@ -36,16 +44,16 @@ class ReportView(View):
         return ReportView.render(request, report, form, message)
 
     @staticmethod
-    def get_instance_and_form(self, request, report_id, ex):
+    def get_instance_and_form(request, report_id, ex):
         try:
             report = Report.objects.get(pk=report_id)
         except Report.DoesNotExist:
-            raise Http404
+            raise ex
         form = ReportForm(request.POST if len(request.POST) else None, instance=report)
         return report, form
 
     @staticmethod
-    def render(self, request, report, form, message):
+    def render(request, report, form, message):
         rows = int(request.GET.get("rows", "100"))
         headers, data, error = report.headers_and_data()
         c = RequestContext(request, {

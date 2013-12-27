@@ -40,3 +40,7 @@ class Report(models.Model):
         headers = [d[0] for d in cursor.description]
         data = [[x.encode('utf-8') if type(x) is unicode else x for x in list(r)] for r in cursor.fetchall()]
         return headers, data, None
+
+    def get_absolute_url(self):
+        from django.core.urlresolvers import reverse
+        return reverse("report_detail", kwargs={'report_id': self.id})

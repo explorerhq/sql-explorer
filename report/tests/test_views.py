@@ -9,3 +9,8 @@ class TestReportViews(TestCase):
         report = SimpleReportFactory(sql="error")
         resp = self.client.get(reverse("report_detail", kwargs={'report_id': report.id}))
         self.assertEqual(resp.status_code, 200)
+
+    def test_posting_report_saves_correctly(self):
+        report = SimpleReportFactory(sql="before")
+        resp = self.client.post(reverse("report_detail", kwargs={'report_id': report.id}))
+        self.assertEqual(resp.status_code, 200)
