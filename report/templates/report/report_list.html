@@ -11,13 +11,14 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Reports</th>
+                <th>Reports</th><th></th>
             </tr>
         </thead>
         <tbody>
             {% for object in object_list %}
             <tr>
                 <td><a href="{{ object.id }}/">{{ object }}</a></td>
+                <td><a href="{{ object.id }}/download">download</a></td>
             </tr>
             {% endfor %}
         </tbody>
