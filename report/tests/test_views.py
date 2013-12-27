@@ -28,7 +28,7 @@ class TestReportDetailView(TestCase):
     def test_admin_required(self):
         self.client.logout()
         report = SimpleReportFactory(sql="before")
-        resp = self.client.post(reverse("report_detail", kwargs={'report_id': report.id}))
+        resp = self.client.get(reverse("report_detail", kwargs={'report_id': report.id}))
         self.assertTemplateUsed(resp, 'admin/login.html')
 
 
@@ -48,3 +48,8 @@ class TestReportPlayground(TestCase):
         resp = self.client.get('%s?report_id=%s' % (reverse("report_playground"), report.id))
         self.assertTemplateUsed(resp, 'report/play.html')
         self.assertContains(resp, 'select 1;')
+
+    def test_admin_required(self):
+        self.client.logout()
+        resp = self.client.get(reverse("report_playground"))
+        self.assertTemplateUsed(resp, 'admin/login.html')

@@ -48,6 +48,7 @@ class PlayReportView(View):
     @staticmethod
     def render(request, context):
         c = RequestContext(request, context)
+        c.update({'title': 'playground'})
         return render_to_response('report/play.html', c)
 
     @staticmethod
@@ -55,6 +56,7 @@ class PlayReportView(View):
         report = Report(sql=sql)
         headers, data, error = report.headers_and_data()
         c = {'error': error,
+             'title': 'playground',
              'sql': sql,
              'data': data[:rows],
              'headers': headers,

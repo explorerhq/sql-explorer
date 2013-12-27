@@ -2,11 +2,11 @@
 
 {% block navlinks %}
     <li class="active"><a href="#">Playground</a></li>
-    <li><a href="/">Report List</a></li>
 {% endblock %}
 
 {% block content %}
 <h2>Playground</h2>
+    <p>The playground is for experimenting and writing ad-hoc queries. By default, nothing you do here will be saved.</p>
 <div>
     <form role="form" action="/report/play/" method="post">{% csrf_token %}
         {% if error %}
