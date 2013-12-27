@@ -8,16 +8,16 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
 from report.models import Report
 from report.forms import ReportForm
+from report.utils import get_object_or_None, url_get_rows, url_get_report_id
 
 
 @staff_member_required
 def download_report(request, report_id):
-    try:
-        report = Report.objects.get(pk=report_id)
-        fn = generate_report_action()
-        return fn(None, None, [report, ])
-    except Report.DoesNotExist:
+    report = get_object_or_None(Report, pk=report_id)
+    if not report:
         raise Http404
+    fn = generate_report_action()
+    return fn(None, None, [report, ])
 
 
 class CreateReportView(CreateView):
@@ -34,24 +34,34 @@ class PlayReportView(View):
         return super(PlayReportView, self).dispatch(*args, **kwargs)
 
     def get(self, request):
-        c = RequestContext(request)
-        return render_to_response('report/play.html', c)
+        if not url_get_report_id(request):
+            return PlayReportView.render(request, {})
+        report = get_object_or_None(Report, pk=url_get_report_id(request))
+        return PlayReportView.render_with_sql(request, report.sql, url_get_rows(request))
 
     def post(self, request):
         sql = request.POST.get('sql', None)
-        if sql:
-            report = Report(sql=sql)
-            rows = int(request.GET.get("rows", "100"))
-            headers, data, error = report.headers_and_data()
-            c = RequestContext(request, {
-                'error': error,
-                'sql': sql,
-                'data': data[:rows],
-                'headers': headers,
-                'rows': rows,
-                'total_rows': len(data)}
-            )
+        if not sql:
+            return PlayReportView.render(request, {'error': 'No SQL provided'})
+        return PlayReportView.render_with_sql(request, sql, url_get_rows(request))
+
+    @staticmethod
+    def render(request, context):
+        c = RequestContext(request, context)
         return render_to_response('report/play.html', c)
+
+    @staticmethod
+    def render_with_sql(request, sql, rows):
+        report = Report(sql=sql)
+        headers, data, error = report.headers_and_data()
+        c = {'error': error,
+             'sql': sql,
+             'data': data[:rows],
+             'headers': headers,
+             'rows': rows,
+             'total_rows': len(data)}
+        return PlayReportView.render(request, c)
+
 
 class ReportView(View):
 
@@ -60,9 +70,8 @@ class ReportView(View):
         return super(ReportView, self).dispatch(*args, **kwargs)
 
     def get(self, request, report_id):
-        message = "Here is your report"
         report, form = ReportView.get_instance_and_form(request, report_id, Http404)
-        return ReportView.render(request, report, form, message)
+        return ReportView.render(request, report, form, "Here is your report")
 
     def post(self, request, report_id):
         report, form = ReportView.get_instance_and_form(request, report_id, HttpResponseServerError)
@@ -71,16 +80,15 @@ class ReportView(View):
 
     @staticmethod
     def get_instance_and_form(request, report_id, ex):
-        try:
-            report = Report.objects.get(pk=report_id)
-        except Report.DoesNotExist:
+        report = get_object_or_None(Report, pk=report_id)
+        if not report:
             raise ex
         form = ReportForm(request.POST if len(request.POST) else None, instance=report)
         return report, form
 
     @staticmethod
     def render(request, report, form, message):
-        rows = int(request.GET.get("rows", "100"))
+        rows = url_get_rows(request)
         headers, data, error = report.headers_and_data()
         c = RequestContext(request, {
             'error': error,

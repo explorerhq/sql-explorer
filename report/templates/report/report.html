@@ -2,9 +2,8 @@
 
 {% block navlinks %}
     <li class="active"><a href="#">Report Detail</a></li>
-    {% if report %}
-        <li><a href="{% url 'admin:report_report_change' report.id %}">View in Admin</a></li>
-    {% endif %}
+    <li><a href="../play/">Report Detail</a></li>
+    <li><a href="/">Report List</a></li>
 {% endblock %}
 
 {% block content %}
@@ -26,34 +25,7 @@
             <input type="submit" value="Save & Run" />
         </div>
     </form>
-    <div>
-        <h2>Preview</h2>
-        {% if rows > total_rows %}
-            <p>Showing {{ total_rows }} of {{ total_rows }} total rows. <a href="download">Download CSV</a></p>
-        {% else %}
-            <p>First {{ rows }} of {{ total_rows }} total rows. <a href="download">Download CSV</a></p>
-        {% endif %}
-        <div style="overflow: auto; height: 500px;" id="overflow_wrapper">
-            <table class="table table-striped table-hover" id="preview">
-                <thead style="background: white;">
-                    <tr>
-                        {% for h in headers %}
-                            <th>{{ h }}</th>
-                        {% endfor %}
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for row in data %}
-                    <tr>
-                        {% for i in row %}
-                            <td>{{ i }}</td>
-                        {% endfor %}
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
+    {% include 'report/preview_pane.html' %}
 </div>
 {% endblock %}
 
