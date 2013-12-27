@@ -26,6 +26,9 @@ class CreateReportView(CreateView):
     template_name = 'report/report.html'
     model = Report
 
+    def get_initial(self):
+        return self.request.POST
+
 
 class PlayReportView(View):
 

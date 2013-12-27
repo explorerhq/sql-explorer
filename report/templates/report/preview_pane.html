@@ -26,3 +26,15 @@
         </table>
     </div>
 </div>
+
+<script src="//rawgithub.com/mkoryak/floatThead/master/jquery.floatThead.js"></script>
+<script>
+    $(document).ready( function () {
+        var $table = $('#preview');
+        $table.floatThead({
+            scrollContainer: function($table){
+                return $table.closest('#overflow_wrapper');
+            }
+        });
+    } );
+</script>
