@@ -24,7 +24,8 @@ class Report(models.Model):
     def csv_report(self):
         csv_report = cStringIO.StringIO()
         writer = csv.writer(csv_report)
-        headers, data = self.headers_and_data()
+        headers, data, error = self.headers_and_data()
+        if error: return error
         writer.writerow(headers)
         map(lambda row: writer.writerow(row), data)
         return csv_report.getvalue()

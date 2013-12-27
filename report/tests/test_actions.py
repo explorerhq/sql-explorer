@@ -45,15 +45,18 @@ class test_sql_reports(TestCase):
 
 class test_sql_blacklist(TestCase):
 
+    def setUp(self):
+        self.orig = app_settings.SQL_BLACKLIST
+
+    def tearDown(self):
+        app_settings.SQL_BLACKLIST = self.orig
+
     def test_overriding_blacklist(self):
-        tmp = app_settings.SQL_BLACKLIST
         app_settings.SQL_BLACKLIST = []
         r = SimpleReportFactory(sql="SELECT 1+1 AS \"DELETE\";")
         fn = generate_report_action()
         result = fn(None, None, [r, ])
-        app_settings.SQL_BLACKLIST = tmp
         self.assertEqual(result.content, 'DELETE\r\n2\r\n')
-
 
     def test_default_blacklist_prevents_deletes(self):
         r = SimpleReportFactory(sql="SELECT 1+1 AS \"DELETE\";")

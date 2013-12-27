@@ -27,14 +27,15 @@ class ReportView(View):
 
     def get(self, request, report_id):
         message = "Here is your report"
-        report, form = self.get_instance_and_form(request, report_id, Http404)
-        return self.render(request, report, form, message)
+        report, form = ReportView.get_instance_and_form(request, report_id, Http404)
+        return ReportView.render(request, report, form, message)
 
     def post(self, request, report_id):
-        report, form = self.get_instance_and_form(request, report_id, HttpResponseServerError)
+        report, form = ReportView.get_instance_and_form(request, report_id, HttpResponseServerError)
         message = "Report saved" if form.save() else "There were errors while saving the report"
-        return self.render(request, report, form, message)
+        return ReportView.render(request, report, form, message)
 
+    @staticmethod
     def get_instance_and_form(self, request, report_id, ex):
         try:
             report = Report.objects.get(pk=report_id)
@@ -43,6 +44,7 @@ class ReportView(View):
         form = ReportForm(request.POST if len(request.POST) else None, instance=report)
         return report, form
 
+    @staticmethod
     def render(self, request, report, form, message):
         rows = int(request.GET.get("rows", "100"))
         headers, data, error = report.headers_and_data()
