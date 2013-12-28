@@ -8,13 +8,13 @@ from report.utils import passes_blacklist, schema_info
 class TestSqlBlacklist(TestCase):
 
     def setUp(self):
-        self.orig = app_settings.SQL_BLACKLIST
+        self.orig = app_settings.REPORT_SQL_BLACKLIST
 
     def tearDown(self):
-        app_settings.SQL_BLACKLIST = self.orig
+        app_settings.REPORT_SQL_BLACKLIST = self.orig
 
     def test_overriding_blacklist(self):
-        app_settings.SQL_BLACKLIST = []
+        app_settings.REPORT_SQL_BLACKLIST = []
         r = SimpleReportFactory(sql="SELECT 1+1 AS \"DELETE\";")
         fn = generate_report_action()
         result = fn(None, None, [r, ])
@@ -45,3 +45,10 @@ class TestSchemaInfo(TestCase):
         res = schema_info()
         tables = [a[1] for a in res]
         self.assertIn('report_report', tables)
+
+    def test_app_exclusion_list(self):
+        app_settings.REPORT_SCHEMA_EXCLUDE_APPS = ('report',)
+        res = schema_info()
+        app_settings.REPORT_SCHEMA_EXCLUDE_APPS = ('',)
+        tables = [a[1] for a in res]
+        self.assertNotIn('report_report', tables)

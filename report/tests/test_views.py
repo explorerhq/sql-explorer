@@ -6,6 +6,18 @@ from django.contrib.auth.models import User
 from django.forms.models import model_to_dict
 
 
+class TestReportListView(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_superuser('admin', 'admin@admin.com', 'pwd')
+        self.client.login(username='admin', password='pwd')
+
+    def test_admin_required(self):
+        self.client.logout()
+        resp = self.client.get(reverse("report_index"))
+        self.assertTemplateUsed(resp, 'admin/login.html')
+
+
 class TestReportDetailView(TestCase):
 
     def setUp(self):
@@ -34,13 +46,18 @@ class TestReportDetailView(TestCase):
 
 class TestDownloadView(TestCase):
     def setUp(self):
+        self.report = SimpleReportFactory(sql="select 1;")
         self.user = User.objects.create_superuser('admin', 'admin@admin.com', 'pwd')
         self.client.login(username='admin', password='pwd')
 
     def test_report_with_bad_sql_renders_error(self):
-        report = SimpleReportFactory(sql="select 1;")
-        resp = self.client.get(reverse("report_download", kwargs={'report_id': report.id}))
+        resp = self.client.get(reverse("report_download", kwargs={'report_id': self.report.id}))
         self.assertEqual(resp['content-type'], 'text/csv')
+
+    def test_admin_required(self):
+        self.client.logout()
+        resp = self.client.get(reverse("report_download", kwargs={'report_id': self.report.id}))
+        self.assertTemplateUsed(resp, 'admin/login.html')
 
 
 class TestReportPlayground(TestCase):
@@ -63,4 +80,21 @@ class TestReportPlayground(TestCase):
     def test_admin_required(self):
         self.client.logout()
         resp = self.client.get(reverse("report_playground"))
+        self.assertTemplateUsed(resp, 'admin/login.html')
+
+
+class TestSchemaView(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_superuser('admin', 'admin@admin.com', 'pwd')
+        self.client.login(username='admin', password='pwd')
+
+    def test_returns_schema_contents(self):
+        resp = self.client.get(reverse("report_schema"))
+        self.assertContains(resp, "report_report")
+        self.assertTemplateUsed(resp, 'report/schema.html')
+
+    def test_admin_required(self):
+        self.client.logout()
+        resp = self.client.get(reverse("report_schema"))
         self.assertTemplateUsed(resp, 'admin/login.html')

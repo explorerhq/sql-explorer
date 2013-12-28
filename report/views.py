@@ -1,6 +1,7 @@
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.views.generic.base import View
+from django.views.generic import ListView
 from django.views.generic.edit import CreateView, DeleteView
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
@@ -22,6 +23,15 @@ def download_report(request, report_id):
 @staff_member_required
 def schema(request):
     return render_to_response('report/schema.html', {'schema': schema_info()})
+
+
+class ListReportView(ListView):
+
+    @method_decorator(staff_member_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ListReportView, self).dispatch(*args, **kwargs)
+
+    model = Report
 
 
 class CreateReportView(CreateView):

@@ -4,8 +4,8 @@ from django.db import models
 
 
 def passes_blacklist(sql):
-    clean = functools.reduce(lambda sql, term: sql.upper().replace(term, ""), app_settings.SQL_WHITELIST, sql)
-    return not any(write_word in clean.upper() for write_word in app_settings.SQL_BLACKLIST)
+    clean = functools.reduce(lambda sql, term: sql.upper().replace(term, ""), app_settings.REPORT_SQL_WHITELIST, sql)
+    return not any(write_word in clean.upper() for write_word in app_settings.REPORT_SQL_BLACKLIST)
 
 
 def safe_cast(val, to_type, default=None):
@@ -30,7 +30,7 @@ def url_get_report_id(request):
 
 def schema_info():
     ret = []
-    for app in models.get_apps():
+    for app in [a for a in models.get_apps() if a.__package__ not in app_settings.REPORT_SCHEMA_EXCLUDE_APPS]:
         for model in models.get_models(app):
             friendly_model = "%s -> %s" % (model._meta.app_label, model._meta.object_name)
             cur_app = (friendly_model, str(model._meta.db_table), [])
