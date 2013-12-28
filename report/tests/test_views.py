@@ -32,6 +32,17 @@ class TestReportDetailView(TestCase):
         self.assertTemplateUsed(resp, 'admin/login.html')
 
 
+class TestDownloadView(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_superuser('admin', 'admin@admin.com', 'pwd')
+        self.client.login(username='admin', password='pwd')
+
+    def test_report_with_bad_sql_renders_error(self):
+        report = SimpleReportFactory(sql="select 1;")
+        resp = self.client.get(reverse("report_download", kwargs={'report_id': report.id}))
+        self.assertEqual(resp['content-type'], 'text/csv')
+
+
 class TestReportPlayground(TestCase):
 
     def setUp(self):
