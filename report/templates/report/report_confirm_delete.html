@@ -1,0 +1,8 @@
+{% extends "report/base.html" %}
+
+{% block content %}
+    <form method="post">{% csrf_token %}
+        Are you sure you want to delete "{{ object.title }}" ?
+        <input type="submit" value="Submit" />
+    </form>
+{%  endblock %}

@@ -11,14 +11,21 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Reports</th><th></th>
+                <th>Reports</th>
+                <th>Download CSV</th>
+                <th>Delete</th>
             </tr>
         </thead>
         <tbody>
             {% for object in object_list %}
             <tr>
                 <td><a href="{{ object.id }}/">{{ object }}</a></td>
-                <td><a href="{{ object.id }}/download">download</a></td>
+                <td style="padding: 2px 0px 0px 45px; vertical-align: middle">
+                    <a href="{{ object.id }}/download"><i class="glyphicon glyphicon-download" style="font-size: 20px;"></i></a>
+                </td>
+                <td style="padding: 0px 0px 0px 20px; vertical-align: middle">
+                    <a href="{{ object.id }}/delete"><i class="glyphicon glyphicon-trash" style="font-size: 18px;"></i></a>
+                </td>
             </tr>
             {% endfor %}
         </tbody>

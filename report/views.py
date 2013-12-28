@@ -1,9 +1,10 @@
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.views.generic.base import View
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, DeleteView
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
+from django.core.urlresolvers import reverse_lazy
 
 from report.actions import generate_report_action
 from report.models import Report
@@ -26,6 +27,12 @@ class CreateReportView(CreateView):
 
     form_class = ReportForm
     template_name = 'report/report.html'
+
+
+class DeleteReportView(DeleteView):
+
+    model = Report
+    success_url = reverse_lazy("report_index")
 
 
 class PlayReportView(View):
