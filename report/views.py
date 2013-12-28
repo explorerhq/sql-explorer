@@ -10,13 +10,17 @@ from report.actions import generate_report_action
 from report.models import Report
 from report.forms import ReportForm
 from report.utils import url_get_rows, url_get_report_id
-
+from report.schemainfo import schemainfo
 
 @staff_member_required
 def download_report(request, report_id):
     report = get_object_or_404(Report, pk=report_id)
     fn = generate_report_action()
     return fn(None, None, [report, ])
+
+
+def schema(request):
+    return render_to_response('report/schema.html', {'schema': schemainfo()})
 
 
 class CreateReportView(CreateView):

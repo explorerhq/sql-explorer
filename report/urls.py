@@ -9,5 +9,6 @@ urlpatterns = patterns('',
     url(r'(?P<pk>\d+)/delete$', DeleteReportView.as_view(), name='report_delete'),
     url(r'new/$', CreateReportView.as_view(), name='report_create'),
     url(r'play/$', PlayReportView.as_view(), name='report_playground'),
+    url(r'schema/$', 'report.views.schema', name='schema_info'),
     url(r'$', ListView.as_view(model=Report), name='report_index'),
 )

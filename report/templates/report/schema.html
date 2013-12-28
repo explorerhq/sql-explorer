@@ -1,0 +1,29 @@
+{% extends "report/base.html" %}
+
+{% block content %}
+
+    {% for m in schema %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">{{ m.1 }}</h3> <small>{{ m.0 }}</small>
+            </div>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th width="50%">Column</th>
+                        <th width="50%">Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in m.2 %}
+                    <tr>
+                        <td>{{ c.0 }}</td>
+                        <td>{{ c.1 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endfor %}
+
+{% endblock %}
