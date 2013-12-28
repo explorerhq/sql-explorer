@@ -38,17 +38,19 @@
                 <input class="form-control" id="id_created_by" maxlength="255" name="created_by" type="text" value="{% firstof form.created_by.value request.user %}" />
             </div>
         </div>
-        <div class="form-group">
-            {% if form.sql.errors %}{% for error in form.sql.errors %}
-                <div class="alert alert-danger">{{ error|escape }}</div>
-            {% endfor %}{% endif %}
-            <label for="id_title" class="col-sm-2 control-label">SQL</label>
-            <div class="col-sm-10">
+        {% if form.sql.errors %}{% for error in form.sql.errors %}
+            <div class="alert alert-danger">{{ error|escape }}</div>
+        {% endfor %}{% endif %}
+        <div class="panel panel-default" style="margin-top: 30px;" xmlns="http://www.w3.org/1999/html">
+            <div class="panel-heading">
+                <span class="panel-title">SQL</span>
+            </div>
+            <div class="panel-content">
                 <textarea class="form-control" cols="40" id="id_sql" name="sql" rows="10">{{ form.sql.value|default_if_none:"" }}</textarea>
             </div>
         </div>
         <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
+            <div style="text-align: center;">
                 <input type="submit" value="Save & Run" class="btn btn-default" />
                 {% if report %}
                     <a class="btn btn-default" target="_blank" href="../play/?report_id={{ report.id }}">Edit in Playground</a>
