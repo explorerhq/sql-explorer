@@ -2,7 +2,11 @@
 
 {% block content %}
     <form method="post">{% csrf_token %}
-        Are you sure you want to delete "{{ object.title }}" ?
-        <input type="submit" value="Submit" />
+        <div class="alert alert-info">
+            Are you sure you want to delete "{{ object.title }}" ?
+        </div>
+        <div>
+            <input type="submit" value="Delete Report" class="btn btn-default" />
+        </div>
     </form>
 {%  endblock %}

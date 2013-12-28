@@ -7,43 +7,54 @@
 {% endblock %}
 
 {% block content %}
-<h2>{% firstof title "New Report" %}</h2>
+<h2 style="padding-bottom: 20px">{% firstof title "New Report" %}</h2>
 {% if message %}
     <div class="alert alert-info">{{ message }}</div>
 {% endif %}
 <div>
-    <form role="form" action="../{% firstof report.id 'new' %}/" method="post">{% csrf_token %}
+    <form role="form" class="form-horizontal" action="../{% firstof report.id 'new' %}/" method="post">{% csrf_token %}
 
         {{ form.non_field_errors }}
         <div class="form-group">
             {% if form.title.errors %}{% for error in form.title.errors %}
                 <div class="alert alert-danger">{{ error|escape }}</div>
             {% endfor %}{% endif %}
-            {{ form.title.label_tag }}
-            <input class="form-control" id="id_title" maxlength="255" name="title" type="text" value="{{ form.title.value|default_if_none:"" }}" />
+            <label for="id_title" class="col-sm-2 control-label">Title</label>
+            <div class="col-sm-10">
+                <input class="form-control" id="id_title" maxlength="255" name="title" type="text" value="{{ form.title.value|default_if_none:"" }}" />
+            </div>
+        </div>
+        <div class="form-group">
+            {{ form.description.errors }}
+            <label for="id_title" class="col-sm-2 control-label">Description</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" cols="40" id="id_description" name="description" rows="2">{{ form.description.value|default_if_none:"" }}</textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            {{ form.created_by.errors }}
+            <label for="id_title" class="col-sm-2 control-label">Created By</label>
+            <div class="col-sm-10">
+                <input class="form-control" id="id_created_by" maxlength="255" name="created_by" type="text" value="{% firstof form.created_by.value request.user %}" />
+            </div>
         </div>
         <div class="form-group">
             {% if form.sql.errors %}{% for error in form.sql.errors %}
                 <div class="alert alert-danger">{{ error|escape }}</div>
             {% endfor %}{% endif %}
-            {{ form.sql.label_tag }}
-            <textarea class="form-control" cols="40" id="id_sql" name="sql" rows="10">{{ form.sql.value|default_if_none:"" }}</textarea>
+            <label for="id_title" class="col-sm-2 control-label">SQL</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" cols="40" id="id_sql" name="sql" rows="10">{{ form.sql.value|default_if_none:"" }}</textarea>
+            </div>
         </div>
         <div class="form-group">
-            {{ form.description.errors }}
-            {{ form.description.label_tag }}
-            <textarea class="form-control" cols="40" id="id_description" name="description" rows="4">{{ form.description.value|default_if_none:"" }}</textarea>
-        </div>
-        <div class="form-group">
-            {{ form.created_by.errors }}
-            {{ form.created_by.label_tag }}
-            <input class="form-control" id="id_created_by" maxlength="255" name="created_by" type="text" value="{% firstof form.created_by.value request.user %}" />
-        </div>
-        <div>
-            <input type="submit" value="Save & Run" />
-            {% if report %}
-                <a target="_blank" href="../play/?report_id={{ report.id }}"> Edit in Playground</a>
-            {%  endif %}
+            <div class="col-sm-offset-2 col-sm-10">
+                <input type="submit" value="Save & Run" class="btn btn-default" />
+                {% if report %}
+                    <a class="btn btn-default" target="_blank" href="../play/?report_id={{ report.id }}">Edit in Playground</a>
+                {%  endif %}
+                <a class="btn btn-default" target="_blank" href="../schema/">Schema Reference</a>
+            </div>
         </div>
     </form>
     {% include 'report/preview_pane.html' %}

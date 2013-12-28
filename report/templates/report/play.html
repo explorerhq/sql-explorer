@@ -13,15 +13,15 @@
         {% if error %}
             <div class="alert alert-danger">{{ error }}</div>
         {% endif %}
-
         <div class="form-group">
-            <label for="id_sql">Sql:</label>
             <textarea class="form-control" cols="40" id="id_sql" name="sql" rows="10">{{ sql }}</textarea>
         </div>
-
-        <div>
-            <input type="submit" value="Refresh Preview" />
-            <input type="submit" value="Create New Report" id="create_button" />
+        <div class="form-group">
+            <div>
+                <input type="submit" value="Refresh Preview" class="btn btn-default"/>
+                <input type="submit" value="Create New Report" id="create_button" class="btn btn-default"/>
+                <a class="btn btn-default" target="_blank" href="../schema/">Schema Reference</a>
+            </div>
         </div>
     </form>
     {% include 'report/preview_pane.html' %}
