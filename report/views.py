@@ -9,8 +9,8 @@ from django.core.urlresolvers import reverse_lazy
 from report.actions import generate_report_action
 from report.models import Report
 from report.forms import ReportForm
-from report.utils import url_get_rows, url_get_report_id
-from report.schemainfo import schemainfo
+from report.utils import url_get_rows, url_get_report_id, schema_info
+
 
 @staff_member_required
 def download_report(request, report_id):
@@ -19,8 +19,9 @@ def download_report(request, report_id):
     return fn(None, None, [report, ])
 
 
+@staff_member_required
 def schema(request):
-    return render_to_response('report/schema.html', {'schema': schemainfo()})
+    return render_to_response('report/schema.html', {'schema': schema_info()})
 
 
 class CreateReportView(CreateView):
@@ -34,6 +35,10 @@ class CreateReportView(CreateView):
 
 
 class DeleteReportView(DeleteView):
+
+    @method_decorator(staff_member_required)
+    def dispatch(self, *args, **kwargs):
+        return super(DeleteReportView, self).dispatch(*args, **kwargs)
 
     model = Report
     success_url = reverse_lazy("report_index")

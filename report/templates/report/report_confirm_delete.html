@@ -3,6 +3,6 @@
 {% block content %}
     <form method="post">{% csrf_token %}
         Are you sure you want to delete "{{ object.title }}" ?
-        <input type="submit" value="Submit" />
+        <input type="submit" value="Submit" class="btn btn-default" />
     </form>
 {%  endblock %}
