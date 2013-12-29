@@ -19,12 +19,13 @@ Dependencies
 All front-end dependencies are served from CDNJS.com
 
 Name | Version | License
-Twitter Boostrap CSS
-jQuery
-Underscore
-Codemirror
-FloatThead*
-FactoryBoy (for tests)
+--- | --- | ---
+Twitter Boostrap CSS | |
+jQuery | |
+Underscore | |
+Codemirror | |
+FloatThead* | |
+FactoryBoy (for tests) | |
 
 
 * Served locally because it is not available on CDNJS
