@@ -1,4 +1,4 @@
-django-sql-reports
+django-sql-explorer
 ==================
 
 

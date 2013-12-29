@@ -1,11 +1,11 @@
-from report.utils import passes_blacklist
+from explorer.utils import passes_blacklist
 from django.db import connection, DatabaseError, models
 from django.core.urlresolvers import reverse
 import csv
 import cStringIO
 
 
-class Report(models.Model):
+class Query(models.Model):
     title = models.CharField(max_length=255)
     sql = models.TextField()
     description = models.TextField(null=True, blank=True)
@@ -41,4 +41,4 @@ class Report(models.Model):
         return headers, data, None
 
     def get_absolute_url(self):
-        return reverse("report_detail", kwargs={'report_id': self.id})
+        return reverse("query_detail", kwargs={'query_id': self.id})

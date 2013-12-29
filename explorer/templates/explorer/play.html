@@ -1,7 +1,7 @@
-{% extends "report/base.html" %}
+{% extends "explorer/base.html" %}
 
 {% block navlinks %}
-    <li><a href="../new/">New Report</a></li>
+    <li><a href="../new/">New Query</a></li>
     <li class="active"><a href="#">Playground</a></li>
 {% endblock %}
 
@@ -9,7 +9,7 @@
 <h2>Playground</h2>
     <p>The playground is for experimenting and writing ad-hoc queries. By default, nothing you do here will be saved.</p>
 <div>
-    <form role="form" action="/report/play/" method="post">{% csrf_token %}
+    <form role="form" action="../play/" method="post">{% csrf_token %}
         {% if form.sql.errors %}{% for error in form.sql.errors %}
             <div class="alert alert-danger">{{ error|escape }}</div>
         {% endfor %}{% endif %}
@@ -24,22 +24,22 @@
         <div class="form-group">
             <div style="text-align: center;">
                 <input type="submit" value="Refresh Preview" class="btn btn-default"/>
-                <input type="submit" value="Create New Report" id="create_button" class="btn btn-default"/>
+                <input type="submit" value="Create New Query" id="create_button" class="btn btn-default"/>
                 <a class="btn btn-default" target="_blank" href="../schema/">Schema Reference</a>
             </div>
         </div>
     </form>
-    {% include 'report/preview_pane.html' %}
+    {% include 'explorer/preview_pane.html' %}
 </div>
 {% endblock %}
 
 {% block scripts %}
-    {% include 'report/preview_pane_scripts.html' %}
-    {% include 'report/sql_editor_scripts.html' %}
+    {% include 'explorer/preview_pane_scripts.html' %}
+    {% include 'explorer/sql_editor_scripts.html' %}
     <script>
         $(function() {
             $("#create_button").click(function() {
-                $(this).closest("form").attr('action', '/report/new/');
+                $(this).closest("form").attr('action', '../new/');
             });
         });
     </script>

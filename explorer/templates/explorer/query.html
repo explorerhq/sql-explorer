@@ -1,18 +1,18 @@
-{% extends "report/base.html" %}
+{% extends "explorer/base.html" %}
 
 {% block navlinks %}
-    <li{% if not report %} class="active" {% endif %}><a href="../new/">New Report</a></li>
+    <li{% if not query %} class="active" {% endif %}><a href="../new/">New Query</a></li>
     <li><a href="../play/">Playground</a></li>
-    {% if report %}<li class="active"><a href="">Report Detail</a></li>{% endif %}
+    {% if query %}<li class="active"><a href="">Query Detail</a></li>{% endif %}
 {% endblock %}
 
 {% block content %}
-<h2 style="padding-bottom: 20px">{% firstof title "New Report" %}</h2>
+<h2 style="padding-bottom: 20px">{% firstof title "New Query" %}</h2>
 {% if message %}
     <div class="alert alert-info">{{ message }}</div>
 {% endif %}
 <div>
-    <form role="form" class="form-horizontal" action="../{% firstof report.id 'new' %}/" method="post">{% csrf_token %}
+    <form role="form" class="form-horizontal" action="../{% firstof query.id 'new' %}/" method="post">{% csrf_token %}
 
         {{ form.non_field_errors }}
         <div class="form-group">
@@ -52,20 +52,20 @@
         <div class="form-group">
             <div style="text-align: center;">
                 <input type="submit" value="Save & Run" class="btn btn-default" />
-                {% if report %}
-                    <a class="btn btn-default" target="_blank" href="../play/?report_id={{ report.id }}">Edit in Playground</a>
+                {% if query %}
+                    <a class="btn btn-default" target="_blank" href="../play/?query_id={{ query.id }}">Edit in Playground</a>
                 {%  endif %}
                 <a class="btn btn-default" target="_blank" href="../schema/">Schema Reference</a>
             </div>
         </div>
     </form>
-    {% include 'report/preview_pane.html' %}
+    {% include 'explorer/preview_pane.html' %}
 </div>
 {% endblock %}
 
 {% block scripts %}
-    {% include 'report/preview_pane_scripts.html' %}
-    {% include 'report/sql_editor_scripts.html' %}
+    {% include 'explorer/preview_pane_scripts.html' %}
+    {% include 'explorer/sql_editor_scripts.html' %}
 {% endblock %}
 
 

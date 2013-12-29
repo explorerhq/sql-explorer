@@ -7,80 +7,80 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse_lazy
 
-from report.actions import generate_report_action
-from report.models import Report
-from report.forms import ReportForm
-from report.utils import url_get_rows, url_get_report_id, schema_info
+from explorer.actions import generate_report_action
+from explorer.models import Query
+from explorer.forms import QueryForm
+from explorer.utils import url_get_rows, url_get_query_id, schema_info
 
 
 @staff_member_required
-def download_report(request, report_id):
-    report = get_object_or_404(Report, pk=report_id)
+def download_query(request, query_id):
+    query = get_object_or_404(Query, pk=query_id)
     fn = generate_report_action()
-    return fn(None, None, [report, ])
+    return fn(None, None, [query, ])
 
 
 @staff_member_required
 def schema(request):
-    return render_to_response('report/schema.html', {'schema': schema_info()})
+    return render_to_response('explorer/schema.html', {'schema': schema_info()})
 
 
-class ListReportView(ListView):
-
-    @method_decorator(staff_member_required)
-    def dispatch(self, *args, **kwargs):
-        return super(ListReportView, self).dispatch(*args, **kwargs)
-
-    model = Report
-
-
-class CreateReportView(CreateView):
+class ListQueryView(ListView):
 
     @method_decorator(staff_member_required)
     def dispatch(self, *args, **kwargs):
-        return super(CreateReportView, self).dispatch(*args, **kwargs)
+        return super(ListQueryView, self).dispatch(*args, **kwargs)
 
-    form_class = ReportForm
-    template_name = 'report/report.html'
-
-
-class DeleteReportView(DeleteView):
-
-    @method_decorator(staff_member_required)
-    def dispatch(self, *args, **kwargs):
-        return super(DeleteReportView, self).dispatch(*args, **kwargs)
-
-    model = Report
-    success_url = reverse_lazy("report_index")
+    model = Query
 
 
-class PlayReportView(View):
+class CreateQueryView(CreateView):
 
     @method_decorator(staff_member_required)
     def dispatch(self, *args, **kwargs):
-        return super(PlayReportView, self).dispatch(*args, **kwargs)
+        return super(CreateQueryView, self).dispatch(*args, **kwargs)
+
+    form_class = QueryForm
+    template_name = 'explorer/query.html'
+
+
+class DeleteQueryView(DeleteView):
+
+    @method_decorator(staff_member_required)
+    def dispatch(self, *args, **kwargs):
+        return super(DeleteQueryView, self).dispatch(*args, **kwargs)
+
+    model = Query
+    success_url = reverse_lazy("explorer_index")
+
+
+class PlayQueryView(View):
+
+    @method_decorator(staff_member_required)
+    def dispatch(self, *args, **kwargs):
+        return super(PlayQueryView, self).dispatch(*args, **kwargs)
 
     def get(self, request):
-        if not url_get_report_id(request):
-            return PlayReportView.render(request)
-        report = get_object_or_404(Report, pk=url_get_report_id(request))
-        return PlayReportView.render_with_sql(request, report.sql)
+        if not url_get_query_id(request):
+            return PlayQueryView.render(request)
+        query = get_object_or_404(Query, pk=url_get_query_id(request))
+        return PlayQueryView.render_with_sql(request, query.sql)
 
     def post(self, request):
         sql = request.POST.get('sql', None)
         if not sql:
-            return PlayReportView.render(request)
-        return PlayReportView.render_with_sql(request, sql)
+            return PlayQueryView.render(request)
+        return PlayQueryView.render_with_sql(request, sql)
 
     @staticmethod
     def render(request):
         c = RequestContext(request, {'title': 'Playground'})
-        return render_to_response('report/play.html', c)
+        return render_to_response('explorer/play.html', c)
 
     @staticmethod
     def render_with_sql(request, sql):
-        report = Report(sql=sql)
-        headers, data, error = report.headers_and_data()
+        query = Query(sql=sql)
+        headers, data, error = query.headers_and_data()
         c = RequestContext(request, {
             'error': error,
             'title': 'Playground',
@@ -89,38 +89,38 @@ class PlayReportView(View):
             'headers': headers,
             'rows': url_get_rows(request),
             'total_rows': len(data)})
-        return render_to_response('report/play.html', c)
+        return render_to_response('explorer/play.html', c)
 
 
-class ReportView(View):
+class QueryView(View):
 
     @method_decorator(staff_member_required)
     def dispatch(self, *args, **kwargs):
-        return super(ReportView, self).dispatch(*args, **kwargs)
+        return super(QueryView, self).dispatch(*args, **kwargs)
 
-    def get(self, request, report_id):
-        report, form = ReportView.get_instance_and_form(request, report_id)
-        return ReportView.render(request, report, form, None)
+    def get(self, request, query_id):
+        query, form = QueryView.get_instance_and_form(request, query_id)
+        return QueryView.render(request, query, form, None)
 
-    def post(self, request, report_id):
-        report, form = ReportView.get_instance_and_form(request, report_id)
+    def post(self, request, query_id):
+        query, form = QueryView.get_instance_and_form(request, query_id)
         success = form.save() if form.is_valid() else None
-        return ReportView.render(request, report, form, "Report saved." if success else None)
+        return QueryView.render(request, query, form, "Query saved." if success else None)
 
     @staticmethod
-    def get_instance_and_form(request, report_id):
-        report = get_object_or_404(Report, pk=report_id)
-        form = ReportForm(request.POST if len(request.POST) else None, instance=report)
-        return report, form
+    def get_instance_and_form(request, query_id):
+        query = get_object_or_404(Query, pk=query_id)
+        form = QueryForm(request.POST if len(request.POST) else None, instance=query)
+        return query, form
 
     @staticmethod
-    def render(request, report, form, message):
+    def render(request, query, form, message):
         rows = url_get_rows(request)
-        headers, data, error = report.headers_and_data()
+        headers, data, error = query.headers_and_data()
         c = RequestContext(request, {
             'error': error,
-            'report': report,
-            'title': report.title,
+            'query': query,
+            'title': query.title,
             'form': form,
             'message': message,
             'data': data[:rows],
@@ -128,4 +128,4 @@ class ReportView(View):
             'rows': rows,
             'total_rows': len(data)}
         )
-        return render_to_response('report/report.html', c)
+        return render_to_response('explorer/query.html', c)

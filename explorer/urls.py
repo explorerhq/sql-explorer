@@ -1,12 +1,12 @@
 from django.conf.urls import patterns, url
-from report.views import ReportView, CreateReportView, PlayReportView, DeleteReportView, ListReportView
+from explorer.views import QueryView, CreateQueryView, PlayQueryView, DeleteQueryView, ListQueryView
 
 urlpatterns = patterns('',
-    url(r'(?P<report_id>\d+)/$', ReportView.as_view(), name='report_detail'),
-    url(r'(?P<report_id>\d+)/download$', 'report.views.download_report', name='report_download'),
-    url(r'(?P<pk>\d+)/delete$', DeleteReportView.as_view(), name='report_delete'),
-    url(r'new/$', CreateReportView.as_view(), name='report_create'),
-    url(r'play/$', PlayReportView.as_view(), name='report_playground'),
-    url(r'schema/$', 'report.views.schema', name='report_schema'),
-    url(r'$', ListReportView.as_view(), name='report_index'),
+    url(r'(?P<query_id>\d+)/$', QueryView.as_view(), name='query_detail'),
+    url(r'(?P<query_id>\d+)/download$', 'explorer.views.download_query', name='csv_download'),
+    url(r'(?P<pk>\d+)/delete$', DeleteQueryView.as_view(), name='query_delete'),
+    url(r'new/$', CreateQueryView.as_view(), name='query_create'),
+    url(r'play/$', PlayQueryView.as_view(), name='explorer_playground'),
+    url(r'schema/$', 'explorer.views.schema', name='explorer_schema'),
+    url(r'$', ListQueryView.as_view(), name='explorer_index'),
 )
