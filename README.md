@@ -5,7 +5,7 @@ Django SQL Explorer is inspired by the Data Explorer tool from Stack Exchange an
 
 django-sql-explorer is MIT licensed, and pull requests are welcome!
 
-![](http://www.untrod.com/django-sql-explorer/query2.png)
+![](http://www.untrod.com/django-sql-explorer/query2.jpg)
 
 Requirements & Installation
 ===========================
