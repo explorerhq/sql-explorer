@@ -11,16 +11,16 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
-    name = "django-sql-reports",
+    name = "django-sql-explorer",
     version = __version__,
     author = "Chris Clark",
     author_email = "cc@epantry.com",
-    description = ("a pluggable app that allows admins to execute sql"
-		   " and view and export the results. Loosely inspired by Stack Exchange Data Explorer."),
+    description = ("A pluggable app that allows admins to execute SQL"
+		   " and view and export the results. Inspired by Stack Exchange Data Explorer."),
     license = "MIT",
-    keywords = "django sql reports reporting csv",
-    url = "https://github.com/epantry/django-sql-reports",
-    packages=['report'],
+    keywords = "django sql explorer reports reporting csv",
+    url = "https://github.com/epantry/django-sql-explorer",
+    packages=['explorer'],
     long_description=read('README.md'),
     classifiers=[
         "Topic :: Utilities",

@@ -12,7 +12,7 @@ DATABASES = {
     }
 }
 
-ROOT_URLCONF = 'report.urls'
+ROOT_URLCONF = 'explorer.urls'
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.static",
@@ -33,8 +33,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'south',
-
-    'report'
+    'explorer'
 )
 
 AUTHENTICATION_BACKENDS = (
