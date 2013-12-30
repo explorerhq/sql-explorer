@@ -16,7 +16,7 @@ This has been tested only with Django 1.6, however it should work back to 1.4. P
 
 Install with pip from github:
 
-    pip install -e git+https://github.com/epantry/django-sql-explorer#egg=explorer
+    pip install django-sql-explorer
 
 Add to your installed_apps:
 
