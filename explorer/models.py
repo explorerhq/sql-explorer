@@ -35,7 +35,7 @@ class Query(models.Model):
         try:
             cursor.execute(self.sql)
         except DatabaseError, e:
-            return [], [], e.message
+            return [], [], e
         headers = [d[0] for d in cursor.description]
         data = [[x.encode('utf-8') if type(x) is unicode else x for x in list(r)] for r in cursor.fetchall()]
         return headers, data, None
