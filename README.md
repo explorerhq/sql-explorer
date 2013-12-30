@@ -7,35 +7,16 @@ django-sql-explorer is MIT licensed, and pull requests are welcome!
 
 ![](http://www.untrod.com/django-sql-explorer/query2.jpg)
 
-Requirements & Installation
-===========================
-
-Django 1.5+ (though this has only been tested on 1.6...it should work on 1.5 and probably even earlier)
-Any database backend that Django supports
-
-
-Dependencies
-============
-
-All front-end dependencies are served from CDNJS.com
-
-Name | Version | License
---- | --- | ---
-Twitter Boostrap CSS | |
-jQuery | |
-Underscore | |
-Codemirror | |
-FloatThead* | |
-FactoryBoy (for tests) | |
-
-
-* Served locally because it is not available on CDNJS
-
-
 Install
 =======
 
-Clone and add to your installed_apps:
+This has been tested only with Django 1.6, however it should work back to 1.4. Please report an issue if you encounter problems on earlier versions of Django.
+
+Install with pip from github:
+
+    pip install -e git+https://github.com/epantry/django-sql-explorer#egg=explorer
+
+Add to your installed_apps:
 
     INSTALLED_APPS = (
       ...
@@ -43,17 +24,36 @@ Clone and add to your installed_apps:
       ...
     )
 
-Add the following to your urls.py:
+Add the following to your urls.py (all Explorer URLs are restricted to staff only):
 
     url(r'^explorer/', include('explorer.urls')),
 
-Run syncdb and you're off to the races. Navigate to /explorer/ and create your first query!
+Run syncdb to create the tables (well...just one table really):
+    
+    python manage.py syncdb
 
-Note that all Explorer URLs are restricted to staff only.
+Browse to ./explorer/ and get exploring!
 
-To run the tests:
 
-    python manage.py test
+Dependencies
+============
+
+An effort has been made to require no packages other than Django. However a number of front-end dependencies do exist and are documented below. All front-end dependencies are served from CDNJS.com
+
+Name | Version | License
+--- | --- | ---
+[Twitter Boostrap](http://getbootstrap.com/) | 3.0.3 | MIT
+[jQuery](http://jquery.com/) | 2.0.3 | MIT
+[Underscore](http://underscorejs.org/) | 1.5.2 | MIT
+[Codemirror](http://codemirror.net/) | 3.19.0 | MIT
+[floatThead](http://mkoryak.github.io/floatThead/)* | 1.2.0 | Creative Commons
+
+_*Served locally because this is not available on cdnjs_
+
+Factory Boy is needed if you'd like to run the tests, which can you do easily:
+
+        python manage.py test
+
 
 Settings
 ========
