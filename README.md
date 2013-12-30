@@ -58,15 +58,12 @@ To run the tests:
 Settings
 ========
 
-Settings names and defaults are below
-
-EXPLORER_SQL_BLACKLIST = getattr(settings, 'EXPLORER_SQL_BLACKLIST', ('ALTER', 'RENAME ', 'DROP', 'TRUNCATE', 'INSERT INTO', 'UPDATE', 'REPLACE', 'DELETE'))
-
-EXPLORER_SQL_WHITELIST = getattr(settings, 'EXPLORER_SQL_WHITELIST', ('DROP FUNCTION', 'REPLACE FUNCTION', 'DROP VIEW', 'REPLACE VIEW', 'CREATED', 'DELETED'))
-
-EXPLORER_DEFAULT_ROWS = getattr(settings, 'EXPLORER_DEFAULT_ROWS', 100)
-
-EXPLORER_SCHEMA_EXCLUDE_APPS = getattr(settings, 'EXPLORER_SCHEMA_EXCLUDE_APPS', ('',))
+Setting | Description | Default
+--------|-------------|--------
+EXPLORER_SQL_BLACKLIST | Disallowed words in SQL queries to prevent destructive actions. | ('ALTER', 'RENAME ', 'DROP', 'TRUNCATE', 'INSERT INTO', 'UPDATE', 'REPLACE', 'DELETE')
+EXPLORER_SQL_WHITELIST | These phrases are allowed, even though part of the phrase appears in the blacklist. | ('DROP FUNCTION', 'REPLACE FUNCTION', 'DROP VIEW', 'REPLACE VIEW', 'CREATED', 'DELETED')
+EXPLORER_DEFAULT_ROWS | The number of rows to show by default in the preview pane. | 100
+EXPLORER_SCHEMA_EXCLUDE_APPS | Don't show schema for these apps in /schema/. This is helpful to clear out cruft that users realistically won't want to refer to for reference. | ('',)  # No apps are excluded
 
 
 Features
