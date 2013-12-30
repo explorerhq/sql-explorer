@@ -51,12 +51,12 @@ class TestDownloadView(TestCase):
         self.client.login(username='admin', password='pwd')
 
     def test_query_with_bad_sql_renders_error(self):
-        resp = self.client.get(reverse("csv_download", kwargs={'query_id': self.query.id}))
+        resp = self.client.get(reverse("query_download", kwargs={'query_id': self.query.id}))
         self.assertEqual(resp['content-type'], 'text/csv')
 
     def test_admin_required(self):
         self.client.logout()
-        resp = self.client.get(reverse("csv_download", kwargs={'query_id': self.query.id}))
+        resp = self.client.get(reverse("query_download", kwargs={'query_id': self.query.id}))
         self.assertTemplateUsed(resp, 'admin/login.html')
 
 
@@ -81,6 +81,23 @@ class TestQueryPlayground(TestCase):
         self.client.logout()
         resp = self.client.get(reverse("explorer_playground"))
         self.assertTemplateUsed(resp, 'admin/login.html')
+
+
+class TestCSVFromSQL(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_superuser('admin', 'admin@admin.com', 'pwd')
+        self.client.login(username='admin', password='pwd')
+
+    def test_admin_required(self):
+        self.client.logout()
+        resp = self.client.post(reverse("generate_csv"), {})
+        self.assertTemplateUsed(resp, 'admin/login.html')
+
+    def test_downloading_from_playground(self):
+        sql = "select 1;"
+        resp = self.client.post(reverse("generate_csv"), {'sql': sql})
+        self.assertEqual(resp['content-type'], 'text/csv')
 
 
 class TestSchemaView(TestCase):

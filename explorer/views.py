@@ -21,6 +21,16 @@ def download_query(request, query_id):
 
 
 @staff_member_required
+def csv_from_sql(request):
+    sql = request.POST.get('sql', None)
+    if not sql:
+        return PlayQueryView.render(request)
+    query = Query(sql=sql)
+    fn = generate_report_action()
+    return fn(None, None, [query, ])
+
+
+@staff_member_required
 def schema(request):
     return render_to_response('explorer/schema.html', {'schema': schema_info()})
 

@@ -4,6 +4,8 @@ from django.core.urlresolvers import reverse
 import csv
 import cStringIO
 
+MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist."
+
 
 class Query(models.Model):
     title = models.CharField(max_length=255)
@@ -31,6 +33,8 @@ class Query(models.Model):
         return csv_report.getvalue()
 
     def headers_and_data(self):
+        if not self.passes_blacklist():
+            return [], [], MSG_FAILED_BLACKLIST
         cursor = connection.cursor()
         try:
             cursor.execute(self.sql)
