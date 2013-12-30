@@ -1,7 +1,7 @@
 Django SQL Explorer
 ==================
 
-Django SQL Explorer is inspired by the Data Explorer tool from Stack Exchange and is designed to make the flow of data between people in your company fast, simple, and confusion-free. Quickly write and share SQL queries in a clean, usable query builder, preview the results in the browser, share links to download CSV files, and keep the information flowing baby!
+Django SQL Explorer is inspired by Stack Exchange's [Data Explorer](http://data.stackexchange.com/stackoverflow/queries) and is designed to make the flow of data between people in your company fast, simple, and confusion-free. Quickly write and share SQL queries in a clean, usable query builder, preview the results in the browser, share links to download CSV files, and keep the information flowing baby!
 
 django-sql-explorer is MIT licensed, and pull requests are welcome!
 
@@ -32,7 +32,7 @@ Run syncdb to create the tables (well...just one table really):
     
     python manage.py syncdb
 
-Browse to ./explorer/ and get exploring!
+Browse to https://yoursite/explorer/ and get exploring!
 
 
 Dependencies
@@ -72,5 +72,5 @@ Features
 - SQL blacklist so destructive queries don't get executed (delete, drop, etc). This is not bulletproof and it's recommended that you instead configure a read-only database role, but when not possible the blacklist provides reasonable protection.
 - Playground! Just want to get in and write some ad-hoc queries? Go nuts!
 - Schema helper - /explorer/schema/ will dump a list of your Django apps' table and column names that you can refer to while writing queries.
-- Reasonably good test coverage
-
+- Reasonably good test coverage.
+- Download multiple queries at once as a zip file through Django's admin interface.
