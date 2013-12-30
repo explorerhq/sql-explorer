@@ -10,6 +10,8 @@ django-sql-explorer is MIT licensed, and pull requests are welcome!
 Install
 =======
 
+Requires Python 2.7.
+
 This has been tested only with Django 1.6, however it should work back to 1.4. Please report an issue if you encounter problems on earlier versions of Django.
 
 Install with pip from github:
