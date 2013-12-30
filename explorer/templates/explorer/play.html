@@ -24,7 +24,8 @@
         <div class="form-group">
             <div style="text-align: center;">
                 <input type="submit" value="Refresh Preview" class="btn btn-default"/>
-                <input type="submit" value="Create New Query" id="create_button" class="btn btn-default"/>
+                <input type="submit" value="Save As New Query" id="create_button" class="btn btn-default"/>
+                <input type="submit" value="Download CSV" id="download_button" class="btn btn-default"/>
                 <a class="btn btn-default" target="_blank" href="../schema/">Schema Reference</a>
             </div>
         </div>
@@ -40,6 +41,9 @@
         $(function() {
             $("#create_button").click(function() {
                 $(this).closest("form").attr('action', '../new/');
+            });
+            $("#download_button").click(function() {
+                $(this).closest("form").attr('action', '../csv');
             });
         });
     </script>

@@ -7,7 +7,7 @@ urlpatterns = patterns('',
     url(r'(?P<pk>\d+)/delete$', DeleteQueryView.as_view(), name='query_delete'),
     url(r'new/$', CreateQueryView.as_view(), name='query_create'),
     url(r'play/$', PlayQueryView.as_view(), name='explorer_playground'),
-    url(r'generate-csv$', 'explorer.views.csv_from_sql', name='generate_csv'),
+    url(r'csv$', 'explorer.views.csv_from_sql', name='generate_csv'),
     url(r'schema/$', 'explorer.views.schema', name='explorer_schema'),
     url(r'$', ListQueryView.as_view(), name='explorer_index'),
 )

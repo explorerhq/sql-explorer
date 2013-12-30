@@ -4,6 +4,7 @@ from django.views.generic.base import View
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView, DeleteView
 from django.contrib.admin.views.decorators import staff_member_required
+from django.views.decorators.http import require_POST, require_GET
 from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse_lazy
 
@@ -14,6 +15,7 @@ from explorer.utils import url_get_rows, url_get_query_id, schema_info
 
 
 @staff_member_required
+@require_GET
 def download_query(request, query_id):
     query = get_object_or_404(Query, pk=query_id)
     fn = generate_report_action()
@@ -21,6 +23,7 @@ def download_query(request, query_id):
 
 
 @staff_member_required
+@require_POST
 def csv_from_sql(request):
     sql = request.POST.get('sql', None)
     if not sql:
@@ -31,6 +34,7 @@ def csv_from_sql(request):
 
 
 @staff_member_required
+@require_GET
 def schema(request):
     return render_to_response('explorer/schema.html', {'schema': schema_info()})
 

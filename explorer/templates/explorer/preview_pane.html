@@ -4,7 +4,7 @@
             <span class="panel-title">Preview</span>
             <span style="float: right;">
                 {% if rows > total_rows %}
-                    Showing {{ total_rows }} of {{ total_rows }} total rows. <a href="download">Download CSV</a> (all rows)
+                    Showing {{ total_rows }} of {{ total_rows }} total rows.
                 {% else %}
                     First <input style="text-align: center; width: 40px;" type="text" name="rows" id="rows" value="{{ rows }}" /> of {{ total_rows }} total rows. <a href="download">Download CSV</a>
                 {% endif %}

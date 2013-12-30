@@ -53,6 +53,7 @@
             <div style="text-align: center;">
                 <input type="submit" value="Save & Run" class="btn btn-default" />
                 {% if query %}
+                    <a class="btn btn-default" href="download">Download CSV</a>
                     <a class="btn btn-default" target="_blank" href="../play/?query_id={{ query.id }}">Edit in Playground</a>
                 {%  endif %}
                 <a class="btn btn-default" target="_blank" href="../schema/">Schema Reference</a>
