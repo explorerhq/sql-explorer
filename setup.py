@@ -14,7 +14,7 @@ setup(
     name = "django-sql-explorer",
     version = __version__,
     author = "Chris Clark",
-    author_email = "cc@epantry.com",
+    author_email = "chris@untrod.com",
     description = ("A pluggable app that allows admins to execute SQL"
 		   " and view and export the results. Inspired by Stack Exchange Data Explorer."),
     license = "MIT",
