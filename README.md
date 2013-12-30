@@ -51,6 +51,9 @@ Run syncdb and you're off to the races. Navigate to /explorer/ and create your f
 
 Note that all Explorer URLs are restricted to staff only.
 
+To run the tests:
+
+    python manage.py test
 
 Settings
 ========
@@ -72,5 +75,5 @@ Features
 - SQL blacklist so destructive queries don't get executed (delete, drop, etc). This is not bulletproof and it's recommended that you instead configure a read-only database role, but when not possible the blacklist provides reasonable protection.
 - Playground! Just want to get in and write some ad-hoc queries? Go nuts!
 - Schema helper - /explorer/schema/ will dump a list of your Django apps' table and column names that you can refer to while writing queries.
-
+- Reasonably good test coverage
 
