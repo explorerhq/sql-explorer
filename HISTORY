@@ -1,0 +1,15 @@
+0.1.1
+=====
+
+12/31/13
+
+Bug Fixes
+- Proper SQL blacklist checks
+- Downloading CSV from playground
+
+0.1
+===
+
+12/29/13
+
+Initial Release
