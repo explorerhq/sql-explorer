@@ -7,6 +7,23 @@ django-sql-explorer is MIT licensed, and pull requests are welcome!
 
 ![](http://www.untrod.com/django-sql-explorer/query2.jpg)
 
+Features
+========
+
+- **Enforces Read-Only**
+    - SQL blacklist so destructive queries don't get executed (delete, drop, update etc). This is not bulletproof and it's recommended that you instead configure a read-only database role, but when not possible the blacklist provides reasonable protection.
+- **Multiple DB Backends**
+    - 100% built on Django's ORM, so works with Postgresql, Mysql, and Sqlite.
+- **Ad-Hoc Querying**
+    - Just want to get in and write some ad-hoc queries? Go nuts with the Playground area.
+- **Schema Helper**
+    - /explorer/schema/ will dump a list of your Django apps' table and column names that you can refer to while writing queries. Apps are excludable from this list so users aren't bogged down in tons of irrelevant tables.
+- **Mass Export**
+    - Download multiple queries at once as a zip file through Django's admin interface via a built-in admin action.
+- **Zero Dependencies**
+    - Other than Django and front-end libraries. More detail below.
+- **Reasonably Good Test Coverage**
+
 Install
 =======
 
@@ -16,7 +33,7 @@ This has been tested only with Django 1.6, however it should work back to 1.4. P
 
 Install with pip from github:
 
-    pip install -e git+https://github.com/epantry/django-sql-explorer#egg=explorer
+    pip install django-sql-explorer
 
 Add to your installed_apps:
 
@@ -68,11 +85,4 @@ EXPLORER_DEFAULT_ROWS | The number of rows to show by default in the preview pan
 EXPLORER_SCHEMA_EXCLUDE_APPS | Don't show schema for these apps in /schema/. This is helpful to clear out cruft that users realistically won't want to refer to for reference. | ('',)  # No apps are excluded
 
 
-Features
-========
 
-- SQL blacklist so destructive queries don't get executed (delete, drop, etc). This is not bulletproof and it's recommended that you instead configure a read-only database role, but when not possible the blacklist provides reasonable protection.
-- Playground! Just want to get in and write some ad-hoc queries? Go nuts!
-- Schema helper - /explorer/schema/ will dump a list of your Django apps' table and column names that you can refer to while writing queries.
-- Reasonably good test coverage.
-- Download multiple queries at once as a zip file through Django's admin interface.
