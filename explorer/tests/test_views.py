@@ -115,3 +115,19 @@ class TestSchemaView(TestCase):
         self.client.logout()
         resp = self.client.get(reverse("explorer_schema"))
         self.assertTemplateUsed(resp, 'admin/login.html')
+
+
+class TestParamsInViews(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_superuser('admin', 'admin@admin.com', 'pwd')
+        self.client.login(username='admin', password='pwd')
+        self.query = SimpleQueryFactory(sql="select $$swap$$;")
+
+    def test_retrieving_query_works_with_params(self):
+        resp = self.client.get(reverse("query_detail", kwargs={'query_id': self.query.id}) + '?params={"swap":123}')
+        self.assertContains(resp, "123")
+
+    def test_query_in_playground_works_with_params(self):
+        resp = self.client.get('%s?query_id=%s&params=%s' % (reverse("explorer_playground"), self.query.id, '{"swap":123}'))
+        self.assertContains(resp, "123")

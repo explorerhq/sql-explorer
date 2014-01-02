@@ -57,8 +57,10 @@ class TestSchemaInfo(TestCase):
 class TestParams(TestCase):
 
     def test_swappable_params_are_built_correctly(self):
+        orig = app_settings.EXPLORER_PARAM_TOKEN
         app_settings.EXPLORER_PARAM_TOKEN = '!!'
         self.assertEqual('!!FOO!!', param('foo'))
+        app_settings.EXPLORER_PARAM_TOKEN = orig
 
     def test_params_get_swapped(self):
         app_settings.EXPLORER_PARAM_TOKEN = '$$'
