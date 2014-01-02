@@ -2,6 +2,7 @@ import functools
 import csv
 import cStringIO
 import json
+import re
 from explorer import app_settings
 from django.db import connection, models
 
@@ -44,6 +45,11 @@ def swap_params(sql, params):
     for k, v in p:
         sql = sql.replace(param(k), str(v))
     return sql
+
+
+def extract_params(text):
+    regex = re.compile("\$\$([a-zA-Z0-9|-]+)\$\$")
+    return [p.upper() for p in re.findall(regex, text)]
 
 
 def write_csv(headers, data):

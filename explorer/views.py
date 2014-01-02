@@ -97,16 +97,7 @@ class PlayQueryView(View):
 
     @staticmethod
     def render_with_sql(request, query):
-        headers, data, error = query.headers_and_data()
-        c = RequestContext(request, {
-            'error': error,
-            'title': 'Playground',
-            'query': query,
-            'data': data[:url_get_rows(request)],
-            'headers': headers,
-            'rows': url_get_rows(request),
-            'total_rows': len(data)})
-        return render_to_response('explorer/play.html', c)
+        return render_to_response('explorer/play.html', query_viewmodel(request, query, title="Playground"))
 
 
 class QueryView(View):
@@ -133,12 +124,16 @@ class QueryView(View):
 
     @staticmethod
     def render(request, query, form, message):
-        rows = url_get_rows(request)
-        headers, data, error = query.headers_and_data()
-        c = RequestContext(request, {
+        return render_to_response('explorer/query.html', query_viewmodel(request, query, form=form, message=message))
+
+
+def query_viewmodel(request, query, title=None, form=None, message=None):
+    rows = url_get_rows(request)
+    headers, data, error = query.headers_and_data()
+    return RequestContext(request, {
             'error': error,
+            'title': title,
             'query': query,
-            'title': query.title,
             'form': form,
             'message': message,
             'data': data[:rows],
@@ -146,4 +141,3 @@ class QueryView(View):
             'rows': rows,
             'total_rows': len(data)}
         )
-        return render_to_response('explorer/query.html', c)
