@@ -11,13 +11,14 @@ from django.core.urlresolvers import reverse_lazy
 from explorer.actions import generate_report_action
 from explorer.models import Query
 from explorer.forms import QueryForm
-from explorer.utils import url_get_rows, url_get_query_id, schema_info
+from explorer.utils import url_get_rows, url_get_query_id, schema_info, url_get_params
 
 
 @staff_member_required
 @require_GET
 def download_query(request, query_id):
     query = get_object_or_404(Query, pk=query_id)
+    query.params = url_get_params(request)
     fn = generate_report_action()
     return fn(None, None, [query, ])
 
@@ -29,6 +30,7 @@ def csv_from_sql(request):
     if not sql:
         return PlayQueryView.render(request)
     query = Query(sql=sql)
+    query.params = url_get_params(request)
     fn = generate_report_action()
     return fn(None, None, [query, ])
 
@@ -78,13 +80,15 @@ class PlayQueryView(View):
         if not url_get_query_id(request):
             return PlayQueryView.render(request)
         query = get_object_or_404(Query, pk=url_get_query_id(request))
-        return PlayQueryView.render_with_sql(request, query.sql)
+        query.params = url_get_params(request)
+        return PlayQueryView.render_with_sql(request, query)
 
     def post(self, request):
         sql = request.POST.get('sql', None)
         if not sql:
             return PlayQueryView.render(request)
-        return PlayQueryView.render_with_sql(request, sql)
+        query = Query(sql=sql, params=url_get_params(request))
+        return PlayQueryView.render_with_sql(request, query)
 
     @staticmethod
     def render(request):
@@ -92,13 +96,12 @@ class PlayQueryView(View):
         return render_to_response('explorer/play.html', c)
 
     @staticmethod
-    def render_with_sql(request, sql):
-        query = Query(sql=sql)
+    def render_with_sql(request, query):
         headers, data, error = query.headers_and_data()
         c = RequestContext(request, {
             'error': error,
             'title': 'Playground',
-            'sql': sql,
+            'query': query,
             'data': data[:url_get_rows(request)],
             'headers': headers,
             'rows': url_get_rows(request),
@@ -124,6 +127,7 @@ class QueryView(View):
     @staticmethod
     def get_instance_and_form(request, query_id):
         query = get_object_or_404(Query, pk=query_id)
+        query.params = url_get_params(request)
         form = QueryForm(request.POST if len(request.POST) else None, instance=query)
         return query, form
 

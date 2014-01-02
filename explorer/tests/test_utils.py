@@ -2,7 +2,7 @@ from django.test import TestCase
 from explorer.actions import generate_report_action
 from explorer.tests.factories import SimpleQueryFactory
 from explorer import app_settings
-from explorer.utils import passes_blacklist, schema_info
+from explorer.utils import passes_blacklist, schema_info, param, swap_params
 
 
 class TestSqlBlacklist(TestCase):
@@ -52,3 +52,25 @@ class TestSchemaInfo(TestCase):
         app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS = ('',)
         tables = [a[1] for a in res]
         self.assertNotIn('explorer_query', tables)
+
+
+class TestParams(TestCase):
+
+    def test_swappable_params_are_built_correctly(self):
+        app_settings.EXPLORER_PARAM_TOKEN = '!!'
+        self.assertEqual('!!FOO!!', param('foo'))
+
+    def test_params_get_swapped(self):
+        app_settings.EXPLORER_PARAM_TOKEN = '$$'
+        sql = 'please swap $$this$$ and $$that$$'
+        expected = 'PLEASE SWAP HERE AND THERE'
+        params = {'this': 'here', 'that': 'there'}
+        got = swap_params(sql, params)
+        self.assertEqual(got, expected)
+
+    def test_empty_params_does_nothing(self):
+        app_settings.EXPLORER_PARAM_TOKEN = '$$'
+        sql = 'please swap $$this$$ and $$that$$'
+        params = None
+        got = swap_params(sql, params)
+        self.assertEqual(got, sql.upper())

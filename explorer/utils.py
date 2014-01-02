@@ -1,31 +1,24 @@
 import functools
+import csv
+import cStringIO
+import json
 from explorer import app_settings
-from django.db import models
+from django.db import connection, models
 
+
+## SQL Specific Things
 
 def passes_blacklist(sql):
     clean = functools.reduce(lambda sql, term: sql.upper().replace(term, ""), app_settings.EXPLORER_SQL_WHITELIST, sql)
     return not any(write_word in clean.upper() for write_word in app_settings.EXPLORER_SQL_BLACKLIST)
 
 
-def safe_cast(val, to_type, default=None):
-    try:
-        return to_type(val)
-    except ValueError:
-        return default
-
-
-def get_int_from_request(request, name, default):
-    val = request.GET.get(name, default)
-    return safe_cast(val, int, default) if val else val  # handle None defaults
-
-
-def url_get_rows(request):
-    return get_int_from_request(request, 'rows', app_settings.EXPLORER_DEFAULT_ROWS)
-
-
-def url_get_query_id(request):
-    return get_int_from_request(request, 'query_id', None)
+def execute_query(sql):
+    cursor = connection.cursor()
+    cursor.execute(sql)
+    headers = [d[0] for d in cursor.description]
+    data = [[x.encode('utf-8') if type(x) is unicode else x for x in list(r)] for r in cursor.fetchall()]
+    return headers, data, None
 
 
 def schema_info():
@@ -40,7 +33,65 @@ def schema_info():
     return ret
 
 
-# from http://stackoverflow.com/a/3829849/221390
+def param(name):
+    bracket = app_settings.EXPLORER_PARAM_TOKEN
+    return ("%s%s%s" % (bracket, name, bracket)).upper()
+
+
+def swap_params(sql, params):
+    p = params.items() if params else {}
+    sql = sql.upper()
+    for k, v in p:
+        sql = sql.replace(param(k), v)
+    return sql.upper()
+
+
+def write_csv(headers, data):
+    csv_report = cStringIO.StringIO()
+    writer = csv.writer(csv_report)
+    writer.writerow(headers)
+    map(lambda row: writer.writerow(row), data)
+    return csv_report.getvalue()
+
+
+## Helpers
+def safe_cast(val, to_type, default=None):
+    try:
+        return to_type(val)
+    except ValueError:
+        return default
+
+
+def safe_json(val):
+    try:
+        return json.loads(val)
+    except ValueError:
+        return None
+
+
+def get_int_from_request(request, name, default):
+    val = request.GET.get(name, default)
+    return safe_cast(val, int, default) if val else None
+
+
+def get_json_from_request(request, name):
+    val = request.GET.get(name, None)
+    return safe_json(val) if val else None
+
+
+def url_get_rows(request):
+    return get_int_from_request(request, 'rows', app_settings.EXPLORER_DEFAULT_ROWS)
+
+
+def url_get_query_id(request):
+    return get_int_from_request(request, 'query_id', None)
+
+
+def url_get_params(request):
+    return get_json_from_request(request, 'params')
+
+
+## Testing helpers (from http://stackoverflow.com/a/3829849/221390
 class AssertMethodIsCalled(object):
     def __init__(self, obj, method):
         self.obj = obj
