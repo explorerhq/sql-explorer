@@ -42,8 +42,8 @@ def swap_params(sql, params):
     p = params.items() if params else {}
     sql = sql.upper()
     for k, v in p:
-        sql = sql.replace(param(k), v)
-    return sql.upper()
+        sql = sql.replace(param(k), str(v))
+    return sql
 
 
 def write_csv(headers, data):

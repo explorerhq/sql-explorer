@@ -63,7 +63,7 @@ class TestParams(TestCase):
     def test_params_get_swapped(self):
         app_settings.EXPLORER_PARAM_TOKEN = '$$'
         sql = 'please swap $$this$$ and $$that$$'
-        expected = 'PLEASE SWAP HERE AND THERE'
+        expected = 'PLEASE SWAP here AND there'
         params = {'this': 'here', 'that': 'there'}
         got = swap_params(sql, params)
         self.assertEqual(got, expected)
@@ -74,3 +74,11 @@ class TestParams(TestCase):
         params = None
         got = swap_params(sql, params)
         self.assertEqual(got, sql.upper())
+
+    def test_non_string_param_gets_swapper(self):
+        app_settings.EXPLORER_PARAM_TOKEN = '$$'
+        sql = 'please swap $$this$$'
+        expected = 'PLEASE SWAP 1'
+        params = {'this': 1}
+        got = swap_params(sql, params)
+        self.assertEqual(got, expected)
