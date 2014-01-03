@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-<h2 style="padding-bottom: 20px">{% firstof query.title "New Query" %}</h2>
+<h2 style="padding-bottom: 20px">{% if query %}{{ query.title }}{% else %}New Query{% endif %}</h2>
 {% if message %}
     <div class="alert alert-info">{{ message }}</div>
 {% endif %}
