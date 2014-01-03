@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-<h2 style="padding-bottom: 20px">{% firstof title "New Query" %}</h2>
+<h2 style="padding-bottom: 20px">{% firstof query.title "New Query" %}</h2>
 {% if message %}
     <div class="alert alert-info">{{ message }}</div>
 {% endif %}
@@ -54,7 +54,7 @@
                 <input type="submit" value="Save & Run" class="btn btn-default" />
                 {% if query %}
                     <a class="btn btn-default" href="download">Download CSV</a>
-                    <a class="btn btn-default" href="../play/?query_id={{ query.id }}">Edit in Playground</a>
+                    <input type="submit" value="Edit in Playground" class="btn btn-default" id="playground_button"/>
                 {%  endif %}
                 <a class="btn btn-default" target="_blank" href="../schema/">Schema Reference</a>
             </div>
@@ -67,6 +67,13 @@
 {% block scripts %}
     {% include 'explorer/preview_pane_scripts.html' %}
     {% include 'explorer/sql_editor_scripts.html' %}
+    <script>
+        $(function() {
+            $("#playground_button").click(function() {
+                $(this).closest("form").attr('action', '../play/');
+            });
+        });
+    </script>
 {% endblock %}
 
 

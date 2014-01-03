@@ -71,9 +71,14 @@ class TestQueryPlayground(TestCase):
         self.assertEqual(resp.status_code, 200)
         self.assertTemplateUsed(resp, 'explorer/play.html')
 
-    def test_playground_renders_with_prepopulated_sql(self):
+    def test_playground_renders_with_query_sql(self):
         query = SimpleQueryFactory(sql="select 1;")
         resp = self.client.get('%s?query_id=%s' % (reverse("explorer_playground"), query.id))
+        self.assertTemplateUsed(resp, 'explorer/play.html')
+        self.assertContains(resp, 'select 1;')
+
+    def test_playground_renders_with_posted_sql(self):
+        resp = self.client.post(reverse("explorer_playground"), {'sql': 'select 1;'})
         self.assertTemplateUsed(resp, 'explorer/play.html')
         self.assertContains(resp, 'select 1;')
 
