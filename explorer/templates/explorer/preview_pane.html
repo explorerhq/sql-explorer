@@ -1,4 +1,4 @@
-{% if data %}
+{% if headers %}
     <div class="panel panel-default" style="margin-top: 30px;" xmlns="http://www.w3.org/1999/html">
         <div class="panel-heading">
             <span class="panel-title">Preview</span>
@@ -20,13 +20,17 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for row in data %}
-                    <tr>
-                        {% for i in row %}
-                            <td>{{ i }}</td>
+                    {% if data %}
+                        {% for row in data %}
+                        <tr>
+                            {% for i in row %}
+                                <td>{{ i }}</td>
+                            {% endfor %}
+                        </tr>
                         {% endfor %}
-                    </tr>
-                    {% endfor %}
+                    {% else %}
+                        <tr style="text-align: center;"><td colspan="{{ headers|length }}">Empty Resultset</td></tr>
+                    {% endif %}
                 </tbody>
             </table>
         </div>
