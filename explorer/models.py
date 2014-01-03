@@ -1,4 +1,4 @@
-from explorer.utils import passes_blacklist, write_csv, swap_params, execute_query
+from explorer.utils import passes_blacklist, write_csv, swap_params, execute_query, extract_params
 from django.db import models, DatabaseError
 from django.core.urlresolvers import reverse
 
@@ -38,7 +38,7 @@ class Query(models.Model):
         try:
             return execute_query(self.final_sql())
         except DatabaseError, e:
-            return [], [], e
+            return [], [], str(e)
 
     def available_params(self):
         return extract_params(self.sql)
