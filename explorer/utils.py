@@ -41,12 +41,11 @@ def schema_info():
 
 def param(name):
     bracket = app_settings.EXPLORER_PARAM_TOKEN
-    return ("%s%s%s" % (bracket, name, bracket)).upper()
+    return "%s%s%s" % (bracket, name, bracket)
 
 
 def swap_params(sql, params):
     p = params.items() if params else {}
-    sql = sql.upper()
     for k, v in p:
         sql = sql.replace(param(k), str(v))
     return sql
@@ -54,7 +53,7 @@ def swap_params(sql, params):
 
 def extract_params(text):
     regex = re.compile("\$\$([a-zA-Z0-9|-]+)\$\$")
-    return [p.upper() for p in re.findall(regex, text)]
+    return re.findall(regex, text)
 
 
 def write_csv(headers, data):

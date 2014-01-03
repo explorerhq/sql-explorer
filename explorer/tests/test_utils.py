@@ -59,13 +59,13 @@ class TestParams(TestCase):
     def test_swappable_params_are_built_correctly(self):
         orig = app_settings.EXPLORER_PARAM_TOKEN
         app_settings.EXPLORER_PARAM_TOKEN = '!!'
-        self.assertEqual('!!FOO!!', param('foo'))
+        self.assertEqual('!!foo!!', param('foo'))
         app_settings.EXPLORER_PARAM_TOKEN = orig
 
     def test_params_get_swapped(self):
         app_settings.EXPLORER_PARAM_TOKEN = '$$'
         sql = 'please swap $$this$$ and $$that$$'
-        expected = 'PLEASE SWAP here AND there'
+        expected = 'please swap here and there'
         params = {'this': 'here', 'that': 'there'}
         got = swap_params(sql, params)
         self.assertEqual(got, expected)
@@ -75,12 +75,12 @@ class TestParams(TestCase):
         sql = 'please swap $$this$$ and $$that$$'
         params = None
         got = swap_params(sql, params)
-        self.assertEqual(got, sql.upper())
+        self.assertEqual(got, sql)
 
     def test_non_string_param_gets_swapper(self):
         app_settings.EXPLORER_PARAM_TOKEN = '$$'
         sql = 'please swap $$this$$'
-        expected = 'PLEASE SWAP 1'
+        expected = 'please swap 1'
         params = {'this': 1}
         got = swap_params(sql, params)
         self.assertEqual(got, expected)
