@@ -17,6 +17,11 @@ def passes_blacklist(sql):
 def execute_query(sql):
     cursor = connection.cursor()
     cursor.execute(sql)
+    return cursor
+
+
+def execute_and_fetch_query(sql):
+    cursor = execute_query(sql)
     headers = [d[0] for d in cursor.description]
     data = [[x.encode('utf-8') if type(x) is unicode else x for x in list(r)] for r in cursor.fetchall()]
     return headers, data, None

@@ -28,6 +28,13 @@ class TestQueryDetailView(TestCase):
         query = SimpleQueryFactory(sql="error")
         resp = self.client.get(reverse("query_detail", kwargs={'query_id': query.id}))
         self.assertTemplateUsed(resp, 'explorer/query.html')
+        self.assertContains(resp, "syntax error")
+
+    def test_query_with_bad_sql_renders_error_on_save(self):
+        query = SimpleQueryFactory(sql="select 1;")
+        resp = self.client.post(reverse("query_detail", kwargs={'query_id': query.id}), data={'sql': 'error'})
+        self.assertTemplateUsed(resp, 'explorer/query.html')
+        self.assertContains(resp, "syntax error")
 
     def test_posting_query_saves_correctly(self):
         expected = 'select 2;'

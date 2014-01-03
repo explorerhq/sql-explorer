@@ -8,7 +8,7 @@ class SqlField(Field):
 
     def validate(self, value):
         query = Query(sql=value)
-        headers, data, error = query.headers_and_data()
+        error = query.error_messages()
         if error:
             raise ValidationError(
                 _(error),

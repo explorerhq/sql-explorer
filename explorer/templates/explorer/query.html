@@ -13,7 +13,9 @@
 {% endif %}
 <div>
     <form role="form" class="form-horizontal" action="../{% firstof query.id 'new' %}/" method="post">{% csrf_token %}
-
+        {% if error %}
+            <div class="alert alert-danger">{{ error|escape }}</div>
+        {% endif %}
         {{ form.non_field_errors }}
         <div class="form-group">
             {% if form.title.errors %}{% for error in form.title.errors %}

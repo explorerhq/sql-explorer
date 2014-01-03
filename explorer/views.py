@@ -109,12 +109,14 @@ class QueryView(View):
 
     def get(self, request, query_id):
         query, form = QueryView.get_instance_and_form(request, query_id)
-        return QueryView.render(request, query, form, None)
+        vm = query_viewmodel(request, query, form=form, message=None)
+        return render_to_response('explorer/query.html', vm)
 
     def post(self, request, query_id):
         query, form = QueryView.get_instance_and_form(request, query_id)
         success = form.save() if form.is_valid() else None
-        return QueryView.render(request, query, form, "Query saved." if success else None)
+        vm = query_viewmodel(request, query, form=form, message="Query saved." if success else None)
+        return render_to_response('explorer/query.html', vm)
 
     @staticmethod
     def get_instance_and_form(request, query_id):
@@ -122,10 +124,6 @@ class QueryView(View):
         query.params = url_get_params(request)
         form = QueryForm(request.POST if len(request.POST) else None, instance=query)
         return query, form
-
-    @staticmethod
-    def render(request, query, form, message):
-        return render_to_response('explorer/query.html', query_viewmodel(request, query, form=form, message=message))
 
 
 def query_viewmodel(request, query, title=None, form=None, message=None):

@@ -1,4 +1,4 @@
-from explorer.utils import passes_blacklist, write_csv, swap_params, execute_query, extract_params
+from explorer.utils import passes_blacklist, write_csv, swap_params, execute_query, execute_and_fetch_query, extract_params
 from django.db import models, DatabaseError
 from django.core.urlresolvers import reverse
 
@@ -32,11 +32,20 @@ class Query(models.Model):
             return error
         return write_csv(headers, data)
 
+    def error_messages(self):
+        if not self.passes_blacklist():
+            return MSG_FAILED_BLACKLIST
+        try:
+            execute_query(self.final_sql())
+            return None
+        except DatabaseError, e:
+            return str(e)
+
     def headers_and_data(self):
         if not self.passes_blacklist():
             return [], [], MSG_FAILED_BLACKLIST
         try:
-            return execute_query(self.final_sql())
+            return execute_and_fetch_query(self.final_sql())
         except DatabaseError, e:
             return [], [], str(e)
 
