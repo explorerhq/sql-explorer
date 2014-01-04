@@ -1,0 +1,8 @@
+{% if params %}
+    <h4>Params:</h4>
+    {% for k, v in params.items %}
+        <div>
+            <label for="{{ k }}_param">{{ k }}:</label><input type="text" id="{{ k }}_param" class="param" name="{{ k }}_param" value="{{ v }}" />
+        </div>
+    {% endfor %}
+{% endif %}

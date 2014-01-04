@@ -2,7 +2,7 @@ from django.test import TestCase
 from explorer.actions import generate_report_action
 from explorer.tests.factories import SimpleQueryFactory
 from explorer import app_settings
-from explorer.utils import passes_blacklist, schema_info, param, swap_params
+from explorer.utils import passes_blacklist, schema_info, param, swap_params, extract_params
 
 
 class TestSqlBlacklist(TestCase):
@@ -84,3 +84,9 @@ class TestParams(TestCase):
         params = {'this': 1}
         got = swap_params(sql, params)
         self.assertEqual(got, expected)
+
+    def test_extracting_params(self):
+        app_settings.EXPLORER_PARAM_TOKEN = '$$'
+        sql = 'please swap $$this$$'
+        expected = {'this': ''}
+        self.assertEqual(extract_params(sql), expected)
