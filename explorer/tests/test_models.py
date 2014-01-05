@@ -15,3 +15,8 @@ class TestQueryModel(TestCase):
         q = SimpleQueryFactory(sql='select 1 "delete";')
         headers, data, error = q.headers_and_data()
         self.assertEqual(error, MSG_FAILED_BLACKLIST)
+
+    def test_params_get_merged(self):
+        q = SimpleQueryFactory(sql="select '$$foo$$';")
+        q.params = {'foo': 'bar'}
+        self.assertEqual(q.available_params(), {'foo': 'bar'})

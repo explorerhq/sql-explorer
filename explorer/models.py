@@ -50,7 +50,10 @@ class Query(models.Model):
             return [], [], str(e)
 
     def available_params(self):
-        return self.params if self.params else extract_params(self.sql)
+        p = extract_params(self.sql)
+        if self.params:
+            p.update(self.params)
+        return p
 
     def get_absolute_url(self):
         return reverse("query_detail", kwargs={'query_id': self.id})

@@ -1,8 +1,12 @@
 {% if params %}
-    <h4>Params:</h4>
+    <div class="form-inline">
     {% for k, v in params.items %}
-        <div>
-            <label for="{{ k }}_param">{{ k }}:</label><input type="text" id="{{ k }}_param" class="param" name="{{ k }}_param" value="{{ v }}" />
+        <div class="form-group">
+            <label for="{{ k }}_param" class="control-label col-sm-2">{{ k }}:</label>
+            <div class="col-sm-8">
+                <input type="text" id="{{ k }}_param" class="param form-control" name="{{ k }}_param" placeholder="parameter" value="{{ v }}" />
+            </div>
         </div>
     {% endfor %}
+    </div>
 {% endif %}
