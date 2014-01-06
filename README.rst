@@ -5,16 +5,20 @@ Django SQL Explorer is inspired by Stack Exchange's [Data Explorer](http://data.
 
 django-sql-explorer is MIT licensed, and pull requests are welcome!
 
-### A view of a query
+**A view of a query**
+
 .. image:: http://www.untrod.com/django-sql-explorer/query1.jpg
 
-### Viewing all queries
+**Viewing all queries**
+
 .. image:: http://www.untrod.com/django-sql-explorer/query2.5.jpg
 
-### Queries can accept parameters. Neato!
+**Queries can accept parameters. Neato!**
+
 .. image:: http://www.untrod.com/django-sql-explorer/query3.5.jpg
 
-### Quick access to DB schema info
+**Quick access to DB schema info**
+
 .. image:: http://www.untrod.com/django-sql-explorer/query4.jpg
 
 
@@ -44,7 +48,7 @@ Features
 Install
 =======
 
-Requires Python 2.7.
+Requires Python 2.7. No Python 3 support...yet.
 
 This has been tested only with Django 1.6, however it should work back to 1.4. Please report an issue if you encounter problems on earlier versions of Django.
 
@@ -86,7 +90,7 @@ Name                                                Version License
 [floatThead](http://mkoryak.github.io/floatThead/)* 1.2.0   Creative Commons
 =================================================== ======= ================
 
-_*Served locally because this is not available on cdnjs_
+_*Served locally because this is not available on cdnjs
 
 Factory Boy is needed if you'd like to run the tests, which can you do easily:
 
