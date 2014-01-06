@@ -50,10 +50,13 @@
             <div class="panel-content">
                 <textarea class="form-control" cols="40" id="id_sql" name="sql" rows="10">{{ form.sql.value|default_if_none:"" }}</textarea>
             </div>
+            <div class="panel-footer">
+                {% include 'explorer/params.html' %}
+            </div>
         </div>
         <div class="form-group">
             <div style="text-align: center;">
-                <input type="submit" value="Save & Run" class="btn btn-default" />
+                <input type="submit" value="Save & Run" class="btn btn-default" id="refresh_button" />
                 {% if query %}
                     <a class="btn btn-default" href="download">Download CSV</a>
                     <input type="submit" value="Edit in Playground" class="btn btn-default" id="playground_button"/>
@@ -71,6 +74,14 @@
     {% include 'explorer/sql_editor_scripts.html' %}
     <script>
         $(function() {
+            $("#refresh_button").click(function() {
+                var o = new Object;
+                $(this).closest("form").find(".param").each(function() {
+                    var k = this.id.replace("_param", "");
+                    o[k] = $(this).val();
+                });
+                $(this).closest("form").attr('action', '../{% firstof query.id 'new' %}/?params=' + JSON.stringify(o));
+            });
             $("#playground_button").click(function() {
                 $(this).closest("form").attr('action', '../play/');
             });

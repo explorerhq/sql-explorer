@@ -131,6 +131,7 @@ def query_viewmodel(request, query, title=None, form=None, message=None):
     headers, data, error = query.headers_and_data()
     return RequestContext(request, {
             'error': error,
+            'params': query.available_params(),
             'title': title,
             'query': query,
             'form': form,

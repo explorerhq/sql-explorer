@@ -20,10 +20,13 @@
             <div class="panel-content">
                 <textarea class="form-control" cols="40" id="id_sql" name="sql" rows="10">{{ query.sql }}</textarea>
             </div>
+            <div class="panel-footer">
+                {% include 'explorer/params.html' %}
+            </div>
         </div>
         <div class="form-group">
             <div style="text-align: center;">
-                <input type="submit" value="Refresh Preview" class="btn btn-default"/>
+                <input type="submit" value="Refresh Preview" id="refresh_button" class="btn btn-default"/>
                 <input type="submit" value="Save As New Query" id="create_button" class="btn btn-default"/>
                 <input type="submit" value="Download CSV" id="download_button" class="btn btn-default"/>
                 <a class="btn btn-default" target="_blank" href="../schema/">Schema Reference</a>
@@ -39,6 +42,14 @@
     {% include 'explorer/sql_editor_scripts.html' %}
     <script>
         $(function() {
+            $("#refresh_button").click(function() {
+                var o = new Object;
+                $(this).closest("form").find(".param").each(function() {
+                    var k = this.id.replace("_param", "");
+                    o[k] = $(this).val();
+                });
+                $(this).closest("form").attr('action', '../play/?params=' + JSON.stringify(o));
+            });
             $("#create_button").click(function() {
                 $(this).closest("form").attr('action', '../new/');
             });

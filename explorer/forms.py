@@ -8,13 +8,14 @@ class SqlField(Field):
 
     def validate(self, value):
         query = Query(sql=value)
-        error = query.error_messages()
-        if error:
-            raise ValidationError(
-                _(error),
-                params={'value': value},
-                code="InvalidSql"
-            )
+        if not query.available_params():
+            error = query.error_messages()
+            if error:
+                raise ValidationError(
+                    _(error),
+                    params={'value': value},
+                    code="InvalidSql"
+                )
 
 
 class QueryForm(ModelForm):
