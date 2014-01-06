@@ -2,7 +2,7 @@ from django.test import TestCase
 from explorer.actions import generate_report_action
 from explorer.tests.factories import SimpleQueryFactory
 from explorer import app_settings
-from explorer.utils import passes_blacklist, schema_info, param, swap_params, extract_params
+from explorer.utils import passes_blacklist, schema_info, param, swap_params, extract_params, shared_dict_update
 
 
 class TestSqlBlacklist(TestCase):
@@ -90,3 +90,8 @@ class TestParams(TestCase):
         sql = 'please swap $$this$$'
         expected = {'this': ''}
         self.assertEqual(extract_params(sql), expected)
+
+    def test_shared_dict_update(self):
+        source = {'foo': 1, 'bar': 2}
+        target = {'bar': None}  # ha ha!
+        self.assertEqual({'bar': 2}, shared_dict_update(target, source))

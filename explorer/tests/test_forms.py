@@ -18,5 +18,6 @@ class TestFormValidation(TestCase):
 
     def test_form_is_always_valid_with_params(self):
         q = SimpleQueryFactory(sql="select $$a$$;")
+        q.params = {}
         form = QueryForm(model_to_dict(q))
         self.assertTrue(form.is_valid())

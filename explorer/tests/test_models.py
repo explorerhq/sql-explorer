@@ -18,5 +18,5 @@ class TestQueryModel(TestCase):
 
     def test_params_get_merged(self):
         q = SimpleQueryFactory(sql="select '$$foo$$';")
-        q.params = {'foo': 'bar'}
+        q.params = {'foo': 'bar', 'mux': 'qux'}
         self.assertEqual(q.available_params(), {'foo': 'bar'})

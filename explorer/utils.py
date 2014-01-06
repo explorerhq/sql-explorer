@@ -52,7 +52,7 @@ def swap_params(sql, params):
 
 
 def extract_params(text):
-    regex = re.compile("\$\$([a-zA-Z0-9|-]+)\$\$")
+    regex = re.compile("\$\$([a-zA-Z0-9_|-]+)\$\$")
     params = re.findall(regex, text)
     return dict(zip(params, ['' for i in range(len(params))]))
 
@@ -66,6 +66,13 @@ def write_csv(headers, data):
 
 
 ## Helpers
+def shared_dict_update(target, source):
+    for k_d1 in target:
+        if k_d1 in source:
+            target[k_d1] = source[k_d1]
+    return target
+
+
 def safe_cast(val, to_type, default=None):
     try:
         return to_type(val)

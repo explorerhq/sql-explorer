@@ -1,4 +1,4 @@
-from explorer.utils import passes_blacklist, write_csv, swap_params, execute_query, execute_and_fetch_query, extract_params
+from explorer.utils import passes_blacklist, write_csv, swap_params, execute_query, execute_and_fetch_query, extract_params, shared_dict_update
 from django.db import models, DatabaseError
 from django.core.urlresolvers import reverse
 
@@ -52,7 +52,7 @@ class Query(models.Model):
     def available_params(self):
         p = extract_params(self.sql)
         if self.params:
-            p.update(self.params)
+            shared_dict_update(p, self.params)
         return p
 
     def get_absolute_url(self):
