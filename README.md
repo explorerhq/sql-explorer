@@ -21,6 +21,7 @@ Features
 ========
 
 - **Safety & Security**
+    - Let's not kid ourselves - this tool is all about giving people access to running SQL in production. So if that makes you nervous (and it should) - you've been warned. Explorer makes an effort to not allow terrible things to happen, but be careful! Note there is a setting in the tip (master) to use a different SQL connection than the default django connection. It's recommended you use a read-only database role.
     - Admins-only. Nice try randos! You have to pass the is_staff() test to access explorer.
     - No destructive queries. Enforces a SQL blacklist so destructive queries don't get executed (delete, drop, update etc). This is not bulletproof and it's recommended that you instead configure a read-only database role, but when not possible the blacklist provides reasonable protection.
 - **Easy to get started**
