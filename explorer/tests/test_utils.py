@@ -89,10 +89,3 @@ class TestParams(TestCase):
         source = {'foo': 1, 'bar': 2}
         target = {'bar': None}  # ha ha!
         self.assertEqual({'bar': 2}, shared_dict_update(target, source))
-
-    def test_execution_time_measure(self):
-        for i in range(1000):
-            SimpleQueryFactory()
-        c, t = execute_query('select 1;')
-        c2, t2 = execute_query('select * from explorer_query q1 inner join explorer_query q2 on q1.id=q2.id inner join explorer_query q3 on q1.id=q3.id order by id desc')
-        self.assertGreater(t2, t)

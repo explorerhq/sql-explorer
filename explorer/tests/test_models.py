@@ -9,11 +9,11 @@ class TestQueryModel(TestCase):
     def test_blacklist_check_runs_before_execution(self):
         q = SimpleQueryFactory(sql='select 1;')
         with AssertMethodIsCalled(q, "passes_blacklist"):
-            headers, data, time, error = q.headers_and_data()
+            headers, data, error = q.headers_and_data()
 
     def test_blacklist_prevents_bad_sql_from_executing(self):
         q = SimpleQueryFactory(sql='select 1 "delete";')
-        headers, data, time, error = q.headers_and_data()
+        headers, data, error = q.headers_and_data()
         self.assertEqual(error, MSG_FAILED_BLACKLIST)
 
     def test_params_get_merged(self):

@@ -3,7 +3,6 @@ import csv
 import cStringIO
 import json
 import re
-import time
 from explorer import app_settings
 from django.db import connections, connection, models
 
@@ -19,17 +18,15 @@ def passes_blacklist(sql):
 def execute_query(sql):
     conn = connections[app_settings.EXPLORER_CONNECTION_NAME] if app_settings.EXPLORER_CONNECTION_NAME else connection
     cursor = conn.cursor()
-    t0 = time.clock()
     cursor.execute(sql)
-    t1 = time.clock()
-    return cursor, (t1-t0)*1000  # milliseconds
+    return cursor
 
 
 def execute_and_fetch_query(sql):
-    cursor, t = execute_query(sql)
+    cursor = execute_query(sql)
     headers = [d[0] for d in cursor.description]
     data = [[x.encode('utf-8') if type(x) is unicode else x for x in list(r)] for r in cursor.fetchall()]
-    return headers, data, t, None
+    return headers, data, None
 
 
 def schema_info():

@@ -27,7 +27,7 @@ class Query(models.Model):
         return swap_params(self.sql, self.params)
 
     def csv_report(self):
-        headers, data, time, error = self.headers_and_data()
+        headers, data, error = self.headers_and_data()
         if error:
             return error
         return write_csv(headers, data)
@@ -43,11 +43,11 @@ class Query(models.Model):
 
     def headers_and_data(self):
         if not self.passes_blacklist():
-            return [], [], None, MSG_FAILED_BLACKLIST
+            return [], [], MSG_FAILED_BLACKLIST
         try:
             return execute_and_fetch_query(self.final_sql())
         except DatabaseError, e:
-            return [], [], None, str(e)
+            return [], [], str(e)
 
     def available_params(self):
         p = extract_params(self.sql)
