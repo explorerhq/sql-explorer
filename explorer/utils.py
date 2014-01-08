@@ -4,8 +4,9 @@ import cStringIO
 import json
 import re
 from explorer import app_settings
-from django.db import connection, models
+from django.db import connections, connection, models
 
+EXPLORER_PARAM_TOKEN = "$$"
 
 ## SQL Specific Things
 
@@ -15,7 +16,8 @@ def passes_blacklist(sql):
 
 
 def execute_query(sql):
-    cursor = connection.cursor()
+    conn = connections[app_settings.EXPLORER_CONNECTION_NAME] if app_settings.EXPLORER_CONNECTION_NAME else connection
+    cursor = conn.cursor()
     cursor.execute(sql)
     return cursor
 
@@ -40,8 +42,7 @@ def schema_info():
 
 
 def param(name):
-    bracket = app_settings.EXPLORER_PARAM_TOKEN
-    return "%s%s%s" % (bracket, name, bracket)
+    return "%s%s%s" % (EXPLORER_PARAM_TOKEN, name, EXPLORER_PARAM_TOKEN)
 
 
 def swap_params(sql, params):

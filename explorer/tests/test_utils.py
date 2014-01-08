@@ -2,7 +2,7 @@ from django.test import TestCase
 from explorer.actions import generate_report_action
 from explorer.tests.factories import SimpleQueryFactory
 from explorer import app_settings
-from explorer.utils import passes_blacklist, schema_info, param, swap_params, extract_params, shared_dict_update
+from explorer.utils import passes_blacklist, schema_info, param, swap_params, extract_params, shared_dict_update, EXPLORER_PARAM_TOKEN, execute_query
 
 
 class TestSqlBlacklist(TestCase):
@@ -57,13 +57,10 @@ class TestSchemaInfo(TestCase):
 class TestParams(TestCase):
 
     def test_swappable_params_are_built_correctly(self):
-        orig = app_settings.EXPLORER_PARAM_TOKEN
-        app_settings.EXPLORER_PARAM_TOKEN = '!!'
-        self.assertEqual('!!foo!!', param('foo'))
-        app_settings.EXPLORER_PARAM_TOKEN = orig
+        expected = EXPLORER_PARAM_TOKEN + 'foo' + EXPLORER_PARAM_TOKEN
+        self.assertEqual(expected, param('foo'))
 
     def test_params_get_swapped(self):
-        app_settings.EXPLORER_PARAM_TOKEN = '$$'
         sql = 'please swap $$this$$ and $$that$$'
         expected = 'please swap here and there'
         params = {'this': 'here', 'that': 'there'}
@@ -71,14 +68,12 @@ class TestParams(TestCase):
         self.assertEqual(got, expected)
 
     def test_empty_params_does_nothing(self):
-        app_settings.EXPLORER_PARAM_TOKEN = '$$'
         sql = 'please swap $$this$$ and $$that$$'
         params = None
         got = swap_params(sql, params)
         self.assertEqual(got, sql)
 
     def test_non_string_param_gets_swapper(self):
-        app_settings.EXPLORER_PARAM_TOKEN = '$$'
         sql = 'please swap $$this$$'
         expected = 'please swap 1'
         params = {'this': 1}
@@ -86,7 +81,6 @@ class TestParams(TestCase):
         self.assertEqual(got, expected)
 
     def test_extracting_params(self):
-        app_settings.EXPLORER_PARAM_TOKEN = '$$'
         sql = 'please swap $$this$$'
         expected = {'this': ''}
         self.assertEqual(extract_params(sql), expected)
