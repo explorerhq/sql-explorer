@@ -47,6 +47,11 @@ class ListQueryView(ListView):
     def dispatch(self, *args, **kwargs):
         return super(ListQueryView, self).dispatch(*args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super(ListView, self).get_context_data(**kwargs)
+        context['title'] = 'All Queries'
+        return context
+
     model = Query
 
 
