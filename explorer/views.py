@@ -92,7 +92,7 @@ class PlayQueryView(View):
         sql = request.POST.get('sql', None)
         if not sql:
             return PlayQueryView.render(request)
-        query = Query(sql=sql)
+        query = Query(sql=sql, title="Playground")
         query.params = url_get_params(request)
         return PlayQueryView.render_with_sql(request, query)
 
