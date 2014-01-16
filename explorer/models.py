@@ -16,7 +16,8 @@ class Query(models.Model):
 
     class Meta:
         ordering = ['title']
-    
+        verbose_name_plural = 'Queries'
+
     def __unicode__(self):
         return unicode(self.title)
 
