@@ -133,7 +133,7 @@ class QueryView(View):
 
 def query_viewmodel(request, query, title=None, form=None, message=None):
     rows = url_get_rows(request)
-    headers, data, error = query.headers_and_data()
+    headers, data, duration, error = query.headers_and_data()
     return RequestContext(request, {
             'error': error,
             'params': query.available_params(),
@@ -143,6 +143,7 @@ def query_viewmodel(request, query, title=None, form=None, message=None):
             'message': message,
             'data': data[:rows],
             'headers': headers,
+            'duration': duration,
             'rows': rows,
             'total_rows': len(data)}
         )

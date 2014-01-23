@@ -44,11 +44,11 @@ class Query(models.Model):
 
     def headers_and_data(self):
         if not self.passes_blacklist():
-            return [], [], MSG_FAILED_BLACKLIST
+            return [], [], None, MSG_FAILED_BLACKLIST
         try:
             return execute_and_fetch_query(self.final_sql())
         except DatabaseError, e:
-            return [], [], str(e)
+            return [], [], None, str(e)
 
     def available_params(self):
         p = extract_params(self.sql)
