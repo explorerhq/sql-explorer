@@ -1,7 +1,7 @@
 {% if headers %}
     <div class="panel panel-default" style="margin-top: 30px;" xmlns="http://www.w3.org/1999/html">
         <div class="panel-heading">
-            <span class="panel-title">Preview (excecution time: {{ duration }} ms)</span>
+            <span class="panel-title">Preview (excecution time: {{ duration|floatformat:2 }} ms)</span>
             <span style="float: right;">
                 {% if rows > total_rows %}
                     Showing {{ total_rows }} of {{ total_rows }} total rows.
