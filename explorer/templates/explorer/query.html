@@ -7,66 +7,74 @@
 {% endblock %}
 
 {% block content %}
-<h2 style="padding-bottom: 20px">{% if query %}{{ query.title }}{% else %}New Query{% endif %}</h2>
-{% if message %}
-    <div class="alert alert-info">{{ message }}</div>
-{% endif %}
-<div>
-    <form role="form" class="form-horizontal" action="../{% firstof query.id 'new' %}/" method="post" id="editor">{% csrf_token %}
-        {% if error %}
-            <div class="alert alert-danger">{{ error|escape }}</div>
+<div class="row">
+    <div id="query_area" class="col-md-12">
+        <h2 style="padding-bottom: 20px">{% if query %}{{ query.title }}{% else %}New Query{% endif %}</h2>
+        {% if message %}
+            <div class="alert alert-info">{{ message }}</div>
         {% endif %}
-        {{ form.non_field_errors }}
-        <div class="form-group">
-            {% if form.title.errors %}{% for error in form.title.errors %}
-                <div class="alert alert-danger">{{ error|escape }}</div>
-            {% endfor %}{% endif %}
-            <label for="id_title" class="col-sm-2 control-label">Title</label>
-            <div class="col-sm-10">
-                <input class="form-control" id="id_title" maxlength="255" name="title" type="text" value="{{ form.title.value|default_if_none:"" }}" />
-            </div>
+        <div>
+            <form role="form" class="form-horizontal" action="../{% firstof query.id 'new' %}/" method="post" id="editor">{% csrf_token %}
+                {% if error %}
+                    <div class="alert alert-danger">{{ error|escape }}</div>
+                {% endif %}
+                {{ form.non_field_errors }}
+                <div class="form-group">
+                    {% if form.title.errors %}{% for error in form.title.errors %}
+                        <div class="alert alert-danger">{{ error|escape }}</div>
+                    {% endfor %}{% endif %}
+                    <label for="id_title" class="col-sm-2 control-label">Title</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" id="id_title" maxlength="255" name="title" type="text" value="{{ form.title.value|default_if_none:"" }}" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    {{ form.description.errors }}
+                    <label for="id_title" class="col-sm-2 control-label">Description</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control" cols="40" id="id_description" name="description" rows="2">{{ form.description.value|default_if_none:"" }}</textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    {{ form.created_by.errors }}
+                    <label for="id_title" class="col-sm-2 control-label">Created By</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" id="id_created_by" maxlength="255" name="created_by" type="text" value="{% firstof form.created_by.value request.user %}" />
+                    </div>
+                </div>
+                {% if form.sql.errors %}{% for error in form.sql.errors %}
+                    <div class="alert alert-danger">{{ error|escape }}</div>
+                {% endfor %}{% endif %}
+                <div class="panel panel-default" style="margin-top: 30px;" xmlns="http://www.w3.org/1999/html">
+                    <div class="panel-heading">
+                        <span class="panel-title">SQL</span>
+                    </div>
+                    <div class="panel-content">
+                        <textarea class="form-control" cols="40" id="id_sql" name="sql" rows="10">{{ form.sql.value|default_if_none:"" }}</textarea>
+                    </div>
+                    <div class="panel-footer">
+                        {% include 'explorer/params.html' %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div style="text-align: center;">
+                        <input type="submit" value="Save & Run" class="btn btn-default" id="refresh_button" />
+                        {% if query %}
+                            <a class="btn btn-default" href="download">Download CSV</a>
+                            <input type="submit" value="Edit in Playground" class="btn btn-default" id="playground_button"/>
+                        {%  endif %}
+                        <button type="button" class="btn btn-default" id="show_schema_button">Show Schema</button>
+                        <button type="button" class="btn btn-default" style="display: none;" id="hide_schema_button">Hide Schema</button>
+                    </div>
+                </div>
+            </form>
         </div>
-        <div class="form-group">
-            {{ form.description.errors }}
-            <label for="id_title" class="col-sm-2 control-label">Description</label>
-            <div class="col-sm-10">
-                <textarea class="form-control" cols="40" id="id_description" name="description" rows="2">{{ form.description.value|default_if_none:"" }}</textarea>
-            </div>
-        </div>
-        <div class="form-group">
-            {{ form.created_by.errors }}
-            <label for="id_title" class="col-sm-2 control-label">Created By</label>
-            <div class="col-sm-10">
-                <input class="form-control" id="id_created_by" maxlength="255" name="created_by" type="text" value="{% firstof form.created_by.value request.user %}" />
-            </div>
-        </div>
-        {% if form.sql.errors %}{% for error in form.sql.errors %}
-            <div class="alert alert-danger">{{ error|escape }}</div>
-        {% endfor %}{% endif %}
-        <div class="panel panel-default" style="margin-top: 30px;" xmlns="http://www.w3.org/1999/html">
-            <div class="panel-heading">
-                <span class="panel-title">SQL</span>
-            </div>
-            <div class="panel-content">
-                <textarea class="form-control" cols="40" id="id_sql" name="sql" rows="10">{{ form.sql.value|default_if_none:"" }}</textarea>
-            </div>
-            <div class="panel-footer">
-                {% include 'explorer/params.html' %}
-            </div>
-        </div>
-        <div class="form-group">
-            <div style="text-align: center;">
-                <input type="submit" value="Save & Run" class="btn btn-default" id="refresh_button" />
-                {% if query %}
-                    <a class="btn btn-default" href="download">Download CSV</a>
-                    <input type="submit" value="Edit in Playground" class="btn btn-default" id="playground_button"/>
-                {%  endif %}
-                <a class="btn btn-default" target="_blank" href="../schema/">Schema Reference</a>
-            </div>
-        </div>
-    </form>
-    {% include 'explorer/preview_pane.html' %}
+    </div>
+    <div id="schema" style="display: none;">
+        <iframe src="" height="630px" frameBorder="0" id="schema_frame"></iframe>
+    </div>
 </div>
+{% include 'explorer/preview_pane.html' %}
 {% endblock %}
 
 {% block scripts %}

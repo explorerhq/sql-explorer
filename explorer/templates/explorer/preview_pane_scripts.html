@@ -69,6 +69,25 @@
             $rows.keyup(function(event){
                 if(event.keyCode == 13){ showRows(); }
             });
+            $("#show_schema_button").click(function() {
+                $("#schema_frame").attr('src', '../schema/');
+                $("#query_area").addClass("col-md-9");
+                var schema$ = $("#schema");
+                schema$.addClass("col-md-3");
+                schema$.show();
+                $(this).hide()
+                $("#hide_schema_button").show()
+                return false;
+            });
+            $("#hide_schema_button").click(function() {
+                $("#query_area").removeClass("col-md-9");
+                var schema$ = $("#schema");
+                schema$.removeClass("col-md-3");
+                schema$.hide();
+                $(this).hide()
+                $("#show_schema_button").show()
+                return false;
+            });
         } );
     </script>
 {%  endif %}

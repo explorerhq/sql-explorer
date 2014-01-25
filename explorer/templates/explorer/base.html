@@ -12,34 +12,36 @@
 
 <body>
     <div id="wrap">
-        <!-- Static navbar -->
-        <div class="navbar navbar-default navbar-static-top" role="navigation">
-          <div class="container">
-            <div class="navbar-header">
-              <a class="navbar-brand" href="../">SQL Explorer</a>
+        {% block navbar %}
+            <div class="navbar navbar-default navbar-static-top" role="navigation">
+              <div class="container">
+                <div class="navbar-header">
+                  <a class="navbar-brand" href="../">SQL Explorer</a>
+                </div>
+                <div class="navbar-collapse collapse">
+                  <ul class="nav navbar-nav">
+                    {% block navlinks %}{% endblock %}
+                  </ul>
+                </div><!--/.nav-collapse -->
+              </div>
             </div>
-            <div class="navbar-collapse collapse">
-              <ul class="nav navbar-nav">
-                {% block navlinks %}{% endblock %}
-              </ul>
-            </div><!--/.nav-collapse -->
-          </div>
-        </div>
-
+        {% endblock %}
         <div class="container">
           <div class="starter-template">
           {% block content %}{% endblock %}
           </div>
         </div>
     </div>
-    <div id="footer" style="padding-top:20px;">
-        <div class="container">
-            <p class="text-muted">
-                Powered by <a href="https://www.github.com/epantry/django-sql-explorer/">django-sql-explorer</a> from
-                <a href="https://www.epantry.com">ePantry</a>.
-            </p>
+    {% block footer %}
+        <div id="footer" style="padding-top:20px;">
+            <div class="container">
+                <p class="text-muted">
+                    Powered by <a href="https://www.github.com/epantry/django-sql-explorer/">django-sql-explorer</a> from
+                    <a href="https://www.epantry.com">ePantry</a>.
+                </p>
+            </div>
         </div>
-    </div>
+    {% endblock %}
     <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
     {% block scripts %}{% endblock %}
