@@ -43,7 +43,8 @@ Features
 - **Django Admin Support**
     - Download multiple queries at once as a zip file through Django's admin interface via a built-in admin action.
 - **Meaningful Test Coverage**
-    - You can even run them yourself! Just install factory_boy and run "manage.py test"
+    - 95% according to coverage...for what that's worth
+    - You can run them yourself! Just install factory_boy and run "manage.py test"
 
 Install
 =======
