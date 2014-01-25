@@ -21,7 +21,7 @@ setup(
     keywords = "django sql explorer reports reporting csv",
     url = "https://github.com/epantry/django-sql-explorer",
     packages=['explorer'],
-    long_description=read('README.md'),
+    long_description=read('README.rst'),
     classifiers=[
         "Topic :: Utilities",
     ],
