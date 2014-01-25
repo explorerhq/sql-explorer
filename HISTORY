@@ -1,3 +1,13 @@
+0.3
+==
+
+1/25/14
+
+- Query execution time shown in query preview
+- Schema helper available as a sidebar in the query views
+- Better defaults for sql blacklist
+- Minor UI bug fixes
+
 0.2
 ===
 

@@ -19,7 +19,7 @@ django-sql-explorer is MIT licensed, and pull requests are welcome!
 
 **Quick access to DB schema info**
 
-.. image:: http://www.untrod.com/django-sql-explorer/query4.jpg
+.. image:: http://www.untrod.com/django-sql-explorer/query-schema-1.jpg
 
 
 Features
@@ -39,7 +39,8 @@ Features
     - Use $$foo$$ in your queries and Explorer will build a UI to fill out parameters. When viewing a query like 'SELECT * FROM table WHERE id=$$id$$', Explorer will generate UI for the 'id' parameter.
     - Parameters are stashed in the URL, so you can share links to parameterized queries with colleagues
 - **Schema Helper**
-    - /explorer/schema/ renders a list of your Django apps' table and column names that you can refer to while writing queries. Apps are excludable from this list so users aren't bogged down in tons of irrelevant tables.
+    - /explorer/schema/ renders a list of your Django apps' table and column names that you can refer to while writing queries. Apps are excludable from this list so users aren't bogged down in tons of irrelevant tables. See settings documentation below for details.
+    - This is available quickly as a sidebar helper while composing queries (see screenshot)
     - Note there is an open issue that the schema explorer does not show join tables for m2m relations. It's a work in progres...
 - **Django Admin Support**
     - Download multiple queries at once as a zip file through Django's admin interface via a built-in admin action.
@@ -106,12 +107,12 @@ and with coverage:
 Settings
 ========
 
-============================ =============================================================================================================================================== ================================================================================================================================================
-Setting                      Description                                                                                                                                     Default
-============================ =============================================================================================================================================== ================================================================================================================================================
-EXPLORER_SQL_BLACKLIST       Disallowed words in SQL queries to prevent destructive actions.                                                                                 ('ALTER', 'RENAME ', 'DROP', 'TRUNCATE', 'INSERT INTO', 'UPDATE', 'REPLACE', 'DELETE', 'ALTER', 'CREATE TABLE', 'SCHEMA', 'GRANT', 'OWNER TO')
-EXPLORER_SQL_WHITELIST       These phrases are allowed, even though part of the phrase appears in the blacklist.                                                             ('CREATED', 'DELETED')
-EXPLORER_DEFAULT_ROWS        The number of rows to show by default in the preview pane.                                                                                      100
-EXPLORER_SCHEMA_EXCLUDE_APPS Don't show schema for these apps in /schema/. This is helpful to clear out cruft that users realistically won't want to refer to for reference. ('',)  # No apps are excluded
-EXPLORER_CONNECTION_NAME     The name of the Django database connection to use. Ideally set this to a connection with read only permissions                                  None  # Which means use the 'default' connection
-============================ =============================================================================================================================================== ================================================================================================================================================
+============================ =============================================================================================================== ================================================================================================================================================
+Setting                      Description                                                                                                                                                  Default
+============================ =============================================================================================================== ================================================================================================================================================
+EXPLORER_SQL_BLACKLIST       Disallowed words in SQL queries to prevent destructive actions.                                                 ('ALTER', 'RENAME ', 'DROP', 'TRUNCATE', 'INSERT INTO', 'UPDATE', 'REPLACE', 'DELETE', 'ALTER', 'CREATE TABLE', 'SCHEMA', 'GRANT', 'OWNER TO')
+EXPLORER_SQL_WHITELIST       These phrases are allowed, even though part of the phrase appears in the blacklist.                             ('CREATED', 'DELETED')
+EXPLORER_DEFAULT_ROWS        The number of rows to show by default in the preview pane.                                                      100
+EXPLORER_SCHEMA_EXCLUDE_APPS Don't show schema for these packages in the schema helper.                                                      ('django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions', 'django.contrib.admin')
+EXPLORER_CONNECTION_NAME     The name of the Django database connection to use. Ideally set this to a connection with read only permissions  None  # Which means use the 'default' connection
+============================ =============================================================================================================== ================================================================================================================================================
