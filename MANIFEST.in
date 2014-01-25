@@ -1,2 +1,2 @@
 recursive-include explorer/templates *
-include README.md
+include README.rst
