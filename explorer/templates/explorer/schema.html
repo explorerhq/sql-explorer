@@ -1,24 +1,24 @@
 {% extends "explorer/base.html" %}
 
+{% block navbar %}{% endblock %}
 {% block content %}
+
+    <h4 style="text-align: center;">Schema</h4>
 
     {% for m in schema %}
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">{{ m.1 }}</h3> <small>{{ m.0 }}</small>
+                <small class="text-muted">{{ m.0 }}</small><h4 class="panel-title">{{ m.1 }}</h4>
             </div>
-            <table class="table table-hover">
+            <table class="table table-condensed table-hover">
                 <thead>
-                    <tr>
-                        <th width="50%">Column</th>
-                        <th width="50%">Type</th>
-                    </tr>
                 </thead>
                 <tbody>
                     {% for c in m.2 %}
                     <tr>
-                        <td>{{ c.0 }}</td>
-                        <td>{{ c.1 }}</td>
+                        <td width="100%"><code>{{ c.0 }}</code></td>
+                        <!-- This will show the type of the column as well -->
+                        <!-- <td width="50%" class="text-muted">{{ c.1 }}</td> -->
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -27,3 +27,4 @@
     {% endfor %}
 
 {% endblock %}
+{% block footer %}{% endblock %}

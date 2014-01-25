@@ -33,16 +33,26 @@ def execute_and_fetch_query(sql):
     return headers, data, duration, None
 
 
+# returns schema information via django app inspection (sorted alphabetically by db table name):
+# [
+#     ("package.name -> ModelClass", "db_table_name",
+#         [
+#             ("db_column_name", "DjangoFieldType"),
+#             (...),
+#         ]
+#     )
+# ]
 def schema_info():
     ret = []
-    for app in [a for a in models.get_apps() if a.__package__ not in app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS]:
+    apps = [a for a in models.get_apps() if a.__package__ not in app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS]
+    for app in apps:
         for model in models.get_models(app):
-            friendly_model = "%s -> %s" % (model._meta.app_label, model._meta.object_name)
+            friendly_model = "%s -> %s" % (app.__package__, model._meta.object_name)
             cur_app = (friendly_model, str(model._meta.db_table), [])
             for f in model._meta.fields:
                 cur_app[2].append((f.get_attname_column()[1], f.get_internal_type()))
             ret.append(cur_app)
-    return ret
+    return sorted(ret, key=lambda t: t[1])  # sort by table name
 
 
 def param(name):
