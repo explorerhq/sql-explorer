@@ -19,7 +19,7 @@ django-sql-explorer is MIT licensed, and pull requests are welcome!
 
 **Quick access to DB schema info**
 
-.. image:: http://www.untrod.com/django-sql-explorer/query-schema-1.jpg
+.. image:: http://www.untrod.com/django-sql-explorer/query-schema-2.jpg
 
 
 Features
@@ -83,15 +83,15 @@ Dependencies
 
 An effort has been made to require no packages other than Django. However a number of front-end dependencies do exist and are documented below. All front-end dependencies are served from CDNJS.com
 
-=================================================== ======= ================
-Name                                                Version License
-=================================================== ======= ================
-[Twitter Boostrap](http://getbootstrap.com/)        3.0.3   MIT
-[jQuery](http://jquery.com/)                        2.0.3   MIT
-[Underscore](http://underscorejs.org/)              1.5.2   MIT
-[Codemirror](http://codemirror.net/)                3.19.0  MIT
-[floatThead](http://mkoryak.github.io/floatThead/)* 1.2.0   Creative Commons
-=================================================== ======= ================
+====================================================== ======= ================
+Name                                                   Version License
+====================================================== ======= ================
+`Twitter Boostrap <http://getbootstrap.com/>`_         3.0.3   MIT
+`jQuery <http://jquery.com/>`_                         2.0.3   MIT
+`Underscore <http://underscorejs.org/>`_               1.5.2   MIT
+`Codemirror <http://codemirror.net/>`_                 3.19.0  MIT
+`floatThead <http://mkoryak.github.io/floatThead/>`_*  1.2.0   Creative Commons
+====================================================== ======= ================
 
 _*Served locally because this is not available on cdnjs
 
