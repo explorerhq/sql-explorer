@@ -43,12 +43,12 @@
     <script>
         $(function() {
             $("#refresh_button").click(function() {
-                var o = new Object;
-                $(this).closest("form").find(".param").each(function() {
-                    var k = this.id.replace("_param", "");
-                    o[k] = $(this).val();
-                });
-                if(o) {
+                var params$ = $(this).closest("form").find(".param");
+                if(params$.length) {
+                    var o = new Object;
+                    params$.each(function() {
+                        o[this.id.replace("_param", "")] = $(this).val();
+                    });
                     $(this).closest("form").attr('action', '../play/?params=' + JSON.stringify(o));
                 }
             });
