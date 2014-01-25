@@ -26,17 +26,13 @@ class TestSqlBlacklist(TestCase):
         result = fn(None, None, [r, ])
         self.assertEqual(result.content, '0')
 
-    def test_queries_modifying_functions_are_ok(self):
-        sql = "SELECT 1+1 AS TWO; drop view foo;"
-        self.assertTrue(passes_blacklist(sql))
-
     def test_queries_deleting_stuff_are_not_ok(self):
-        sql = "'distraction'; delete from table; SELECT 1+1 AS TWO; drop view foo;"
+        sql = "'distraction'; deLeTe from table; SELECT 1+1 AS TWO; drop view foo;"
         self.assertFalse(passes_blacklist(sql))
 
-    def test_queries_dropping_views_is_ok_and_not_case_sensitive(self):
+    def test_queries_dropping_views_is_not_ok_and_not_case_sensitive(self):
         sql = "SELECT 1+1 AS TWO; drop ViEw foo;"
-        self.assertTrue(passes_blacklist(sql))
+        self.assertFalse(passes_blacklist(sql))
 
 
 class TestSchemaInfo(TestCase):
