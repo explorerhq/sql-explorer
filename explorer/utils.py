@@ -5,7 +5,7 @@ import json
 import re
 from time import time
 from explorer import app_settings
-from django.db import connections, connection, models
+from django.db import connections, connection, models, transaction, DatabaseError
 
 EXPLORER_PARAM_TOKEN = "$$"
 
@@ -20,7 +20,15 @@ def execute_query(sql):
     conn = connections[app_settings.EXPLORER_CONNECTION_NAME] if app_settings.EXPLORER_CONNECTION_NAME else connection
     cursor = conn.cursor()
     start_time = time()
-    cursor.execute(sql)
+
+    sid = transaction.savepoint()
+    try:
+        cursor.execute(sql)
+        transaction.savepoint_commit(sid)
+    except DatabaseError:
+        transaction.savepoint_rollback(sid)
+        raise
+
     end_time = time()
     duration = (end_time - start_time) * 1000
     return cursor, duration
