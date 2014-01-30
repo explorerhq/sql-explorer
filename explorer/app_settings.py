@@ -12,14 +12,10 @@ EXPLORER_CONNECTION_NAME = getattr(settings, 'EXPLORER_CONNECTION_NAME', None)
 
 
 def sql_explorer_view(user):
-    if user.is_staff:
-        return True
-    return False
+    return user.is_staff
 EXPLORER_PERMISSION_VIEW = getattr(settings, 'EXPLORER_PERMISSION_VIEW', sql_explorer_view)
 
 
 def sql_explorer_change(user):
-    if user.is_staff:
-        return True
-    return False
+    return user.is_staff
 EXPLORER_PERMISSION_CHANGE = getattr(settings, 'EXPLORER_PERMISSION_CHANGE', sql_explorer_change)
