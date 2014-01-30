@@ -1,8 +1,10 @@
 {% extends "explorer/base.html" %}
 
 {% block navlinks %}
-    <li><a href="new/">New Query</a></li>
-    <li><a href="play/">Playground</a></li>
+    {% if user.sql_explorer_change %}
+      <li><a href="new/">New Query</a></li>
+      <li><a href="play/">Playground</a></li>
+    {% endif %}
 {% endblock %}
 
 {% block content %}
@@ -12,7 +14,9 @@
             <tr>
                 <th>Query</th>
                 <th>Download CSV</th>
-                <th>Delete</th>
+                {% if user.sql_explorer_change %}
+                    <th>Delete</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -22,9 +26,11 @@
                 <td style="padding: 2px 0px 0px 45px; vertical-align: middle">
                     <a href="{{ object.id }}/download"><i class="glyphicon glyphicon-download" style="font-size: 20px;"></i></a>
                 </td>
-                <td style="padding: 0px 0px 0px 20px; vertical-align: middle">
-                    <a href="{{ object.id }}/delete"><i class="glyphicon glyphicon-trash" style="font-size: 18px;"></i></a>
-                </td>
+                {% if user.sql_explorer_change %}
+                    <td style="padding: 0px 0px 0px 20px; vertical-align: middle">
+                        <a href="{{ object.id }}/delete"><i class="glyphicon glyphicon-trash" style="font-size: 18px;"></i></a>
+                    </td>
+                {% endif %}
             </tr>
             {% endfor %}
         </tbody>
