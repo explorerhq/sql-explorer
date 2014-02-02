@@ -27,7 +27,7 @@ Features
 
 - **Safety & Security**
     - Let's not kid ourselves - this tool is all about giving people access to running SQL in production. So if that makes you nervous (and it should) - you've been warned. Explorer makes an effort to not allow terrible things to happen, but be careful! Note there is a setting in the tip (master) to use a different SQL connection than the default django connection. It's recommended you use a read-only database role.
-    - Admins-only. Nice try randos! You have to pass the is_staff() test to access explorer.
+    - Admins-only per default. Nice try randos! You have to pass the is_staff() test to access explorer. This can be configuered with the settings EXPLORER_PERMISSION_VIEW and EXPLORER_PERMISSION_CHANGE
     - Enforces a SQL blacklist so destructive queries don't get executed (delete, drop, alter, update etc). This is not bulletproof and it's recommended that you instead configure a read-only database role, but when not possible the blacklist provides reasonable protection.
 - **Easy to get started**
     - 100% built on Django's ORM, so works with Postgresql, Mysql, and Sqlite.
@@ -67,7 +67,7 @@ Add to your installed_apps:
 ...
 )``
 
-Add the following to your urls.py (all Explorer URLs are restricted to staff only):
+Add the following to your urls.py (all Explorer URLs are restricted to staff only per default):
 
 ``url(r'^explorer/', include('explorer.urls')),``
 
@@ -115,4 +115,6 @@ EXPLORER_SQL_WHITELIST       These phrases are allowed, even though part of the 
 EXPLORER_DEFAULT_ROWS        The number of rows to show by default in the preview pane.                                                      100
 EXPLORER_SCHEMA_EXCLUDE_APPS Don't show schema for these packages in the schema helper.                                                      ('django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions', 'django.contrib.admin')
 EXPLORER_CONNECTION_NAME     The name of the Django database connection to use. Ideally set this to a connection with read only permissions  None  # Which means use the 'default' connection
+EXPLORER_PERMISSION_VIEW     Callback to check if the user is allowed to view and execute stored queries                                     Checks for the user to be staff
+EXPLORER_PERMISSION_CHANGE   Callback to check if the user is allowed to add/change/delete queries                                           Checks for the user to be staff
 ============================ =============================================================================================================== ================================================================================================================================================
