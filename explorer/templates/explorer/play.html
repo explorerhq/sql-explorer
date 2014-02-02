@@ -1,7 +1,7 @@
 {% extends "explorer/base.html" %}
 
 {% block navlinks %}
-    {% if user.sql_explorer_change %}
+    {% if request.user.sql_explorer_change %}
       <li><a href="../new/">New Query</a></li>
       <li class="active"><a href="#">Playground</a></li>
     {% endif %}

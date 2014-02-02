@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.forms.models import model_to_dict
 from explorer.tests.factories import SimpleQueryFactory
 from explorer.models import Query
+from explorer import app_settings
 
 
 class TestQueryListView(TestCase):
@@ -44,6 +45,25 @@ class TestQueryDetailView(TestCase):
         self.client.post(reverse("query_detail", kwargs={'query_id': query.id}), data)
         self.assertEqual(Query.objects.get(pk=query.id).sql, expected)
 
+    def test_change_permission_required_to_save_query(self):
+        def not_allowed(user):
+            return False
+
+        old = app_settings.EXPLORER_PERMISSION_CHANGE
+        app_settings.EXPLORER_PERMISSION_CHANGE = not_allowed
+        User.add_to_class('sql_explorer_change', app_settings.EXPLORER_PERMISSION_CHANGE)
+
+        query = SimpleQueryFactory()
+        expected = query.sql
+        resp = self.client.get(reverse("query_detail", kwargs={'query_id': query.id}))
+        self.assertTemplateUsed(resp, 'explorer/query.html')
+
+        self.client.post(reverse("query_detail", kwargs={'query_id': query.id}), {'sql': 'select 1;'})
+        self.assertEqual(Query.objects.get(pk=query.id).sql, expected)
+
+        app_settings.EXPLORER_PERMISSION_CHANGE = old
+        User.add_to_class('sql_explorer_change', app_settings.EXPLORER_PERMISSION_CHANGE)
+
     def test_admin_required(self):
         self.client.logout()
         query = SimpleQueryFactory(sql="before")
@@ -57,7 +77,7 @@ class TestDownloadView(TestCase):
         self.user = User.objects.create_superuser('admin', 'admin@admin.com', 'pwd')
         self.client.login(username='admin', password='pwd')
 
-    def test_query_with_bad_sql_renders_error(self):
+    def test_download_query(self):
         resp = self.client.get(reverse("query_download", kwargs={'query_id': self.query.id}))
         self.assertEqual(resp['content-type'], 'text/csv')
 
