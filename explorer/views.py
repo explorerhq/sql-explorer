@@ -9,12 +9,29 @@ from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse_lazy
 
 from explorer.actions import generate_report_action
-from explorer.models import Query, sql_explorer_view, sql_explorer_change
+from explorer.models import Query
+from explorer.app_settings import EXPLORER_PERMISSION_VIEW, EXPLORER_PERMISSION_CHANGE
 from explorer.forms import QueryForm
-from explorer.utils import url_get_rows, url_get_query_id, schema_info, url_get_params
+from explorer.utils import url_get_rows, url_get_query_id, schema_info, url_get_params, safe_admin_login_prompt
 
 
-@sql_explorer_view
+def view_permission(f):
+    def wrap(request, *args, **kwargs):
+        if not EXPLORER_PERMISSION_VIEW(request.user):
+            return safe_admin_login_prompt(request)
+        return f(request, *args, **kwargs)
+    return wrap
+
+
+def change_permission(f):
+    def wrap(request, *args, **kwargs):
+        if not EXPLORER_PERMISSION_CHANGE(request.user):
+            return safe_admin_login_prompt(request)
+        return f(request, *args, **kwargs)
+    return wrap
+
+
+@view_permission
 @require_GET
 def download_query(request, query_id):
     query = get_object_or_404(Query, pk=query_id)
@@ -23,7 +40,7 @@ def download_query(request, query_id):
     return fn(None, None, [query, ])
 
 
-@sql_explorer_change
+@change_permission
 @require_POST
 def csv_from_sql(request):
     sql = request.POST.get('sql', None)
@@ -35,7 +52,7 @@ def csv_from_sql(request):
     return fn(None, None, [query, ])
 
 
-@sql_explorer_change
+@change_permission
 @require_GET
 def schema(request):
     return render_to_response('explorer/schema.html', {'schema': schema_info()})
@@ -43,7 +60,7 @@ def schema(request):
 
 class ListQueryView(ListView):
 
-    @method_decorator(sql_explorer_view)
+    @method_decorator(view_permission)
     def dispatch(self, *args, **kwargs):
         return super(ListQueryView, self).dispatch(*args, **kwargs)
 
@@ -57,7 +74,7 @@ class ListQueryView(ListView):
 
 class CreateQueryView(CreateView):
 
-    @method_decorator(sql_explorer_change)
+    @method_decorator(change_permission)
     def dispatch(self, *args, **kwargs):
         return super(CreateQueryView, self).dispatch(*args, **kwargs)
 
@@ -67,7 +84,7 @@ class CreateQueryView(CreateView):
 
 class DeleteQueryView(DeleteView):
 
-    @method_decorator(sql_explorer_change)
+    @method_decorator(change_permission)
     def dispatch(self, *args, **kwargs):
         return super(DeleteQueryView, self).dispatch(*args, **kwargs)
 
@@ -77,7 +94,7 @@ class DeleteQueryView(DeleteView):
 
 class PlayQueryView(View):
 
-    @method_decorator(sql_explorer_change)
+    @method_decorator(change_permission)
     def dispatch(self, *args, **kwargs):
         return super(PlayQueryView, self).dispatch(*args, **kwargs)
 
@@ -108,7 +125,7 @@ class PlayQueryView(View):
 
 class QueryView(View):
 
-    @method_decorator(sql_explorer_view)
+    @method_decorator(view_permission)
     def dispatch(self, *args, **kwargs):
         return super(QueryView, self).dispatch(*args, **kwargs)
 

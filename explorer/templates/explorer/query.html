@@ -2,7 +2,7 @@
 {% load url from future %}
 
 {% block navlinks %}
-    {% if user.sql_explorer_change %}
+    {% if request.user.sql_explorer_change %}
       <li{% if not query %} class="active" {% endif %}><a href="../new/">New Query</a></li>
       <li><a href="../play/">Playground</a></li>
     {% endif %}
@@ -17,7 +17,7 @@
             <div class="alert alert-info">{{ message }}</div>
         {% endif %}
         <div>
-            {% if user.sql_explorer_change %}
+            {% if request.user.sql_explorer_change %}
                 <form role="form" class="form-horizontal" action="../{% firstof query.id 'new' %}/" method="post" id="editor">{% csrf_token %}
                     {% if error %}
                         <div class="alert alert-danger">{{ error|escape }}</div>

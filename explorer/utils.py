@@ -81,6 +81,22 @@ def write_csv(headers, data):
 
 
 ## Helpers
+from django.contrib.admin.forms import AdminAuthenticationForm
+from django.contrib.auth.views import login
+from django.contrib.auth import REDIRECT_FIELD_NAME
+def safe_admin_login_prompt(request):
+    defaults = {
+        'template_name': 'admin/login.html',
+        'authentication_form': AdminAuthenticationForm,
+        'extra_context': {
+            'title': 'Log in',
+            'app_path': request.get_full_path(),
+            REDIRECT_FIELD_NAME: request.get_full_path(),
+        },
+    }
+    return login(request, **defaults)
+
+
 def shared_dict_update(target, source):
     for k_d1 in target:
         if k_d1 in source:
