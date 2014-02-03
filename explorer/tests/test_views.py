@@ -109,6 +109,11 @@ class TestQueryPlayground(TestCase):
         self.assertTemplateUsed(resp, 'explorer/play.html')
         self.assertContains(resp, 'select 1;')
 
+    def test_query_with_no_resultset_doesnt_throw_error(self):
+        query = SimpleQueryFactory(sql="")
+        resp = self.client.get('%s?query_id=%s' % (reverse("explorer_playground"), query.id))
+        self.assertTemplateUsed(resp, 'explorer/play.html')
+
     def test_admin_required(self):
         self.client.logout()
         resp = self.client.get(reverse("explorer_playground"))

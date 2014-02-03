@@ -36,7 +36,7 @@ def execute_query(sql):
 
 def execute_and_fetch_query(sql):
     cursor, duration = execute_query(sql)
-    headers = [d[0] for d in cursor.description]
+    headers = [d[0] for d in cursor.description] if cursor.description else ['--']
     data = [[x.encode('utf-8') if type(x) is unicode else x for x in list(r)] for r in cursor.fetchall()]
     return headers, data, duration, None
 
