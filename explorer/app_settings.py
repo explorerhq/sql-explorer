@@ -10,6 +10,7 @@ EXPLORER_SCHEMA_EXCLUDE_APPS = getattr(settings, 'EXPLORER_SCHEMA_EXCLUDE_APPS',
 
 EXPLORER_CONNECTION_NAME = getattr(settings, 'EXPLORER_CONNECTION_NAME', None)
 
+EXPLORER_TRANSFORMS = getattr(settings, 'EXPLORER_TRANSFORMS', [])
 
 def sql_explorer_view(user):
     return user.is_staff

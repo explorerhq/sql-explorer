@@ -37,8 +37,26 @@ def execute_query(sql):
 def execute_and_fetch_query(sql):
     cursor, duration = execute_query(sql)
     headers = [d[0] for d in cursor.description] if cursor.description else ['--']
-    data = [[x.encode('utf-8') if type(x) is unicode else x for x in list(r)] for r in cursor.fetchall()]
+    transforms = get_transforms(headers, app_settings.EXPLORER_TRANSFORMS)
+    data = [transform_row(transforms, r) for r in cursor.fetchall()]
     return headers, data, duration, None
+
+
+def get_transforms(headers, transforms):
+    relevant_transforms = []
+    for field, template in transforms:
+        try:
+            relevant_transforms.append((headers.index(field), template))
+        except ValueError:
+            pass
+    return relevant_transforms
+
+
+def transform_row(transforms, row):
+    row = [x.encode('utf-8') if type(x) is unicode else x for x in list(row)]
+    for i, t in transforms:
+        row[i] = t % str(row[i])
+    return row
 
 
 # returns schema information via django app inspection (sorted alphabetically by db table name):

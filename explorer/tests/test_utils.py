@@ -2,7 +2,8 @@ from django.test import TestCase
 from explorer.actions import generate_report_action
 from explorer.tests.factories import SimpleQueryFactory
 from explorer import app_settings
-from explorer.utils import passes_blacklist, schema_info, param, swap_params, extract_params, shared_dict_update, EXPLORER_PARAM_TOKEN, execute_query
+from explorer.utils import passes_blacklist, schema_info, param, swap_params, extract_params,\
+    shared_dict_update, EXPLORER_PARAM_TOKEN, transform_row, get_transforms
 
 
 class TestSqlBlacklist(TestCase):
@@ -85,3 +86,31 @@ class TestParams(TestCase):
         source = {'foo': 1, 'bar': 2}
         target = {'bar': None}  # ha ha!
         self.assertEqual({'bar': 2}, shared_dict_update(target, source))
+
+
+class TestTransforms(TestCase):
+
+    def test_transforms_are_identified_in_headers(self):
+        headers = ['foo']
+        transforms = [('foo', 'http://www.%s.com')]
+        got = get_transforms(headers, transforms)
+        self.assertEqual([(0, 'http://www.%s.com')], got)
+
+    def test_transform_alters_row(self):
+        headers = ['foo', 'bar']
+        transforms = get_transforms(headers, [('bar', 'http://www.%s.com')])
+        row = [1, 2]
+        got = transform_row(transforms, row)
+        self.assertEqual([1, 'http://www.2.com'], got)
+
+    def test_multiple_transforms(self):
+        headers = ['foo', 'bar']
+        transforms = get_transforms(headers, [('foo', '<a href="%s">link</a>'),
+                                              ('bar', 'x: %s')])
+        rows = [[1, 2], ['a', 'b']]
+        got = [transform_row(transforms, row) for row in rows]
+        expected = [
+            ['<a href="1">link</a>', 'x: 2'],
+            ['<a href="a">link</a>', 'x: b']
+        ]
+        self.assertEqual(expected, got)
