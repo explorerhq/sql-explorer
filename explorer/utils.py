@@ -37,8 +37,26 @@ def execute_query(sql):
 def execute_and_fetch_query(sql):
     cursor, duration = execute_query(sql)
     headers = [d[0] for d in cursor.description] if cursor.description else ['--']
-    data = [[x.encode('utf-8') if type(x) is unicode else x for x in list(r)] for r in cursor.fetchall()]
+    transforms = get_transforms(headers, app_settings.EXPLORER_TRANSFORMS)
+    data = [transform_row(transforms, r) for r in cursor.fetchall()]
     return headers, data, duration, None
+
+
+def get_transforms(headers, transforms):
+    relevant_transforms = []
+    for field, template in transforms:
+        try:
+            relevant_transforms.append((headers.index(field), template))
+        except ValueError:
+            pass
+    return relevant_transforms
+
+
+def transform_row(transforms, row):
+    row = [x.encode('utf-8') if type(x) is unicode else x for x in list(row)]
+    for i, t in transforms:
+        row[i] = t.format(str(row[i]))
+    return row
 
 
 # returns schema information via django app inspection (sorted alphabetically by db table name):
@@ -56,11 +74,26 @@ def schema_info():
     for app in apps:
         for model in models.get_models(app):
             friendly_model = "%s -> %s" % (app.__package__, model._meta.object_name)
-            cur_app = (friendly_model, str(model._meta.db_table), [])
-            for f in model._meta.fields:
-                cur_app[2].append((f.get_attname_column()[1], f.get_internal_type()))
-            ret.append(cur_app)
+            ret.append((
+                          friendly_model,
+                          model._meta.db_table,
+                          [_format_field(f) for f in model._meta.fields]
+                      ))
+
+            #Do the same thing for many_to_many fields. These don't show up in the field list of the model
+            #because they are stored as separate "through" relations and have their own tables
+            ret += [(
+                       friendly_model,
+                       m2m.rel.through._meta.db_table,
+                       [_format_field(f) for f in m2m.rel.through._meta.fields]
+                    ) for m2m in model._meta.many_to_many]
+
     return sorted(ret, key=lambda t: t[1])  # sort by table name
+
+
+def _format_field(field):
+    return (field.get_attname_column()[1], field.get_internal_type())
+
 
 
 def param(name):
