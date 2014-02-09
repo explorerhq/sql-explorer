@@ -98,19 +98,19 @@ class TestTransforms(TestCase):
 
     def test_transform_alters_row(self):
         headers = ['foo', 'bar']
-        transforms = get_transforms(headers, [('bar', 'http://www.%s.com')])
+        transforms = get_transforms(headers, [('bar', 'http://www.{0}.com')])
         row = [1, 2]
         got = transform_row(transforms, row)
         self.assertEqual([1, 'http://www.2.com'], got)
 
     def test_multiple_transforms(self):
         headers = ['foo', 'bar']
-        transforms = get_transforms(headers, [('foo', '<a href="%s">link</a>'),
-                                              ('bar', 'x: %s')])
+        transforms = get_transforms(headers, [('foo', '<a href="{0}">{0}</a>'),
+                                              ('bar', 'x: {0}')])
         rows = [[1, 2], ['a', 'b']]
         got = [transform_row(transforms, row) for row in rows]
         expected = [
-            ['<a href="1">link</a>', 'x: 2'],
-            ['<a href="a">link</a>', 'x: b']
+            ['<a href="1">1</a>', 'x: 2'],
+            ['<a href="a">a</a>', 'x: b']
         ]
         self.assertEqual(expected, got)

@@ -55,7 +55,7 @@ def get_transforms(headers, transforms):
 def transform_row(transforms, row):
     row = [x.encode('utf-8') if type(x) is unicode else x for x in list(row)]
     for i, t in transforms:
-        row[i] = t % str(row[i])
+        row[i] = t.format(str(row[i]))
     return row
 
 
@@ -74,10 +74,20 @@ def schema_info():
     for app in apps:
         for model in models.get_models(app):
             friendly_model = "%s -> %s" % (app.__package__, model._meta.object_name)
-            cur_app = (friendly_model, str(model._meta.db_table), [])
-            for f in model._meta.fields:
-                cur_app[2].append((f.get_attname_column()[1], f.get_internal_type()))
-            ret.append(cur_app)
+            ret.append((
+                          friendly_model,
+                          model._meta.db_table,
+                          [(f.get_attname_column()[1], f.get_internal_type()) for f in model._meta.fields]
+                      ))
+
+            #Do the same thing for many_to_many fields. These don't show up in the field list of the model
+            #because they are stored as separate "through" relations and have their own tables
+            ret += [(
+                       friendly_model,
+                       m2m.rel.through._meta.db_table,
+                       [(f.get_attname_column()[1], f.get_internal_type()) for f in m2m.rel.through._meta.fields]
+                    ) for m2m in model._meta.many_to_many]
+
     return sorted(ret, key=lambda t: t[1])  # sort by table name
 
 
