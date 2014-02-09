@@ -21,6 +21,10 @@ django-sql-explorer is MIT licensed, and pull requests are welcome!
 
 .. image:: http://www.untrod.com/django-sql-explorer/query-schema-2.jpg
 
+**Query timings!**
+
+**"Template" columns for quick-linking to detailed record views**
+
 
 Features
 ========
@@ -41,7 +45,15 @@ Features
 - **Schema Helper**
     - /explorer/schema/ renders a list of your Django apps' table and column names that you can refer to while writing queries. Apps are excludable from this list so users aren't bogged down in tons of irrelevant tables. See settings documentation below for details.
     - This is available quickly as a sidebar helper while composing queries (see screenshot)
-    - Note there is an open issue that the schema explorer does not show join tables for m2m relations. It's a work in progres...
+    - Supports many_to_many relations as well
+- **Template Columns**
+    - Let's say you have a query like 'select id, email from user' and you'd like to quickly drill through to the profile page for each user in the result. You can create a "template" column to do just that.
+    - Just set up a template column in your settings file:
+
+    ```EXPLORER_TRANSFORMS = [('user', '<a href="https://yoursite.com/profile/{0}/">{0}</a>')]```
+
+    - And change your query to 'SELECT id AS "user", email FROM user'. Explorer will match the "user" column alias to the transform and merge each cell in that column into the template string. Cool!
+
 - **Django Admin Support**
     - Download multiple queries at once as a zip file through Django's admin interface via a built-in admin action.
 - **Meaningful Test Coverage**
@@ -117,4 +129,5 @@ EXPLORER_SCHEMA_EXCLUDE_APPS Don't show schema for these packages in the schema 
 EXPLORER_CONNECTION_NAME     The name of the Django database connection to use. Ideally set this to a connection with read only permissions  None  # Which means use the 'default' connection
 EXPLORER_PERMISSION_VIEW     Callback to check if the user is allowed to view and execute stored queries                                     Checks for the user to be staff
 EXPLORER_PERMISSION_CHANGE   Callback to check if the user is allowed to add/change/delete queries                                           Checks for the user to be staff
+EXPLORER_TRANSFORMS          List of tuples like [('alias', 'Template for {0}')]. See features section of this doc for more info.            []
 ============================ =============================================================================================================== ================================================================================================================================================
