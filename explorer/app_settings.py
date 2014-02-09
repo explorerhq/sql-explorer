@@ -12,11 +12,6 @@ EXPLORER_CONNECTION_NAME = getattr(settings, 'EXPLORER_CONNECTION_NAME', None)
 
 EXPLORER_TRANSFORMS = getattr(settings, 'EXPLORER_TRANSFORMS', [])
 
-def sql_explorer_view(user):
-    return user.is_staff
-EXPLORER_PERMISSION_VIEW = getattr(settings, 'EXPLORER_PERMISSION_VIEW', sql_explorer_view)
+EXPLORER_PERMISSION_VIEW = getattr(settings, 'EXPLORER_PERMISSION_VIEW', lambda u: u.is_staff)
 
-
-def sql_explorer_change(user):
-    return user.is_staff
-EXPLORER_PERMISSION_CHANGE = getattr(settings, 'EXPLORER_PERMISSION_CHANGE', sql_explorer_change)
+EXPLORER_PERMISSION_CHANGE = getattr(settings, 'EXPLORER_PERMISSION_CHANGE', lambda u: u.is_staff)

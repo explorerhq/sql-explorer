@@ -21,17 +21,13 @@ django-sql-explorer is MIT licensed, and pull requests are welcome!
 
 .. image:: http://www.untrod.com/django-sql-explorer/query-schema-2.jpg
 
-**Query timings!**
-
-**"Template" columns for quick-linking to detailed record views**
-
 
 Features
 ========
 
-- **Safety & Security**
+- **Security**
     - Let's not kid ourselves - this tool is all about giving people access to running SQL in production. So if that makes you nervous (and it should) - you've been warned. Explorer makes an effort to not allow terrible things to happen, but be careful! Note there is a setting in the tip (master) to use a different SQL connection than the default django connection. It's recommended you use a read-only database role.
-    - Admins-only per default. Nice try randos! You have to pass the is_staff() test to access explorer. This can be configuered with the settings EXPLORER_PERMISSION_VIEW and EXPLORER_PERMISSION_CHANGE
+    - Explorer supports two different permission checks for users of the tool. Users passing the EXPLORER_PERMISSION_CHANGE test can create, edit, delete, and execute queries. Users who do not pass this test but pass the EXPLORER_PERMISSION_VIEW test can only execute queries. Other users cannot access any part of Explorer. Both permission groups are set to is_staff by default and can be overridden in your settings file.
     - Enforces a SQL blacklist so destructive queries don't get executed (delete, drop, alter, update etc). This is not bulletproof and it's recommended that you instead configure a read-only database role, but when not possible the blacklist provides reasonable protection.
 - **Easy to get started**
     - 100% built on Django's ORM, so works with Postgresql, Mysql, and Sqlite.
@@ -50,7 +46,7 @@ Features
     - Let's say you have a query like 'select id, email from user' and you'd like to quickly drill through to the profile page for each user in the result. You can create a "template" column to do just that.
     - Just set up a template column in your settings file:
 
-    ```EXPLORER_TRANSFORMS = [('user', '<a href="https://yoursite.com/profile/{0}/">{0}</a>')]```
+    ``EXPLORER_TRANSFORMS = [('user', '<a href="https://yoursite.com/profile/{0}/">{0}</a>')]``
 
     - And change your query to 'SELECT id AS "user", email FROM user'. Explorer will match the "user" column alias to the transform and merge each cell in that column into the template string. Cool!
 
@@ -127,7 +123,7 @@ EXPLORER_SQL_WHITELIST       These phrases are allowed, even though part of the 
 EXPLORER_DEFAULT_ROWS        The number of rows to show by default in the preview pane.                                                      100
 EXPLORER_SCHEMA_EXCLUDE_APPS Don't show schema for these packages in the schema helper.                                                      ('django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions', 'django.contrib.admin')
 EXPLORER_CONNECTION_NAME     The name of the Django database connection to use. Ideally set this to a connection with read only permissions  None  # Which means use the 'default' connection
-EXPLORER_PERMISSION_VIEW     Callback to check if the user is allowed to view and execute stored queries                                     Checks for the user to be staff
-EXPLORER_PERMISSION_CHANGE   Callback to check if the user is allowed to add/change/delete queries                                           Checks for the user to be staff
+EXPLORER_PERMISSION_VIEW     Callback to check if the user is allowed to view and execute stored queries                                     lambda u: u.is_staff
+EXPLORER_PERMISSION_CHANGE   Callback to check if the user is allowed to add/change/delete queries                                           lambda u: u.is_staff
 EXPLORER_TRANSFORMS          List of tuples like [('alias', 'Template for {0}')]. See features section of this doc for more info.            []
 ============================ =============================================================================================================== ================================================================================================================================================

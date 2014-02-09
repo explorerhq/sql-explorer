@@ -1,7 +1,7 @@
 {% extends "explorer/base.html" %}
 
 {% block navlinks %}
-    {% if request.user.sql_explorer_change %}
+    {% if can_change %}
       <li><a href="new/">New Query</a></li>
       <li><a href="play/">Playground</a></li>
     {% endif %}
@@ -14,7 +14,7 @@
             <tr>
                 <th>Query</th>
                 <th>Download CSV</th>
-                {% if request.user.sql_explorer_change %}
+                {% if can_change %}
                     <th>Delete</th>
                 {% endif %}
             </tr>
@@ -26,7 +26,7 @@
                 <td style="padding: 2px 0px 0px 45px; vertical-align: middle">
                     <a href="{{ object.id }}/download"><i class="glyphicon glyphicon-download" style="font-size: 20px;"></i></a>
                 </td>
-                {% if request.user.sql_explorer_change %}
+                {% if can_change %}
                     <td style="padding: 0px 0px 0px 20px; vertical-align: middle">
                         <a href="{{ object.id }}/delete"><i class="glyphicon glyphicon-trash" style="font-size: 18px;"></i></a>
                     </td>

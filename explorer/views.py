@@ -135,7 +135,7 @@ class QueryView(View):
         return render_to_response('explorer/query.html', vm)
 
     def post(self, request, query_id):
-        if not request.user.sql_explorer_change():
+        if not EXPLORER_PERMISSION_CHANGE(request.user):
             return HttpResponseRedirect(
                 reverse_lazy('query_detail', kwargs={'query_id': query_id})
             )
@@ -167,5 +167,7 @@ def query_viewmodel(request, query, title=None, form=None, message=None):
             'headers': headers,
             'duration': duration,
             'rows': rows,
-            'total_rows': len(data)}
+            'total_rows': len(data),
+            'can_view': EXPLORER_PERMISSION_VIEW(request.user),
+            'can_change': EXPLORER_PERMISSION_CHANGE(request.user)}
         )

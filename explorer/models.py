@@ -1,9 +1,6 @@
-from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import user_passes_test
 from explorer.utils import passes_blacklist, write_csv, swap_params, execute_query, execute_and_fetch_query, extract_params, shared_dict_update
 from django.db import models, DatabaseError
 from django.core.urlresolvers import reverse
-from app_settings import EXPLORER_PERMISSION_VIEW, EXPLORER_PERMISSION_CHANGE
 
 MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist."
 
@@ -61,7 +58,3 @@ class Query(models.Model):
 
     def get_absolute_url(self):
         return reverse("query_detail", kwargs={'query_id': self.id})
-
-User = get_user_model()
-User.add_to_class('sql_explorer_view', EXPLORER_PERMISSION_VIEW)
-User.add_to_class('sql_explorer_change', EXPLORER_PERMISSION_CHANGE)
