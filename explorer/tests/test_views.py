@@ -19,6 +19,24 @@ class TestQueryListView(TestCase):
         self.assertTemplateUsed(resp, 'admin/login.html')
 
 
+class TestQueryCreateView(TestCase):
+
+    def setUp(self):
+        self.admin = User.objects.create_superuser('admin', 'admin@admin.com', 'pwd')
+        self.user = User.objects.create_user('user', 'user@user.com', 'pwd')
+
+    def test_change_permission_required(self):
+        self.client.login(username='user', password='pwd')
+        resp = self.client.get(reverse("query_create"))
+        self.assertTemplateUsed(resp, 'admin/login.html')
+
+    def test_renders_with_title(self):
+        self.client.login(username='admin', password='pwd')
+        resp = self.client.get(reverse("query_create"))
+        self.assertTemplateUsed(resp, 'explorer/query.html')
+        self.assertContains(resp, "New Query")
+
+
 class TestQueryDetailView(TestCase):
 
     def setUp(self):
