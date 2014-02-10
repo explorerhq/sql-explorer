@@ -31,6 +31,22 @@ def change_permission(f):
     return wrap
 
 
+class ExplorerContextMixin(object):
+
+    def gen_ctx(self):
+        return {'can_view': EXPLORER_PERMISSION_VIEW(self.request.user),
+                'can_change': EXPLORER_PERMISSION_CHANGE(self.request.user)}
+
+    def get_context_data(self, **kwargs):
+        ctx = super(ExplorerContextMixin, self).get_context_data(**kwargs)
+        ctx.update(self.gen_ctx())
+        return ctx
+
+    def render_template(self, template, ctx):
+        ctx.update(self.gen_ctx())
+        return render_to_response(template, ctx)
+
+
 @view_permission
 @require_GET
 def download_query(request, query_id):
@@ -58,21 +74,21 @@ def schema(request):
     return render_to_response('explorer/schema.html', {'schema': schema_info()})
 
 
-class ListQueryView(ListView):
+class ListQueryView(ExplorerContextMixin, ListView):
 
     @method_decorator(view_permission)
     def dispatch(self, *args, **kwargs):
         return super(ListQueryView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(ListView, self).get_context_data(**kwargs)
+        context = super(ListQueryView, self).get_context_data(**kwargs)
         context['title'] = 'All Queries'
         return context
 
     model = Query
 
 
-class CreateQueryView(CreateView):
+class CreateQueryView(ExplorerContextMixin, CreateView):
 
     @method_decorator(change_permission)
     def dispatch(self, *args, **kwargs):
@@ -82,7 +98,7 @@ class CreateQueryView(CreateView):
     template_name = 'explorer/query.html'
 
 
-class DeleteQueryView(DeleteView):
+class DeleteQueryView(ExplorerContextMixin, DeleteView):
 
     @method_decorator(change_permission)
     def dispatch(self, *args, **kwargs):
@@ -92,7 +108,7 @@ class DeleteQueryView(DeleteView):
     success_url = reverse_lazy("explorer_index")
 
 
-class PlayQueryView(View):
+class PlayQueryView(ExplorerContextMixin, View):
 
     @method_decorator(change_permission)
     def dispatch(self, *args, **kwargs):
@@ -100,10 +116,10 @@ class PlayQueryView(View):
 
     def get(self, request):
         if not url_get_query_id(request):
-            return PlayQueryView.render(request)
+            return self.render(request)
         query = get_object_or_404(Query, pk=url_get_query_id(request))
         query.params = url_get_params(request)
-        return PlayQueryView.render_with_sql(request, query)
+        return self.render_with_sql(request, query)
 
     def post(self, request):
         sql = request.POST.get('sql', None)
@@ -111,19 +127,17 @@ class PlayQueryView(View):
             return PlayQueryView.render(request)
         query = Query(sql=sql, title="Playground")
         query.params = url_get_params(request)
-        return PlayQueryView.render_with_sql(request, query)
+        return self.render_with_sql(request, query)
 
-    @staticmethod
-    def render(request):
+    def render(self, request):
         c = RequestContext(request, {'title': 'Playground'})
-        return render_to_response('explorer/play.html', c)
+        return self.render_template('explorer/play.html', c)
 
-    @staticmethod
-    def render_with_sql(request, query):
-        return render_to_response('explorer/play.html', query_viewmodel(request, query, title="Playground"))
+    def render_with_sql(self, request, query):
+        return self.render_template('explorer/play.html', query_viewmodel(request, query, title="Playground"))
 
 
-class QueryView(View):
+class QueryView(ExplorerContextMixin, View):
 
     @method_decorator(view_permission)
     def dispatch(self, *args, **kwargs):
@@ -132,7 +146,7 @@ class QueryView(View):
     def get(self, request, query_id):
         query, form = QueryView.get_instance_and_form(request, query_id)
         vm = query_viewmodel(request, query, form=form, message=None)
-        return render_to_response('explorer/query.html', vm)
+        return self.render_template('explorer/query.html', vm)
 
     def post(self, request, query_id):
         if not EXPLORER_PERMISSION_CHANGE(request.user):
@@ -143,7 +157,7 @@ class QueryView(View):
         query, form = QueryView.get_instance_and_form(request, query_id)
         success = form.save() if form.is_valid() else None
         vm = query_viewmodel(request, query, form=form, message="Query saved." if success else None)
-        return render_to_response('explorer/query.html', vm)
+        return self.render_template('explorer/query.html', vm)
 
     @staticmethod
     def get_instance_and_form(request, query_id):
@@ -167,7 +181,4 @@ def query_viewmodel(request, query, title=None, form=None, message=None):
             'headers': headers,
             'duration': duration,
             'rows': rows,
-            'total_rows': len(data),
-            'can_view': EXPLORER_PERMISSION_VIEW(request.user),
-            'can_change': EXPLORER_PERMISSION_CHANGE(request.user)}
-        )
+            'total_rows': len(data)})
