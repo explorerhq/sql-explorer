@@ -1,7 +1,7 @@
 Django SQL Explorer
 ===================
 
-Django SQL Explorer is inspired by Stack Exchange's [Data Explorer](http://data.stackexchange.com/stackoverflow/queries) and is designed to make the flow of data between people in your company fast, simple, and confusion-free. Quickly write and share SQL queries in a clean, usable query builder, preview the results in the browser, share links to download CSV files, and keep the information flowing baby!
+Django SQL Explorer is inspired by Stack Exchange's `Data Explorer <http://data.stackexchange.com/stackoverflow/queries>`_ and is designed to make the flow of data between people in your company fast, simple, and confusion-free. Quickly write and share SQL queries in a clean, usable query builder, preview the results in the browser, share links to download CSV files, and keep the information flowing baby!
 
 django-sql-explorer is MIT licensed, and pull requests are welcome!
 
