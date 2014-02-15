@@ -1,3 +1,5 @@
+.. image:: https://travis-ci.org/epantry/django-sql-explorer.png?branch=master
+
 Django SQL Explorer
 ===================
 
