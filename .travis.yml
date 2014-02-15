@@ -2,4 +2,5 @@ language: python
 python:
   - "2.7"
 install: pip install django
+install: pip install factory-boy
 script:  python manage.py test
