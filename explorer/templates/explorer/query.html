@@ -1,7 +1,7 @@
 {% extends "explorer/base.html" %}
 {% load url from future %}
 
-{% block navlinks %}
+{% block sql_explorer_navlinks %}
     {% if can_change %}
       <li{% if not query %} class="active" {% endif %}><a href="../new/">New Query</a></li>
       <li><a href="../play/">Playground</a></li>
@@ -9,7 +9,7 @@
     {% if query %}<li class="active"><a href="">Query Detail</a></li>{% endif %}
 {% endblock %}
 
-{% block content %}
+{% block sql_explorer_content %}
 <div class="row">
     <div id="query_area" class="col-md-12">
         <h2 style="padding-bottom: 20px">{% if query %}{{ query.title }}{% else %}New Query{% endif %}</h2>
@@ -89,7 +89,7 @@
 {% include 'explorer/preview_pane.html' %}
 {% endblock %}
 
-{% block scripts %}
+{% block sql_explorer_scripts %}
     {% include 'explorer/preview_pane_scripts.html' %}
     {% include 'explorer/sql_editor_scripts.html' %}
     <script>

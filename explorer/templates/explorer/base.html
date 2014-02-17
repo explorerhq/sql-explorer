@@ -13,7 +13,7 @@
 
 <body>
     <div id="wrap">
-        {% block navbar %}
+        {% block sql_explorer_navbar %}
             <div class="navbar navbar-default navbar-static-top" role="navigation">
               <div class="container">
                 <div class="navbar-header">
@@ -21,7 +21,7 @@
                 </div>
                 <div class="navbar-collapse collapse">
                   <ul class="nav navbar-nav">
-                    {% block navlinks %}{% endblock %}
+                    {% block sql_explorer_navlinks %}{% endblock %}
                   </ul>
                 </div><!--/.nav-collapse -->
               </div>
@@ -29,11 +29,11 @@
         {% endblock %}
         <div class="container">
           <div class="starter-template">
-          {% block content %}{% endblock %}
+          {% block sql_explorer_content %}{% endblock %}
           </div>
         </div>
     </div>
-    {% block footer %}
+    {% block sql_explorer_footer %}
         <div id="footer" style="padding-top:20px;">
             <div class="container">
                 <p class="text-muted">
@@ -45,7 +45,7 @@
     {% endblock %}
     <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
-    {% block scripts %}{% endblock %}
+    {% block sql_explorer_scripts %}{% endblock %}
 </body>
 
 </html>
