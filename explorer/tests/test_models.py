@@ -1,6 +1,6 @@
 from django.test import TestCase
 from explorer.tests.factories import SimpleQueryFactory
-from explorer.utils import AssertMethodIsCalled
+from explorer.tests.utils import AssertMethodIsCalled
 from explorer.models import MSG_FAILED_BLACKLIST
 
 
