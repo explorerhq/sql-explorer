@@ -1,6 +1,6 @@
 {% extends "explorer/base.html" %}
 
-{% block content %}
+{% block sql_explorer_content %}
     <form method="post">{% csrf_token %}
         <div class="alert alert-info">
             Are you sure you want to delete "{{ object.title }}" ?

@@ -1,13 +1,13 @@
 {% extends "explorer/base.html" %}
 
-{% block navlinks %}
+{% block sql_explorer_navlinks %}
     {% if can_change %}
       <li><a href="new/">New Query</a></li>
       <li><a href="play/">Playground</a></li>
     {% endif %}
 {% endblock %}
 
-{% block content %}
+{% block sql_explorer_content %}
     <h3>{{ title }}</h3>
     <table class="table table-striped">
         <thead>
