@@ -9,19 +9,19 @@ django-sql-explorer is MIT licensed, and pull requests are welcome!
 
 **A view of a query**
 
-`Screenshot <http://www.untrod.com/django-sql-explorer/query1.jpg/>`_
+`Screenshot <http://www.untrod.com/django-sql-explorer/query1.jpg>`_
 
 **Viewing all queries**
 
-`Screenshot <http://www.untrod.com/django-sql-explorer/query2.5.jpg/>`_
+`Screenshot <http://www.untrod.com/django-sql-explorer/query2.5.jpg>`_
 
 **Queries can accept parameters. Neato!**
 
-`Screenshot <http://www.untrod.com/django-sql-explorer/query3.5.jpg/>`_
+`Screenshot <http://www.untrod.com/django-sql-explorer/query3.5.jpg>`_
 
 **Quick access to DB schema info**
 
-`Screenshot <http://www.untrod.com/django-sql-explorer/query-schema-2.jpg/>`_
+`Screenshot <http://www.untrod.com/django-sql-explorer/query-schema-2.jpg>`_
 
 
 Features
