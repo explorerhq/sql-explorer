@@ -3,6 +3,15 @@
 <script>
     var editor = CodeMirror.fromTextArea(document.getElementById('id_sql'), {
         mode: "text/x-sql",
-        lineNumbers: 't'
+        lineNumbers: 't',
+        autofocus: true,
+        extraKeys: {
+            "Ctrl-Enter": function() {
+                $('#editor').submit();
+            },
+            "Cmd-Enter": function() {
+                $('#editor').submit();
+            }
+        }
     });
 </script>
