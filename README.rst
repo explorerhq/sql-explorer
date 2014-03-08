@@ -35,6 +35,7 @@ Features
     - 100% built on Django's ORM, so works with Postgresql, Mysql, and Sqlite.
     - Zero dependencies other than Django and front-end libraries. More detail below.
     - Just want to get in and write some ad-hoc queries? Go nuts with the Playground area.
+    - Cmd+Enter and/or Ctrl+Enter sill submit and execute the query - no mouse required.
 - **Looks Reasonably Not Crappy**
     - Thanks to CodeMirror and Bootstrap you might actually enjoy this for querying more than pgadmin or phpmyadmin
 - **Parameterized Queries**
