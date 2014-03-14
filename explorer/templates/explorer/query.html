@@ -65,7 +65,7 @@
                         <div style="text-align: center;">
                             <input type="submit" value="Save & Run" class="btn btn-default" id="refresh_button" />
                             {% if query %}
-                                <a class="btn btn-default" href="download">Download CSV</a>
+                                <button class="btn btn-default download_button" href="csv">Download CSV</button>
                                 <input type="submit" value="Edit in Playground" class="btn btn-default" id="playground_button"/>
                             {%  endif %}
                             <button type="button" class="btn btn-default" id="show_schema_button">Show Schema</button>
@@ -78,7 +78,7 @@
                     {{ query.description }}
                 </p>
                 <p>
-                    <a href="{% url "query_download" query_id=query.id %}">Download as CSV</a>
+                    <button class="btn btn-default download_button" href="csv">Download CSV</button>
                 </p>
             {% endif %}
         </div>
@@ -96,17 +96,20 @@
     <script>
         $(function() {
             $("#refresh_button").click(function() {
-                var params$ = $(this).closest("form").find(".param");
-                if(params$.length) {
-                    var o = new Object;
-                    params$.each(function() {
-                        o[this.id.replace("_param", "")] = $(this).val();
-                    });
-                    $(this).closest("form").attr('action', '../{% firstof query.id 'new' %}/?params=' + JSON.stringify(o));
+                var params = getparams(this);
+                if(params) {
+                    $(this).closest("form").attr('action', '../{% firstof query.id 'new' %}/?params=' + JSON.stringify(params));
                 }
             });
             $("#playground_button").click(function() {
                 $(this).closest("form").attr('action', '../play/');
+            });
+            $(".download_button").click(function(e) {
+                e.preventDefault();
+                var dl_link = 'download';
+                var params = getparams(this);
+                if(params) { dl_link = dl_link + '?params=' + JSON.stringify(params); }
+                window.location.href = dl_link;
             });
         });
     </script>

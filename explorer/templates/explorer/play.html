@@ -53,20 +53,21 @@
     <script>
         $(function() {
             $("#refresh_button").click(function() {
-                var params$ = $(this).closest("form").find(".param");
-                if(params$.length) {
-                    var o = new Object;
-                    params$.each(function() {
-                        o[this.id.replace("_param", "")] = $(this).val();
-                    });
-                    $(this).closest("form").attr('action', '../play/?params=' + JSON.stringify(o));
+                var params = getparams(this);
+                if(params) {
+                    $(this).closest("form").attr('action', '../play/?params=' + JSON.stringify(params));
                 }
             });
             $("#create_button").click(function() {
                 $(this).closest("form").attr('action', '../new/');
             });
             $("#download_button").click(function() {
-                $(this).closest("form").attr('action', '../csv');
+                var params = getparams(this);
+                if(params) {
+                    $(this).closest("form").attr('action', '../csv?params=' + JSON.stringify(params));
+                } else {
+                    $(this).closest("form").attr('action', '../csv');
+                }
             });
         });
     </script>
