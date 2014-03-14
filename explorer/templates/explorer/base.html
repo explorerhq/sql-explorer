@@ -10,6 +10,19 @@
     <link href="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/codemirror.min.css" rel="stylesheet">
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script type="text/javascript">
+        var getparams = function(el) {
+            var params$ = $(el).closest("form").find(".param");
+            var o = false;
+            if(params$.length) {
+                o = new Object;
+                params$.each(function() {
+                    o[this.id.replace("_param", "")] = $(this).val();
+                });
+            }
+            return o;
+        }
+    </script>
 </head>
 
 <body>
