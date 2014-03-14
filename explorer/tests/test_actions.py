@@ -39,3 +39,12 @@ class testSqlQueryActions(TestCase):
         self.assertEqual(len(z.namelist()), 2)
         self.assertEqual(z.namelist()[0], '%s.csv' % q.title)
         self.assertEqual(got_csv.lower(), expected_csv)
+
+    # if commas are not removed from the filename, then Chrome throws "duplicate headers received from server"
+    def test_packaging_removes_commas_from_file_name(self):
+
+        expected = 'attachment; filename=query for x y.csv'
+        q = SimpleQueryFactory(title='query for x, y')
+        fn = generate_report_action()
+        res = fn(None, None, [q])
+        self.assertEqual(res['Content-Disposition'], expected)

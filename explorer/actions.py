@@ -27,7 +27,7 @@ def _package(queries):
     is_one = len(queries) == 1
     name_root = lambda n: "attachment; filename=%s" % n
     ret["content_type"] = (is_one and 'text/csv') or 'application/zip'
-    ret["filename"] = (is_one and name_root('%s.csv' % queries[0].title)) or name_root("Report_%s.zip" % date.today())
+    ret["filename"] = (is_one and name_root('%s.csv' % queries[0].title.replace(',', ''))) or name_root("Report_%s.zip" % date.today())
     ret["data"] = (is_one and queries[0].csv_report()) or _build_zip(queries)
     ret["length"] = (is_one and len(ret["data"]) or ret["data"].blksize)
     return ret
