@@ -3,7 +3,11 @@
 If you are upgrading...
 =======================
 
-Version 0.5 adds a new field to explorer model, thus South is now a requirement for running migrations and upgrading. If you are installing from scratch, you can just syncdb.
+Version 0.5 adds a new field to Query model, thus South is now a requirement for running migrations and upgrading. After upgrading to 0.5, you will have to convert Explorer to a south app by faking the first migration:
+
+``python manage.py migrate explorer 0001 --fake``
+
+If you are installing Explorer for the first time, you can just follow the normal installation instructions below.
 
 
 Django SQL Explorer
