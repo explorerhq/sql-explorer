@@ -10,7 +10,7 @@ from django.core.urlresolvers import reverse_lazy
 
 from explorer.actions import generate_report_action
 from explorer.models import Query
-from explorer.app_settings import EXPLORER_PERMISSION_VIEW, EXPLORER_PERMISSION_CHANGE
+from explorer.app_settings import EXPLORER_PERMISSION_VIEW, EXPLORER_PERMISSION_CHANGE, EXPLORER_RECENT_QUERY_COUNT
 from explorer.forms import QueryForm
 from explorer.utils import url_get_rows, url_get_query_id, schema_info, url_get_params, safe_admin_login_prompt
 
@@ -81,8 +81,9 @@ class ListQueryView(ExplorerContextMixin, ListView):
         return super(ListQueryView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
+        recent_queries = Query.objects.all().order_by('-last_run_date')[:EXPLORER_RECENT_QUERY_COUNT]
         context = super(ListQueryView, self).get_context_data(**kwargs)
-        context['title'] = 'All Queries'
+        context['recent_queries'] = recent_queries
         return context
 
     model = Query
@@ -145,6 +146,7 @@ class QueryView(ExplorerContextMixin, View):
 
     def get(self, request, query_id):
         query, form = QueryView.get_instance_and_form(request, query_id)
+        query.save()  # updates the modified date
         vm = query_viewmodel(request, query, form=form, message=None)
         return self.render_template('explorer/query.html', vm)
 

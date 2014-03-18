@@ -1,5 +1,11 @@
 .. image:: https://travis-ci.org/epantry/django-sql-explorer.png?branch=master
 
+If you are upgrading...
+=======================
+
+Version 0.5 adds a new field to explorer model, thus South is now a requirement for running migrations and upgrading. If you are installing from scratch, you can just syncdb.
+
+
 Django SQL Explorer
 ===================
 
@@ -92,7 +98,7 @@ Browse to https://yoursite/explorer/ and get exploring!
 Dependencies
 ============
 
-An effort has been made to require no packages other than Django. However a number of front-end dependencies do exist and are documented below. All front-end dependencies are served from CDNJS.com
+An effort has been made to require no packages other than Django and South (for migrations). However a number of front-end dependencies do exist and are documented below. All front-end dependencies are served from CDNJS.com
 
 ====================================================== ======= ================
 Name                                                   Version License
@@ -127,4 +133,5 @@ EXPLORER_CONNECTION_NAME     The name of the Django database connection to use. 
 EXPLORER_PERMISSION_VIEW     Callback to check if the user is allowed to view and execute stored queries                                     lambda u: u.is_staff
 EXPLORER_PERMISSION_CHANGE   Callback to check if the user is allowed to add/change/delete queries                                           lambda u: u.is_staff
 EXPLORER_TRANSFORMS          List of tuples like [('alias', 'Template for {0}')]. See features section of this doc for more info.            []
+EXPLORER_RECENT_QUERY_COUNT  The number of recent queries to show at the top of the query listing.                                         10
 ============================ =============================================================================================================== ================================================================================================================================================

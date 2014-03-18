@@ -8,7 +8,30 @@
 {% endblock %}
 
 {% block sql_explorer_content %}
-    <h3>{{ title }}</h3>
+    {% if recent_queries|length > 0 %}
+        <h3>{{ recent_queries|length }} Most Recently Used</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Query</th>
+                    <th>Last Run</th>
+                    <th>Download CSV</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for object in recent_queries %}
+                <tr>
+                    <td><a href="{{ object.id }}/">{{ object }}</a></td>
+                    <td>{{ object.last_run_date|date:"SHORT_DATETIME_FORMAT" }}</td>
+                    <td style="padding: 2px 0px 0px 45px; vertical-align: middle">
+                        <a href="{{ object.id }}/download"><i class="glyphicon glyphicon-download" style="font-size: 20px;"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+    <h3>All Queries</h3>
     <table class="table table-striped">
         <thead>
             <tr>
