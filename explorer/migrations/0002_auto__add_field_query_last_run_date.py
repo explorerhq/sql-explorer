@@ -8,15 +8,15 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding field 'Query.modified_date'
-        db.add_column(u'explorer_query', 'modified_date',
+        # Adding field 'Query.last_run_date'
+        db.add_column(u'explorer_query', 'last_run_date',
                       self.gf('django.db.models.fields.DateTimeField')(auto_now=True, default=datetime.datetime(2014, 3, 15, 0, 0), blank=True),
                       keep_default=False)
 
 
     def backwards(self, orm):
-        # Deleting field 'Query.modified_date'
-        db.delete_column(u'explorer_query', 'modified_date')
+        # Deleting field 'Query.last_run_date'
+        db.delete_column(u'explorer_query', 'last_run_date')
 
 
     models = {

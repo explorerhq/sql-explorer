@@ -5,7 +5,7 @@ from django.forms.models import model_to_dict
 from explorer.tests.factories import SimpleQueryFactory
 from explorer.models import Query
 from explorer import app_settings
-
+import time
 
 class TestQueryListView(TestCase):
 
@@ -69,7 +69,6 @@ class TestQueryDetailView(TestCase):
 
         old = app_settings.EXPLORER_PERMISSION_CHANGE
         app_settings.EXPLORER_PERMISSION_CHANGE = not_allowed
-        User.add_to_class('sql_explorer_change', app_settings.EXPLORER_PERMISSION_CHANGE)
 
         query = SimpleQueryFactory()
         expected = query.sql
@@ -80,7 +79,13 @@ class TestQueryDetailView(TestCase):
         self.assertEqual(Query.objects.get(pk=query.id).sql, expected)
 
         app_settings.EXPLORER_PERMISSION_CHANGE = old
-        User.add_to_class('sql_explorer_change', app_settings.EXPLORER_PERMISSION_CHANGE)
+
+    def test_modified_date_gets_updated_after_viewing_query(self):
+        query = SimpleQueryFactory()
+        old = query.last_run_date
+        time.sleep(0.1)
+        self.client.get(reverse("query_detail", kwargs={'query_id': query.id}))
+        self.assertNotEqual(old, Query.objects.get(pk=query.id).last_run_date)
 
     def test_admin_required(self):
         self.client.logout()
