@@ -48,7 +48,7 @@ class Query(models.Model):
             return [], [], None, MSG_FAILED_BLACKLIST
         try:
             return execute_and_fetch_query(self.final_sql())
-        except DatabaseError, e:
+        except (DatabaseError, Warning), e:
             return [], [], None, str(e)
 
     def available_params(self):
