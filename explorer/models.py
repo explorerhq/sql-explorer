@@ -25,8 +25,8 @@ class Query(models.Model):
     def passes_blacklist(self):
         return passes_blacklist(self.final_sql())
 
-    def final_sql(self):
-        return swap_params(self.sql, self.params)
+    def final_sql(self, params=None):
+        return swap_params(self.sql, params)
 
     def csv_report(self):
         headers, data, duration, error = self.headers_and_data()
@@ -43,18 +43,18 @@ class Query(models.Model):
         except DatabaseError, e:
             return str(e)
 
-    def headers_and_data(self):
+    def headers_and_data(self, params=None):
         if not self.passes_blacklist():
             return [], [], None, MSG_FAILED_BLACKLIST
         try:
-            return execute_and_fetch_query(self.final_sql())
+            return execute_and_fetch_query(self.final_sql(params))
         except (DatabaseError, Warning), e:
             return [], [], None, str(e)
 
-    def available_params(self):
+    def available_params(self, param_values=None):
         p = extract_params(self.sql)
-        if self.params:
-            shared_dict_update(p, self.params)
+        if param_values:
+            shared_dict_update(p, param_values)
         return p
 
     def get_absolute_url(self):
