@@ -23,9 +23,6 @@
                 <div class="panel-content">
                     <textarea class="form-control" cols="40" id="id_sql" name="sql" rows="10">{{ query.sql }}</textarea>
                 </div>
-                <div class="panel-footer">
-                    {% include 'explorer/params.html' %}
-                </div>
             </div>
             <h5 style="text-align: right;margin-top: -20px;"><small>Tip: Use Ctrl+Enter or Cmd+Enter to execute the query</small></h5>
             <div class="form-group">
@@ -53,21 +50,13 @@
     <script>
         $(function() {
             $("#refresh_button").click(function() {
-                var params = getparams(this);
-                if(params) {
-                    $(this).closest("form").attr('action', '../play/?params=' + JSON.stringify(params));
-                }
+                $(this).closest("form").attr('action', '../play/');
             });
             $("#create_button").click(function() {
                 $(this).closest("form").attr('action', '../new/');
             });
             $("#download_button").click(function() {
-                var params = getparams(this);
-                if(params) {
-                    $(this).closest("form").attr('action', '../csv?params=' + JSON.stringify(params));
-                } else {
-                    $(this).closest("form").attr('action', '../csv');
-                }
+                $(this).closest("form").attr('action', '../csv');
             });
         });
     </script>

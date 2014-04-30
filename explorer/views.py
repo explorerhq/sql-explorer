@@ -119,7 +119,6 @@ class PlayQueryView(ExplorerContextMixin, View):
         if not url_get_query_id(request):
             return self.render(request)
         query = get_object_or_404(Query, pk=url_get_query_id(request))
-        query.params = url_get_params(request)
         return self.render_with_sql(request, query)
 
     def post(self, request):
@@ -127,7 +126,6 @@ class PlayQueryView(ExplorerContextMixin, View):
         if not sql:
             return PlayQueryView.render(request)
         query = Query(sql=sql, title="Playground")
-        query.params = url_get_params(request)
         return self.render_with_sql(request, query)
 
     def render(self, request):
@@ -164,17 +162,17 @@ class QueryView(ExplorerContextMixin, View):
     @staticmethod
     def get_instance_and_form(request, query_id):
         query = get_object_or_404(Query, pk=query_id)
-        query.params = url_get_params(request)
         form = QueryForm(request.POST if len(request.POST) else None, instance=query)
         return query, form
 
 
 def query_viewmodel(request, query, title=None, form=None, message=None):
     rows = url_get_rows(request)
-    headers, data, duration, error = query.headers_and_data()
+    params = url_get_params(request)
+    headers, data, duration, error = query.headers_and_data(params)
     return RequestContext(request, {
             'error': error,
-            'params': query.available_params(),
+            'params': query.available_params(param_values=params),
             'title': title,
             'query': query,
             'form': form,

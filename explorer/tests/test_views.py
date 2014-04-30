@@ -64,11 +64,9 @@ class TestQueryDetailView(TestCase):
         self.assertEqual(Query.objects.get(pk=query.id).sql, expected)
 
     def test_change_permission_required_to_save_query(self):
-        def not_allowed(user):
-            return False
 
         old = app_settings.EXPLORER_PERMISSION_CHANGE
-        app_settings.EXPLORER_PERMISSION_CHANGE = not_allowed
+        app_settings.EXPLORER_PERMISSION_CHANGE = lambda u: False
 
         query = SimpleQueryFactory()
         expected = query.sql
@@ -188,13 +186,19 @@ class TestParamsInViews(TestCase):
         resp = self.client.get(reverse("query_detail", kwargs={'query_id': self.query.id}) + '?params={"swap":123}')
         self.assertContains(resp, "123")
 
-    def test_query_in_playground_works_with_params(self):
-        resp = self.client.get('%s?query_id=%s&params=%s' % (reverse("explorer_playground"), self.query.id, '{"swap":123}'))
-        self.assertContains(resp, "123")
-
     def test_saving_non_executing_query_with__wrong_url_params_works(self):
         q = SimpleQueryFactory(sql="select $$swap$$;")
         data = model_to_dict(q)
         url = '%s?params=%s' % (reverse("query_detail", kwargs={'query_id': q.id}), '{"foo":123}')
         resp = self.client.post(url, data)
         self.assertContains(resp, 'saved')
+
+    def test_users_without_change_permissions_can_use_params(self):
+
+        old = app_settings.EXPLORER_PERMISSION_CHANGE
+        app_settings.EXPLORER_PERMISSION_CHANGE = lambda u: False
+
+        resp = self.client.get(reverse("query_detail", kwargs={'query_id': self.query.id}) + '?params={"swap":123}')
+        self.assertContains(resp, "123")
+
+        app_settings.EXPLORER_PERMISSION_CHANGE = old
