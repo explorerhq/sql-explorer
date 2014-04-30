@@ -28,50 +28,38 @@
                     {% endfor %}{% endif %}
                     <label for="id_title" class="col-sm-2 control-label">Title</label>
                     <div class="col-sm-10">
-                        {% if can_change %}
-                            <input class="form-control" id="id_title" maxlength="255" name="title" type="text" value="{{ form.title.value|default_if_none:"" }}" />
-                        {% else %}
-                           {{ query.title }}
-                        {% endif %}
+                        <input class="form-control" id="id_title" maxlength="255" name="title" type="text" {% if not can_change %}disabled{% endif %} value="{{ form.title.value|default_if_none:"" }}" />
                     </div>
                 </div>
                 <div class="form-group">
                     {{ form.description.errors }}
                     <label for="id_title" class="col-sm-2 control-label">Description</label>
                     <div class="col-sm-10">
-                        {% if can_change %}
-                             <textarea class="form-control" cols="40" id="id_description" name="description" rows="2">{{ form.description.value|default_if_none:"" }}</textarea>
-                        {% else %}
-                           {{ query.description }}
-                        {% endif %}
+                        <textarea class="form-control" cols="40" id="id_description" name="description" {% if not can_change %}disabled{% endif %} rows="2">{{ form.description.value|default_if_none:"" }}</textarea>
                     </div>
                 </div>
                 <div class="form-group">
                     {{ form.created_by.errors }}
                     <label for="id_title" class="col-sm-2 control-label">Created By</label>
                     <div class="col-sm-10">
-                        {% if can_change %}
-                             <input class="form-control" id="id_created_by" maxlength="255" name="created_by" type="text" value="{% firstof form.created_by.value request.user %}" />
-                        {% else %}
-                           {{ query.created_by }}
-                        {% endif %}
+                        <input class="form-control" id="id_created_by" maxlength="255" name="created_by" type="text" {% if not can_change %}disabled{% endif %} value="{% firstof form.created_by.value request.user %}" />
                     </div>
                 </div>
                 {% if form.sql.errors %}{% for error in form.sql.errors %}
                     <div class="alert alert-danger">{{ error|escape }}</div>
                 {% endfor %}{% endif %}
-                {% if can_change %}
-                    <div class="panel panel-default" style="margin-top: 30px;" xmlns="http://www.w3.org/1999/html">
+                <div class="panel panel-default" style="margin-top: 30px;" xmlns="http://www.w3.org/1999/html">
+                    {% if can_change %}
                         <div class="panel-heading">
                             <span class="panel-title">SQL</span>
                         </div>
                         <div class="panel-content">
                             <textarea class="form-control" cols="40" id="id_sql" name="sql" rows="10">{{ form.sql.value|default_if_none:"" }}</textarea>
                         </div>
+                    {% endif %}
+                    <div class="panel-footer">
+                        {% include 'explorer/params.html' %}
                     </div>
-                {% endif %}
-                <div class="panel-footer">
-                    {% include 'explorer/params.html' %}
                 </div>
                 {% if can_change %}
                      <h5 style="text-align: right;margin-top: -20px;"><small>Tip: Use Ctrl+Enter or Cmd+Enter to execute the query</small></h5>
@@ -79,7 +67,7 @@
                 <div class="form-group">
                     <div style="text-align: center;">
                         {% if can_change %}
-                            <input type="submit" value="Save & Run" class="btn btn-default" id="refresh_button" />
+                            <input type="submit" value="Save & Run" class="btn btn-default" id="save_button" />
                             {% if query %}
                                  <button class="btn btn-default download_button" href="csv">Download CSV</button>
                                  <input type="submit" value="Test it" class="btn btn-default" id="playground_button"/>
@@ -87,6 +75,7 @@
                             <button type="button" class="btn btn-default" id="show_schema_button">Show Schema</button>
                             <button type="button" class="btn btn-default" style="display: none;" id="hide_schema_button">Hide Schema</button>
                         {% else %}
+                            <input type="submit" value="Refresh" class="btn btn-default" id="refresh_button" />
                             <button class="btn btn-default download_button" href="csv">Download CSV</button>
                         {% endif %}
                     </div>
@@ -108,10 +97,19 @@
     {% endif %}
     <script>
         $(function() {
-            $("#refresh_button").click(function() {
+            $("#save_button").click(function() {
                 var params = getparams(this);
                 if(params) {
                     $(this).closest("form").attr('action', '../{% firstof query.id 'new' %}/?params=' + JSON.stringify(params));
+                }
+            });
+            $("#refresh_button").click(function(e) {
+                e.preventDefault();
+                var params = getparams(this);
+                if(params) {
+                    window.location.href = '../{{ query.id }}/?params=' + JSON.stringify(params);
+                } else {
+                    window.location.href = '../{{ query.id }}/';
                 }
             });
             $("#playground_button").click(function() {
