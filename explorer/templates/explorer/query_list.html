@@ -47,7 +47,7 @@
             {% for object in object_list %}
             <tr>
                 <td><a href="{{ object.id }}/">{{ object }}</a></td>
-                <td>{{ object.created_at|date:"SHORT_DATE_FORMAT" }} by {% firstof object.created_by 'unknown' %}</td>
+                <td>{{ object.created_at|date:"SHORT_DATE_FORMAT" }} by {% firstof object.created_by_user 'unknown' %}</td>
                 <td style="padding: 2px 0px 0px 45px; vertical-align: middle">
                     <a href="{{ object.id }}/download"><i class="glyphicon glyphicon-download" style="font-size: 20px;"></i></a>
                 </td>

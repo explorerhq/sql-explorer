@@ -39,10 +39,11 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    {{ form.created_by.errors }}
+                    {{ form.created_by_user.errors }}
                     <label for="id_title" class="col-sm-2 control-label">Created By</label>
                     <div class="col-sm-10">
-                        <input class="form-control" id="id_created_by" maxlength="255" name="created_by" type="text" {% if not can_change %}disabled{% endif %} value="{% firstof form.created_by.value request.user %}" />
+                        <span class="form-control" id="id_created_by_user_label" maxlength="255" name="created_by_user_label">{% firstof form.created_by_user.value request.user %}</span>
+                        <input type="hidden" id="id_created_by_user" value="{% firstof form.created_by_user_id.value request.user.id %}" />
                     </div>
                 </div>
                 {% if form.sql.errors %}{% for error in form.sql.errors %}

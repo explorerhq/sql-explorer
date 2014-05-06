@@ -1,6 +1,7 @@
 from explorer.utils import passes_blacklist, write_csv, swap_params, execute_query, execute_and_fetch_query, extract_params, shared_dict_update
 from django.db import models, DatabaseError
 from django.core.urlresolvers import reverse
+from django.contrib.auth import get_user_model
 
 MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist."
 
@@ -9,7 +10,7 @@ class Query(models.Model):
     title = models.CharField(max_length=255)
     sql = models.TextField()
     description = models.TextField(null=True, blank=True)
-    created_by = models.CharField(max_length=255, null=True, blank=True)
+    created_by_user = models.ForeignKey(get_user_model(), null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     last_run_date = models.DateTimeField(auto_now=True)
 
