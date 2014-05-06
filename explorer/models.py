@@ -13,8 +13,6 @@ class Query(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     last_run_date = models.DateTimeField(auto_now=True)
 
-    params = {}
-
     class Meta:
         ordering = ['title']
         verbose_name_plural = 'Queries'
