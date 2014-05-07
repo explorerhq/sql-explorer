@@ -1,0 +1,34 @@
+{% extends "explorer/base.html" %}
+
+{% block sql_explorer_navlinks %}
+    {% if can_change %}
+      <li><a href="../new/">New Query</a></li>
+      <li><a href="../play/">Playground</a></li>
+    {% endif %}
+{% endblock %}
+
+{% block sql_explorer_content %}
+    <h3>{{ recent_logs|length }} Most Recent Log Entries</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Run At</th>
+                <th>Run By</th>
+                <th>SQL</th>
+                <th>Query ID</th>
+                <th>Playground</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for object in recent_logs %}
+            <tr>
+                <td>{{ object.run_at|date:"SHORT_DATETIME_FORMAT" }}</td>
+                <td>{{ object.run_by_user.email }}</td>
+                <td>{{ object.sql }}</td>
+                <td>{{ object.query_id }}</td>
+                <td>{{ object.is_playground }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

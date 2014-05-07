@@ -9,7 +9,7 @@ from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse_lazy
 
 from explorer.actions import generate_report_action
-from explorer.models import Query
+from explorer.models import Query, QueryLog
 from explorer.app_settings import EXPLORER_PERMISSION_VIEW, EXPLORER_PERMISSION_CHANGE, EXPLORER_RECENT_QUERY_COUNT
 from explorer.forms import QueryForm
 from explorer.utils import url_get_rows, url_get_query_id, schema_info, url_get_params, safe_admin_login_prompt
@@ -89,6 +89,21 @@ class ListQueryView(ExplorerContextMixin, ListView):
     model = Query
 
 
+class ListQueryLogView(ExplorerContextMixin, ListView):
+
+    @method_decorator(view_permission)
+    def dispatch(self, *args, **kwargs):
+        return super(ListQueryLogView, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        recent_logs = QueryLog.objects.all().order_by('-run_at')[:100]
+        context = super(ListQueryLogView, self).get_context_data(**kwargs)
+        context['recent_logs'] = recent_logs
+        return context
+
+    model = QueryLog
+
+
 class CreateQueryView(ExplorerContextMixin, CreateView):
 
     @method_decorator(change_permission)
@@ -130,6 +145,7 @@ class PlayQueryView(ExplorerContextMixin, View):
         if not sql:
             return PlayQueryView.render(request)
         query = Query(sql=sql, title="Playground")
+        query.log(request.user)
         return self.render_with_sql(request, query)
 
     def render(self, request):
@@ -160,17 +176,14 @@ class QueryView(ExplorerContextMixin, View):
 
         query, form = QueryView.get_instance_and_form(request, query_id)
         success = form.save() if form.is_valid() else None
+        if form.has_changed():
+            query.log(request.user)
         vm = query_viewmodel(request, query, form=form, message="Query saved." if success else None)
         return self.render_template('explorer/query.html', vm)
 
     @staticmethod
     def get_instance_and_form(request, query_id):
         query = get_object_or_404(Query, pk=query_id)
-
-        #ensure that the created_by_user_id is not getting overwritten
-        if query.created_by_user_id and request.POST.get('created_by_user', None):
-            request.POST['created_by_user'] = query.created_by_user_id
-
         form = QueryForm(request.POST if len(request.POST) else None, instance=query)
         return query, form
 

@@ -22,6 +22,11 @@ class QueryForm(ModelForm):
 
     sql = SqlField()
 
+    def clean(self):
+        if self.instance and self.data.get('created_by_user', None):
+            self.cleaned_data['created_by_user'] = self.instance.created_by_user
+        return super(QueryForm, self).clean()
+
     class Meta:
         model = Query
         fields = ['title', 'sql', 'description', 'created_by_user']
