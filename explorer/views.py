@@ -9,7 +9,7 @@ from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse_lazy
 
 from explorer.actions import generate_report_action
-from explorer.models import Query
+from explorer.models import Query, QueryLog
 from explorer.app_settings import EXPLORER_PERMISSION_VIEW, EXPLORER_PERMISSION_CHANGE, EXPLORER_RECENT_QUERY_COUNT
 from explorer.forms import QueryForm
 from explorer.utils import url_get_rows, url_get_query_id, schema_info, url_get_params, safe_admin_login_prompt
@@ -87,6 +87,21 @@ class ListQueryView(ExplorerContextMixin, ListView):
         return context
 
     model = Query
+
+
+class ListQueryLogView(ExplorerContextMixin, ListView):
+
+    @method_decorator(view_permission)
+    def dispatch(self, *args, **kwargs):
+        return super(ListQueryLogView, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        recent_logs = QueryLog.objects.all().order_by('-run_at')[:100]
+        context = super(ListQueryLogView, self).get_context_data(**kwargs)
+        context['recent_logs'] = recent_logs
+        return context
+
+    model = QueryLog
 
 
 class CreateQueryView(ExplorerContextMixin, CreateView):
