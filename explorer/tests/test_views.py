@@ -261,3 +261,11 @@ class TestQueryLog(TestCase):
         query = SimpleQueryFactory()
         self.client.get(reverse("query_detail", kwargs={'query_id': query.id}))
         self.assertEqual(0, QueryLog.objects.count())
+
+    def test_query_gets_logged_and_appears_on_log_page(self):
+        query = SimpleQueryFactory()
+        data = model_to_dict(query)
+        data['sql'] = 'select 12345;'
+        self.client.post(reverse("query_detail", kwargs={'query_id': query.id}), data)
+        resp = self.client.get(reverse("explorer_logs"))
+        self.assertContains(resp, 'select 12345;')
