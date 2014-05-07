@@ -1,3 +1,13 @@
+0.5.0
+=====
+
+- Query logs! A very minimal implementation of logging previous queries. This is accessible via explorer/logs/. For now this just means you can look at old queries (oh wait? what was that playground query I ran this morning?) and with better UI it means query versioning, reverts, and all sorts of other fancy things. Already this iteration has given me good peace of mind though :)
+- Actually captures the creator of the query via a ForeignKey relation, instead of just using a Char field.
+- Re-introduced type information in the schema helpers.
+- Proper relative URL handling after downloading a query as CSV
+- Users with view permissions can use query parameters. This is potentially dangerous because I don't think they are safe against injection...
+- Refactored params handling for extra safety in multi-threaded enviros
+
 0.4.1
 =====
 

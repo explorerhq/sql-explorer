@@ -1,11 +1,14 @@
 .. image:: https://travis-ci.org/epantry/django-sql-explorer.png?branch=master
 
-If you are upgrading...
-=======================
+**Upgrading from previous verion**
 
-Version 0.5 adds a new field to Query model, thus South is now a requirement for running migrations and upgrading. After upgrading to 0.5, you will have to convert Explorer to a south app by faking the first migration:
+As of version 0.5, South migrations have been introduced to handle model schema changes. After upgrading to 0.5, you will have to convert Explorer to a south app by faking the first migration:
 
 ``python manage.py migrate explorer 0001 --fake``
+
+You can then run the rest of the migrations as usual.
+
+``python manage.py migrate explorer``
 
 If you are installing Explorer for the first time, you can just follow the normal installation instructions below.
 
@@ -52,7 +55,7 @@ Features
     - Use $$foo$$ in your queries and Explorer will build a UI to fill out parameters. When viewing a query like 'SELECT * FROM table WHERE id=$$id$$', Explorer will generate UI for the 'id' parameter.
     - Parameters are stashed in the URL, so you can share links to parameterized queries with colleagues
 - **Schema Helper**
-    - /explorer/schema/ renders a list of your Django apps' table and column names that you can refer to while writing queries. Apps are excludable from this list so users aren't bogged down in tons of irrelevant tables. See settings documentation below for details.
+    - /explorer/schema/ renders a list of your Django apps' table and column names (and types) that you can refer to while writing queries. Apps are excludable from this list so users aren't bogged down in tons of irrelevant tables. See settings documentation below for details.
     - This is available quickly as a sidebar helper while composing queries (see screenshot)
     - Supports many_to_many relations as well
 - **Template Columns**
@@ -63,6 +66,8 @@ Features
 
     - And change your query to 'SELECT id AS "user", email FROM user'. Explorer will match the "user" column alias to the transform and merge each cell in that column into the template string. Cool!
 
+- **Query Logs**
+    - Explorer will save a snapshot of every query you execute so you can revert to previous versions (albeit with a little bit of manual work), and recover lost ad-hoc queries made from the Playground.
 - **Django Admin Support**
     - Download multiple queries at once as a zip file through Django's admin interface via a built-in admin action.
 - **Meaningful Test Coverage**
