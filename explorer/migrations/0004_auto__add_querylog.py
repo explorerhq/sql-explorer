@@ -3,6 +3,7 @@ from south.utils import datetime_utils as datetime
 from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
+from django.conf import settings
 
 
 user_model = getattr(settings, 'AUTH_USER_MODEL', 'auth.User')
