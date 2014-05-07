@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.forms.models import model_to_dict
 from explorer.tests.factories import SimpleQueryFactory
-from explorer.models import Query
+from explorer.models import Query, QueryLog
 from explorer import app_settings
 import time
 
@@ -206,25 +206,58 @@ class TestParamsInViews(TestCase):
 
 class TestCreatedBy(TestCase):
 
-    def test_query_update_doesnt_change_created_user(self):
+    def setUp(self):
         self.user = User.objects.create_superuser('admin', 'admin@admin.com', 'pwd')
         self.user2 = User.objects.create_superuser('admin2', 'admin2@admin.com', 'pwd')
         self.client.login(username='admin', password='pwd')
-        self.query = SimpleQueryFactory(created_by_user_id=1)
-        data = model_to_dict(self.query)
-        data["created_by_user"] = 2
-        self.client.post(reverse("query_detail", kwargs={'query_id': self.query.id}), data)
+        self.query = SimpleQueryFactory.build()
+        self.data = model_to_dict(self.query)
+        self.data["created_by_user"] = 2
+
+    def test_query_update_doesnt_change_created_user(self):
+        self.query.save()
+        self.client.post(reverse("query_detail", kwargs={'query_id': self.query.id}), self.data)
         q = Query.objects.get(id=self.query.id)
         self.assertEqual(q.created_by_user_id, 1)
 
 
     def test_new_query_gets_created_by_logged_in_user(self):
-        self.user1 = User.objects.create_superuser('admin', 'admin@admin.com', 'pwd')
-        self.user2 = User.objects.create_superuser('foo', 'foo@admin.com', 'pwd')
-        self.client.login(username='admin', password='pwd')
-        self.query = SimpleQueryFactory.build()
-        data = model_to_dict(self.query)
-        data["created_by_user"] = 2
-        self.client.post(reverse("query_create"), data)
+        self.client.post(reverse("query_create"), self.data)
         q = Query.objects.first()
         self.assertEqual(q.created_by_user_id, 1)
+
+
+class TestQueryLog(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_superuser('admin', 'admin@admin.com', 'pwd')
+        self.client.login(username='admin', password='pwd')
+
+    def test_playground_saves_query_to_log(self):
+        self.client.post(reverse("explorer_playground"), {'sql': 'select 1;'})
+        log = QueryLog.objects.first()
+        self.assertTrue(log.is_playground)
+        self.assertEqual(log.sql, 'select 1;')
+
+    # Since it will be saved on the initial query creation, no need to log it
+    def test_creating_query_does_not_save_to_log(self):
+        query = SimpleQueryFactory()
+        self.client.post(reverse("query_create"), model_to_dict(query))
+        self.assertEqual(0, QueryLog.objects.count())
+
+    def test_changing_query_saves_to_log(self):
+        query = SimpleQueryFactory()
+        data = model_to_dict(query)
+        data['sql'] = 'select 12345;'
+        self.client.post(reverse("query_detail", kwargs={'query_id': query.id}), data)
+        self.assertEqual(1, QueryLog.objects.count())
+
+    def test_unchanged_query_doesnt_save_to_log(self):
+        query = SimpleQueryFactory()
+        self.client.post(reverse("query_detail", kwargs={'query_id': query.id}), model_to_dict(query))
+        self.assertEqual(0, QueryLog.objects.count())
+
+    def test_retrieving_query_doesnt_save_to_log(self):
+        query = SimpleQueryFactory()
+        self.client.get(reverse("query_detail", kwargs={'query_id': query.id}))
+        self.assertEqual(0, QueryLog.objects.count())
