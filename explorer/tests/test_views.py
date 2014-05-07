@@ -202,3 +202,29 @@ class TestParamsInViews(TestCase):
         self.assertContains(resp, "123")
 
         app_settings.EXPLORER_PERMISSION_CHANGE = old
+
+
+class TestCreatedBy(TestCase):
+
+    def test_query_update_doesnt_change_created_user(self):
+        self.user = User.objects.create_superuser('admin', 'admin@admin.com', 'pwd')
+        self.user2 = User.objects.create_superuser('admin2', 'admin2@admin.com', 'pwd')
+        self.client.login(username='admin', password='pwd')
+        self.query = SimpleQueryFactory(created_by_user_id=1)
+        data = model_to_dict(self.query)
+        data["created_by_user"] = 2
+        self.client.post(reverse("query_detail", kwargs={'query_id': self.query.id}), data)
+        q = Query.objects.get(id=self.query.id)
+        self.assertEqual(q.created_by_user_id, 1)
+
+
+    def test_new_query_gets_created_by_logged_in_user(self):
+        self.user1 = User.objects.create_superuser('admin', 'admin@admin.com', 'pwd')
+        self.user2 = User.objects.create_superuser('foo', 'foo@admin.com', 'pwd')
+        self.client.login(username='admin', password='pwd')
+        self.query = SimpleQueryFactory.build()
+        data = model_to_dict(self.query)
+        data["created_by_user"] = 2
+        self.client.post(reverse("query_create"), data)
+        q = Query.objects.first()
+        self.assertEqual(q.created_by_user_id, 1)

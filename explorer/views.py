@@ -95,6 +95,10 @@ class CreateQueryView(ExplorerContextMixin, CreateView):
     def dispatch(self, *args, **kwargs):
         return super(CreateQueryView, self).dispatch(*args, **kwargs)
 
+    def form_valid(self, form):
+        form.instance.created_by_user = self.request.user
+        return super(CreateQueryView, self).form_valid(form)
+
     form_class = QueryForm
     template_name = 'explorer/query.html'
 
@@ -162,6 +166,11 @@ class QueryView(ExplorerContextMixin, View):
     @staticmethod
     def get_instance_and_form(request, query_id):
         query = get_object_or_404(Query, pk=query_id)
+
+        #ensure that the created_by_user_id is not getting overwritten
+        if query.created_by_user_id and request.POST.get('created_by_user', None):
+            request.POST['created_by_user'] = query.created_by_user_id
+
         form = QueryForm(request.POST if len(request.POST) else None, instance=query)
         return query, form
 
