@@ -58,3 +58,16 @@ class Query(models.Model):
 
     def get_absolute_url(self):
         return reverse("query_detail", kwargs={'query_id': self.id})
+
+    def log(self, user):
+        log_entry = QueryLog(sql=self.sql, query_id=self.id, run_by_user=user, is_playground=not bool(self.id))
+        log_entry.save()
+
+
+class QueryLog(models.Model):
+
+    sql = models.TextField()
+    query = models.ForeignKey(Query, null=True, blank=True, on_delete=models.SET_NULL)
+    is_playground = models.BooleanField(default=False)
+    run_by_user = models.ForeignKey(get_user_model(), null=True, blank=True)
+    run_at = models.DateTimeField(auto_now_add=True)

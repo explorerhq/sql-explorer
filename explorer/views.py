@@ -130,6 +130,7 @@ class PlayQueryView(ExplorerContextMixin, View):
         if not sql:
             return PlayQueryView.render(request)
         query = Query(sql=sql, title="Playground")
+        query.log(request.user)
         return self.render_with_sql(request, query)
 
     def render(self, request):
@@ -160,17 +161,14 @@ class QueryView(ExplorerContextMixin, View):
 
         query, form = QueryView.get_instance_and_form(request, query_id)
         success = form.save() if form.is_valid() else None
+        if form.has_changed():
+            query.log(request.user)
         vm = query_viewmodel(request, query, form=form, message="Query saved." if success else None)
         return self.render_template('explorer/query.html', vm)
 
     @staticmethod
     def get_instance_and_form(request, query_id):
         query = get_object_or_404(Query, pk=query_id)
-
-        #ensure that the created_by_user_id is not getting overwritten
-        if query.created_by_user_id and request.POST.get('created_by_user', None):
-            request.POST['created_by_user'] = query.created_by_user_id
-
         form = QueryForm(request.POST if len(request.POST) else None, instance=query)
         return query, form
 
