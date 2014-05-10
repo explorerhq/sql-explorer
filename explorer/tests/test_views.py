@@ -107,6 +107,13 @@ class TestDownloadView(TestCase):
         resp = self.client.get(reverse("query_download", kwargs={'query_id': self.query.id}))
         self.assertTemplateUsed(resp, 'admin/login.html')
 
+    def test_params_in_download(self):
+        q = SimpleQueryFactory(sql="select '$$foo$$';")
+        url = '%s?params=%s' % (reverse("query_download", kwargs={'query_id': q.id}), '{"foo":123}')
+        resp = self.client.get(url)
+        self.assertContains(resp, "'123'")
+
+
 
 class TestQueryPlayground(TestCase):
 

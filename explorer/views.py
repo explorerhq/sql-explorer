@@ -1,4 +1,4 @@
-from django.http.response import HttpResponseRedirect
+from django.http.response import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.views.generic.base import View
@@ -8,7 +8,6 @@ from django.views.decorators.http import require_POST, require_GET
 from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse_lazy
 
-from explorer.actions import generate_report_action
 from explorer.models import Query, QueryLog
 from explorer.app_settings import EXPLORER_PERMISSION_VIEW, EXPLORER_PERMISSION_CHANGE, EXPLORER_RECENT_QUERY_COUNT
 from explorer.forms import QueryForm
@@ -51,9 +50,11 @@ class ExplorerContextMixin(object):
 @require_GET
 def download_query(request, query_id):
     query = get_object_or_404(Query, pk=query_id)
-    #query.params = url_get_params(request)
-    fn = generate_report_action()
-    return fn(None, None, [query, ])
+    data = query.csv_report(url_get_params(request))
+    response = HttpResponse(data, content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=%s.csv' % query.title.replace(',', '')
+    response['Content-Length'] = len(data)
+    return response
 
 
 @change_permission
@@ -62,10 +63,11 @@ def csv_from_sql(request):
     sql = request.POST.get('sql', None)
     if not sql:
         return PlayQueryView.render(request)
-    query = Query(sql=sql)
-    #query.params = url_get_params(request)
-    fn = generate_report_action()
-    return fn(None, None, [query, ])
+    data = Query(sql=sql).csv_report(url_get_params(request))
+    response = HttpResponse(data, content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=query.csv'
+    response['Content-Length'] = len(data)
+    return response
 
 
 @change_permission

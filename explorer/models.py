@@ -27,8 +27,8 @@ class Query(models.Model):
     def final_sql(self, params=None):
         return swap_params(self.sql, params)
 
-    def csv_report(self):
-        headers, data, duration, error = self.headers_and_data()
+    def csv_report(self, params=None):
+        headers, data, duration, error = self.headers_and_data(params)
         if error:
             return error
         return write_csv(headers, data)

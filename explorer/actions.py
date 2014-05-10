@@ -41,5 +41,3 @@ def _build_zip(queries):
     ret = FileWrapper(temp)
     temp.seek(0)
     return ret
-
-
