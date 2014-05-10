@@ -21,8 +21,8 @@ class Query(models.Model):
     def __unicode__(self):
         return unicode(self.title)
 
-    def passes_blacklist(self):
-        return passes_blacklist(self.final_sql())
+    def passes_blacklist(self, params=None):
+        return passes_blacklist(self.final_sql(params=params))
 
     def final_sql(self, params=None):
         return swap_params(self.sql, params)
@@ -43,7 +43,7 @@ class Query(models.Model):
             return str(e)
 
     def headers_and_data(self, params=None):
-        if not self.passes_blacklist():
+        if not self.passes_blacklist(params):
             return [], [], None, MSG_FAILED_BLACKLIST
         try:
             return execute_and_fetch_query(self.final_sql(params))

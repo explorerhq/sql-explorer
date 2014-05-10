@@ -51,7 +51,7 @@ class ExplorerContextMixin(object):
 @require_GET
 def download_query(request, query_id):
     query = get_object_or_404(Query, pk=query_id)
-    query.params = url_get_params(request)
+    #query.params = url_get_params(request)
     fn = generate_report_action()
     return fn(None, None, [query, ])
 
@@ -63,7 +63,7 @@ def csv_from_sql(request):
     if not sql:
         return PlayQueryView.render(request)
     query = Query(sql=sql)
-    query.params = url_get_params(request)
+    #query.params = url_get_params(request)
     fn = generate_report_action()
     return fn(None, None, [query, ])
 

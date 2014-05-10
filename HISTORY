@@ -1,11 +1,11 @@
 0.5.0
 =====
 
-- Query logs! A very minimal implementation of logging previous queries. This is accessible via explorer/logs/. For now this just means you can look at old queries (oh wait? what was that playground query I ran this morning?) and with better UI it means query versioning, reverts, and all sorts of other fancy things. Already this iteration has given me good peace of mind though :)
-- Actually captures the creator of the query via a ForeignKey relation, instead of just using a Char field.
-- Re-introduced type information in the schema helpers.
+- Query logs! A very minimal implementation of logging previous queries. This is accessible via explorer/logs/. For now this just means you can look at previously executed queries (so you don't, for instance, lose that plauground query you were working on because you closed a browser tab). The data model is in place, and it's just a nice UI away from query versioning, reverts, and all sorts of other fancy things. For now it's for peace of mind and can be accessed at explorer/logs/
+- Actually captures the creator of the query via a ForeignKey relation, instead of just using a Char field
+- Re-introduced type information in the schema helpers
 - Proper relative URL handling after downloading a query as CSV
-- Users with view permissions can use query parameters. This is potentially dangerous because I don't think they are safe against injection...
+- Users with view permissions can use query parameters. There is potential for SQL injection here. I think about the permissions as being about preventing users from borking up queries, not preventing them from viewing data. You've been warned.
 - Refactored params handling for extra safety in multi-threaded enviros
 
 0.4.1

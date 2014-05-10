@@ -16,6 +16,11 @@ class TestQueryModel(TestCase):
         headers, data, duration, error = q.headers_and_data()
         self.assertEqual(error, MSG_FAILED_BLACKLIST)
 
+    def test_blacklist_prevents_bad_sql_with_params_from_executing(self):
+        q = SimpleQueryFactory(sql="select '$$foo$$';")
+        headers, data, duration, error = q.headers_and_data(params={"foo": "'; delete from *; select'"})
+        self.assertEqual(error, MSG_FAILED_BLACKLIST)
+
     def test_params_get_merged(self):
         q = SimpleQueryFactory(sql="select '$$foo$$';")
         params = {'foo': 'bar', 'mux': 'qux'}
