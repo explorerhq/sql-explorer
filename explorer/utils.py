@@ -6,6 +6,7 @@ import re
 from time import time
 from explorer import app_settings
 from django.db import connections, connection, models, transaction, DatabaseError
+from django.http import HttpResponse
 
 EXPLORER_PARAM_TOKEN = "$$"
 
@@ -114,11 +115,26 @@ def extract_params(text):
 
 
 def write_csv(headers, data):
-    csv_report = cStringIO.StringIO()
-    writer = csv.writer(csv_report)
+    csv_data = cStringIO.StringIO()
+    writer = csv.writer(csv_data)
     writer.writerow(headers)
     map(lambda row: writer.writerow(row), data)
-    return csv_report.getvalue()
+    return csv_data.getvalue()
+
+
+def build_download_response(query, request):
+    data = csv_report(query, url_get_params(request))
+    response = HttpResponse(data, content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=%s.csv' % query.title.replace(',', '')
+    response['Content-Length'] = len(data)
+    return response
+
+
+def csv_report(query, params=None):
+    headers, data, duration, error = query.headers_and_data(params)
+    if error:
+        return error
+    return write_csv(headers, data)
 
 
 ## Helpers

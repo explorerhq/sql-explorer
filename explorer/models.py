@@ -27,12 +27,6 @@ class Query(models.Model):
     def final_sql(self, params=None):
         return swap_params(self.sql, params)
 
-    def csv_report(self, params=None):
-        headers, data, duration, error = self.headers_and_data(params)
-        if error:
-            return error
-        return write_csv(headers, data)
-
     def error_messages(self):
         if not self.passes_blacklist():
             return MSG_FAILED_BLACKLIST

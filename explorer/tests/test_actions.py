@@ -1,6 +1,7 @@
 from django.test import TestCase
 from explorer.actions import generate_report_action
 from explorer.tests.factories import SimpleQueryFactory
+from explorer.utils import csv_report
 import StringIO
 from zipfile import ZipFile
 
@@ -12,7 +13,7 @@ class testSqlQueryActions(TestCase):
         expected_csv = 'two\r\n2\r\n'
 
         r = SimpleQueryFactory()
-        result = r.csv_report()
+        result = csv_report(r)
 
         self.assertIsNotNone(result, "Query '%s' returned None." % r.title)
         self.assertEqual(result.lower(), expected_csv)

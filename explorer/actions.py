@@ -4,6 +4,7 @@ from datetime import date
 from django.http import HttpResponse
 from django.core.servers.basehttp import FileWrapper
 from collections import defaultdict
+from explorer.utils import csv_report
 
 _ = lambda x: x
 
@@ -28,7 +29,7 @@ def _package(queries):
     name_root = lambda n: "attachment; filename=%s" % n
     ret["content_type"] = (is_one and 'text/csv') or 'application/zip'
     ret["filename"] = (is_one and name_root('%s.csv' % queries[0].title.replace(',', ''))) or name_root("Report_%s.zip" % date.today())
-    ret["data"] = (is_one and queries[0].csv_report()) or _build_zip(queries)
+    ret["data"] = (is_one and csv_report(queries[0])) or _build_zip(queries)
     ret["length"] = (is_one and len(ret["data"]) or ret["data"].blksize)
     return ret
 
@@ -36,7 +37,7 @@ def _package(queries):
 def _build_zip(queries):
     temp = tempfile.TemporaryFile()
     zip_file = ZipFile(temp, 'w')
-    map(lambda r: zip_file.writestr('%s.csv' % r.title, r.csv_report() or "Error!"), queries)
+    map(lambda r: zip_file.writestr('%s.csv' % r.title, csv_report(r) or "Error!"), queries)
     zip_file.close()
     ret = FileWrapper(temp)
     temp.seek(0)

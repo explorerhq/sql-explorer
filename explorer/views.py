@@ -11,7 +11,7 @@ from django.core.urlresolvers import reverse_lazy
 from explorer.models import Query, QueryLog
 from explorer.app_settings import EXPLORER_PERMISSION_VIEW, EXPLORER_PERMISSION_CHANGE, EXPLORER_RECENT_QUERY_COUNT
 from explorer.forms import QueryForm
-from explorer.utils import url_get_rows, url_get_query_id, schema_info, url_get_params, safe_admin_login_prompt
+from explorer.utils import url_get_rows, url_get_query_id, schema_info, url_get_params, safe_admin_login_prompt, build_download_response
 
 
 def view_permission(f):
@@ -50,11 +50,7 @@ class ExplorerContextMixin(object):
 @require_GET
 def download_query(request, query_id):
     query = get_object_or_404(Query, pk=query_id)
-    data = query.csv_report(url_get_params(request))
-    response = HttpResponse(data, content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=%s.csv' % query.title.replace(',', '')
-    response['Content-Length'] = len(data)
-    return response
+    return build_download_response(query, request)
 
 
 @change_permission
@@ -63,11 +59,7 @@ def csv_from_sql(request):
     sql = request.POST.get('sql', None)
     if not sql:
         return PlayQueryView.render(request)
-    data = Query(sql=sql).csv_report(url_get_params(request))
-    response = HttpResponse(data, content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=query.csv'
-    response['Content-Length'] = len(data)
-    return response
+    return build_download_response(Query(sql=sql, title="Playground"), request)
 
 
 @change_permission
