@@ -142,5 +142,5 @@ EXPLORER_CONNECTION_NAME     The name of the Django database connection to use. 
 EXPLORER_PERMISSION_VIEW     Callback to check if the user is allowed to view and execute stored queries                                     lambda u: u.is_staff
 EXPLORER_PERMISSION_CHANGE   Callback to check if the user is allowed to add/change/delete queries                                           lambda u: u.is_staff
 EXPLORER_TRANSFORMS          List of tuples like [('alias', 'Template for {0}')]. See features section of this doc for more info.            []
-EXPLORER_RECENT_QUERY_COUNT  The number of recent queries to show at the top of the query listing.                                         10
+EXPLORER_RECENT_QUERY_COUNT  The number of recent queries to show at the top of the query listing.                                           10
 ============================ =============================================================================================================== ================================================================================================================================================
