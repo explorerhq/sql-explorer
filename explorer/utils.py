@@ -193,6 +193,10 @@ def url_get_query_id(request):
     return get_int_from_request(request, 'query_id', None)
 
 
+def url_get_log_id(request):
+    return get_int_from_request(request, 'querylog_id', None)
+
+
 def url_get_params(request):
     return get_json_from_request(request, 'params')
 
