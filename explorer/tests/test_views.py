@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.forms.models import model_to_dict
-from explorer.tests.factories import SimpleQueryFactory
+from explorer.tests.factories import SimpleQueryFactory, QueryLogFactory
 from explorer.models import Query, QueryLog
 from explorer import app_settings
 import time
@@ -146,6 +146,11 @@ class TestQueryPlayground(TestCase):
         self.client.logout()
         resp = self.client.get(reverse("explorer_playground"))
         self.assertTemplateUsed(resp, 'admin/login.html')
+
+    def test_loads_query_from_log(self):
+        querylog = QueryLogFactory()
+        resp = self.client.get('%s?querylog_id=%s' % (reverse("explorer_playground"), querylog.id))
+        self.assertContains(resp, "FOUR")
 
 
 class TestCSVFromSQL(TestCase):

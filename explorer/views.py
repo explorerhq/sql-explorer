@@ -11,7 +11,7 @@ from django.core.urlresolvers import reverse_lazy
 from explorer.models import Query, QueryLog
 from explorer.app_settings import EXPLORER_PERMISSION_VIEW, EXPLORER_PERMISSION_CHANGE, EXPLORER_RECENT_QUERY_COUNT
 from explorer.forms import QueryForm
-from explorer.utils import url_get_rows, url_get_query_id, schema_info, url_get_params, safe_admin_login_prompt, build_download_response
+from explorer.utils import url_get_rows, url_get_query_id, url_get_log_id, schema_info, url_get_params, safe_admin_login_prompt, build_download_response
 
 
 def view_permission(f):
@@ -89,13 +89,9 @@ class ListQueryLogView(ExplorerContextMixin, ListView):
     def dispatch(self, *args, **kwargs):
         return super(ListQueryLogView, self).dispatch(*args, **kwargs)
 
-    def get_context_data(self, **kwargs):
-        recent_logs = QueryLog.objects.all().order_by('-run_at')[:100]
-        context = super(ListQueryLogView, self).get_context_data(**kwargs)
-        context['recent_logs'] = recent_logs
-        return context
-
+    context_object_name = "recent_logs"
     model = QueryLog
+    paginate_by = 20
 
 
 class CreateQueryView(ExplorerContextMixin, CreateView):
@@ -129,10 +125,14 @@ class PlayQueryView(ExplorerContextMixin, View):
         return super(PlayQueryView, self).dispatch(*args, **kwargs)
 
     def get(self, request):
-        if not url_get_query_id(request):
-            return self.render(request)
-        query = get_object_or_404(Query, pk=url_get_query_id(request))
-        return self.render_with_sql(request, query)
+        if url_get_query_id(request):
+            query = get_object_or_404(Query, pk=url_get_query_id(request))
+            return self.render_with_sql(request, query)
+        if url_get_log_id(request):
+            log = get_object_or_404(QueryLog, pk=url_get_log_id(request))
+            query = Query(sql=log.sql, title="Playground")
+            return self.render_with_sql(request, query)
+        return self.render(request)
 
     def post(self, request):
         sql = request.POST.get('sql', None)
