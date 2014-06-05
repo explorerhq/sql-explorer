@@ -89,13 +89,9 @@ class ListQueryLogView(ExplorerContextMixin, ListView):
     def dispatch(self, *args, **kwargs):
         return super(ListQueryLogView, self).dispatch(*args, **kwargs)
 
-    def get_context_data(self, **kwargs):
-        recent_logs = QueryLog.objects.all().order_by('-run_at')[:100]
-        context = super(ListQueryLogView, self).get_context_data(**kwargs)
-        context['recent_logs'] = recent_logs
-        return context
-
+    context_object_name = "recent_logs"
     model = QueryLog
+    paginate_by = 20
 
 
 class CreateQueryView(ExplorerContextMixin, CreateView):
