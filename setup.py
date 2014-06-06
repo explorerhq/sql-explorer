@@ -15,10 +15,10 @@ setup(
     version = __version__,
     author = "Chris Clark",
     author_email = "chris@untrod.com",
-    description = ("A pluggable app that allows admins to execute SQL"
-		   " and view and export the results. Inspired by Stack Exchange Data Explorer."),
+    description = ("A pluggable app that allows users (admins) to execute SQL,"
+		   " view, and export the results. Inspired by Stack Exchange Data Explorer."),
     license = "MIT",
-    keywords = "django sql explorer reports reporting csv",
+    keywords = "django sql explorer reports reporting csv database query",
     url = "https://github.com/epantry/django-sql-explorer",
     packages=['explorer'],
     long_description=read('README.rst'),
