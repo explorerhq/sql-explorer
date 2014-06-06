@@ -22,19 +22,23 @@ django-sql-explorer is MIT licensed, and pull requests are welcome!
 
 **A view of a query**
 
-`Screenshot <http://www.untrod.com/django-sql-explorer/query1.jpg>`_
+.. image:: https://s3.amazonaws.com/protopantry/explorer/1-2.png
 
 **Viewing all queries**
 
-`Screenshot <http://www.untrod.com/django-sql-explorer/query2.5.jpg>`_
+.. image:: https://s3.amazonaws.com/protopantry/explorer/1-4.png
 
 **Queries can accept parameters. Neato!**
 
-`Screenshot <http://www.untrod.com/django-sql-explorer/query3.5.jpg>`_
+.. image:: https://s3.amazonaws.com/protopantry/explorer/1-1.png
 
 **Quick access to DB schema info**
 
-`Screenshot <http://www.untrod.com/django-sql-explorer/query-schema-2.jpg>`_
+.. image:: https://s3.amazonaws.com/protopantry/explorer/1-5.png
+
+**View & access query history**
+
+.. image:: https://s3.amazonaws.com/protopantry/explorer/1-3.png
 
 
 Features
@@ -67,7 +71,7 @@ Features
     - And change your query to 'SELECT id AS "user", email FROM user'. Explorer will match the "user" column alias to the transform and merge each cell in that column into the template string. Cool!
 
 - **Query Logs**
-    - Explorer will save a snapshot of every query you execute so you can revert to previous versions (albeit with a little bit of manual work), and recover lost ad-hoc queries made from the Playground.
+    - Explorer will save a snapshot of every query you execute so you can recover lost ad-hoc queries, and see what you've been querying.
 - **Django Admin Support**
     - Download multiple queries at once as a zip file through Django's admin interface via a built-in admin action.
 - **Meaningful Test Coverage**
