@@ -120,7 +120,7 @@ Name                                                   Version License
 `jQuery <http://jquery.com/>`_                         2.0.3   MIT
 `Underscore <http://underscorejs.org/>`_               1.5.2   MIT
 `Codemirror <http://codemirror.net/>`_                 3.19.0  MIT
-`floatThead <http://mkoryak.github.io/floatThead/>`_   1.2.0   Creative Commons
+`floatThead <http://mkoryak.github.io/floatThead/>`_   1.2.7   MIT
 ====================================================== ======= ================
 
 Factory Boy is needed if you'd like to run the tests, which can you do easily:
