@@ -1,8 +1,8 @@
 .. image:: https://travis-ci.org/epantry/django-sql-explorer.png?branch=master
 
-**Upgrading from previous verion**
+**Upgrading from previous version**
 
-As of version 0.5, South migrations have been introduced to handle model schema changes. After upgrading to 0.5, you will have to convert Explorer to a south app by faking the first migration:
+As of version 0.5, South migrations are used to handle model schema changes. After upgrading to 0.5, you will have to convert Explorer to a south app by faking the first migration:
 
 ``python manage.py migrate explorer 0001 --fake``
 
