@@ -46,17 +46,25 @@
         </thead>
         <tbody>
             {% for object in object_list %}
-            <tr>
-                <td><a href="{{ object.id }}/">{{ object }}</a></td>
-                <td>{{ object.created_at|date:"SHORT_DATE_FORMAT" }} by {% firstof object.created_by_user 'unknown' %}</td>
-                <td style="padding: 2px 0px 0px 45px; vertical-align: middle">
-                    <a href="{{ object.id }}/download"><i class="glyphicon glyphicon-download" style="font-size: 20px;"></i></a>
-                </td>
-                {% if can_change %}
+            <tr {% if object.is_in_category %}class="collapse in collapse-{{ object.header }}"{% endif %}>
+                {% if object.is_header %}
+                    <td><strong><span data-toggle="collapse" data-target=".collapse-{{object.title}}" style="text-decoration: underline; cursor: pointer;">{{ object.title }}</span></strong></td>
+                    <td></td><td></td><td></td>
+                {% else %}
+                    <td {% if object.is_in_category %}style="border-left: 1px solid; padding-left: 30px;"{% endif %}>
+                        <a href="{{ object.id }}/">{{ object.title }}</a>
+                    </td>
+                    <td>{{ object.created_at|date:"SHORT_DATE_FORMAT" }} by {% firstof object.created_by_user 'unknown' %}</td>
+                    <td style="padding: 2px 0px 0px 45px; vertical-align: middle">
+                        <a href="{{ object.id }}/download"><i class="glyphicon glyphicon-download" style="font-size: 20px;"></i></a>
+                    </td>
                     <td style="padding: 0px 0px 0px 20px; vertical-align: middle">
-                        <a href="{{ object.id }}/delete"><i class="glyphicon glyphicon-trash" style="font-size: 18px;"></i></a>
+                        {% if can_change %}
+                            <a href="{{ object.id }}/delete"><i class="glyphicon glyphicon-trash" style="font-size: 18px;"></i></a>
+                        {% endif %}
                     </td>
                 {% endif %}
+
             </tr>
             {% endfor %}
         </tbody>

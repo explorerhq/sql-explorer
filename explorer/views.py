@@ -7,6 +7,7 @@ from django.views.generic.edit import CreateView, DeleteView
 from django.views.decorators.http import require_POST, require_GET
 from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse_lazy
+from django.forms.models import model_to_dict
 
 from explorer.models import Query, QueryLog
 from explorer.app_settings import EXPLORER_PERMISSION_VIEW, EXPLORER_PERMISSION_CHANGE, EXPLORER_RECENT_QUERY_COUNT
@@ -77,6 +78,22 @@ class ListQueryView(ExplorerContextMixin, ListView):
     def get_context_data(self, **kwargs):
         recent_queries = Query.objects.all().order_by('-last_run_date')[:EXPLORER_RECENT_QUERY_COUNT]
         context = super(ListQueryView, self).get_context_data(**kwargs)
+
+        dict_list = []
+        headers = []
+        for q in self.object_list:
+            model_dict = model_to_dict(q)
+            if ' - ' in q.title:
+                header = q.title.split(' - ')[0]
+                if header not in headers:
+                    headers.append(header)
+                    dict_list.append({'title': header, 'is_header': True, 'is_in_category': False})
+
+                model_dict.update({'is_header': False, 'is_in_category': True, 'header': header})
+            else:
+                model_dict.update({'is_header': False, 'is_in_category': False})
+            dict_list.append(model_dict)
+        context['object_list'] = dict_list
         context['recent_queries'] = recent_queries
         return context
 
