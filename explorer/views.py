@@ -14,6 +14,7 @@ from explorer.app_settings import EXPLORER_PERMISSION_VIEW, EXPLORER_PERMISSION_
 from explorer.forms import QueryForm
 from explorer.utils import url_get_rows, url_get_query_id, url_get_log_id, schema_info, url_get_params, safe_admin_login_prompt, build_download_response
 
+import re
 
 def view_permission(f):
     def wrap(request, *args, **kwargs):
@@ -76,23 +77,37 @@ class ListQueryView(ExplorerContextMixin, ListView):
         return super(ListQueryView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
+        from collections import defaultdict
         recent_queries = Query.objects.all().order_by('-last_run_date')[:EXPLORER_RECENT_QUERY_COUNT]
         context = super(ListQueryView, self).get_context_data(**kwargs)
 
         dict_list = []
-        headers = []
+        headers = defaultdict(int)
+        rendered_headers = []
+        pattern = re.compile('[\W_]+')
+
+        # First pass - build up a list of headers and their counts
+        # This will identify 'header - title' and also any duplicate named queries
+        for q in self.object_list:
+            headers[q.title.split(' - ')[0]] += 1
+
+        # Second pass - if there are >1 items in a header, build the header
         for q in self.object_list:
             model_dict = model_to_dict(q)
-            if ' - ' in q.title:
-                header = q.title.split(' - ')[0]
-                if header not in headers:
-                    headers.append(header)
-                    dict_list.append({'title': header, 'is_header': True, 'is_in_category': False})
+            model_dict['created_at'] = q.created_at
+            model_dict['created_by_user'] = q.created_by_user.__unicode__ if q.created_by_user else None
+            header = q.title.split(' - ')[0]
+            collapse_target = pattern.sub('', header)  # this gets used as a CSS class, so make it alphanumeric
+            model_dict.update({'is_header': False, 'is_in_category': headers[header] > 1, 'header': header, 'collapse_target': collapse_target})
 
-                model_dict.update({'is_header': False, 'is_in_category': True, 'header': header})
-            else:
-                model_dict.update({'is_header': False, 'is_in_category': False})
+            # inject the header
+            if headers[header] > 1 and header not in rendered_headers:
+                dict_list.append({'title': header, 'is_header': True, 'is_in_category': False, 'collapse_target': collapse_target})
+                rendered_headers.append(header)
+
+            # add the query
             dict_list.append(model_dict)
+
         context['object_list'] = dict_list
         context['recent_queries'] = recent_queries
         return context
