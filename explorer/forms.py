@@ -14,11 +14,12 @@ class SqlField(Field):
         """
 
         query = Query(sql=value)
-        error = None
-        if not query.available_params():
-            error = query.error_messages()
-        elif not query.passes_blacklist():
-            error = MSG_FAILED_BLACKLIST
+
+        error = MSG_FAILED_BLACKLIST if not query.passes_blacklist() else None
+
+        if not error and not query.available_params():
+            error = query.try_execute()
+
         if error:
             raise ValidationError(
                 _(error),

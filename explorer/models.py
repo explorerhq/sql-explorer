@@ -27,16 +27,20 @@ class Query(models.Model):
     def final_sql(self, params=None):
         return swap_params(self.sql, params)
 
-    def error_messages(self):
-        if not self.passes_blacklist():
-            return MSG_FAILED_BLACKLIST
+    def try_execute(self):
         try:
             execute_query(self.final_sql())
-            return None
         except DatabaseError, e:
             return str(e)
 
     def headers_and_data(self, params=None):
+        """
+        Retrieve the results from a query.
+
+        :param params: A dictionary of Query param values. These will get merged into the final SQL before execution.
+        :return: ([headers], [data], duration in ms, error message)
+        """
+
         if not self.passes_blacklist(params):
             return [], [], None, MSG_FAILED_BLACKLIST
         try:
@@ -45,6 +49,13 @@ class Query(models.Model):
             return [], [], None, str(e)
 
     def available_params(self, param_values=None):
+        """
+        Merge parameter values into a dictionary of available parameters
+
+        :param param_values: A dictionary of Query param values.
+        :return: A merged dictionary of parameter names and values. Values of non-existent parameters are removed.
+        """
+
         p = extract_params(self.sql)
         if param_values:
             shared_dict_update(p, param_values)

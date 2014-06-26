@@ -76,6 +76,7 @@ def schema_info():
         ]
 
     """
+
     ret = []
     apps = [a for a in models.get_apps() if a.__package__ not in app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS]
     for app in apps:
