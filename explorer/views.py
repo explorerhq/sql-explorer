@@ -85,31 +85,41 @@ class ListQueryView(ExplorerContextMixin, ListView):
         return context
 
     def _build_queries_and_headers(self):
+        """
+        Build a list of query information and headers (pseudo-folders) for consumption by the template.
+
+        Strategy: Look for queries with titles of the form "something - else" (eg. with a ' - ' in the middle)
+                  and split on the ' - ', treating the left side as a "header" (or folder). Interleave the
+                  headers into the ListView's object_list as appropriate. Ignore headers that only have one
+                  child. The front end uses bootstrap's JS Collapse plugin, which necessitates generating CSS
+                  classes to map the header onto the child rows, hence the collapse_target variable.
+
+                  To make the return object homogeneous, convert the object_list models into dictionaries for
+                  interleaving with the header "objects". This necessitates special handling of 'created_at'
+                  and 'created_by_user' because model_to_dict doesn't include non-editable fields (created_at)
+                  and will give the int representation of the user instead of the string representation.
+
+        :return: A list of model dictionaries representing all the query objects, interleaved with header dictionaries.
+        """
+
         dict_list = []
         rendered_headers = []
         pattern = re.compile('[\W_]+')
 
-        # Build a list of headers and their counts
         headers = Counter([q.title.split(' - ')[0] for q in self.object_list])
 
-        # Add extra info to queries that fall under a header and interleave the header objects themselves
         for q in self.object_list:
             model_dict = model_to_dict(q)
             header = q.title.split(' - ')[0]
-            collapse_target = pattern.sub('', header)  # this gets used as a CSS class, so make it alphanumeric
+            collapse_target = pattern.sub('', header)
 
-            # inject the header, if a header exists for the upcoming query and we haven't rendered the header already
             if headers[header] > 1 and header not in rendered_headers:
                 dict_list.append({'title': header,
                                   'is_header': True,
                                   'collapse_target': collapse_target,
                                   'count': headers[header]})
-                rendered_headers.append(header)  # remember that we've already rendered this one
+                rendered_headers.append(header)
 
-            # Set up the query for rendering in the template.
-            # Need to specially handle 'created_at' and 'created_by_user' because model_to_dict
-            # doesn't include non-editable fields (created_at) and will give the int representation
-            # of the user instead of the string representation
             model_dict.update({'is_in_category': headers[header] > 1,
                                'collapse_target': collapse_target,
                                'created_at': q.created_at,

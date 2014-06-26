@@ -1,5 +1,5 @@
 from django.forms import ModelForm, Field, ValidationError
-from explorer.models import Query
+from explorer.models import Query, MSG_FAILED_BLACKLIST
 
 _ = lambda x: x
 
@@ -7,15 +7,24 @@ _ = lambda x: x
 class SqlField(Field):
 
     def validate(self, value):
+        """
+        Ensure that the SQL passes the blacklist and executes. Execution check is skipped if params are present.
+
+        :param value: The SQL for this Query model.
+        """
+
         query = Query(sql=value)
+        error = None
         if not query.available_params():
             error = query.error_messages()
-            if error:
-                raise ValidationError(
-                    _(error),
-                    params={'value': value},
-                    code="InvalidSql"
-                )
+        elif not query.passes_blacklist():
+            error = MSG_FAILED_BLACKLIST
+        if error:
+            raise ValidationError(
+                _(error),
+                params={'value': value},
+                code="InvalidSql"
+            )
 
 
 class QueryForm(ModelForm):

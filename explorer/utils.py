@@ -12,6 +12,7 @@ EXPLORER_PARAM_TOKEN = "$$"
 
 ## SQL Specific Things
 
+
 def passes_blacklist(sql):
     clean = functools.reduce(lambda sql, term: sql.upper().replace(term, ""), app_settings.EXPLORER_SQL_WHITELIST, sql)
     return not any(write_word in clean.upper() for write_word in app_settings.EXPLORER_SQL_BLACKLIST)
@@ -60,16 +61,21 @@ def transform_row(transforms, row):
     return row
 
 
-# returns schema information via django app inspection (sorted alphabetically by db table name):
-# [
-#     ("package.name -> ModelClass", "db_table_name",
-#         [
-#             ("db_column_name", "DjangoFieldType"),
-#             (...),
-#         ]
-#     )
-# ]
 def schema_info():
+    """
+    Construct schema information via introspection of the django models in the database.
+
+    :return: Schema information of the following form, sorted by db_table_name.
+        [
+            ("package.name -> ModelClass", "db_table_name",
+                [
+                    ("db_column_name", "DjangoFieldType"),
+                    (...),
+                ]
+            )
+        ]
+
+    """
     ret = []
     apps = [a for a in models.get_apps() if a.__package__ not in app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS]
     for app in apps:
@@ -89,12 +95,11 @@ def schema_info():
                        [_format_field(f) for f in m2m.rel.through._meta.fields]
                     ) for m2m in model._meta.many_to_many]
 
-    return sorted(ret, key=lambda t: t[1])  # sort by table name
+    return sorted(ret, key=lambda t: t[1])
 
 
 def _format_field(field):
     return (field.get_attname_column()[1], field.get_internal_type())
-
 
 
 def param(name):
@@ -141,6 +146,8 @@ def csv_report(query, params=None):
 from django.contrib.admin.forms import AdminAuthenticationForm
 from django.contrib.auth.views import login
 from django.contrib.auth import REDIRECT_FIELD_NAME
+
+
 def safe_admin_login_prompt(request):
     defaults = {
         'template_name': 'admin/login.html',
