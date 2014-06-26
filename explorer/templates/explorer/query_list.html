@@ -48,10 +48,13 @@
             {% for object in object_list %}
             <tr {% if object.is_in_category %}class="collapse in collapse-{{ object.collapse_target }}"{% endif %}>
                 {% if object.is_header %}
-                    <td><strong><span data-toggle="collapse" data-target=".collapse-{{object.collapse_target}}"
+                    <td>
+                        <strong>
+                            <span data-toggle="collapse" data-target=".collapse-{{object.collapse_target}}"
                                       style="text-decoration: underline; cursor: pointer; color: #428bca;">
-                        {{ object.title }}</span></strong></td>
-                    <td></td><td></td><td></td>
+                            {{ object.title }} ({{ object.count }})</span>
+                        </strong>
+                    </td><td></td><td></td><td></td>
                 {% else %}
                     <td {% if object.is_in_category %}style="padding-left: 30px;"{% endif %}>
                         {% if object.is_in_category %}|-- {% endif %}<a href="{{ object.id }}/">{{ object.title }}</a>

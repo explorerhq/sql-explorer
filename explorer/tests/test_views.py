@@ -18,6 +18,16 @@ class TestQueryListView(TestCase):
         resp = self.client.get(reverse("explorer_index"))
         self.assertTemplateUsed(resp, 'admin/login.html')
 
+    def test_headers(self):
+        SimpleQueryFactory(title='foo - bar1')
+        SimpleQueryFactory(title='foo - bar2')
+        SimpleQueryFactory(title='foo - bar3')
+        SimpleQueryFactory(title='qux - mux')
+        resp = self.client.get(reverse("explorer_index"))
+        self.assertContains(resp, 'foo (3)')
+        self.assertContains(resp, 'foo - bar2')
+        self.assertContains(resp, 'qux - mux')
+
 
 class TestQueryCreateView(TestCase):
 
@@ -281,3 +291,8 @@ class TestQueryLog(TestCase):
         self.client.post(reverse("query_detail", kwargs={'query_id': query.id}), data)
         resp = self.client.get(reverse("explorer_logs"))
         self.assertContains(resp, 'select 12345;')
+
+    def test_admin_required(self):
+        self.client.logout()
+        resp = self.client.get(reverse("explorer_logs"))
+        self.assertTemplateUsed(resp, 'admin/login.html')
