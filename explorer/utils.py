@@ -5,7 +5,7 @@ import json
 import re
 from time import time
 from explorer import app_settings
-from django.db import connections, connection, models, transaction, DatabaseError
+from django.db import connections, connection, router, models, transaction, DatabaseError
 from django.http import HttpResponse
 
 EXPLORER_PARAM_TOKEN = "$$"
@@ -19,7 +19,15 @@ def passes_blacklist(sql):
 
 
 def execute_query(sql):
-    conn = connections[app_settings.EXPLORER_CONNECTION_NAME] if app_settings.EXPLORER_CONNECTION_NAME else connection
+    conn = None
+    apps = [a for a in models.get_apps() if a.__package__ not in app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS]
+    for app in apps:
+        for model in models.get_models(app):
+            if model._meta.db_table in sql:
+                conn = connections[router.db_for_read(model)]
+    if conn is None:
+        conn = connections[app_settings.EXPLORER_CONNECTION_NAME] if app_settings.EXPLORER_CONNECTION_NAME\
+            else connection
     cursor = conn.cursor()
     start_time = time()
 
