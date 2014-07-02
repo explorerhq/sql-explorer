@@ -23,7 +23,6 @@ class SqlField(Field):
         if error:
             raise ValidationError(
                 _(error),
-                params={'value': value},
                 code="InvalidSql"
             )
 
