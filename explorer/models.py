@@ -76,3 +76,6 @@ class QueryLog(models.Model):
     is_playground = models.BooleanField(default=False)
     run_by_user = models.ForeignKey(get_user_model(), null=True, blank=True)
     run_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-run_at']
