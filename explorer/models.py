@@ -1,7 +1,7 @@
 from explorer.utils import passes_blacklist, write_csv, swap_params, execute_query, execute_and_fetch_query, extract_params, shared_dict_update
 from django.db import models, DatabaseError
 from django.core.urlresolvers import reverse
-from django.contrib.auth import get_user_model
+from django.conf import settings
 
 MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist."
 
@@ -10,7 +10,7 @@ class Query(models.Model):
     title = models.CharField(max_length=255)
     sql = models.TextField()
     description = models.TextField(null=True, blank=True)
-    created_by_user = models.ForeignKey(get_user_model(), null=True, blank=True)
+    created_by_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     last_run_date = models.DateTimeField(auto_now=True)
 
@@ -74,7 +74,7 @@ class QueryLog(models.Model):
     sql = models.TextField()
     query = models.ForeignKey(Query, null=True, blank=True, on_delete=models.SET_NULL)
     is_playground = models.BooleanField(default=False)
-    run_by_user = models.ForeignKey(get_user_model(), null=True, blank=True)
+    run_by_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
     run_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
