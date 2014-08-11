@@ -44,8 +44,8 @@
                         {{ form.created_by_user.errors }}
                         <label for="id_title" class="col-sm-2 control-label">Created By</label>
                         <div class="col-sm-10">
-                            <span class="form-control" disabled id="id_created_by_user_label" maxlength="255" name="created_by_user_label">{% firstof form.created_by_user.value.email request.user %}</span>
-                            <input type="hidden" id="id_created_by_user" value="{% firstof form.created_by_user_id.value request.user.id %}" />
+                            <span class="form-control" disabled id="id_created_by_user_label" maxlength="255" name="created_by_user_label">{{ form.created_by_user_email }}</span>
+                            <input type="hidden" id="id_created_by_user" name="created_by_user" value="{{ form.created_by_user_id }}" />
                         </div>
                     </div>
                 {% endif %}

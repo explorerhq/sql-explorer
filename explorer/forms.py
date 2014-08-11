@@ -36,6 +36,14 @@ class QueryForm(ModelForm):
             self.cleaned_data['created_by_user'] = self.instance.created_by_user
         return super(QueryForm, self).clean()
 
+    @property
+    def created_by_user_email(self):
+        return self.instance.created_by_user.email
+
+    @property
+    def created_by_user_id(self):
+        return self.instance.created_by_user.id
+
     class Meta:
         model = Query
         fields = ['title', 'sql', 'description', 'created_by_user']
