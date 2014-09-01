@@ -3,6 +3,7 @@ import csv
 import cStringIO
 import json
 import re
+import string
 from time import time
 from explorer import app_settings
 from django.db import connections, connection, models, transaction, DatabaseError
@@ -128,10 +129,20 @@ def write_csv(headers, data):
     return csv_data.getvalue()
 
 
+def get_filename_for_title(title):
+    # build list of valid chars, build filename from title and replace spaces
+    valid_chars = '-_.() %s%s' % (string.ascii_letters, string.digits)
+    filename = ''.join(c for c in title if c in valid_chars)
+    filename = filename.replace(' ', '_')
+    return filename
+
+
 def build_download_response(query, request):
     data = csv_report(query, url_get_params(request))
     response = HttpResponse(data, content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=%s.csv' % query.title.replace(',', '')
+    response['Content-Disposition'] = 'attachment; filename="%s.csv"' % (
+        get_filename_for_title(query.title)
+    )
     response['Content-Length'] = len(data)
     return response
 
