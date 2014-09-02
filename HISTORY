@@ -1,3 +1,12 @@
+0.5.1
+=====
+- Bugfixes
+    - Created_by_user not getting saved correctly
+    - Content-disposition .csv issue
+    - Issue with queries ending in ...like '%... clauses
+    - Change the way customer user model is referenced
+- Pseudo-folders for queries. Use "Foo - Ba1", "Foo - Bar2" for query names and the UI will build a little "Foo" pseudofolder for you in the query list.
+
 0.5.0
 =====
 
