@@ -53,14 +53,13 @@
                     <div class="alert alert-danger">{{ error|escape }}</div>
                 {% endfor %}{% endif %}
                 <div class="panel panel-default" style="margin-top: 30px;" xmlns="http://www.w3.org/1999/html">
-                    {% if can_change %}
+
                         <div class="panel-heading">
                             <span class="panel-title">SQL</span>
                         </div>
                         <div class="panel-content">
-                            <textarea class="form-control" cols="40" id="id_sql" name="sql" rows="10">{{ form.sql.value|default_if_none:"" }}</textarea>
+                            <textarea class="form-control" {% if not can_change %} disabled {% endif %} cols="40" id="id_sql" name="sql" rows="10">{{ form.sql.value|default_if_none:"" }}</textarea>
                         </div>
-                    {% endif %}
                     <div class="panel-footer">
                         {% include 'explorer/params.html' %}
                     </div>
