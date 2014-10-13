@@ -4,8 +4,11 @@ from django.contrib.auth.models import User
 from django.forms.models import model_to_dict
 from explorer.tests.factories import SimpleQueryFactory, QueryLogFactory
 from explorer.models import Query, QueryLog
-from explorer import app_settings
+from explorer.views import user_can_see_query
+from django.conf import settings
+from mock import Mock
 import time
+
 
 class TestQueryListView(TestCase):
 
@@ -75,8 +78,8 @@ class TestQueryDetailView(TestCase):
 
     def test_change_permission_required_to_save_query(self):
 
-        old = app_settings.EXPLORER_PERMISSION_CHANGE
-        app_settings.EXPLORER_PERMISSION_CHANGE = lambda u: False
+        #old = app_settings.EXPLORER_PERMISSION_CHANGE
+        #app_settings.EXPLORER_PERMISSION_CHANGE = lambda u: False
 
         query = SimpleQueryFactory()
         expected = query.sql
@@ -86,7 +89,7 @@ class TestQueryDetailView(TestCase):
         self.client.post(reverse("query_detail", kwargs={'query_id': query.id}), {'sql': 'select 1;'})
         self.assertEqual(Query.objects.get(pk=query.id).sql, expected)
 
-        app_settings.EXPLORER_PERMISSION_CHANGE = old
+        #app_settings.EXPLORER_PERMISSION_CHANGE = old
 
     def test_modified_date_gets_updated_after_viewing_query(self):
         query = SimpleQueryFactory()
@@ -97,9 +100,39 @@ class TestQueryDetailView(TestCase):
 
     def test_admin_required(self):
         self.client.logout()
-        query = SimpleQueryFactory(sql="before")
+        query = SimpleQueryFactory()
         resp = self.client.get(reverse("query_detail", kwargs={'query_id': query.id}))
         self.assertTemplateUsed(resp, 'admin/login.html')
+
+    def test_individual_view_permission(self):
+        self.client.logout()
+        user = User.objects.create_user('user1', 'user@user.com', 'pwd')
+        self.client.login(username='user1', password='pwd')
+
+        query = SimpleQueryFactory(sql="select 123")
+
+        with self.settings(EXPLORER_USER_QUERY_VIEWS={user.id: [query.id]}):
+            resp = self.client.get(reverse("query_detail", kwargs={'query_id': query.id}))
+        self.assertTemplateUsed(resp, 'explorer/query.html')
+        self.assertContains(resp, "123")
+
+    def test_user_query_views(self):
+        request = Mock()
+
+        request.user.is_anonymous = Mock(return_value=True)
+        kwargs = {}
+        self.assertFalse(user_can_see_query(request, kwargs))
+
+        request.user.is_anonymous = Mock(return_value=True)
+        self.assertFalse(user_can_see_query(request, kwargs))
+
+        kwargs = {'query_id': 123}
+        request.user.is_anonymous = Mock(return_value=False)
+        self.assertFalse(user_can_see_query(request, kwargs))
+
+        request.user.id = 99
+        with self.settings(EXPLORER_USER_QUERY_VIEWS={99: [111, 123]}):
+            self.assertTrue(user_can_see_query(request, kwargs))
 
 
 class TestDownloadView(TestCase):
@@ -122,7 +155,6 @@ class TestDownloadView(TestCase):
         url = '%s?params=%s' % (reverse("query_download", kwargs={'query_id': q.id}), '{"foo":123}')
         resp = self.client.get(url)
         self.assertContains(resp, "'123'")
-
 
 
 class TestQueryPlayground(TestCase):
@@ -217,13 +249,13 @@ class TestParamsInViews(TestCase):
 
     def test_users_without_change_permissions_can_use_params(self):
 
-        old = app_settings.EXPLORER_PERMISSION_CHANGE
-        app_settings.EXPLORER_PERMISSION_CHANGE = lambda u: False
+        #old = app_settings.EXPLORER_PERMISSION_CHANGE
+        #app_settings.EXPLORER_PERMISSION_CHANGE = lambda u: False
 
         resp = self.client.get(reverse("query_detail", kwargs={'query_id': self.query.id}) + '?params={"swap":123}')
         self.assertContains(resp, "123")
 
-        app_settings.EXPLORER_PERMISSION_CHANGE = old
+        #app_settings.EXPLORER_PERMISSION_CHANGE = old
 
 
 class TestCreatedBy(TestCase):
@@ -241,7 +273,6 @@ class TestCreatedBy(TestCase):
         self.client.post(reverse("query_detail", kwargs={'query_id': self.query.id}), self.data)
         q = Query.objects.get(id=self.query.id)
         self.assertEqual(q.created_by_user_id, 1)
-
 
     def test_new_query_gets_created_by_logged_in_user(self):
         self.client.post(reverse("query_create"), self.data)
