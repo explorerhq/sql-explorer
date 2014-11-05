@@ -1,18 +1,5 @@
 .. image:: https://travis-ci.org/epantry/django-sql-explorer.png?branch=master
 
-**Upgrading from previous version**
-
-As of version 0.5, South migrations are used to handle model schema changes. After upgrading to 0.5, you will have to convert Explorer to a south app by faking the first migration:
-
-``python manage.py migrate explorer 0001 --fake``
-
-You can then run the rest of the migrations as usual.
-
-``python manage.py migrate explorer``
-
-If you are installing Explorer for the first time, you can just follow the normal installation instructions below.
-
-
 Django SQL Explorer
 ===================
 
@@ -72,6 +59,8 @@ Features
 
 - **Query Logs**
     - Explorer will save a snapshot of every query you execute so you can recover lost ad-hoc queries, and see what you've been querying.
+    - This also serves as cheap-and-dirty versioning of Queries.
+    - You can also use this feature to share temporary queries with colleagues by running a query in the Playground and then sharing the log link e.g. /explorer/play/?querylog_id=2428. This is nice because it avoids polluting your saved Queries with lots of one-off queries.
 - **Django Admin Support**
     - Download multiple queries at once as a zip file through Django's admin interface via a built-in admin action.
 - **Meaningful Test Coverage**
@@ -81,9 +70,7 @@ Features
 Install
 =======
 
-Requires Python 2.7. No Python 3 support...yet.
-
-This has been tested only with Django 1.6, however it should work back to 1.4. Please report an issue if you encounter problems on earlier versions of Django.
+Requires Python 2.7. No Python 3 support...yet. Requires Django 1.6.7 or higher (including Django 1.7). In theory Explorer should work fine with earlier versions of Django, but this has not been tested.
 
 Install with pip from github:
 
@@ -101,11 +88,31 @@ Add the following to your urls.py (all Explorer URLs are restricted to staff onl
 
 ``url(r'^explorer/', include('explorer.urls')),``
 
-Run syncdb to create the tables (well...just one table really):
+Run syncdb to create the tables:
 
 ``python manage.py syncdb``
 
 Browse to https://yoursite/explorer/ and get exploring!
+
+
+Using South Migrations
+======================
+
+Explorer by default uses the new migrations in Django 1.7 to manage database schema. However South migrations also exist in the south_migrations folder, for those still using Django 1.6 or earlier. To use South migrations, For South support, customize the SOUTH_MIGRATION_MODULES setting like so:
+
+    SOUTH_MIGRATION_MODULES = {
+        'explorer': 'explorer.south_migrations',
+    }
+
+Migrations were introduced in version 0.5. So if you are upgrading from an earlier version of explorer and using South, you'll have to run the following to convert Explorer to a South application:
+
+``python manage.py migrate explorer 0001 --fake``
+
+You can then run the rest of the migrations as usual.
+
+``python manage.py migrate explorer``
+
+If you are installing Explorer for the first time, you can just follow the normal installation instructions.
 
 
 Dependencies
@@ -135,16 +142,17 @@ and with coverage:
 Settings
 ========
 
-============================ =============================================================================================================== ================================================================================================================================================
-Setting                      Description                                                                                                                                                  Default
-============================ =============================================================================================================== ================================================================================================================================================
-EXPLORER_SQL_BLACKLIST       Disallowed words in SQL queries to prevent destructive actions.                                                 ('ALTER', 'RENAME ', 'DROP', 'TRUNCATE', 'INSERT INTO', 'UPDATE', 'REPLACE', 'DELETE', 'ALTER', 'CREATE TABLE', 'SCHEMA', 'GRANT', 'OWNER TO')
-EXPLORER_SQL_WHITELIST       These phrases are allowed, even though part of the phrase appears in the blacklist.                             ('CREATED', 'DELETED')
-EXPLORER_DEFAULT_ROWS        The number of rows to show by default in the preview pane.                                                      100
-EXPLORER_SCHEMA_EXCLUDE_APPS Don't show schema for these packages in the schema helper.                                                      ('django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions', 'django.contrib.admin')
-EXPLORER_CONNECTION_NAME     The name of the Django database connection to use. Ideally set this to a connection with read only permissions  None  # Which means use the 'default' connection
-EXPLORER_PERMISSION_VIEW     Callback to check if the user is allowed to view and execute stored queries                                     lambda u: u.is_staff
-EXPLORER_PERMISSION_CHANGE   Callback to check if the user is allowed to add/change/delete queries                                           lambda u: u.is_staff
-EXPLORER_TRANSFORMS          List of tuples like [('alias', 'Template for {0}')]. See features section of this doc for more info.            []
-EXPLORER_RECENT_QUERY_COUNT  The number of recent queries to show at the top of the query listing.                                           10
-============================ =============================================================================================================== ================================================================================================================================================
+============================= =============================================================================================================== ================================================================================================================================================
+Setting                       Description                                                                                                                                                  Default
+============================= =============================================================================================================== ================================================================================================================================================
+EXPLORER_SQL_BLACKLIST        Disallowed words in SQL queries to prevent destructive actions.                                                 ('ALTER', 'RENAME ', 'DROP', 'TRUNCATE', 'INSERT INTO', 'UPDATE', 'REPLACE', 'DELETE', 'ALTER', 'CREATE TABLE', 'SCHEMA', 'GRANT', 'OWNER TO')
+EXPLORER_SQL_WHITELIST        These phrases are allowed, even though part of the phrase appears in the blacklist.                             ('CREATED', 'DELETED')
+EXPLORER_DEFAULT_ROWS         The number of rows to show by default in the preview pane.                                                      100
+EXPLORER_SCHEMA_EXCLUDE_APPS  Don't show schema for these packages in the schema helper.                                                      ('django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions', 'django.contrib.admin')
+EXPLORER_CONNECTION_NAME      The name of the Django database connection to use. Ideally set this to a connection with read only permissions  None  # Which means use the 'default' connection
+EXPLORER_PERMISSION_VIEW      Callback to check if the user is allowed to view and execute stored queries                                     lambda u: u.is_staff
+EXPLORER_PERMISSION_CHANGE    Callback to check if the user is allowed to add/change/delete queries                                           lambda u: u.is_staff
+EXPLORER_TRANSFORMS           List of tuples like [('alias', 'Template for {0}')]. See features section of this doc for more info.            []
+EXPLORER_RECENT_QUERY_COUNT   The number of recent queries to show at the top of the query listing.                                           10
+EXPLORER_GET_USER_QUERY_VIEWS A dict granting view permissions on specific queries of the form {userId:[queryId, ...], ...}                   {}
+============================= =============================================================================================================== ================================================================================================================================================
