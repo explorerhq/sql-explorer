@@ -32,7 +32,7 @@ Features
 ========
 
 - **Security**
-    - Let's not kid ourselves - this tool is all about giving people access to running SQL in production. So if that makes you nervous (and it should) - you've been warned. Explorer makes an effort to not allow terrible things to happen, but be careful! Note there is a setting in the tip (master) to use a different SQL connection than the default django connection. It's recommended you use a read-only database role.
+    - Let's not kid ourselves - this tool is all about giving people access to running SQL in production. So if that makes you nervous (and it should) - you've been warned. Explorer makes an effort to not allow terrible things to happen, but be careful! It's recommended you use the EXPLORER_CONNECTION_NAME setting to connect SQL Explorer to a read-only database role.
     - Explorer supports two different permission checks for users of the tool. Users passing the EXPLORER_PERMISSION_CHANGE test can create, edit, delete, and execute queries. Users who do not pass this test but pass the EXPLORER_PERMISSION_VIEW test can only execute queries. Other users cannot access any part of Explorer. Both permission groups are set to is_staff by default and can be overridden in your settings file.
     - Enforces a SQL blacklist so destructive queries don't get executed (delete, drop, alter, update etc). This is not bulletproof and it's recommended that you instead configure a read-only database role, but when not possible the blacklist provides reasonable protection.
 - **Easy to get started**
@@ -92,7 +92,7 @@ Run syncdb to create the tables:
 
 ``python manage.py syncdb``
 
-Browse to https://yoursite/explorer/ and get exploring!
+You can now browse to https://yoursite/explorer/ and get exploring! However note it is highly recommended that you also configure Explorer to use a read-only database connection via the EXPLORER_CONNECTION_NAME setting.
 
 
 Using South Migrations
@@ -124,10 +124,10 @@ An effort has been made to require no packages other than Django and South (for 
 Name                                                   Version License
 ====================================================== ======= ================
 `Twitter Boostrap <http://getbootstrap.com/>`_         3.0.3   MIT
-`jQuery <http://jquery.com/>`_                         2.0.3   MIT
-`Underscore <http://underscorejs.org/>`_               1.5.2   MIT
+`jQuery <http://jquery.com/>`_                         2.1.1   MIT
+`Underscore <http://underscorejs.org/>`_               1.7.0   MIT
 `Codemirror <http://codemirror.net/>`_                 3.19.0  MIT
-`floatThead <http://mkoryak.github.io/floatThead/>`_   1.2.7   MIT
+`floatThead <http://mkoryak.github.io/floatThead/>`_   1.2.8   MIT
 ====================================================== ======= ================
 
 Factory Boy is needed if you'd like to run the tests, which can you do easily:
