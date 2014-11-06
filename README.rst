@@ -132,11 +132,11 @@ Name                                                   Version License
 
 Factory Boy is needed if you'd like to run the tests, which can you do easily:
 
-``python manage.py test``
+``python manage.py test --settings=explorer.tests.settings``
 
 and with coverage:
 
-``coverage run --source='.' manage.py test explorer``
+``coverage run --source='.' manage.py test --settings=explorer.tests.settings``
 
 
 Settings

@@ -1,5 +1,21 @@
+0.6.0
+=====
+
+11/5/2014
+
+- Introduced Django 1.7 migrations. See readme.rst for info on how to run South migrations if you are not on Django 1.7 yet.
+- Upgraded front-end libraries to latest versions.
+- Added ability to grant selected users view permissions on selected queries via the EXPLORER_USER_QUERY_VIEWS parameter
+  - Example usage: EXPLORER_USER_QUERY_VIEWS = {1: [3,4], 2:[3]}
+  - This would grant user with PK 1 read-only access to query with PK=3 and PK=4 and user 2 access to query 3.
+- Bugfixes
+  - Navigating to an explorer URL without the trailing slash now redirects to the intended page (e.g. /logs -> /logs/)
+  - Downloading a .csv and subsequently re-executing a query via a keyboard shortcut (cmd+enter) would re-submit the form and re-download the .csv. It now correctly just refreshes the query.
+  - Django 1.7 compatibility fix
+
 0.5.1
 =====
+
 - Bugfixes
     - Created_by_user not getting saved correctly
     - Content-disposition .csv issue
