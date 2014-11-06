@@ -1,17 +1,21 @@
-<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.20.0/codemirror.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/3.19.0/mode/sql/sql.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.7.0/codemirror.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.7.0/mode/sql/sql.min.js"></script>
 <script>
+    doCodeMirrorSubmit = function() {
+        if ($("#save_button").length) {
+            $("#save_button").click();
+        }
+        else {
+            $("#refresh_button").click();
+        }
+    };
     var editor = CodeMirror.fromTextArea(document.getElementById('id_sql'), {
         mode: "text/x-sql",
         lineNumbers: 't',
         autofocus: true,
         extraKeys: {
-            "Ctrl-Enter": function() {
-                $('#editor').submit();
-            },
-            "Cmd-Enter": function() {
-                $('#editor').submit();
-            }
+            "Ctrl-Enter": doCodeMirrorSubmit,
+            "Cmd-Enter": doCodeMirrorSubmit
         }
     });
 </script>

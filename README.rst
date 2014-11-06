@@ -123,10 +123,10 @@ An effort has been made to require no packages other than Django and South (for 
 ====================================================== ======= ================
 Name                                                   Version License
 ====================================================== ======= ================
-`Twitter Boostrap <http://getbootstrap.com/>`_         3.0.3   MIT
+`Twitter Boostrap <http://getbootstrap.com/>`_         3.3.0   MIT
 `jQuery <http://jquery.com/>`_                         2.1.1   MIT
 `Underscore <http://underscorejs.org/>`_               1.7.0   MIT
-`Codemirror <http://codemirror.net/>`_                 3.19.0  MIT
+`Codemirror <http://codemirror.net/>`_                 4.7.0   MIT
 `floatThead <http://mkoryak.github.io/floatThead/>`_   1.2.8   MIT
 ====================================================== ======= ================
 
