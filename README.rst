@@ -100,9 +100,9 @@ Using South Migrations
 
 Explorer by default uses the new migrations in Django 1.7 to manage database schema. However South migrations also exist in the south_migrations folder, for those still using Django 1.6 or earlier. To use South migrations, For South support, customize the SOUTH_MIGRATION_MODULES setting like so:
 
-    SOUTH_MIGRATION_MODULES = {
-        'explorer': 'explorer.south_migrations',
-    }
+``SOUTH_MIGRATION_MODULES = {
+'explorer': 'explorer.south_migrations',
+}``
 
 Migrations were introduced in version 0.5. So if you are upgrading from an earlier version of explorer and using South, you'll have to run the following to convert Explorer to a South application:
 
