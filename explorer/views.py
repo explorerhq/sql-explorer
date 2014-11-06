@@ -10,7 +10,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.forms.models import model_to_dict
 
 from explorer.models import Query, QueryLog
-from explorer.app_settings import EXPLORER_PERMISSION_VIEW, EXPLORER_PERMISSION_CHANGE, EXPLORER_RECENT_QUERY_COUNT, EXPLORER_USER_QUERY_VIEWS
+from explorer import app_settings
 from explorer.forms import QueryForm
 from explorer.utils import url_get_rows, url_get_query_id, url_get_log_id, schema_info, url_get_params, safe_admin_login_prompt, build_download_response
 
@@ -20,21 +20,22 @@ import re
 
 def view_permission(f):
     def wrap(request, *args, **kwargs):
-        if not EXPLORER_PERMISSION_VIEW(request.user) and not user_can_see_query(request, kwargs):
+        if not app_settings.EXPLORER_PERMISSION_VIEW(request.user) and not user_can_see_query(request, kwargs):
             return safe_admin_login_prompt(request)
         return f(request, *args, **kwargs)
     return wrap
 
+
 def user_can_see_query(request, kwargs):
     if not request.user.is_anonymous() and 'query_id' in kwargs:
-        allowed_queries = EXPLORER_USER_QUERY_VIEWS.get(request.user.id, [])
+        allowed_queries = app_settings.EXPLORER_GET_USER_QUERY_VIEWS().get(request.user.id, [])
         return int(kwargs['query_id']) in allowed_queries
     return False
 
 
 def change_permission(f):
     def wrap(request, *args, **kwargs):
-        if not EXPLORER_PERMISSION_CHANGE(request.user):
+        if not app_settings.EXPLORER_PERMISSION_CHANGE(request.user):
             return safe_admin_login_prompt(request)
         return f(request, *args, **kwargs)
     return wrap
@@ -43,8 +44,8 @@ def change_permission(f):
 class ExplorerContextMixin(object):
 
     def gen_ctx(self):
-        return {'can_view': EXPLORER_PERMISSION_VIEW(self.request.user),
-                'can_change': EXPLORER_PERMISSION_CHANGE(self.request.user)}
+        return {'can_view': app_settings.EXPLORER_PERMISSION_VIEW(self.request.user),
+                'can_change': app_settings.EXPLORER_PERMISSION_CHANGE(self.request.user)}
 
     def get_context_data(self, **kwargs):
         ctx = super(ExplorerContextMixin, self).get_context_data(**kwargs)
@@ -87,7 +88,7 @@ class ListQueryView(ExplorerContextMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(ListQueryView, self).get_context_data(**kwargs)
         context['object_list'] = self._build_queries_and_headers()
-        context['recent_queries'] = Query.objects.all().order_by('-last_run_date')[:EXPLORER_RECENT_QUERY_COUNT]
+        context['recent_queries'] = Query.objects.all().order_by('-last_run_date')[:app_settings.EXPLORER_RECENT_QUERY_COUNT]
         return context
 
     def _build_queries_and_headers(self):
@@ -216,7 +217,7 @@ class QueryView(ExplorerContextMixin, View):
         return self.render_template('explorer/query.html', vm)
 
     def post(self, request, query_id):
-        if not EXPLORER_PERMISSION_CHANGE(request.user):
+        if not app_settings.EXPLORER_PERMISSION_CHANGE(request.user):
             return HttpResponseRedirect(
                 reverse_lazy('query_detail', kwargs={'query_id': query_id})
             )

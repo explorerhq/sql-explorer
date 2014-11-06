@@ -12,7 +12,7 @@ DATABASES = {
     }
 }
 
-ROOT_URLCONF = 'explorer.urls'
+ROOT_URLCONF = 'explorer.tests.urls'
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.static",
@@ -20,8 +20,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
+    'django.template.loaders.filesystem.Loader',
 )
 
 INSTALLED_APPS = (
@@ -33,7 +33,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'explorer',
-    'south'
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -41,3 +40,10 @@ AUTHENTICATION_BACKENDS = (
 )
 
 STATIC_URL = '/static/'
+
+MIDDLEWARE_CLASSES = ('django.contrib.sessions.middleware.SessionMiddleware',
+                      'django.contrib.auth.middleware.AuthenticationMiddleware')
+
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+
+EXPLORER_USER_QUERY_VIEWS = {}
