@@ -12,7 +12,7 @@ from django.forms.models import model_to_dict
 from explorer.models import Query, QueryLog
 from explorer import app_settings
 from explorer.forms import QueryForm
-from explorer.utils import url_get_rows, url_get_query_id, url_get_log_id, schema_info, url_get_params, safe_admin_login_prompt, build_download_response
+from explorer.utils import url_get_rows, url_get_query_id, url_get_log_id, schema_info, url_get_params, safe_admin_login_prompt, build_download_response, build_stream_response
 
 from collections import Counter
 import re
@@ -64,9 +64,23 @@ def download_query(request, query_id):
     return build_download_response(query, request)
 
 
+@view_permission
+@require_GET
+def view_csv_query(request, query_id):
+    query = get_object_or_404(Query, pk=query_id)
+    return build_stream_response(query, request)
+
+
+@view_permission
+@require_GET
+def chart_query(request, query_id):
+    query = get_object_or_404(Query, pk=query_id)
+    return render_to_response('explorer/chart.html', {'dataUrl': reverse_lazy('query_csv', kwargs={'query_id':query.id})})
+
+
 @change_permission
 @require_POST
-def csv_from_sql(request):
+def download_csv_from_sql(request):
     sql = request.POST.get('sql', None)
     if not sql:
         return PlayQueryView.render(request)
@@ -251,4 +265,5 @@ def query_viewmodel(request, query, title=None, form=None, message=None):
             'headers': headers,
             'duration': duration,
             'rows': rows,
-            'total_rows': len(data)})
+            'total_rows': len(data),
+            'dataUrl': reverse_lazy('query_csv', kwargs={'query_id': query.id})})

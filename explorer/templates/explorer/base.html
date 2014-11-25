@@ -1,4 +1,5 @@
 {% load url from future %}
+{% load staticfiles %}
 <!DOCTYPE html>
 <html>
 
@@ -9,7 +10,22 @@
     <title>SQL Explorer{% if query %} - {{ query.title }}{% elif title %} - {{ title }}{% endif %}</title>
     <link href="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.7.0/codemirror.min.css" rel="stylesheet">
     <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'explorer/charted.css' %}">
+
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="//use.edgefonts.net/source-sans-pro:n2,n4,n9.js"></script>
+    <!-- <script src="{% static 'explorer/lib/jquery.js' %}"></script> -->
+    <script src="{% static 'explorer/lib/d3.js' %}"></script>
+    <script src="{% static 'explorer/lib/lodash.compat.js' %}"></script>
+    <script src="{% static 'explorer/Utils.js' %}"></script>
+    <script src="{% static 'explorer/PageData.js' %}"></script>
+    <script src="{% static 'explorer/ChartLegend.js' %}"></script>
+    <script src="{% static 'explorer/ChartData.js' %}"></script>
+    <script src="{% static 'explorer/Chart.js' %}"></script>
+    <script src="{% static 'explorer/PageController.js' %}"></script>
+    <script type="text/javascript">
+        dataUrl = "{{ dataUrl }}";
+    </script>
     <script type="text/javascript">
         var getparams = function(el) {
             var params$ = $(el).closest("form").find(".param");

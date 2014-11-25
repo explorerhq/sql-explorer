@@ -1,6 +1,12 @@
 {% if data %}
     <script src="//cdnjs.cloudflare.com/ajax/libs/floatthead/1.2.8/jquery.floatThead-slim.min.js"></script>
     <script>
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            if(e.target.hash == "#chart") {
+                var pageController = new PageController();
+                pageController.setupPage({dataUrl: dataUrl})
+            }
+        });
         // http://stackoverflow.com/a/11654596/221390
         function UpdateQueryString(key, value, url) {
             if (!url) url = window.location.href;

@@ -137,6 +137,12 @@ def get_filename_for_title(title):
     return filename
 
 
+def build_stream_response(query, request):
+    data = csv_report(query, url_get_params(request))
+    response = HttpResponse(data, content_type='text')
+    return response
+
+
 def build_download_response(query, request):
     data = csv_report(query, url_get_params(request))
     response = HttpResponse(data, content_type='text/csv')
