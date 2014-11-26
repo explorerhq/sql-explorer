@@ -4,7 +4,7 @@
             <div role="tabpanel">
                 <ul class="nav nav-tabs" role="tablist">
                     <li role="presentation" class="active"><a href="#previewpane" aria-controls="previewpane" role="tab" data-toggle="tab">Preview</a></li>
-                    <li role="presentation"><a href="#chart" aria-controls="chart" role="tab" data-toggle="tab">Chart</a></li>
+                    {% if query.id %}<li role="presentation"><a href="#chart" aria-controls="chart" role="tab" data-toggle="tab">Chart</a></li>{% endif %}
                 </ul>
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active" id="previewpane">
