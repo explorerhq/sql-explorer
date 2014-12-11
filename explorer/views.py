@@ -14,7 +14,10 @@ from explorer import app_settings
 from explorer.forms import QueryForm
 from explorer.utils import url_get_rows, url_get_query_id, url_get_log_id, schema_info, url_get_params, safe_admin_login_prompt, build_download_response
 
-from collections import Counter
+try:
+    from collections import Counter
+except:
+    from counter import Counter
 import re
 
 
