@@ -32,7 +32,9 @@
             </tbody>
         </table>
     {% endif %}
-    <h3>All Queries</h3>
+    <h3 style="float:left;">All Queries</h3>
+    <div id="queries">
+    <input class="search" style="width: 250px; margin-top: 30px; margin-left: 30px;" placeholder="Search" autofocus=true />
     <table class="table table-striped">
         <thead>
             <tr>
@@ -44,7 +46,7 @@
                 {% endif %}
             </tr>
         </thead>
-        <tbody>
+        <tbody class="list">
             {% for object in object_list %}
             <tr {% if object.is_in_category %}class="collapse in collapse-{{ object.collapse_target }}"{% endif %}>
                 {% if object.is_header %}
@@ -56,7 +58,7 @@
                         </strong>
                     </td><td></td><td></td><td></td>
                 {% else %}
-                    <td {% if object.is_in_category %}style="padding-left: 30px;"{% endif %}>
+                    <td class="name" {% if object.is_in_category %}style="padding-left: 30px;"{% endif %}>
                         {% if object.is_in_category %}|-- {% endif %}<a href="{{ object.id }}/">{{ object.title }}</a>
                     </td>
                     <td>{{ object.created_at|date:"SHORT_DATE_FORMAT" }}
@@ -73,9 +75,24 @@
                         {% endif %}
                     </td>
                 {% endif %}
-
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    </div>
+{% endblock %}
+
+{% block sql_explorer_scripts %}
+<script>
+    $(document).ready( function() {
+        var options = {
+          valueNames: [ 'name' ]
+        };
+
+        var queryList = new List('queries', options);
+        
+        //HACK -- not sure why this is necessary
+        setTimeout("$('.search').focus();", 200);
+    });
+</script>
 {% endblock %}
