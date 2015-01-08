@@ -4,27 +4,48 @@
 {% block sql_explorer_content %}
 
     <h4 style="text-align: center;">Schema</h4>
-
-    {% for m in schema %}
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <small class="text-muted">{{ m.0 }}</small><h4 class="panel-title">{{ m.1 }}</h4>
-            </div>
-            <table class="table table-condensed table-hover">
-                <thead>
-                </thead>
-                <tbody>
-                    {% for c in m.2 %}
-                    <tr>
-                        <td width="50%"><code>{{ c.0 }}</code></td>
-                        <!-- This will show the type of the column as well -->
-                        <td width="50%" class="text-muted"><small>{{ c.1 }}</small></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    {% endfor %}
+    <div id="tables">
+        <input class="search" placeholder="Search" />
+        <ul class="list" style="-webkit-padding-start: 0px;">
+            {% for m in schema %}
+                <li>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <small class="text-muted app">{{ m.0 }}</small><h4 class="name panel-title">{{ m.1 }}</h4>
+                        </div>
+                        <table class="table table-condensed table-hover">
+                            <thead>
+                            </thead>
+                            <tbody>
+                                {% for c in m.2 %}
+                                <tr>
+                                    <td width="50%"><code>{{ c.0 }}</code></td>
+                                    <!-- This will show the type of the column as well -->
+                                    <td width="50%" class="text-muted"><small>{{ c.1 }}</small></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
 
 {% endblock %}
 {% block sql_explorer_footer %}{% endblock %}
+
+{% block sql_explorer_scripts %}
+<script>
+    $(document).ready( function() {
+        var options = {
+          valueNames: [ 'name', 'app' ]
+        };
+
+        var tableList = new List('tables', options);
+
+        //HACK -- not sure why this is necessary
+        setTimeout("$('.search').focus();", 200);
+    });
+</script>
+{% endblock %}
