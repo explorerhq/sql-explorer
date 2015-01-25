@@ -14,8 +14,10 @@ from explorer import app_settings
 from explorer.forms import QueryForm
 from explorer.utils import url_get_rows, url_get_query_id, url_get_log_id, schema_info, url_get_params, safe_admin_login_prompt, build_download_response, build_stream_response, user_can_see_query
 
-from collections import Counter
-from functools import wraps
+try:
+    from collections import Counter
+except:
+    from counter import Counter
 import re
 
 
@@ -30,6 +32,11 @@ def view_permission(f):
     return wrap
 
 
+def user_can_see_query(request, kwargs):
+    if not request.user.is_anonymous() and 'query_id' in kwargs:
+        allowed_queries = app_settings.EXPLORER_GET_USER_QUERY_VIEWS().get(request.user.id, [])
+        return int(kwargs['query_id']) in allowed_queries
+    return False
 def change_permission(f):
     @wraps(f)
     def wrap(request, *args, **kwargs):
