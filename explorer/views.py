@@ -24,7 +24,7 @@ def view_permission(f):
     def wrap(request, *args, **kwargs):
         if not app_settings.EXPLORER_PERMISSION_VIEW(request.user)\
                 and not user_can_see_query(request, kwargs)\
-                and not (app_settings.EXPLORER_TOKEN_AUTH_ENABLED and request.META.get('HTTP_X_API_TOKEN') == app_settings.EXPLORER_TOKEN):
+                and not (app_settings.EXPLORER_TOKEN_AUTH_ENABLED() and request.META.get('HTTP_X_API_TOKEN') == app_settings.EXPLORER_TOKEN):
             return safe_admin_login_prompt(request)
         return f(request, *args, **kwargs)
     return wrap
