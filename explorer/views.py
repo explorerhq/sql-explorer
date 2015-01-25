@@ -18,7 +18,10 @@ try:
     from collections import Counter
 except:
     from counter import Counter
+
+
 import re
+from functools import wraps
 
 
 def view_permission(f):
@@ -32,11 +35,6 @@ def view_permission(f):
     return wrap
 
 
-def user_can_see_query(request, kwargs):
-    if not request.user.is_anonymous() and 'query_id' in kwargs:
-        allowed_queries = app_settings.EXPLORER_GET_USER_QUERY_VIEWS().get(request.user.id, [])
-        return int(kwargs['query_id']) in allowed_queries
-    return False
 def change_permission(f):
     @wraps(f)
     def wrap(request, *args, **kwargs):
