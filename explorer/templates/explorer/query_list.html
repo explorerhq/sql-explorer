@@ -34,7 +34,7 @@
     {% endif %}
     <h3 style="float:left;">All Queries</h3>
     <div id="queries">
-    <input class="search" style="width: 250px; margin-top: 30px; margin-left: 30px;" placeholder="Search" autofocus=true />
+    <input class="search" style="width: 250px; margin-top: 30px; margin-left: 30px;" placeholder="Search" />
     <table class="table table-striped">
         <thead>
             <tr>
@@ -85,14 +85,14 @@
 {% block sql_explorer_scripts %}
 <script>
     $(document).ready( function() {
+        function SearchFocus() {
+            $(".search").focus();
+        }
         var options = {
-          valueNames: [ 'name' ]
+            valueNames: [ 'name' ],
+            handlers: { 'updated': [SearchFocus] }
         };
-
         var queryList = new List('queries', options);
-
-        //HACK -- not sure why this is necessary
-        setTimeout("$('.search').focus();", 400);
     });
 </script>
 {% endblock %}

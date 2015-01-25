@@ -22,3 +22,6 @@ EXPLORER_RECENT_QUERY_COUNT = getattr(settings, 'EXPLORER_RECENT_QUERY_COUNT', 1
 # This aids testability. Otherwise this property gets loaded at the beginning of the test run
 # and can't be overridden. There is surely a better pattern for this, but this'll hold for now.
 EXPLORER_GET_USER_QUERY_VIEWS = lambda: getattr(settings, 'EXPLORER_USER_QUERY_VIEWS', {})
+EXPLORER_TOKEN_AUTH_ENABLED = lambda: getattr(settings, 'EXPLORER_TOKEN_AUTH_ENABLED', False)
+
+EXPLORER_TOKEN = getattr(settings, 'EXPLORER_TOKEN', 'Something Secure')

@@ -5,7 +5,7 @@ from django.forms.models import model_to_dict
 from explorer.tests.factories import SimpleQueryFactory, QueryLogFactory
 from explorer.models import Query, QueryLog
 from explorer.views import user_can_see_query
-from django.conf import settings
+from explorer.app_settings import EXPLORER_TOKEN
 from mock import Mock
 import time
 
@@ -77,10 +77,6 @@ class TestQueryDetailView(TestCase):
         self.assertEqual(Query.objects.get(pk=query.id).sql, expected)
 
     def test_change_permission_required_to_save_query(self):
-
-        #old = app_settings.EXPLORER_PERMISSION_CHANGE
-        #app_settings.EXPLORER_PERMISSION_CHANGE = lambda u: False
-
         query = SimpleQueryFactory()
         expected = query.sql
         resp = self.client.get(reverse("query_detail", kwargs={'query_id': query.id}))
@@ -88,8 +84,6 @@ class TestQueryDetailView(TestCase):
 
         self.client.post(reverse("query_detail", kwargs={'query_id': query.id}), {'sql': 'select 1;'})
         self.assertEqual(Query.objects.get(pk=query.id).sql, expected)
-
-        #app_settings.EXPLORER_PERMISSION_CHANGE = old
 
     def test_modified_date_gets_updated_after_viewing_query(self):
         query = SimpleQueryFactory()
@@ -113,6 +107,16 @@ class TestQueryDetailView(TestCase):
 
         with self.settings(EXPLORER_USER_QUERY_VIEWS={user.id: [query.id]}):
             resp = self.client.get(reverse("query_detail", kwargs={'query_id': query.id}))
+        self.assertTemplateUsed(resp, 'explorer/query.html')
+        self.assertContains(resp, "123")
+
+    def test_token_auth(self):
+        self.client.logout()
+
+        query = SimpleQueryFactory(sql="select 123")
+
+        with self.settings(EXPLORER_TOKEN_AUTH_ENABLED=True):
+            resp = self.client.get(reverse("query_detail", kwargs={'query_id': query.id}), **{'HTTP_X_API_TOKEN': EXPLORER_TOKEN})
         self.assertTemplateUsed(resp, 'explorer/query.html')
         self.assertContains(resp, "123")
 

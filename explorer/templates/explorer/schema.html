@@ -38,14 +38,18 @@
 {% block sql_explorer_scripts %}
 <script>
     $(document).ready( function() {
+
+        function SearchFocus() {
+            $(".search").focus();
+        }
+
         var options = {
-          valueNames: [ 'name', 'app' ]
+          valueNames: [ 'name', 'app' ],
+            handlers: { 'updated': [SearchFocus] }
         };
 
         var tableList = new List('tables', options);
 
-        //HACK -- not sure why this is necessary
-        setTimeout("$('.search').focus();", 200);
     });
 </script>
 {% endblock %}

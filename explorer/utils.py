@@ -226,4 +226,8 @@ def url_get_params(request):
     return get_json_from_request(request, 'params')
 
 
-
+def user_can_see_query(request, kwargs):
+    if not request.user.is_anonymous() and 'query_id' in kwargs:
+        allowed_queries = app_settings.EXPLORER_GET_USER_QUERY_VIEWS().get(request.user.id, [])
+        return int(kwargs['query_id']) in allowed_queries
+    return False
