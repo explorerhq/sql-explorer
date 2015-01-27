@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="{% static 'explorer/charted.css' %}">
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
     <script src="//use.edgefonts.net/source-sans-pro:n2,n4,n9.js"></script>
     <script src="{% static 'explorer/lib/d3.js' %}"></script>
     <script src="{% static 'explorer/lib/lodash.compat.js' %}"></script>
@@ -37,6 +38,12 @@
             }
             return o;
         }
+        var csrf_token = $.cookie('csrftoken');
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrf_token);
+            }
+        });
     </script>
     <style>
         .collapse.in {
