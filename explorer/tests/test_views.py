@@ -233,6 +233,19 @@ class TestSchemaView(TestCase):
         self.assertTemplateUsed(resp, 'admin/login.html')
 
 
+class TestFormat(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_superuser('admin', 'admin@admin.com', 'pwd')
+        self.client.login(username='admin', password='pwd')
+
+    def test_returns_formatted_sql(self):
+        import json
+        resp = self.client.post(reverse("format_sql"),  data={"sql": "select * from explorer_query"})
+        resp = json.loads(resp.content)
+        self.assertIn("\n", resp['formatted'])
+        self.assertIn("explorer_query", resp['formatted'])
+
+
 class TestParamsInViews(TestCase):
 
     def setUp(self):

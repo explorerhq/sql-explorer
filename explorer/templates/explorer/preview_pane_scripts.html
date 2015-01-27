@@ -80,5 +80,12 @@
             $("#show_schema_button").show()
             return false;
         });
+        $("#format_button").click(function(e) {
+            e.preventDefault();
+
+            var jqxhr = $.post('../format/', {sql: editor.getValue() }, function(data) {
+              editor.setValue(data.formatted);
+            });
+        });
     } );
 </script>

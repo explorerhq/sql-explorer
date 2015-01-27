@@ -12,5 +12,6 @@ urlpatterns = patterns('',
     url(r'csv$', 'explorer.views.download_csv_from_sql', name='generate_csv'),
     url(r'schema/$', 'explorer.views.schema', name='explorer_schema'),
     url(r'logs/$', ListQueryLogView.as_view(), name='explorer_logs'),
+    url(r'format/$', 'explorer.views.format_sql', name='format_sql'),
     url(r'^$', ListQueryView.as_view(), name='explorer_index'),
 )

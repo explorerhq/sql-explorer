@@ -8,11 +8,12 @@ from django.views.decorators.http import require_POST, require_GET
 from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse_lazy
 from django.forms.models import model_to_dict
+from django.http import HttpResponse
 
 from explorer.models import Query, QueryLog
 from explorer import app_settings
 from explorer.forms import QueryForm
-from explorer.utils import url_get_rows, url_get_query_id, url_get_log_id, schema_info, url_get_params, safe_admin_login_prompt, build_download_response, build_stream_response, user_can_see_query
+from explorer.utils import url_get_rows, url_get_query_id, url_get_log_id, schema_info, url_get_params, safe_admin_login_prompt, build_download_response, build_stream_response, user_can_see_query, fmt_sql
 
 try:
     from collections import Counter
@@ -94,6 +95,14 @@ def download_csv_from_sql(request):
 @require_GET
 def schema(request):
     return render_to_response('explorer/schema.html', {'schema': schema_info()})
+
+
+@require_POST
+def format_sql(request):
+    import json
+    sql = request.POST.get('sql', None)
+    formatted = fmt_sql(sql) if sql else ''
+    return HttpResponse(json.dumps({"formatted": formatted}), content_type="application/json")
 
 
 class ListQueryView(ExplorerContextMixin, ListView):
