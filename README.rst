@@ -54,7 +54,8 @@ Features
     ``EXPLORER_TRANSFORMS = [('user', '<a href="https://yoursite.com/profile/{0}/">{0}</a>')]``
 
     - And change your query to 'SELECT id AS "user", email FROM user'. Explorer will match the "user" column alias to the transform and merge each cell in that column into the template string. Cool!
-
+- ** Simple Charts**
+    - Using the Charted JS library from Medium, you can view results as either a table (default) or a chart. Just click on the "chart" tab.
 - **Query Logs**
     - Explorer will save a snapshot of every query you execute so you can recover lost ad-hoc queries, and see what you've been querying.
     - This also serves as cheap-and-dirty versioning of Queries.
@@ -122,17 +123,35 @@ If you are installing Explorer for the first time, you can just follow the norma
 Dependencies
 ============
 
-An effort has been made to require no packages other than Django and South (for migrations). However a number of front-end dependencies do exist and are documented below. All front-end dependencies are served from CDNJS.com
+An effort has been made to keep the number of dependencies to a minimum.
 
-====================================================== ======= ================
-Name                                                   Version License
-====================================================== ======= ================
-`Twitter Boostrap <http://getbootstrap.com/>`_         3.3.0   MIT
-`jQuery <http://jquery.com/>`_                         2.1.1   MIT
-`Underscore <http://underscorejs.org/>`_               1.7.0   MIT
-`Codemirror <http://codemirror.net/>`_                 4.7.0   MIT
-`floatThead <http://mkoryak.github.io/floatThead/>`_   1.2.8   MIT
-====================================================== ======= ================
+*Back End*
+
+========================================================= ======= ================
+Name                                                      Version License
+========================================================= ======= ================
+`sqlparse* <https://github.com/andialbrecht/sqlparse/>`_  0.1.11  BSD
+`Factory Boy <https://github.com/rbarrois/factory_boy>`_  2.4.1   MIT
+========================================================= ======= ================
+
+* Used for SQL formatting only
+
+*Front End*
+
+============================================================ ======= ================
+Name                                                         Version License
+============================================================ ======= ================
+`Twitter Boostrap <http://getbootstrap.com/>`_               3.3.0   MIT
+`jQuery <http://jquery.com/>`_                               2.1.1   MIT
+`jQuery Cookie <https://github.com/carhartl/jquery-cookie>`_ 1.4.1   MIT
+`Underscore <http://underscorejs.org/>`_                     1.7.0   MIT
+`Codemirror <http://codemirror.net/>`_                       4.7.0   MIT
+`floatThead <http://mkoryak.github.io/floatThead/>`_         1.2.8   MIT
+`charted <http://charted.co/>`_                              0.1.1   MIT
+`list.js <http://listjs.com>`_                               1.1.1   MIT
+============================================================ ======= ================
+
+Most are served from cdnjs, except for Charted, which is served locally.
 
 Factory Boy is needed if you'd like to run the tests, which can you do easily:
 
