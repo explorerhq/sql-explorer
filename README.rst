@@ -23,7 +23,7 @@ django-sql-explorer is MIT licensed, and pull requests are welcome!
 
 .. image:: https://s3.amazonaws.com/protopantry/explorer/1-5.png
 
-**View & access query history**
+**View & access query history, & logs**
 
 .. image:: https://s3.amazonaws.com/protopantry/explorer/1-3.png
 
@@ -36,19 +36,17 @@ Features
     - Explorer supports two different permission checks for users of the tool. Users passing the EXPLORER_PERMISSION_CHANGE test can create, edit, delete, and execute queries. Users who do not pass this test but pass the EXPLORER_PERMISSION_VIEW test can only execute queries. Other users cannot access any part of Explorer. Both permission groups are set to is_staff by default and can be overridden in your settings file.
     - Enforces a SQL blacklist so destructive queries don't get executed (delete, drop, alter, update etc). This is not bulletproof and it's recommended that you instead configure a read-only database role, but when not possible the blacklist provides reasonable protection.
 - **Easy to get started**
-    - 100% built on Django's ORM, so works with Postgresql, Mysql, and Sqlite.
-    - Zero dependencies other than Django and front-end libraries. More detail below.
+    - Built on Django's ORM, so works with Postgresql, Mysql, and Sqlite.
+    - Small number of dependencies.
     - Just want to get in and write some ad-hoc queries? Go nuts with the Playground area.
-    - Cmd+Enter and/or Ctrl+Enter sill submit and execute the query - no mouse required.
-- **Looks Reasonably Not Crappy**
-    - Thanks to CodeMirror and Bootstrap you might actually enjoy this for querying more than pgadmin or phpmyadmin
 - **Parameterized Queries**
     - Use $$foo$$ in your queries and Explorer will build a UI to fill out parameters. When viewing a query like 'SELECT * FROM table WHERE id=$$id$$', Explorer will generate UI for the 'id' parameter.
     - Parameters are stashed in the URL, so you can share links to parameterized queries with colleagues
 - **Schema Helper**
     - /explorer/schema/ renders a list of your Django apps' table and column names (and types) that you can refer to while writing queries. Apps are excludable from this list so users aren't bogged down in tons of irrelevant tables. See settings documentation below for details.
     - This is available quickly as a sidebar helper while composing queries (see screenshot)
-    - Supports many_to_many relations as well
+    - Supports many_to_many relations as well.
+    - Quick search for the tables/django models you are looking for. Just start typing!
 - **Template Columns**
     - Let's say you have a query like 'select id, email from user' and you'd like to quickly drill through to the profile page for each user in the result. You can create a "template" column to do just that.
     - Just set up a template column in your settings file:
@@ -60,17 +58,23 @@ Features
 - **Query Logs**
     - Explorer will save a snapshot of every query you execute so you can recover lost ad-hoc queries, and see what you've been querying.
     - This also serves as cheap-and-dirty versioning of Queries.
-    - You can also use this feature to share temporary queries with colleagues by running a query in the Playground and then sharing the log link e.g. /explorer/play/?querylog_id=2428. This is nice because it avoids polluting your saved Queries with lots of one-off queries.
-- **Django Admin Support**
-    - Download multiple queries at once as a zip file through Django's admin interface via a built-in admin action.
-- **Meaningful Test Coverage**
-    - 95% according to coverage...for what that's worth
-    - You can run them yourself! Just install factory_boy and run "manage.py test"
+- **Stable**
+    - 95% according to coverage...for what that's worth. Just install factory_boy and run `manage.py test`
+    - Battle-tested in production every day by the ePantry team.
+- **Power tips**
+    - On the query listing page, focus gets set to a search box so you can just navigate to /explorer and start typing the name of your query to find it.
+    - Quick search also works after hitting "Show Schema" on a query view.
+    - Command+Enter and Ctrl+Enter will execute a query when typing in the SQL editor area.
+    - Hit the "Format" button to format and clean up your SQL (this is non-validating -- just formatting).
+    - Use the Query Logs feature to share one-time queries that aren't worth createing a persistent query for. Just run your SQL in the playground, then navigate to /logs and share the link (e.g. /explorer/play/?querylog_id=2428)
+    - Set env vars for EXPLORER_TOKEN_AUTH_ENABLED=TRUE and EXPLORER_TOKEN_AUTH_ENABLED=<SOME TOKEN> and you have an instant data API. Just:
+    
+    ``curl --header "X-API-TOKEN: <SOME TOKEN>" https://www.your-site.com/explorer/<QUERY_ID>/csv``
 
 Install
 =======
 
-Requires Python 2.7. No Python 3 support...yet. Requires Django 1.6.7 or higher (including Django 1.7). In theory Explorer should work fine with earlier versions of Django, but this has not been tested.
+Requires Python 2.6 or 2.7. No Python 3 support...yet. Requires Django 1.6.7 or higher (including Django 1.7). In theory Explorer should work fine with earlier versions of Django, but this has not been tested. South migrations exist for Django 1.6 and earlier, but by default Explorer uses 1.7 migrations.
 
 Install with pip from github:
 
