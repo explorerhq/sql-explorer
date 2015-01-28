@@ -143,7 +143,7 @@ Chart.prototype.updateSizes = function () {
   this.xScale.range([this.margin.left, (this.width - this.margin.right - this.margin.left)])
   this.yScale.range([this.height - this.margin.bottom, this.margin.top])
   this.xEndEdge = this.$xEnd.offset().left - this.$plot.offset().left
-  this.xBegEdge = this.$xBeg.offset().left - this.$plot.offset().left + this.$xEnd.width()
+  this.xBegEdge = this.$xBeg.offset().left - this.$plot.offset().left + this.$xBeg.width()
 }
 
 Chart.prototype.render = function () {
@@ -459,8 +459,7 @@ Chart.prototype.chartHTML = function (parameters) {
   var template = ''
   template +='<div class="chart show-columns">'
   template +='  <div class="chart-description">'
-  template +='    <h1 class="title info-input" contenteditable="true"></h1>'
-  template +='    <div class="note info-input" contenteditable="true"></div>'
+  template +='    <h1 class="title info-input"></h1>'
   template +='  </div>'
   template +='  <div class="chart-plot-outer-container">'
   template +='    <div class="chart-plot-inner-container">'

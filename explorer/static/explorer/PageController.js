@@ -10,7 +10,7 @@ function PageController () {
     type: ['column', 'line'],
     rounding: ['on', 'off']
   }
-  this.EDITABLES = ['title', 'note']
+  this.EDITABLES = ['title',]
 
   this.$body = $('body')
   this.$charts = $('.charts')
