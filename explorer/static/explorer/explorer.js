@@ -19,6 +19,7 @@ function ExplorerEditor(queryId, dataUrl) {
             "Cmd-Enter": this.doCodeMirrorSubmit
         }
     });
+    this.bind();
 }
 
 ExplorerEditor.prototype.getParams = function(el) {

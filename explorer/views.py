@@ -217,7 +217,7 @@ class PlayQueryView(ExplorerContextMixin, View):
     def post(self, request):
         sql = request.POST.get('sql', None)
         if not sql:
-            return PlayQueryView.render(request)
+            return self.render(request)
         query = Query(sql=sql, title="Playground")
         query.log(request.user)
         return self.render_with_sql(request, query)
