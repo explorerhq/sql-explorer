@@ -1,7 +1,8 @@
-from explorer.utils import passes_blacklist, write_csv, swap_params, execute_query, execute_and_fetch_query, extract_params, shared_dict_update
+from explorer.utils import passes_blacklist, swap_params, execute_query, extract_params, shared_dict_update, get_transforms, transform_row
 from django.db import models, DatabaseError
 from django.core.urlresolvers import reverse
 from django.conf import settings
+import app_settings
 
 MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist."
 
@@ -14,6 +15,11 @@ class Query(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     last_run_date = models.DateTimeField(auto_now=True)
 
+    def __init__(self, *args, **kwargs):
+        self.params = kwargs.get('params')
+        kwargs.pop('params', None)
+        super(Query, self).__init__(*args, **kwargs)
+
     class Meta:
         ordering = ['title']
         verbose_name_plural = 'Queries'
@@ -21,11 +27,11 @@ class Query(models.Model):
     def __unicode__(self):
         return unicode(self.title)
 
-    def passes_blacklist(self, params=None):
-        return passes_blacklist(self.final_sql(params=params))
+    def passes_blacklist(self):
+        return passes_blacklist(self.final_sql())
 
-    def final_sql(self, params=None):
-        return swap_params(self.sql, params)
+    def final_sql(self):
+        return swap_params(self.sql, self.params)
 
     def try_execute(self):
         try:
@@ -33,7 +39,7 @@ class Query(models.Model):
         except DatabaseError, e:
             return str(e)
 
-    def headers_and_data(self, params=None):
+    def headers_and_data(self):
         """
         Retrieve the results from a query.
 
@@ -41,14 +47,23 @@ class Query(models.Model):
         :return: ([headers], [data], duration in ms, error message)
         """
 
-        if not self.passes_blacklist(params):
-            return [], [], None, MSG_FAILED_BLACKLIST
+        if not self.passes_blacklist():
+            return QueryResult(headers=[], data=[], duration=None, error=MSG_FAILED_BLACKLIST)
         try:
-            return execute_and_fetch_query(self.final_sql(params))
+            return self._execute()
         except (DatabaseError, Warning), e:
-            return [], [], None, str(e)
+            return QueryResult(headers=[], data=[], duration=None, error=str(e))
 
-    def available_params(self, param_values=None):
+    def _execute(self):
+        cursor, duration = execute_query(self.final_sql())
+        headers = [d[0] for d in cursor.description] if cursor.description else ['--']
+        transforms = get_transforms(headers, app_settings.EXPLORER_TRANSFORMS)
+        return QueryResult(headers=headers,
+                           data=[transform_row(transforms, r) for r in cursor.fetchall()],
+                           duration=duration,
+                           error=None)
+
+    def available_params(self):
         """
         Merge parameter values into a dictionary of available parameters
 
@@ -57,8 +72,8 @@ class Query(models.Model):
         """
 
         p = extract_params(self.sql)
-        if param_values:
-            shared_dict_update(p, param_values)
+        if self.params:
+            shared_dict_update(p, self.params)
         return p
 
     def get_absolute_url(self):
@@ -79,3 +94,12 @@ class QueryLog(models.Model):
 
     class Meta:
         ordering = ['-run_at']
+
+
+class QueryResult(object):
+
+    def __init__(self, headers, data, duration, error):
+        self.headers = headers
+        self.data = data
+        self.duration = duration
+        self.error = error
