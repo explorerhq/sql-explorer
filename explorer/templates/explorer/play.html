@@ -17,7 +17,7 @@
             {% if error %}
                 <div class="alert alert-danger">{{ error|escape }}</div>
             {% endif %}
-            <div class="panel panel-default" style="margin-top: 30px;" xmlns="http://www.w3.org/1999/html">
+            <div class="panel panel-default sql-panel">
                 <div class="panel-heading">
                     <span class="panel-title">SQL</span>
                 </div>
@@ -25,21 +25,23 @@
                     <textarea class="form-control" cols="40" id="id_sql" name="sql" rows="10">{{ query.sql }}</textarea>
                 </div>
             </div>
-            <h5 style="text-align: right;margin-top: -20px;"><small>Tip: Use Ctrl+Enter or Cmd+Enter to execute the query</small></h5>
+            <h5 class="tip"><small>Tip: Use Ctrl+Enter or Cmd+Enter to execute the query</small></h5>
             <div class="form-group">
-                <div style="text-align: center;">
-                    <input type="submit" value="Refresh Preview" id="refresh_button" class="btn btn-default"/>
-                    <input type="submit" value="Save As New Query" id="create_button" class="btn btn-default"/>
-                    <input type="submit" value="Download CSV" id="download_button" class="btn btn-default"/>
-                    <button type="button" class="btn btn-default" id="format_button">Format</button>
-                    <button type="button" class="btn btn-default" id="show_schema_button">Show Schema</button>
-                    <button type="button" class="btn btn-default" style="display: none;" id="hide_schema_button">Hide Schema</button>
+                <div class="btn-group-wrap">
+                    <div class="btn-group">
+                        <input type="submit" value="Refresh Preview" id="refresh_play_button" class="btn btn-default"/>
+                        <input type="submit" value="Save As New Query" id="create_button" class="btn btn-default"/>
+                        <input type="submit" value="Download CSV" id="download_play_button" class="btn btn-default"/>
+                        <button type="button" class="btn btn-default" id="format_button">Format</button>
+                        <button type="button" class="btn btn-default" id="show_schema_button">Show Schema</button>
+                        <button type="button" class="btn btn-default" id="hide_schema_button">Hide Schema</button>
+                    </div>
                 </div>
             </div>
             <input type="hidden" value="Playground Query" name="title" />
         </form>
     </div>
-    <div id="schema" style="display: none; top: 43px;">
+    <div id="schema" class="schema-frame">
         <iframe src="" height="480px" frameBorder="0" id="schema_frame"></iframe>
     </div>
 </div>
@@ -48,19 +50,10 @@
 {% endblock %}
 
 {% block sql_explorer_scripts %}
-    {% include 'explorer/preview_pane_scripts.html' %}
-    {% include 'explorer/sql_editor_scripts.html' %}
     <script>
         $(function() {
-            $("#refresh_button").click(function() {
-                $(this).closest("form").attr('action', '../play/');
-            });
-            $("#create_button").click(function() {
-                $(this).closest("form").attr('action', '../new/');
-            });
-            $("#download_button").click(function() {
-                $(this).closest("form").attr('action', '../csv');
-            });
+            var e = new ExplorerEditor(queryId, dataUrl);
+            e.bind();
         });
     </script>
 {% endblock %}

@@ -1,3 +1,16 @@
+0.7.0
+=====
+
+2/12/2015
+
+- Added search functionality to schema view and explorer view (using list.js).
+- Python 2.6 compatibility.
+- Basic charts via charted (from Medium).
+- SQL formatting function.
+- Token authentication to retrieve csv version of queries.
+- Fixed south_migrations packaging issue.
+- External stylesheet added.
+
 0.6.0
 =====
 

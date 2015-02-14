@@ -54,7 +54,7 @@ Features
     ``EXPLORER_TRANSFORMS = [('user', '<a href="https://yoursite.com/profile/{0}/">{0}</a>')]``
 
     - And change your query to 'SELECT id AS "user", email FROM user'. Explorer will match the "user" column alias to the transform and merge each cell in that column into the template string. Cool!
-- ** Simple Charts**
+- **Simple Charts**
     - Using the Charted JS library from Medium, you can view results as either a table (default) or a chart. Just click on the "chart" tab.
 - **Query Logs**
     - Explorer will save a snapshot of every query you execute so you can recover lost ad-hoc queries, and see what you've been querying.
@@ -68,7 +68,7 @@ Features
     - Command+Enter and Ctrl+Enter will execute a query when typing in the SQL editor area.
     - Hit the "Format" button to format and clean up your SQL (this is non-validating -- just formatting).
     - Use the Query Logs feature to share one-time queries that aren't worth createing a persistent query for. Just run your SQL in the playground, then navigate to /logs and share the link (e.g. /explorer/play/?querylog_id=2428)
-    - Set env vars for EXPLORER_TOKEN_AUTH_ENABLED=TRUE and EXPLORER_TOKEN_AUTH_ENABLED=<SOME TOKEN> and you have an instant data API. Just:
+    - Set env vars for EXPLORER_TOKEN_AUTH_ENABLED=TRUE and EXPLORER_TOKEN=<SOME TOKEN> and you have an instant data API. Just:
     
     ``curl --header "X-API-TOKEN: <SOME TOKEN>" https://www.your-site.com/explorer/<QUERY_ID>/csv``
 
@@ -178,4 +178,6 @@ EXPLORER_PERMISSION_CHANGE    Callback to check if the user is allowed to add/ch
 EXPLORER_TRANSFORMS           List of tuples like [('alias', 'Template for {0}')]. See features section of this doc for more info.            []
 EXPLORER_RECENT_QUERY_COUNT   The number of recent queries to show at the top of the query listing.                                           10
 EXPLORER_GET_USER_QUERY_VIEWS A dict granting view permissions on specific queries of the form {userId:[queryId, ...], ...}                   {}
+EXPLORER_TOKEN_AUTH_ENABLED   Bool indicating whether token-authenticated requests should be enabled. See "Power Tips", above.                False
+EXPLORER_TOKEN
 ============================= =============================================================================================================== ================================================================================================================================================
