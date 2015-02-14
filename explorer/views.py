@@ -75,16 +75,19 @@ class ExplorerContextMixin(object):
 @view_permission
 @require_GET
 def download_query(request, query_id):
-    query = get_object_or_404(Query, pk=query_id)
-    query.params = url_get_params(request)
-    return build_download_response(query)
+    return _csv_response(request, query_id, False)
 
 
 @view_permission
 @require_GET
 def view_csv_query(request, query_id):
-    query = get_object_or_404(Query, pk=query_id, params=url_get_params(request))
-    return build_stream_response(query)
+    return _csv_response(request, query_id, True)
+
+
+def _csv_response(request, query_id, stream=False):
+    query = get_object_or_404(Query, pk=query_id)
+    query.params = url_get_params(request)
+    return build_stream_response(query) if stream else build_download_response(query)
 
 
 @change_permission
