@@ -10,13 +10,17 @@ function ExplorerEditor(queryId, dataUrl) {
     this.dataUrl = dataUrl;
     this.$table = $('#preview');
     this.$rows = $('#rows');
+
+    this.$submit = $("#save_button");
+    if (!this.$submit.length) { this.$submit = $("#refresh_button"); }
+
     this.editor = CodeMirror.fromTextArea(document.getElementById('id_sql'), {
         mode: "text/x-sql",
         lineNumbers: 't',
         autofocus: true,
         extraKeys: {
-            "Ctrl-Enter": this.doCodeMirrorSubmit,
-            "Cmd-Enter": this.doCodeMirrorSubmit
+            "Ctrl-Enter": function() { this.doCodeMirrorSubmit(); }.bind(this),
+            "Cmd-Enter": function() { this.doCodeMirrorSubmit(); }.bind(this)
         }
     });
     this.bind();
@@ -36,12 +40,7 @@ ExplorerEditor.prototype.getParams = function(el) {
 
 ExplorerEditor.prototype.doCodeMirrorSubmit = function() {
     // Captures the cmd+enter keystroke and figures out which button to trigger.
-    var $btn = $("#save_button");
-    if ($btn.length) {
-        $btn.click();
-    } else {
-        $("#refresh_button").click();
-    }
+    this.$submit.click();
 };
 
 ExplorerEditor.prototype.updateQueryString = function(key, value, url) {
@@ -81,8 +80,8 @@ ExplorerEditor.prototype.formatSql = function() {
 };
 
 ExplorerEditor.prototype.showRows = function() {
-    var rows = this.$rows.val();
-    var $form = $("#editor");
+    var rows = this.$rows.val(),
+        $form = $("#editor");
     $form.attr('action', this.updateQueryString("rows", rows, window.location.href));
     $form.submit();
 };
