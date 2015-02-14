@@ -40,7 +40,8 @@ def view_permission(f):
     def wrap(request, *args, **kwargs):
         if not app_settings.EXPLORER_PERMISSION_VIEW(request.user)\
                 and not user_can_see_query(request, kwargs)\
-                and not (app_settings.EXPLORER_TOKEN_AUTH_ENABLED() and request.META.get('HTTP_X_API_TOKEN') == app_settings.EXPLORER_TOKEN):
+                and not (app_settings.EXPLORER_TOKEN_AUTH_ENABLED()
+                         and request.META.get('HTTP_X_API_TOKEN') == app_settings.EXPLORER_TOKEN):
             return safe_admin_login_prompt(request)
         return f(request, *args, **kwargs)
     return wrap
@@ -224,8 +225,7 @@ class PlayQueryView(ExplorerContextMixin, View):
         return self.render_with_sql(request, query)
 
     def render(self, request):
-        c = RequestContext(request, {'title': 'Playground'})
-        return self.render_template('explorer/play.html', c)
+        return self.render_template('explorer/play.html', RequestContext(request, {'title': 'Playground'}))
 
     def render_with_sql(self, request, query):
         return self.render_template('explorer/play.html', query_viewmodel(request, query, title="Playground"))
