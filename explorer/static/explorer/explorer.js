@@ -75,16 +75,16 @@ ExplorerEditor.prototype.updateQueryString = function(key, value, url) {
 };
 
 ExplorerEditor.prototype.formatSql = function() {
-    var jqxhr = $.post('../format/', {sql: this.editor.getValue() }, function(data) {
-      this.editor.setValue(data.formatted);
+    $.post('../format/', {sql: this.editor.getValue() }, function(data) {
+        this.editor.setValue(data.formatted);
     }.bind(this));
 };
 
 ExplorerEditor.prototype.showRows = function() {
-    rows = this.$rows.val();
-    var $form = $("#editor")
+    var rows = this.$rows.val();
+    var $form = $("#editor");
     $form.attr('action', this.updateQueryString("rows", rows, window.location.href));
-    $form.submit()
+    $form.submit();
 };
 
 ExplorerEditor.prototype.bind = function() {
@@ -94,8 +94,8 @@ ExplorerEditor.prototype.bind = function() {
         var schema$ = $("#schema");
         schema$.addClass("col-md-3");
         schema$.show();
-        $(this).hide()
-        $("#hide_schema_button").show()
+        $(this).hide();
+        $("#hide_schema_button").show();
         return false;
     });
 
@@ -104,8 +104,8 @@ ExplorerEditor.prototype.bind = function() {
         var schema$ = $("#schema");
         schema$.removeClass("col-md-3");
         schema$.hide();
-        $(this).hide()
-        $("#show_schema_button").show()
+        $(this).hide();
+        $("#show_schema_button").show();
         return false;
     });
 
@@ -163,9 +163,7 @@ ExplorerEditor.prototype.bind = function() {
     });
 
     this.$table.floatThead({
-        scrollContainer: function($table){
-            return $table.closest('#overflow_wrapper');
-        }
+        scrollContainer: function() {return this.$table.closest('#overflow_wrapper');}.bind(this)
     });
 
     this.$rows.change(function() { this.showRows(); }.bind(this));
