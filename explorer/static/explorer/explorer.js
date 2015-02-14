@@ -1,6 +1,6 @@
 var csrf_token = $.cookie('csrftoken');
 $.ajaxSetup({
-    beforeSend: function(xhr, settings) {
+    beforeSend: function(xhr) {
         xhr.setRequestHeader("X-CSRFToken", csrf_token);
     }
 });
@@ -10,6 +10,8 @@ function ExplorerEditor(queryId, dataUrl) {
     this.dataUrl = dataUrl;
     this.$table = $('#preview');
     this.$rows = $('#rows');
+    this.$form = $("form");
+    this.$paramFields = this.$form.find(".param");
 
     this.$submit = $("#save_button");
     if (!this.$submit.length) { this.$submit = $("#refresh_button"); }
@@ -26,12 +28,11 @@ function ExplorerEditor(queryId, dataUrl) {
     this.bind();
 }
 
-ExplorerEditor.prototype.getParams = function(el) {
-    var params$ = $(el).closest("form").find(".param"),
-        o = false;
-    if(params$.length) {
-        o = new Object;
-        params$.each(function() {
+ExplorerEditor.prototype.getParams = function() {
+    var o = false;
+    if(this.$paramFields.length) {
+        o = {};
+        this.$paramFields.each(function() {
             o[this.id.replace("_param", "")] = $(this).val();
         });
     }
@@ -123,13 +124,13 @@ ExplorerEditor.prototype.bind = function() {
     $("#save_button").click(function() {
         var params = this.getParams(this);
         if(params) {
-            $(this).closest("form").attr('action', '../' + this.queryId + '/?params=' + JSON.stringify(params));
+            this.$form.attr('action', '../' + this.queryId + '/?params=' + JSON.stringify(params));
         }
     }.bind(this));
 
     $("#refresh_button").click(function(e) {
         e.preventDefault();
-        var params = this.getParams(this);
+        var params = this.getParams();
         if(params) {
             window.location.href = '../' + this.queryId + '/?params=' + JSON.stringify(params);
         } else {
@@ -138,16 +139,16 @@ ExplorerEditor.prototype.bind = function() {
     }.bind(this));
 
     $("#playground_button").click(function() {
-        $(this).closest("form").attr('action', '../play/');
-    });
+        this.$form.attr('action', '../play/');
+    }.bind(this));
 
     $("#refresh_play_button").click(function() {
-        $(this).closest("form").attr('action', '../play/');
-    });
+        this.$form.attr('action', '../play/');
+    }.bind(this));
 
     $("#download_play_button").click(function() {
-        $(this).closest("form").attr('action', '../csv');
-    });
+        this.$form.attr('action', '../csv');
+    }.bind(this));
 
     $(".download_button").click(function(e) {
         e.preventDefault();
@@ -158,8 +159,8 @@ ExplorerEditor.prototype.bind = function() {
     }.bind(this));
 
     $("#create_button").click(function() {
-        $(this).closest("form").attr('action', '../new/');
-    });
+        this.$form.attr('action', '../new/');
+    }.bind(this));
 
     this.$table.floatThead({
         scrollContainer: function() {
