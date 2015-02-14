@@ -138,11 +138,7 @@ ExplorerEditor.prototype.bind = function() {
         }
     }.bind(this));
 
-    $("#playground_button").click(function() {
-        this.$form.attr('action', '../play/');
-    }.bind(this));
-
-    $("#refresh_play_button").click(function() {
+    $("#refresh_play_button, #playground_button").click(function() {
         this.$form.attr('action', '../play/');
     }.bind(this));
 
