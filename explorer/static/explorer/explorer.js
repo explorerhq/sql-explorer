@@ -163,7 +163,9 @@ ExplorerEditor.prototype.bind = function() {
     });
 
     this.$table.floatThead({
-        scrollContainer: function() {return this.$table.closest('#overflow_wrapper');}.bind(this)
+        scrollContainer: function() {
+                            return this.$table.closest('.overflow-wrapper');
+                        }.bind(this)
     });
 
     this.$rows.change(function() { this.showRows(); }.bind(this));
