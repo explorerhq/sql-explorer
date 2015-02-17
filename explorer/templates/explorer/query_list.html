@@ -24,17 +24,17 @@
                 <tr>
                     <td><a href="{{ object.id }}/">{{ object }}</a></td>
                     <td>{{ object.last_run_date|date:"SHORT_DATETIME_FORMAT" }}</td>
-                    <td style="padding: 2px 0px 0px 45px; vertical-align: middle">
-                        <a href="{{ object.id }}/download"><i class="glyphicon glyphicon-download" style="font-size: 20px;"></i></a>
+                    <td class="icon-cell">
+                        <a href="{{ object.id }}/download"><i class="glyphicon glyphicon-download"></i></a>
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     {% endif %}
-    <h3 style="float:left;">All Queries</h3>
+    <h3 class="querylist-header">All Queries</h3>
     <div id="queries">
-    <input class="search" style="width: 250px; margin-top: 30px; margin-left: 30px;" placeholder="Search" />
+    <input class="search" placeholder="Search" />
     <table class="table table-striped">
         <thead>
             <tr>
@@ -53,12 +53,12 @@
                     <td>
                         <strong>
                             <span data-toggle="collapse" data-target=".collapse-{{object.collapse_target}}"
-                                      style="text-decoration: underline; cursor: pointer; color: #428bca;">
+                                      class="toggle">
                             {{ object.title }} ({{ object.count }})</span>
                         </strong>
                     </td><td></td><td></td><td></td>
                 {% else %}
-                    <td class="name" {% if object.is_in_category %}style="padding-left: 30px;"{% endif %}>
+                    <td class="name" {% if object.is_in_category %}class="indented"{% endif %}>
                         {% if object.is_in_category %}|-- {% endif %}<a href="{{ object.id }}/">{{ object.title }}</a>
                     </td>
                     <td>{{ object.created_at|date:"SHORT_DATE_FORMAT" }}
@@ -66,12 +66,12 @@
                             by {{ object.created_by_user }}
                         {% endif %}
                     </td>
-                    <td style="padding: 2px 0px 0px 45px; vertical-align: middle">
-                        <a href="{{ object.id }}/download"><i class="glyphicon glyphicon-download" style="font-size: 20px;"></i></a>
+                    <td class="icon-cell">
+                        <a href="{{ object.id }}/download"><i class="glyphicon glyphicon-download"></i></a>
                     </td>
-                    <td style="padding: 0px 0px 0px 20px; vertical-align: middle">
+                    <td class="icon-cell">
                         {% if can_change %}
-                            <a href="{{ object.id }}/delete"><i class="glyphicon glyphicon-trash" style="font-size: 18px;"></i></a>
+                            <a href="{{ object.id }}/delete"><i class="glyphicon glyphicon-trash"></i></a>
                         {% endif %}
                     </td>
                 {% endif %}
@@ -84,7 +84,7 @@
 
 {% block sql_explorer_scripts %}
 <script>
-    $(document).ready( function() {
+    $(function() {
         function SearchFocus() {
             $(".search").focus();
         }

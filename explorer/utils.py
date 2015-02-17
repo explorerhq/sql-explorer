@@ -12,7 +12,7 @@ import sqlparse
 
 EXPLORER_PARAM_TOKEN = "$$"
 
-## SQL Specific Things
+# SQL Specific Things
 
 
 def passes_blacklist(sql):
@@ -36,14 +36,6 @@ def execute_query(sql):
     end_time = time()
     duration = (end_time - start_time) * 1000
     return cursor, duration
-
-
-def execute_and_fetch_query(sql):
-    cursor, duration = execute_query(sql)
-    headers = [d[0] for d in cursor.description] if cursor.description else ['--']
-    transforms = get_transforms(headers, app_settings.EXPLORER_TRANSFORMS)
-    data = [transform_row(transforms, r) for r in cursor.fetchall()]
-    return headers, data, duration, None
 
 
 def get_transforms(headers, transforms):
@@ -90,8 +82,8 @@ def schema_info():
                           [_format_field(f) for f in model._meta.fields]
                       ))
 
-            #Do the same thing for many_to_many fields. These don't show up in the field list of the model
-            #because they are stored as separate "through" relations and have their own tables
+            # Do the same thing for many_to_many fields. These don't show up in the field list of the model
+            # because they are stored as separate "through" relations and have their own tables
             ret += [(
                        friendly_model,
                        m2m.rel.through._meta.db_table,
@@ -138,14 +130,14 @@ def get_filename_for_title(title):
     return filename
 
 
-def build_stream_response(query, request):
-    data = csv_report(query, url_get_params(request))
+def build_stream_response(query):
+    data = csv_report(query)
     response = HttpResponse(data, content_type='text')
     return response
 
 
-def build_download_response(query, request):
-    data = csv_report(query, url_get_params(request))
+def build_download_response(query):
+    data = csv_report(query)
     response = HttpResponse(data, content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="%s.csv"' % (
         get_filename_for_title(query.title)
@@ -154,14 +146,12 @@ def build_download_response(query, request):
     return response
 
 
-def csv_report(query, params=None):
-    headers, data, duration, error = query.headers_and_data(params)
-    if error:
-        return error
-    return write_csv(headers, data)
+def csv_report(query):
+    res = query.headers_and_data()
+    return res.error if res.error else write_csv(res.headers, res.data)
 
 
-## Helpers
+# Helpers
 from django.contrib.admin.forms import AdminAuthenticationForm
 from django.contrib.auth.views import login
 from django.contrib.auth import REDIRECT_FIELD_NAME
@@ -232,6 +222,7 @@ def user_can_see_query(request, kwargs):
         allowed_queries = app_settings.EXPLORER_GET_USER_QUERY_VIEWS().get(request.user.id, [])
         return int(kwargs['query_id']) in allowed_queries
     return False
+
 
 def fmt_sql(sql):
     return sqlparse.format(sql, reindent=True, keyword_case='upper')

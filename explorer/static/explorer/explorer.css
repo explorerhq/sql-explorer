@@ -1,0 +1,112 @@
+.collapse.in {
+    display: table-row;
+}
+
+.collapsing {
+    position: relative;
+    height: 0;
+    overflow: hidden;
+    -webkit-transition: height 0.01s ease;
+    transition: height 0.01s ease;
+}
+
+.query-list {
+    table-layout: fixed;
+}
+
+.query-area h2 {
+    padding-bottom: 20px;
+}
+
+.sql-panel {
+    margin-top: 30px;
+}
+
+.tip {
+    text-align: right;
+    margin-top: -20px;
+}
+
+.btn-group-wrap {
+    text-align: center;
+}
+
+.schema-frame {
+    display: none;
+    top: 43px;
+}
+
+#hide_schema_button {
+    display: none;
+}
+
+.charts {
+    overflow: auto;
+    height: 500px;
+}
+
+.row-control {
+    float: right;
+}
+
+.rows-input {
+    text-align: center;
+    width: 40px;
+}
+
+.overflow-wrapper {
+    overflow: auto; height: 500px;
+}
+
+.data-headers {
+    background: white;
+}
+
+.center {
+    text-align: center;
+}
+
+.log-sql {
+    word-wrap: break-word;
+}
+
+.list {
+    -webkit-padding-start: 0px;
+}
+
+#footer {
+    padding-top: 20px;
+}
+
+.wrap {
+    overflow: hidden; /* for schema navigator */
+}
+
+.icon-cell {
+    padding: 2px 0 0 45px;
+    vertical-align: middle
+}
+
+.icon-cell a {
+    font-size: 20px;
+}
+
+.search {
+    width: 250px;
+    margin-top: 30px;
+    margin-left: 30px;
+}
+
+.querylist-header {
+    float: left;
+}
+
+.toggle {
+    text-decoration: underline;
+    cursor: pointer;
+    color: #428bca;
+}
+
+.indented {
+    padding-left: 30px;
+}

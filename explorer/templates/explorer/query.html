@@ -12,8 +12,8 @@
 
 {% block sql_explorer_content %}
 <div class="row">
-    <div id="query_area" class="col-md-12">
-        <h2 style="padding-bottom: 20px">{% if query %}{{ query.title }}{% else %}New Query{% endif %}</h2>
+    <div id="query_area" class="col-md-12 query-area">
+        <h2>{% if query %}{{ query.title }}{% else %}New Query{% endif %}</h2>
         {% if message %}
             <div class="alert alert-info">{{ message }}</div>
         {% endif %}
@@ -52,41 +52,43 @@
                 {% if form.sql.errors %}{% for error in form.sql.errors %}
                     <div class="alert alert-danger">{{ error|escape }}</div>
                 {% endfor %}{% endif %}
-                <div class="panel panel-default" style="margin-top: 30px;" xmlns="http://www.w3.org/1999/html">
-                        <div class="panel-heading">
-                            <span class="panel-title">SQL</span>
-                        </div>
-                        <div class="panel-content">
-                            <textarea class="form-control" {% if not can_change %} disabled {% endif %} cols="40" id="id_sql" name="sql" rows="10">{{ form.sql.value|default_if_none:"" }}</textarea>
-                        </div>
+                <div class="panel panel-default sql-panel">
+                    <div class="panel-heading">
+                        <span class="panel-title">SQL</span>
+                    </div>
+                    <div class="panel-content">
+                        <textarea class="form-control" {% if not can_change %} disabled {% endif %} cols="40" id="id_sql" name="sql" rows="10">{{ form.sql.value|default_if_none:"" }}</textarea>
+                    </div>
                     <div class="panel-footer">
                         {% include 'explorer/params.html' %}
                     </div>
                 </div>
                 {% if can_change %}
-                     <h5 style="text-align: right;margin-top: -20px;"><small>Tip: Use Ctrl+Enter or Cmd+Enter to execute the query</small></h5>
+                     <h5 class="tip"><small>Tip: Use Ctrl+Enter or Cmd+Enter to execute the query</small></h5>
                 {% endif %}
                 <div class="form-group">
-                    <div style="text-align: center;">
-                        {% if can_change %}
-                            <input type="submit" value="Save & Run" class="btn btn-default" id="save_button" />
-                            {% if query %}
-                                 <button class="btn btn-default download_button" href="csv">Download CSV</button>
-                                 <input type="submit" value="Open in Playground" class="btn btn-default" id="playground_button"/>
-                            {%  endif %}
-                            <button type="button" class="btn btn-default" id="show_schema_button">Show Schema</button>
-                            <button type="button" class="btn btn-default" style="display: none;" id="hide_schema_button">Hide Schema</button>
-                            <button type="button" class="btn btn-default" id="format_button">Format</button>
-                        {% else %}
-                            <input type="submit" value="Refresh" class="btn btn-default" id="refresh_button" />
-                            <button class="btn btn-default download_button" href="csv">Download CSV</button>
-                        {% endif %}
+                    <div class="btn-group-wrap">
+                        <div class="btn-group">
+                            {% if can_change %}
+                                <input type="submit" value="Save & Run" class="btn btn-default" id="save_button" />
+                                {% if query %}
+                                     <button class="btn btn-default download_button" href="csv">Download CSV</button>
+                                     <input type="submit" value="Open in Playground" class="btn btn-default" id="playground_button"/>
+                                {%  endif %}
+                                <button type="button" class="btn btn-default" id="show_schema_button">Show Schema</button>
+                                <button type="button" class="btn btn-default" id="hide_schema_button">Hide Schema</button>
+                                <button type="button" class="btn btn-default" id="format_button">Format</button>
+                            {% else %}
+                                <input type="submit" value="Refresh" class="btn btn-default" id="refresh_button" />
+                                <button class="btn btn-default download_button" href="csv">Download CSV</button>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </form>
         </div>
     </div>
-    <div id="schema" style="display: none; top: 43px;">
+    <div id="schema" class="schema-frame">
         <iframe src="" height="630px" frameBorder="0" id="schema_frame"></iframe>
     </div>
 </div>
@@ -94,37 +96,9 @@
 {% endblock %}
 
 {% block sql_explorer_scripts %}
-    {% include 'explorer/preview_pane_scripts.html' %}
-    {% if can_change %}
-        {% include 'explorer/sql_editor_scripts.html' %}
-    {% endif %}
     <script>
         $(function() {
-            $("#save_button").click(function() {
-                var params = getparams(this);
-                if(params) {
-                    $(this).closest("form").attr('action', '../{% firstof query.id 'new' %}/?params=' + JSON.stringify(params));
-                }
-            });
-            $("#refresh_button").click(function(e) {
-                e.preventDefault();
-                var params = getparams(this);
-                if(params) {
-                    window.location.href = '../{{ query.id }}/?params=' + JSON.stringify(params);
-                } else {
-                    window.location.href = '../{{ query.id }}/';
-                }
-            });
-            $("#playground_button").click(function() {
-                $(this).closest("form").attr('action', '../play/');
-            });
-            $(".download_button").click(function(e) {
-                e.preventDefault();
-                var dl_link = 'download';
-                var params = getparams(this);
-                if(params) { dl_link = dl_link + '?params=' + JSON.stringify(params); }
-                window.open(dl_link, '_blank');
-            });
+            var e = new ExplorerEditor(queryId, dataUrl);
         });
     </script>
 {% endblock %}

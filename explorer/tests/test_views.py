@@ -8,6 +8,7 @@ from explorer.views import user_can_see_query
 from explorer.app_settings import EXPLORER_TOKEN
 from mock import Mock
 import time
+import json
 
 
 class TestQueryListView(TestCase):
@@ -183,6 +184,11 @@ class TestQueryPlayground(TestCase):
         self.assertTemplateUsed(resp, 'explorer/play.html')
         self.assertContains(resp, 'select 1;')
 
+    def test_playground_renders_with_empty_posted_sql(self):
+        resp = self.client.post(reverse("explorer_playground"), {'sql': ''})
+        self.assertEqual(resp.status_code, 200)
+        self.assertTemplateUsed(resp, 'explorer/play.html')
+
     def test_query_with_no_resultset_doesnt_throw_error(self):
         query = SimpleQueryFactory(sql="")
         resp = self.client.get('%s?query_id=%s' % (reverse("explorer_playground"), query.id))
@@ -213,7 +219,12 @@ class TestCSVFromSQL(TestCase):
     def test_downloading_from_playground(self):
         sql = "select 1;"
         resp = self.client.post(reverse("generate_csv"), {'sql': sql})
-        self.assertEqual(resp['content-type'], 'text/csv')
+        self.assertEqual('text/csv', resp['content-type'])
+
+    def test_stream_csv_from_query(self):
+        q = SimpleQueryFactory()
+        resp = self.client.get(reverse("query_csv", kwargs={'query_id': q.id}))
+        self.assertEqual('text', resp['content-type'])
 
 
 class TestSchemaView(TestCase):
@@ -239,7 +250,6 @@ class TestFormat(TestCase):
         self.client.login(username='admin', password='pwd')
 
     def test_returns_formatted_sql(self):
-        import json
         resp = self.client.post(reverse("format_sql"),  data={"sql": "select * from explorer_query"})
         resp = json.loads(resp.content)
         self.assertIn("\n", resp['formatted'])
