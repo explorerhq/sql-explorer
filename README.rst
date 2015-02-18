@@ -9,23 +9,19 @@ django-sql-explorer is MIT licensed, and pull requests are welcome!
 
 **A view of a query**
 
-.. image:: https://s3.amazonaws.com/protopantry/explorer/1-2.png
+.. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/2.png
 
 **Viewing all queries**
 
-.. image:: https://s3.amazonaws.com/protopantry/explorer/1-4.png
-
-**Queries can accept parameters. Neato!**
-
-.. image:: https://s3.amazonaws.com/protopantry/explorer/1-1.png
+.. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/1.png
 
 **Quick access to DB schema info**
 
-.. image:: https://s3.amazonaws.com/protopantry/explorer/1-5.png
+.. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/3.png
 
-**View & access query history, & logs**
+**Basic visualization**
 
-.. image:: https://s3.amazonaws.com/protopantry/explorer/1-3.png
+.. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/4.png
 
 
 Features
@@ -70,12 +66,12 @@ Features
     - Use the Query Logs feature to share one-time queries that aren't worth createing a persistent query for. Just run your SQL in the playground, then navigate to /logs and share the link (e.g. /explorer/play/?querylog_id=2428)
     - Set env vars for EXPLORER_TOKEN_AUTH_ENABLED=TRUE and EXPLORER_TOKEN=<SOME TOKEN> and you have an instant data API. Just:
     
-    ``curl --header "X-API-TOKEN: <SOME TOKEN>" https://www.your-site.com/explorer/<QUERY_ID>/csv``
+    ``curl --header "X-API-TOKEN: <TOKEN>" https://www.your-site.com/explorer/<QUERY_ID>/csv``
 
 Install
 =======
 
-Requires Python 2.6 or 2.7. No Python 3 support...yet. Requires Django 1.6.7 or higher (including Django 1.7). In theory Explorer should work fine with earlier versions of Django, but this has not been tested. South migrations exist for Django 1.6 and earlier, but by default Explorer uses 1.7 migrations.
+Requires Python 2.6 or 2.7. No Python 3 support...yet. Requires Django 1.6.7 or higher. In theory Explorer should work fine with earlier versions of Django, but this has not been tested. South migrations exist for Django 1.6 and earlier, but by default Explorer uses 1.7 migrations.
 
 Install with pip from github:
 
@@ -179,5 +175,5 @@ EXPLORER_TRANSFORMS           List of tuples like [('alias', 'Template for {0}')
 EXPLORER_RECENT_QUERY_COUNT   The number of recent queries to show at the top of the query listing.                                           10
 EXPLORER_GET_USER_QUERY_VIEWS A dict granting view permissions on specific queries of the form {userId:[queryId, ...], ...}                   {}
 EXPLORER_TOKEN_AUTH_ENABLED   Bool indicating whether token-authenticated requests should be enabled. See "Power Tips", above.                False
-EXPLORER_TOKEN
+EXPLORER_TOKEN                Access token for query results.                                                                                 CHANGEME
 ============================= =============================================================================================================== ================================================================================================================================================

@@ -24,4 +24,4 @@ EXPLORER_RECENT_QUERY_COUNT = getattr(settings, 'EXPLORER_RECENT_QUERY_COUNT', 1
 EXPLORER_GET_USER_QUERY_VIEWS = lambda: getattr(settings, 'EXPLORER_USER_QUERY_VIEWS', {})
 EXPLORER_TOKEN_AUTH_ENABLED = lambda: getattr(settings, 'EXPLORER_TOKEN_AUTH_ENABLED', False)
 
-EXPLORER_TOKEN = getattr(settings, 'EXPLORER_TOKEN', 'Something Secure')
+EXPLORER_TOKEN = getattr(settings, 'EXPLORER_TOKEN', 'CHANGEME')
