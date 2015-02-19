@@ -1,5 +1,2 @@
-recursive-include explorer/templates *
-include explorer/migrations/*.py
-include explorer/south_migrations/*.py
-include explorer/tests/*.py
+recursive-include explorer *
 include README.rst
