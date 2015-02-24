@@ -13,7 +13,7 @@ function ExplorerEditor(queryId, dataUrl) {
     this.$form = $("form");
     this.$paramFields = this.$form.find(".param");
 
-    this.$submit = $("#save_button");
+    this.$submit = $("#refresh_play_button, #save_button");
     if (!this.$submit.length) { this.$submit = $("#refresh_button"); }
 
     this.editor = CodeMirror.fromTextArea(document.getElementById('id_sql'), {
