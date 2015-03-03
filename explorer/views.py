@@ -122,6 +122,9 @@ class ListQueryView(ExplorerContextMixin, ListView):
         context['recent_queries'] = Query.objects.all().order_by('-last_run_date')[:app_settings.EXPLORER_RECENT_QUERY_COUNT]
         return context
 
+    def get_queryset(self):
+        return Query.objects.prefetch_related('created_by_user').all()
+
     def _build_queries_and_headers(self):
         """
         Build a list of query information and headers (pseudo-folders) for consumption by the template.
@@ -161,7 +164,7 @@ class ListQueryView(ExplorerContextMixin, ListView):
             model_dict.update({'is_in_category': headers[header] > 1,
                                'collapse_target': collapse_target,
                                'created_at': q.created_at,
-                               'created_by_user': q.created_by_user.__unicode__ if q.created_by_user else None})
+                               'created_by_user': unicode(q.created_by_user) if q.created_by_user else None})
             dict_list.append(model_dict)
         return dict_list
 
