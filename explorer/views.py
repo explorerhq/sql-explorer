@@ -226,15 +226,16 @@ class PlayQueryView(ExplorerContextMixin, View):
 
     def post(self, request):
         sql = request.POST.get('sql')
+        show_results = request.POST.get('show', True)
         query = Query(sql=sql, title="Playground")
         query.log(request.user)
-        return self.render_with_sql(request, query)
+        return self.render_with_sql(request, query, show_results)
 
     def render(self, request):
         return self.render_template('explorer/play.html', RequestContext(request, {'title': 'Playground'}))
 
-    def render_with_sql(self, request, query):
-        return self.render_template('explorer/play.html', query_viewmodel(request, query, title="Playground"))
+    def render_with_sql(self, request, query, show_results=True):
+        return self.render_template('explorer/play.html', query_viewmodel(request, query, title="Playground", show_results=show_results))
 
 
 class QueryView(ExplorerContextMixin, View):
@@ -270,19 +271,21 @@ class QueryView(ExplorerContextMixin, View):
         return query, form
 
 
-def query_viewmodel(request, query, title=None, form=None, message=None):
+def query_viewmodel(request, query, title=None, form=None, message=None, show_results=True):
     rows = url_get_rows(request)
-    res = query.headers_and_data()
+    res = query.headers_and_data() if show_results else None
     return RequestContext(request, {
-            'error': res.error,
+
             'params': query.available_params(),
             'title': title,
             'query': query,
             'form': form,
             'message': message,
-            'data': res.data[:rows],
-            'headers': res.headers,
-            'duration': res.duration,
+            'error': res.error if show_results else None,
+            'data': res.data[:rows] if show_results else None,
+            'headers': res.headers if show_results else None,
+            'total_rows': len(res.data) if show_results else None,
+            'duration': res.duration if show_results else None,
             'rows': rows,
-            'total_rows': len(res.data),
+
             'dataUrl': reverse_lazy('query_csv', kwargs={'query_id': query.id}) if query.id else ''})

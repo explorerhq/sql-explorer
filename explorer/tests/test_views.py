@@ -180,9 +180,14 @@ class TestQueryPlayground(TestCase):
         self.assertContains(resp, 'select 1;')
 
     def test_playground_renders_with_posted_sql(self):
-        resp = self.client.post(reverse("explorer_playground"), {'sql': 'select 1;'})
+        resp = self.client.post(reverse("explorer_playground"), {'sql': 'select 1+3400;'})
         self.assertTemplateUsed(resp, 'explorer/play.html')
-        self.assertContains(resp, 'select 1;')
+        self.assertContains(resp, '3401')
+
+    def test_playground_doesnt_render_with_posted_sql_if_show_is_none(self):
+        resp = self.client.post(reverse("explorer_playground"), {'sql': 'select 1+3400;', 'show': ''})
+        self.assertTemplateUsed(resp, 'explorer/play.html')
+        self.assertNotContains(resp, '3401')
 
     def test_playground_renders_with_empty_posted_sql(self):
         resp = self.client.post(reverse("explorer_playground"), {'sql': ''})
