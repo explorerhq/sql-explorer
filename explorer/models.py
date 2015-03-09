@@ -150,7 +150,7 @@ class QueryResult(object):
                 r[ix] = t.format(str(r[ix]))
         end_time = time()
         duration = (end_time - start_time) * 1000
-        logger.info("Explorer QUery Processing took in %sms." % duration)
+        logger.info("Explorer Query Processing took in %sms." % duration)
 
     def execute_query(self):
         conn = get_connection()
@@ -187,15 +187,14 @@ class ColumnStat(object):
 
 class ColumnSummary(object):
 
-    _stats = [
-        ColumnStat("Sum", sum),
-        ColumnStat("Length", len, 0),
-        ColumnStat("Average", lambda x: float(sum(x)) / float(len(x))),
-        ColumnStat("Minimum", min),
-        ColumnStat("Maximum", max)
-    ]
-
     def __init__(self, header, col):
+        self._stats = [
+            ColumnStat("Sum", sum),
+            ColumnStat("Length", len, 0),
+            ColumnStat("Average", lambda x: float(sum(x)) / float(len(x))),
+            ColumnStat("Minimum", min),
+            ColumnStat("Maximum", max)
+        ]
         self.name = header
         col = map(lambda x: 0 if x is None else x, col)
         for stat in self._stats:
