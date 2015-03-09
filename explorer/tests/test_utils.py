@@ -3,7 +3,7 @@ from explorer.actions import generate_report_action
 from explorer.tests.factories import SimpleQueryFactory
 from explorer import app_settings
 from explorer.utils import passes_blacklist, schema_info, param, swap_params, extract_params,\
-    shared_dict_update, EXPLORER_PARAM_TOKEN, transform_row, get_transforms
+    shared_dict_update, EXPLORER_PARAM_TOKEN
 
 
 class TestSqlBlacklist(TestCase):

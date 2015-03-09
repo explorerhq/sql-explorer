@@ -272,20 +272,24 @@ class QueryView(ExplorerContextMixin, View):
 
 
 def query_viewmodel(request, query, title=None, form=None, message=None, show_results=True):
+    from django.db import DatabaseError
     rows = url_get_rows(request)
-    res = query.headers_and_data() if show_results else None
+    try:
+        query.execute()
+        error = None
+    except DatabaseError as e:
+        error = str(e)
+    res = query.execute() if show_results else None
     return RequestContext(request, {
-
             'params': query.available_params(),
             'title': title,
             'query': query,
             'form': form,
             'message': message,
-            'error': res.error if show_results else None,
-            'data': res.data[:rows] if show_results else None,
-            'headers': res.headers if show_results else None,
-            'total_rows': len(res.data) if show_results else None,
-            'duration': res.duration if show_results else None,
+            'error': error,
+            'data': res.data[:rows] if not error and show_results else None,
+            'headers': res.headers if not error and show_results else None,
+            'total_rows': len(res.data) if not error and show_results else None,
+            'duration': res.duration if not error and show_results else None,
             'rows': rows,
-
             'dataUrl': reverse_lazy('query_csv', kwargs={'query_id': query.id}) if query.id else ''})

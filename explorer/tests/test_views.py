@@ -104,22 +104,22 @@ class TestQueryDetailView(TestCase):
         user = User.objects.create_user('user1', 'user@user.com', 'pwd')
         self.client.login(username='user1', password='pwd')
 
-        query = SimpleQueryFactory(sql="select 123")
+        query = SimpleQueryFactory(sql="select 123+1")
 
         with self.settings(EXPLORER_USER_QUERY_VIEWS={user.id: [query.id]}):
             resp = self.client.get(reverse("query_detail", kwargs={'query_id': query.id}))
         self.assertTemplateUsed(resp, 'explorer/query.html')
-        self.assertContains(resp, "123")
+        self.assertContains(resp, "124")
 
     def test_token_auth(self):
         self.client.logout()
 
-        query = SimpleQueryFactory(sql="select 123")
+        query = SimpleQueryFactory(sql="select 123+1")
 
         with self.settings(EXPLORER_TOKEN_AUTH_ENABLED=True):
             resp = self.client.get(reverse("query_detail", kwargs={'query_id': query.id}), **{'HTTP_X_API_TOKEN': EXPLORER_TOKEN})
         self.assertTemplateUsed(resp, 'explorer/query.html')
-        self.assertContains(resp, "123")
+        self.assertContains(resp, "124")
 
     def test_user_query_views(self):
         request = Mock()

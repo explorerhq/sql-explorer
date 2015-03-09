@@ -20,39 +20,9 @@ def passes_blacklist(sql):
     return not any(write_word in clean.upper() for write_word in app_settings.EXPLORER_SQL_BLACKLIST)
 
 
-def execute_query(sql):
-    conn = connections[app_settings.EXPLORER_CONNECTION_NAME] if app_settings.EXPLORER_CONNECTION_NAME else connection
-    cursor = conn.cursor()
-    start_time = time()
+def get_connection():
+    return connections[app_settings.EXPLORER_CONNECTION_NAME] if app_settings.EXPLORER_CONNECTION_NAME else connection
 
-    sid = transaction.savepoint()
-    try:
-        cursor.execute(sql)
-        transaction.savepoint_commit(sid)
-    except DatabaseError:
-        transaction.savepoint_rollback(sid)
-        raise
-
-    end_time = time()
-    duration = (end_time - start_time) * 1000
-    return cursor, duration
-
-
-def get_transforms(headers, transforms):
-    relevant_transforms = []
-    for field, template in transforms:
-        try:
-            relevant_transforms.append((headers.index(field), template))
-        except ValueError:
-            pass
-    return relevant_transforms
-
-
-def transform_row(transforms, row):
-    row = [x.encode('utf-8') if type(x) is unicode else x for x in list(row)]
-    for i, t in transforms:
-        row[i] = t.format(str(row[i]))
-    return row
 
 
 def schema_info():
@@ -147,8 +117,11 @@ def build_download_response(query):
 
 
 def csv_report(query):
-    res = query.headers_and_data()
-    return res.error if res.error else write_csv(res.headers, res.data)
+    try:
+        res = query.execute()
+        return write_csv(res.headers, res.data)
+    except DatabaseError as e:
+        return str(e)
 
 
 # Helpers

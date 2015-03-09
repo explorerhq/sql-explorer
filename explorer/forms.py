@@ -1,5 +1,6 @@
 from django.forms import ModelForm, Field, ValidationError
 from explorer.models import Query, MSG_FAILED_BLACKLIST
+from django.db import DatabaseError
 
 _ = lambda x: x
 
@@ -18,7 +19,10 @@ class SqlField(Field):
         error = MSG_FAILED_BLACKLIST if not query.passes_blacklist() else None
 
         if not error and not query.available_params():
-            error = query.try_execute()
+            try:
+                query.try_execute()
+            except DatabaseError as e:
+                error = str(e)
 
         if error:
             raise ValidationError(
