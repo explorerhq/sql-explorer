@@ -48,9 +48,25 @@ class TestQueryResults(TestCase):
 
     def test_uncode_with_nulls(self):
         self.qr._headers = ["num","char"]
+        self.qr._description = [("num",), ("char",)]
         self.qr._data = [[2,u"a"],[3,None]]
         self.qr.process()
         self.assertEqual(self.qr.data, [[2,"a"],[3,None]])
+
+    def test_summary_gets_built(self):
+        self.qr.process()
+        self.assertEqual(len(self.qr.summary), 1)
+        self.assertEqual(self.qr.summary[0].name, "foo")
+        self.assertEqual(self.qr.summary[0].stats["Sum"], 1.0)
+
+    def test_summary_gets_built_for_multiple_cols(self):
+        self.qr._headers = ["a","b"]
+        self.qr._description = [("a",), ("b",)]
+        self.qr._data = [[1,10],[2,20]]
+        self.qr.process()
+        self.assertEqual(len(self.qr.summary), 2)
+        self.assertEqual(self.qr.summary[0].stats["Sum"], 3.0)
+        self.assertEqual(self.qr.summary[1].stats["Sum"], 30.0)
 
     def test_numeric_detection(self):
         self.assertEqual(self.qr._get_numerics(), [(0, 'foo')])
