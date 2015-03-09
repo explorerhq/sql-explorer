@@ -1,26 +1,9 @@
 from django.test import TestCase
 from explorer.tests.factories import SimpleQueryFactory
-from explorer.tests.utils import AssertMethodIsCalled
-from explorer.models import MSG_FAILED_BLACKLIST, QueryLog, Query
+from explorer.models import QueryLog, Query, QueryResult
 
 
 class TestQueryModel(TestCase):
-
-    # def test_blacklist_check_runs_before_execution(self):
-    #     q = SimpleQueryFactory(sql='select 1;')
-    #     with AssertMethodIsCalled(q, "passes_blacklist"):
-    #         res = q.execute()
-    #
-    # def test_blacklist_prevents_bad_sql_from_executing(self):
-    #     q = SimpleQueryFactory(sql='select 1 "delete";')
-    #     res = q.execute()
-    #     self.assertEqual(res.error, MSG_FAILED_BLACKLIST)
-    #
-    # def test_blacklist_prevents_bad_sql_with_params_from_executing(self):
-    #     q = SimpleQueryFactory(sql="select '$$foo$$';")
-    #     q.params = {"foo": "'; delete from *; select'"}
-    #     res = q.execute()
-    #     self.assertEqual(res.error, MSG_FAILED_BLACKLIST)
 
     def test_params_get_merged(self):
         q = SimpleQueryFactory(sql="select '$$foo$$';")
@@ -42,3 +25,43 @@ class TestQueryModel(TestCase):
         query.log(None)
         log = QueryLog.objects.first()
         self.assertTrue(log.is_playground)
+
+
+class TestQueryResults(TestCase):
+
+    def setUp(self):
+        self.qr = QueryResult('select 1 as "foo", "qux" as "mux";')
+
+    def test_column_access(self):
+        self.qr._data = [[1,2,3],[4,5,6],[7,8,9]]
+        self.assertEqual(self.qr.column(1), [2,5,8])
+
+    def test_headers(self):
+        self.assertEqual(self.qr.headers[0], "foo")
+        self.assertEqual(self.qr.headers[1], "mux")
+
+    def test_data(self):
+        self.assertEqual(self.qr.data, [[1, "qux"]])
+
+    def test_unicode_detection(self):
+        self.assertEqual(self.qr._get_unicodes(), [1])
+
+    def test_numeric_detection(self):
+        self.assertEqual(self.qr._get_numerics(), [(0, 'foo')])
+
+    def test_transforms_are_identified(self):
+        self.qr._headers = ['foo']
+        got = self.qr._get_transforms()
+        self.assertEqual([(0, '<a href="{0}">{0}</a>')], got)
+
+    def test_transform_alters_row(self):
+        self.qr._headers = ['foo', 'qux']
+        self.qr._data = [[1,2]]
+        self.qr.process()
+        self.assertEqual(['<a href="1">1</a>', 2], self.qr._data[0])
+
+    def test_multiple_transforms(self):
+        self.qr._headers = ['foo', 'bar']
+        self.qr._data = [[1,2]]
+        self.qr.process()
+        self.assertEqual(['<a href="1">1</a>', 'x: 2'], self.qr._data[0])

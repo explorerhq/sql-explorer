@@ -48,7 +48,7 @@ class Query(models.Model):
 
     def available_params(self):
         """
-        Merge parameter values into a dictionary of available parameters
+            Merge parameter values into a dictionary of available parameters
 
         :param param_values: A dictionary of Query param values.
         :return: A merged dictionary of parameter names and values. Values of non-existent parameters are removed.
@@ -104,12 +104,22 @@ class QueryResult(object):
     def headers(self):
         return self._headers or []
 
+    @property
+    def summary(self):
+        return self._summary or {}
+
     def _get_headers(self):
         return [d[0] for d in self._description] if self._description else ['--']
 
     def _get_numerics(self):
+
         conn = get_connection()
-        return [(ix, c.name) for ix, c in enumerate(self._description) if hasattr(c, 'type_code') and c.type_code in conn.Database.NUMBER.values]
+        if hasattr(conn.Database, "NUMBER"):
+            return [(ix, c.name) for ix, c in enumerate(self._description) if hasattr(c, 'type_code') and c.type_code in conn.Database.NUMBER.values]
+        elif self.data:
+            d = self.data[0]
+            return [(ix, c[0]) for ix, c in enumerate(self._description) if not isinstance(d[ix], basestring) and unicode(d[ix]).isnumeric()]
+        return []
 
     def _get_unicodes(self):
         if len(self.data):
@@ -120,10 +130,11 @@ class QueryResult(object):
         transforms = app_settings.EXPLORER_TRANSFORMS
         return [(self.headers.index(field), template) for field, template in transforms if field in self.headers]
 
+    def column(self, ix):
+        return [r[ix] for r in self.data]
+
     def process(self):
-        for ix, header in self._get_numerics():
-            col = [r[ix] for r in self.data]
-            self._summary[header] = ColumnSummary(col)
+        self._summary = [ColumnSummary(header, self.column(ix)) for ix, header in self._get_numerics()]
 
         unicodes = self._get_unicodes()
         transforms = self._get_transforms()
@@ -149,11 +160,41 @@ class QueryResult(object):
         return cursor, duration
 
 
+class ColumnStat(object):
+
+    def __init__(self, label, statfn, precision=2):
+        self.label = label
+        self.statfn = statfn
+        self.precision = precision
+
+    def __call__(self, coldata):
+        self.value = round(float(self.statfn(coldata)), self.precision)
+
+    def __unicode__(self):
+        return self.label
+
+    def foo(self):
+        return "foobar"
+
+
 class ColumnSummary(object):
 
-    def __init__(self, col):
-        self.sum = sum(col)
-        self.len = len(col)
-        self.avg = self.sum / float(self.len)
-        self.min = min(col)
-        self.max = max(col)
+    _stats = [
+        ColumnStat("Sum", sum),
+        ColumnStat("Length", len, 0),
+        ColumnStat("Average", lambda x: float(sum(x)) / float(len(x))),
+        ColumnStat("Minimum", min),
+        ColumnStat("Maximum", max)
+    ]
+
+    def __init__(self, header, col):
+        self.name = header
+        for stat in self._stats:
+            stat(col)
+
+    @property
+    def stats(self):
+        return {c.label: c.value for c in self._stats}
+
+    def __unicode__(self):
+        return self.name

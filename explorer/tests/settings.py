@@ -14,6 +14,11 @@ DATABASES = {
 
 ROOT_URLCONF = 'explorer.tests.urls'
 
+EXPLORER_TRANSFORMS = (
+    ('foo', '<a href="{0}">{0}</a>'),
+    ('bar', 'x: {0}')
+)
+
 TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.static",
     "django.core.context_processors.request",
