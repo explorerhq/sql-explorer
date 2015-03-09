@@ -170,10 +170,11 @@ class QueryResult(object):
 
 class ColumnStat(object):
 
-    def __init__(self, label, statfn, precision=2):
+    def __init__(self, label, statfn, precision=2, handles_null=False):
         self.label = label
         self.statfn = statfn
         self.precision = precision
+        self.handles_null = handles_null
 
     def __call__(self, coldata):
         self.value = round(float(self.statfn(coldata)), self.precision)
@@ -193,12 +194,14 @@ class ColumnSummary(object):
             ColumnStat("Length", len, 0),
             ColumnStat("Average", lambda x: float(sum(x)) / float(len(x))),
             ColumnStat("Minimum", min),
-            ColumnStat("Maximum", max)
+            ColumnStat("Maximum", max),
+            ColumnStat("NULLs", lambda x: sum(map(lambda y: 1 if y is None else 0, x)), 0, True)
         ]
         self.name = header
-        col = map(lambda x: 0 if x is None else x, col)
+        without_nulls = map(lambda x: 0 if x is None else x, col)
+
         for stat in self._stats:
-            stat(col)
+            stat(col) if stat.handles_null else stat(without_nulls)
 
     @property
     def stats(self):
