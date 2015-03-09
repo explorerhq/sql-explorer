@@ -4,8 +4,12 @@ from time import time
 from django.core.urlresolvers import reverse
 from django.conf import settings
 import app_settings
+import logging
 
 MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist."
+
+
+logger = logging.getLogger(__name__)
 
 
 class Query(models.Model):
@@ -134,15 +138,19 @@ class QueryResult(object):
         return [r[ix] for r in self.data]
 
     def process(self):
+        start_time = time()
         self._summary = [ColumnSummary(header, self.column(ix)) for ix, header in self._get_numerics()]
 
         unicodes = self._get_unicodes()
         transforms = self._get_transforms()
         for r in self.data:
             for u in unicodes:
-                r[u] = r[u].encode('utf-8')
+                r[u] = r[u].encode('utf-8') if r[u] is not None else r[u]
             for ix, t in transforms:
                 r[ix] = t.format(str(r[ix]))
+        end_time = time()
+        duration = (end_time - start_time) * 1000
+        logger.info("Explorer QUery Processing took in %sms." % duration)
 
     def execute_query(self):
         conn = get_connection()
@@ -189,6 +197,7 @@ class ColumnSummary(object):
 
     def __init__(self, header, col):
         self.name = header
+        col = map(lambda x: 0 if x is None else x, col)
         for stat in self._stats:
             stat(col)
 

@@ -1,6 +1,6 @@
 from django.test import TestCase
 from explorer.tests.factories import SimpleQueryFactory
-from explorer.models import QueryLog, Query, QueryResult
+from explorer.models import QueryLog, Query, QueryResult, ColumnSummary
 
 
 class TestQueryModel(TestCase):
@@ -46,6 +46,12 @@ class TestQueryResults(TestCase):
     def test_unicode_detection(self):
         self.assertEqual(self.qr._get_unicodes(), [1])
 
+    def test_uncode_with_nulls(self):
+        self.qr._headers = ["num","char"]
+        self.qr._data = [[2,u"a"],[3,None]]
+        self.qr.process()
+        self.assertEqual(self.qr.data, [[2,"a"],[3,None]])
+
     def test_numeric_detection(self):
         self.assertEqual(self.qr._get_numerics(), [(0, 'foo')])
 
@@ -65,3 +71,14 @@ class TestQueryResults(TestCase):
         self.qr._data = [[1,2]]
         self.qr.process()
         self.assertEqual(['<a href="1">1</a>', 'x: 2'], self.qr._data[0])
+
+
+class TestColumnSummary(TestCase):
+
+    def test_executes(self):
+        res = ColumnSummary('foo', [1,2,3])
+        self.assertEqual(res.stats, {'Minimum': 1, 'Maximum': 3, 'Length': 3, 'Average': 2, 'Sum': 6})
+
+    def test_handles_null_as_zero(self):
+        res = ColumnSummary('foo', [1,None,5])
+        self.assertEqual(res.stats, {'Minimum': 0, 'Maximum': 5, 'Length': 3, 'Average': 2, 'Sum': 6})
