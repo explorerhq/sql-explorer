@@ -177,7 +177,7 @@ class ColumnStat(object):
         self.handles_null = handles_null
 
     def __call__(self, coldata):
-        self.value = round(float(self.statfn(coldata)), self.precision)
+        self.value = round(float(self.statfn(coldata)), self.precision) if coldata else 0
 
     def __unicode__(self):
         return self.label

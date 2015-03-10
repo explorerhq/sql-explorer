@@ -98,3 +98,7 @@ class TestColumnSummary(TestCase):
     def test_handles_null_as_zero(self):
         res = ColumnSummary('foo', [1,None,5])
         self.assertEqual(res.stats, {'Minimum': 0, 'Maximum': 5, 'Length': 3, 'Average': 2, 'Sum': 6,  'NULLs': 1})
+
+    def test_empty_data(self):
+        res = ColumnSummary('foo', [])
+        self.assertEqual(res.stats, {'Minimum': 0, 'Maximum': 0, 'Length': 0, 'Average': 0, 'Sum': 0,  'NULLs': 0})
