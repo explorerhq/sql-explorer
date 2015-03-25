@@ -1,3 +1,5 @@
+import six
+
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
@@ -164,7 +166,7 @@ class ListQueryView(ExplorerContextMixin, ListView):
             model_dict.update({'is_in_category': headers[header] > 1,
                                'collapse_target': collapse_target,
                                'created_at': q.created_at,
-                               'created_by_user': unicode(q.created_by_user) if q.created_by_user else None})
+                               'created_by_user': six.text_type(q.created_by_user) if q.created_by_user else None})
             dict_list.append(model_dict)
         return dict_list
 

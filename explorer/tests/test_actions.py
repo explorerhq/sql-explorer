@@ -2,7 +2,7 @@ from django.test import TestCase
 from explorer.actions import generate_report_action
 from explorer.tests.factories import SimpleQueryFactory
 from explorer.utils import csv_report
-import StringIO
+from six import StringIO
 from zipfile import ZipFile
 
 
