@@ -19,7 +19,7 @@ class TestSqlBlacklist(TestCase):
         r = SimpleQueryFactory(sql="SELECT 1+1 AS \"DELETE\";")
         fn = generate_report_action()
         result = fn(None, None, [r, ])
-        self.assertEqual(result.content, b'DELETE\r\n')
+        self.assertEqual(result.content, b'DELETE\r\n2\r\n')
 
     def test_default_blacklist_prevents_deletes(self):
         r = SimpleQueryFactory(sql="SELECT 1+1 AS \"DELETE\";")
