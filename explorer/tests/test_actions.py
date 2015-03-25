@@ -35,8 +35,8 @@ class testSqlQueryActions(TestCase):
         q2 = SimpleQueryFactory()
         fn = generate_report_action()
 
-        res = fn(None, None, [q1,q2])
-        z = ZipFile(six.BytesIO(res.content)
+        res = fn(None, None, [q,q2])
+        z = ZipFile(six.BytesIO(res.content))
         got_csv = z.read(z.namelist()[0])
 
         self.assertEqual(len(z.namelist()), 2)
