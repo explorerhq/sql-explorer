@@ -18,7 +18,7 @@ def generate_report_action(description="Generate CSV file from SQL query",):
         response['Content-Disposition'] = queries["filename"]
         response['Content-Length'] = queries["length"]
         return response
-    
+
     generate_report.short_description = description
     return generate_report
 
@@ -37,7 +37,8 @@ def _package(queries):
 def _build_zip(queries):
     temp = tempfile.TemporaryFile()
     zip_file = ZipFile(temp, 'w')
-    map(lambda r: zip_file.writestr('%s.csv' % r.title, csv_report(r) or "Error!"), queries)
+    for r in queries:
+        zip_file.writestr('%s.csv' % r.title, csv_report(r) or "Error!")
     zip_file.close()
     ret = FileWrapper(temp)
     temp.seek(0)
