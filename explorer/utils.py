@@ -1,6 +1,5 @@
 import functools
 import csv
-import cStringIO
 import json
 import re
 import string
@@ -8,6 +7,7 @@ from time import time
 from explorer import app_settings
 from django.db import connections, connection, models, transaction, DatabaseError
 from django.http import HttpResponse
+from six.moves import cStringIO
 import sqlparse
 
 EXPLORER_PARAM_TOKEN = "$$"
