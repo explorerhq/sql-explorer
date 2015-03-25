@@ -18,7 +18,7 @@ def generate_report_action(description="Generate CSV file from SQL query",):
         response['Content-Disposition'] = queries["filename"]
         response['Content-Length'] = queries["length"]
         return response
-    
+
     generate_report.short_description = description
     return generate_report
 

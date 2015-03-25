@@ -117,7 +117,6 @@ class QueryResult(object):
         return [d[0] for d in self._description] if self._description else ['--']
 
     def _get_numerics(self):
-
         conn = get_connection()
         if hasattr(conn.Database, "NUMBER"):
             return [(ix, c.name) for ix, c in enumerate(self._description) if hasattr(c, 'type_code') and c.type_code in conn.Database.NUMBER.values]

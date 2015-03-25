@@ -88,7 +88,10 @@ def write_csv(headers, data):
     csv_data = cStringIO()
     writer = csv.writer(csv_data)
     writer.writerow(headers)
-    map(lambda row: writer.writerow(row), data)
+    # TODO: Resolve why this line doesn't work on Py 3.4
+    # map(lambda row: writer.writerow(row), data)
+    for row in data:
+        writer.writerow(row)
     return csv_data.getvalue()
 
 
@@ -126,6 +129,7 @@ def csv_report(query):
 
 # Helpers
 from django.contrib.admin.forms import AdminAuthenticationForm
+
 from django.contrib.auth.views import login
 from django.contrib.auth import REDIRECT_FIELD_NAME
 
