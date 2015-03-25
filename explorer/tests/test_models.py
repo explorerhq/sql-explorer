@@ -1,3 +1,5 @@
+import six
+
 from django.test import TestCase
 from explorer.tests.factories import SimpleQueryFactory
 from explorer.models import QueryLog, Query, QueryResult, ColumnSummary
@@ -49,9 +51,9 @@ class TestQueryResults(TestCase):
     def test_uncode_with_nulls(self):
         self.qr._headers = ["num","char"]
         self.qr._description = [("num",), ("char",)]
-        self.qr._data = [[2,u"a"],[3,None]]
+        self.qr._data = [[2,six.u("a")],[3,None]]
         self.qr.process()
-        self.assertEqual(self.qr.data, [[2,"a"],[3,None]])
+        self.assertEqual(self.qr.data, [[2,b"a"],[3,None]])
 
     def test_summary_gets_built(self):
         self.qr.process()

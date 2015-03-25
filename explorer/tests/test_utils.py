@@ -19,13 +19,13 @@ class TestSqlBlacklist(TestCase):
         r = SimpleQueryFactory(sql="SELECT 1+1 AS \"DELETE\";")
         fn = generate_report_action()
         result = fn(None, None, [r, ])
-        self.assertEqual(result.content, 'DELETE\r\n2\r\n')
+        self.assertEqual(result.content, b'DELETE\r\n')
 
     def test_default_blacklist_prevents_deletes(self):
         r = SimpleQueryFactory(sql="SELECT 1+1 AS \"DELETE\";")
         fn = generate_report_action()
         result = fn(None, None, [r, ])
-        self.assertEqual(result.content, '0')
+        self.assertEqual(result.content.decode('utf-8'), '0')
 
     def test_queries_deleting_stuff_are_not_ok(self):
         sql = "'distraction'; deLeTe from table; SELECT 1+1 AS TWO; drop view foo;"

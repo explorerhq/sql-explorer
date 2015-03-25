@@ -256,7 +256,7 @@ class TestFormat(TestCase):
 
     def test_returns_formatted_sql(self):
         resp = self.client.post(reverse("format_sql"),  data={"sql": "select * from explorer_query"})
-        resp = json.loads(resp.content)
+        resp = json.loads(resp.content.decode('utf-8'))
         self.assertIn("\n", resp['formatted'])
         self.assertIn("explorer_query", resp['formatted'])
 

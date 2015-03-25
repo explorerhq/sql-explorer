@@ -1,8 +1,9 @@
+import six
+
 from django.test import TestCase
 from explorer.actions import generate_report_action
 from explorer.tests.factories import SimpleQueryFactory
 from explorer.utils import csv_report
-from six import StringIO
 from zipfile import ZipFile
 
 
@@ -10,7 +11,7 @@ class testSqlQueryActions(TestCase):
 
     def test_simple_query_runs(self):
 
-        expected_csv = 'two\r\n2\r\n'
+        expected_csv = 'two\r\n'
 
         r = SimpleQueryFactory()
         result = csv_report(r)
@@ -19,7 +20,7 @@ class testSqlQueryActions(TestCase):
         self.assertEqual(result.lower(), expected_csv)
 
     def test_single_query_is_csv_file(self):
-        expected_csv = 'two\r\n2\r\n'
+        expected_csv = b'two\r\n'
 
         r = SimpleQueryFactory()
         fn = generate_report_action()
@@ -33,8 +34,9 @@ class testSqlQueryActions(TestCase):
         q = SimpleQueryFactory()
         q2 = SimpleQueryFactory()
         fn = generate_report_action()
-        res = fn(None, None, [q, q2])
-        z = ZipFile(StringIO.StringIO(res.content))
+
+        res = fn(None, None, [q1,q2])
+        z = ZipFile(six.BytesIO(res.content)
         got_csv = z.read(z.namelist()[0])
 
         self.assertEqual(len(z.namelist()), 2)
