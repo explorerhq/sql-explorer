@@ -88,8 +88,6 @@ def write_csv(headers, data):
     csv_data = cStringIO()
     writer = csv.writer(csv_data)
     writer.writerow(headers)
-    # TODO: Resolve why this line doesn't work on Py 3.4
-    # map(lambda row: writer.writerow(row), data)
     for row in data:
         writer.writerow(row)
     return csv_data.getvalue()

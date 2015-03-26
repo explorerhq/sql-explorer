@@ -37,8 +37,6 @@ def _package(queries):
 def _build_zip(queries):
     temp = tempfile.TemporaryFile()
     zip_file = ZipFile(temp, 'w')
-    # TODO: Work out why this doesn't work but the latter does
-    # map(lambda r: zip_file.writestr('%s.csv' % r.title, csv_report(r) or "Error!"), queries)
     for r in queries:
         zip_file.writestr('%s.csv' % r.title, csv_report(r) or "Error!")
     zip_file.close()
