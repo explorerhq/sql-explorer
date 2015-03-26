@@ -205,7 +205,8 @@ class ColumnSummary(object):
 
     @property
     def stats(self):
-        return {c.label: c.value for c in self._stats}
+        # dict comprehensions are not supported in Python 2.6
+        return dict((c.label, c.value) for c in self._stats)
 
     def __unicode__(self):
         return self.name
