@@ -5,6 +5,7 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 import app_settings
 import logging
+import six
 
 MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist."
 
@@ -30,7 +31,7 @@ class Query(models.Model):
         verbose_name_plural = 'Queries'
 
     def __unicode__(self):
-        return unicode(self.title)
+        return six.text_type(self.title)
 
     def passes_blacklist(self):
         return passes_blacklist(self.final_sql())
@@ -116,18 +117,17 @@ class QueryResult(object):
         return [d[0] for d in self._description] if self._description else ['--']
 
     def _get_numerics(self):
-
         conn = get_connection()
         if hasattr(conn.Database, "NUMBER"):
             return [(ix, c.name) for ix, c in enumerate(self._description) if hasattr(c, 'type_code') and c.type_code in conn.Database.NUMBER.values]
         elif self.data:
             d = self.data[0]
-            return [(ix, c[0]) for ix, c in enumerate(self._description) if not isinstance(d[ix], basestring) and unicode(d[ix]).isnumeric()]
+            return [(ix, c[0]) for ix, c in enumerate(self._description) if not isinstance(d[ix], six.string_types) and six.text_type(d[ix]).isnumeric()]
         return []
 
     def _get_unicodes(self):
         if len(self.data):
-            return [ix for ix, c in enumerate(self.data[0]) if type(c) is unicode]
+            return [ix for ix, c in enumerate(self.data[0]) if type(c) is six.text_type]
         return []
 
     def _get_transforms(self):
@@ -198,14 +198,15 @@ class ColumnSummary(object):
             ColumnStat("NULLs", lambda x: sum(map(lambda y: 1 if y is None else 0, x)), 0, True)
         ]
         self.name = header
-        without_nulls = map(lambda x: 0 if x is None else x, col)
+        without_nulls = list(map(lambda x: 0 if x is None else x, col))
 
         for stat in self._stats:
             stat(col) if stat.handles_null else stat(without_nulls)
 
     @property
     def stats(self):
-        return {c.label: c.value for c in self._stats}
+        # dict comprehensions are not supported in Python 2.6
+        return dict((c.label, c.value) for c in self._stats)
 
     def __unicode__(self):
         return self.name

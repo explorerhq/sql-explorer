@@ -1,3 +1,5 @@
-django>=1.6.7
+Django>=1.6.7
 factory-boy==2.4.1
+mock==1.0.1
+six==1.9.0
 sqlparse==0.1.11
