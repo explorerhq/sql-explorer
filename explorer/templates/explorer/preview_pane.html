@@ -4,7 +4,6 @@
             <div role="tabpanel">
                 <ul class="nav nav-tabs" role="tablist">
                     <li role="presentation" class="active"><a href="#previewpane" aria-controls="previewpane" role="tab" data-toggle="tab">Preview</a></li>
-                    <li role="presentation"><a href="#stats" aria-controls="stats" role="tab" data-toggle="tab">Stats</a></li>
                     {% if query.id %}<li role="presentation"><a href="#chart" aria-controls="chart" role="tab" data-toggle="tab">Chart</a></li>{% endif %}
                 </ul>
                 <div class="tab-content">
@@ -25,7 +24,11 @@
                                     <thead class="data-headers">
                                         <tr>
                                             {% for h in headers %}
-                                                <th>{{ h }}</th>
+                                                <th>{{ h }}<br/>
+                                                    {% for label, value in h.summary.stats.items %}
+                                                        {{ label }} - {{ value }}<br/>
+                                                    {% endfor %}
+                                                </th>
                                             {% endfor %}
                                         </tr>
                                     </thead>
@@ -46,22 +49,6 @@
                             </div>
                         </div>
                     </div>
-                    {% if summary %}
-                    <div role="tabpanel" class="tab-pane" id="stats">
-                        <div class="stats">
-                            {% for col in summary %}
-                            <table class="table table-striped table-condensed" style="width: 180px;">
-                                <thead><tr><th colspan="2">{{ col }}</th></tr></thead>
-                                <tbody>
-                                    {% for label, value in col.stats.items %}
-                                        <tr><td width="50%">{{ label }}</td><td width="50%">{{ value }}</td></tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    {% endif %}
                     <div role="tabpanel" class="tab-pane" id="chart">
                         <div class="charts"></div>
                     </div>

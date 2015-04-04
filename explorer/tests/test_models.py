@@ -2,7 +2,7 @@ import six
 
 from django.test import TestCase
 from explorer.tests.factories import SimpleQueryFactory
-from explorer.models import QueryLog, Query, QueryResult, ColumnSummary
+from explorer.models import QueryLog, Query, QueryResult, ColumnSummary, ColumnHeader
 
 
 class TestQueryModel(TestCase):
@@ -39,8 +39,8 @@ class TestQueryResults(TestCase):
         self.assertEqual(self.qr.column(1), [2,5,8])
 
     def test_headers(self):
-        self.assertEqual(self.qr.headers[0], "foo")
-        self.assertEqual(self.qr.headers[1], "mux")
+        self.assertEqual(unicode(self.qr.headers[0]), "foo")
+        self.assertEqual(unicode(self.qr.headers[1]), "mux")
 
     def test_data(self):
         self.assertEqual(self.qr.data, [[1, "qux"]])
@@ -49,7 +49,7 @@ class TestQueryResults(TestCase):
         self.assertEqual(self.qr._get_unicodes(), [1])
 
     def test_uncode_with_nulls(self):
-        self.qr._headers = ["num","char"]
+        self.qr._headers = [ColumnHeader('num'), ColumnHeader('char')]
         self.qr._description = [("num",), ("char",)]
         self.qr._data = [[2,six.u("a")],[3,None]]
         self.qr.process()
@@ -57,35 +57,35 @@ class TestQueryResults(TestCase):
 
     def test_summary_gets_built(self):
         self.qr.process()
-        self.assertEqual(len(self.qr.summary), 1)
-        self.assertEqual(self.qr.summary[0].name, "foo")
-        self.assertEqual(self.qr.summary[0].stats["Sum"], 1.0)
+        self.assertEqual(len([h for h in self.qr.headers if h.summary]), 1)
+        self.assertEqual(unicode(self.qr.headers[0].summary), "foo")
+        self.assertEqual(self.qr.headers[0].summary.stats["Sum"], 1.0)
 
     def test_summary_gets_built_for_multiple_cols(self):
-        self.qr._headers = ["a","b"]
+        self.qr._headers = [ColumnHeader('a'), ColumnHeader('b')]
         self.qr._description = [("a",), ("b",)]
         self.qr._data = [[1,10],[2,20]]
         self.qr.process()
-        self.assertEqual(len(self.qr.summary), 2)
-        self.assertEqual(self.qr.summary[0].stats["Sum"], 3.0)
-        self.assertEqual(self.qr.summary[1].stats["Sum"], 30.0)
+        self.assertEqual(len([h for h in self.qr.headers if h.summary]), 2)
+        self.assertEqual(self.qr.headers[0].summary.stats["Sum"], 3.0)
+        self.assertEqual(self.qr.headers[1].summary.stats["Sum"], 30.0)
 
     def test_numeric_detection(self):
-        self.assertEqual(self.qr._get_numerics(), [(0, 'foo')])
+        self.assertEqual(self.qr._get_numerics(), [0])
 
     def test_transforms_are_identified(self):
-        self.qr._headers = ['foo']
+        self.qr._headers = [ColumnHeader('foo')]
         got = self.qr._get_transforms()
         self.assertEqual([(0, '<a href="{0}">{0}</a>')], got)
 
     def test_transform_alters_row(self):
-        self.qr._headers = ['foo', 'qux']
+        self.qr._headers = [ColumnHeader('foo'), ColumnHeader('qux')]
         self.qr._data = [[1,2]]
         self.qr.process()
         self.assertEqual(['<a href="1">1</a>', 2], self.qr._data[0])
 
     def test_multiple_transforms(self):
-        self.qr._headers = ['foo', 'bar']
+        self.qr._headers = [ColumnHeader('foo'), ColumnHeader('bar')]
         self.qr._data = [[1,2]]
         self.qr.process()
         self.assertEqual(['<a href="1">1</a>', 'x: 2'], self.qr._data[0])

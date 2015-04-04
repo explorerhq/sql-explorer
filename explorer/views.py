@@ -11,6 +11,7 @@ from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse_lazy
 from django.forms.models import model_to_dict
 from django.http import HttpResponse
+from django.db import DatabaseError
 
 from explorer.models import Query, QueryLog
 from explorer import app_settings
@@ -274,7 +275,6 @@ class QueryView(ExplorerContextMixin, View):
 
 
 def query_viewmodel(request, query, title=None, form=None, message=None, show_results=True):
-    from django.db import DatabaseError
     rows = url_get_rows(request)
     res = None
     error = None
@@ -294,6 +294,5 @@ def query_viewmodel(request, query, title=None, form=None, message=None, show_re
             'headers': res.headers if not error and show_results else None,
             'total_rows': len(res.data) if not error and show_results else None,
             'duration': res.duration if not error and show_results else None,
-            'summary': res.summary if not error and show_results else None,
             'rows': rows,
             'dataUrl': reverse_lazy('query_csv', kwargs={'query_id': query.id}) if query.id else ''})
