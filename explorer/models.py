@@ -128,7 +128,7 @@ class QueryResult(object):
 
     def _get_transforms(self):
         transforms = dict(app_settings.EXPLORER_TRANSFORMS)
-        return [(ix, transforms[unicode(h)]) for ix, h in enumerate(self.headers) if unicode(h) in transforms.keys()]
+        return [(ix, transforms[str(h)]) for ix, h in enumerate(self.headers) if str(h) in transforms.keys()]
 
     def column(self, ix):
         return [r[ix] for r in self.data]
@@ -208,11 +208,10 @@ class ColumnSummary(object):
         self._header = header
         self._stats = [
             ColumnStat("Sum", sum),
-            ColumnStat("Length", len, 0),
-            ColumnStat("Average", lambda x: float(sum(x)) / float(len(x))),
-            ColumnStat("Minimum", min),
-            ColumnStat("Maximum", max),
-            ColumnStat("NULLs", lambda x: sum(map(lambda y: 1 if y is None else 0, x)), 0, True)
+            ColumnStat("Avg", lambda x: float(sum(x)) / float(len(x))),
+            ColumnStat("Min", min),
+            ColumnStat("Max", max),
+            ColumnStat("NUL", lambda x: sum(map(lambda y: 1 if y is None else 0, x)), 0, True)
         ]
         without_nulls = list(map(lambda x: 0 if x is None else x, col))
 
@@ -224,5 +223,5 @@ class ColumnSummary(object):
         # dict comprehensions are not supported in Python 2.6, so do this instead
         return dict((c.label, c.value) for c in self._stats)
 
-    def __unicode__(self):
-        return unicode(self._header)
+    def __str__(self):
+        return str(self._header)
