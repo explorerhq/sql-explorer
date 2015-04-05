@@ -211,7 +211,7 @@ class ColumnSummary(object):
             ColumnStat("Avg", lambda x: float(sum(x)) / float(len(x))),
             ColumnStat("Min", min),
             ColumnStat("Max", max),
-            ColumnStat("NUL", lambda x: sum(map(lambda y: 1 if y is None else 0, x)), 0, True)
+            ColumnStat("NUL", lambda x: int(sum(map(lambda y: 1 if y is None else 0, x))), 0, True)
         ]
         without_nulls = list(map(lambda x: 0 if x is None else x, col))
 

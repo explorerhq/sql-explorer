@@ -295,4 +295,5 @@ def query_viewmodel(request, query, title=None, form=None, message=None, show_re
             'total_rows': len(res.data) if not error and show_results else None,
             'duration': res.duration if not error and show_results else None,
             'rows': rows,
+            'has_stats': len([h for h in res.headers if h.summary]) if not error and show_results else False,
             'dataUrl': reverse_lazy('query_csv', kwargs={'query_id': query.id}) if query.id else ''})

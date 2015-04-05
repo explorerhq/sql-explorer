@@ -110,3 +110,28 @@
 .indented {
     padding-left: 30px;
 }
+
+.stats-wrapper {
+    width: 120px;
+    display: none;
+}
+
+.stat-wrapper {
+    float: left;
+    width: 120px;
+}
+
+.stat-label {
+    width: 50%;
+    font-weight: 300;
+}
+
+.stat-value {
+    width: 50%;
+    font-weight: 500;
+}
+
+.stats-expand {
+    cursor: pointer;
+    height: 20px;
+}

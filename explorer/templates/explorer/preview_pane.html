@@ -24,15 +24,28 @@
                                     <thead class="data-headers">
                                         <tr>
                                             {% for h in headers %}
-                                                <th>{{ h }}<br/>
-                                                    {% for label, value in h.summary.stats.items %}
-                                                        {{ label }} - {{ value }}<br/>
-                                                    {% endfor %}
-                                                </th>
+                                                <th>{{ h }}</th>
                                             {% endfor %}
                                         </tr>
-                                    </thead>
+                                        </thead>
                                     <tbody>
+                                        {% if has_stats %}
+                                            <tr class="stats">
+                                                {% for h in headers %}
+                                                    <th>
+                                                        {% if h.summary %}
+                                                            <div class="stats-expand">...</div>
+                                                        {% endif %}
+                                                        <div class="stats-wrapper">
+                                                            {% for label, value in h.summary.stats.items %}
+                                                                <div class="stat-wrapper"><span class="stat-label">{{ label }}:&nbsp;</span><span class="stat-value">{{ value }}</span></div>
+                                                            {% endfor %}
+                                                        </div>
+                                                    </th>
+                                                {% endfor %}
+                                            </tr>
+                                        {% endif %}
+
                                         {% if data %}
                                             {% for row in data %}
                                             <tr>
