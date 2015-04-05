@@ -110,7 +110,7 @@ class QueryResult(object):
         return self._headers or []
 
     def _get_headers(self):
-        return [ColumnHeader(d[0]) for d in self._description] if self._description else ['--']
+        return [ColumnHeader(d[0]) for d in self._description] if self._description else [ColumnHeader('--')]
 
     def _get_numerics(self):
         conn = get_connection()

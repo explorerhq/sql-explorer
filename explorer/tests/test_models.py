@@ -90,6 +90,10 @@ class TestQueryResults(TestCase):
         self.qr.process()
         self.assertEqual(['<a href="1">1</a>', 'x: 2'], self.qr._data[0])
 
+    def test_get_headers_no_results(self):
+        self.qr._description = None
+        self.assertEqual([ColumnHeader('--')][0].title, self.qr._get_headers()[0].title)
+
 
 class TestColumnSummary(TestCase):
 
