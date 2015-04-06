@@ -71,6 +71,10 @@ class Query(models.Model):
         log_entry = QueryLog(sql=self.sql, query_id=self.id, run_by_user=user, is_playground=not bool(self.id))
         log_entry.save()
 
+    @property
+    def shared(self):
+        return self.id in set(sum(app_settings.EXPLORER_GET_USER_QUERY_VIEWS().values(), []))
+
 
 class QueryLog(models.Model):
 
@@ -109,20 +113,16 @@ class QueryResult(object):
     def headers(self):
         return self._headers or []
 
-    @property
-    def summary(self):
-        return self._summary or {}
-
     def _get_headers(self):
-        return [d[0] for d in self._description] if self._description else ['--']
+        return [ColumnHeader(d[0]) for d in self._description] if self._description else [ColumnHeader('--')]
 
     def _get_numerics(self):
         conn = get_connection()
         if hasattr(conn.Database, "NUMBER"):
-            return [(ix, c.name) for ix, c in enumerate(self._description) if hasattr(c, 'type_code') and c.type_code in conn.Database.NUMBER.values]
+            return [ix for ix, c in enumerate(self._description) if hasattr(c, 'type_code') and c.type_code in conn.Database.NUMBER.values]
         elif self.data:
             d = self.data[0]
-            return [(ix, c[0]) for ix, c in enumerate(self._description) if not isinstance(d[ix], six.string_types) and six.text_type(d[ix]).isnumeric()]
+            return [ix for ix, _ in enumerate(self._description) if not isinstance(d[ix], six.string_types) and six.text_type(d[ix]).isnumeric()]
         return []
 
     def _get_unicodes(self):
@@ -131,16 +131,25 @@ class QueryResult(object):
         return []
 
     def _get_transforms(self):
-        transforms = app_settings.EXPLORER_TRANSFORMS
-        return [(self.headers.index(field), template) for field, template in transforms if field in self.headers]
+        transforms = dict(app_settings.EXPLORER_TRANSFORMS)
+        return [(ix, transforms[str(h)]) for ix, h in enumerate(self.headers) if str(h) in transforms.keys()]
 
     def column(self, ix):
         return [r[ix] for r in self.data]
 
     def process(self):
         start_time = time()
-        self._summary = [ColumnSummary(header, self.column(ix)) for ix, header in self._get_numerics()]
 
+        self.process_columns()
+        self.process_rows()
+
+        logger.info("Explorer Query Processing took in %sms." % ((time() - start_time) * 1000))
+
+    def process_columns(self):
+        for ix in self._get_numerics():
+            self.headers[ix].add_summary(self.column(ix))
+
+    def process_rows(self):
         unicodes = self._get_unicodes()
         transforms = self._get_transforms()
         for r in self.data:
@@ -148,9 +157,6 @@ class QueryResult(object):
                 r[u] = r[u].encode('utf-8') if r[u] is not None else r[u]
             for ix, t in transforms:
                 r[ix] = t.format(str(r[ix]))
-        end_time = time()
-        duration = (end_time - start_time) * 1000
-        logger.info("Explorer Query Processing took in %sms." % duration)
 
     def execute_query(self):
         conn = get_connection()
@@ -163,9 +169,23 @@ class QueryResult(object):
             cursor.close()
             raise e
 
-        end_time = time()
-        duration = (end_time - start_time) * 1000
-        return cursor, duration
+        return cursor, ((time() - start_time) * 1000)
+
+
+class ColumnHeader(object):
+
+    def __init__(self, title):
+        self.title = title
+        self.summary = None
+
+    def add_summary(self, column):
+        self.summary = ColumnSummary(self, column)
+
+    def __unicode__(self):
+        return self.title
+
+    def __str__(self):
+        return self.title
 
 
 class ColumnStat(object):
@@ -189,15 +209,14 @@ class ColumnStat(object):
 class ColumnSummary(object):
 
     def __init__(self, header, col):
+        self._header = header
         self._stats = [
             ColumnStat("Sum", sum),
-            ColumnStat("Length", len, 0),
-            ColumnStat("Average", lambda x: float(sum(x)) / float(len(x))),
-            ColumnStat("Minimum", min),
-            ColumnStat("Maximum", max),
-            ColumnStat("NULLs", lambda x: sum(map(lambda y: 1 if y is None else 0, x)), 0, True)
+            ColumnStat("Avg", lambda x: float(sum(x)) / float(len(x))),
+            ColumnStat("Min", min),
+            ColumnStat("Max", max),
+            ColumnStat("NUL", lambda x: int(sum(map(lambda y: 1 if y is None else 0, x))), 0, True)
         ]
-        self.name = header
         without_nulls = list(map(lambda x: 0 if x is None else x, col))
 
         for stat in self._stats:
@@ -205,8 +224,8 @@ class ColumnSummary(object):
 
     @property
     def stats(self):
-        # dict comprehensions are not supported in Python 2.6
+        # dict comprehensions are not supported in Python 2.6, so do this instead
         return dict((c.label, c.value) for c in self._stats)
 
-    def __unicode__(self):
-        return self.name
+    def __str__(self):
+        return str(self._header)

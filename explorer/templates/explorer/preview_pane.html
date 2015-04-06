@@ -4,7 +4,6 @@
             <div role="tabpanel">
                 <ul class="nav nav-tabs" role="tablist">
                     <li role="presentation" class="active"><a href="#previewpane" aria-controls="previewpane" role="tab" data-toggle="tab">Preview</a></li>
-                    <li role="presentation"><a href="#stats" aria-controls="stats" role="tab" data-toggle="tab">Stats</a></li>
                     {% if query.id %}<li role="presentation"><a href="#chart" aria-controls="chart" role="tab" data-toggle="tab">Chart</a></li>{% endif %}
                 </ul>
                 <div class="tab-content">
@@ -28,8 +27,25 @@
                                                 <th>{{ h }}</th>
                                             {% endfor %}
                                         </tr>
-                                    </thead>
+                                        </thead>
                                     <tbody>
+                                        {% if has_stats %}
+                                            <tr class="stats">
+                                                {% for h in headers %}
+                                                    <th>
+                                                        {% if h.summary %}
+                                                            <div class="stats-expand">...</div>
+                                                        {% endif %}
+                                                        <div class="stats-wrapper">
+                                                            {% for label, value in h.summary.stats.items %}
+                                                                <div class="stat-wrapper"><span class="stat-label">{{ label }}:&nbsp;</span><span class="stat-value">{{ value }}</span></div>
+                                                            {% endfor %}
+                                                        </div>
+                                                    </th>
+                                                {% endfor %}
+                                            </tr>
+                                        {% endif %}
+
                                         {% if data %}
                                             {% for row in data %}
                                             <tr>
@@ -46,22 +62,6 @@
                             </div>
                         </div>
                     </div>
-                    {% if summary %}
-                    <div role="tabpanel" class="tab-pane" id="stats">
-                        <div class="stats">
-                            {% for col in summary %}
-                            <table class="table table-striped table-condensed" style="width: 180px;">
-                                <thead><tr><th colspan="2">{{ col }}</th></tr></thead>
-                                <tbody>
-                                    {% for label, value in col.stats.items %}
-                                        <tr><td width="50%">{{ label }}</td><td width="50%">{{ value }}</td></tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    {% endif %}
                     <div role="tabpanel" class="tab-pane" id="chart">
                         <div class="charts"></div>
                     </div>

@@ -13,7 +13,8 @@
 {% block sql_explorer_content %}
 <div class="row">
     <div id="query_area" class="col-md-12 query-area">
-        <h2>{% if query %}{{ query.title }}{% else %}New Query{% endif %}</h2>
+        <h2>{% if query %}{{ query.title }}{% if shared %}<small>&nbsp;&nbsp;shared</small>{% endif %}{% else %}New Query{% endif %}</h2>
+
         {% if message %}
             <div class="alert alert-info">{{ message }}</div>
         {% endif %}

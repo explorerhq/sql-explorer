@@ -42,11 +42,11 @@ class QueryForm(ModelForm):
 
     @property
     def created_by_user_email(self):
-        return self.instance.created_by_user.email
+        return self.instance.created_by_user.email if self.instance.created_by_user else '--'
 
     @property
     def created_by_user_id(self):
-        return self.instance.created_by_user.id
+        return self.instance.created_by_user.id if self.instance.created_by_user else '--'
 
     class Meta:
         model = Query
