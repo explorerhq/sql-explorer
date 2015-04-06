@@ -28,6 +28,14 @@ class TestQueryModel(TestCase):
         log = QueryLog.objects.first()
         self.assertTrue(log.is_playground)
 
+    def test_shared(self):
+        q = SimpleQueryFactory()
+        q2 = SimpleQueryFactory()
+        with self.settings(EXPLORER_USER_QUERY_VIEWS={'foo': [q.id]}):
+            self.assertTrue(q.shared)
+            self.assertFalse(q2.shared)
+
+
 
 class TestQueryResults(TestCase):
 

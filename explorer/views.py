@@ -286,6 +286,7 @@ def query_viewmodel(request, query, title=None, form=None, message=None, show_re
     return RequestContext(request, {
             'params': query.available_params(),
             'title': title,
+            'shared': query.shared,
             'query': query,
             'form': form,
             'message': message,

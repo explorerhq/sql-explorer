@@ -280,14 +280,8 @@ class TestParamsInViews(TestCase):
         self.assertContains(resp, 'saved')
 
     def test_users_without_change_permissions_can_use_params(self):
-
-        #old = app_settings.EXPLORER_PERMISSION_CHANGE
-        #app_settings.EXPLORER_PERMISSION_CHANGE = lambda u: False
-
         resp = self.client.get(reverse("query_detail", kwargs={'query_id': self.query.id}) + '?params={"swap":123}')
         self.assertContains(resp, "123")
-
-        #app_settings.EXPLORER_PERMISSION_CHANGE = old
 
 
 class TestCreatedBy(TestCase):
