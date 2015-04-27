@@ -3,7 +3,7 @@ from django.db import models, DatabaseError
 from time import time
 from django.core.urlresolvers import reverse
 from django.conf import settings
-import app_settings
+from . import app_settings
 import logging
 import six
 
