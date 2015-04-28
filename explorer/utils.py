@@ -86,7 +86,7 @@ def extract_params(text):
 
 def write_csv(headers, data):
     csv_data = cStringIO()
-    writer = csv.writer(csv_data, delimeter=app_settings.CSV_DELIMETER)
+    writer = csv.writer(csv_data, delimiter=app_settings.CSV_DELIMETER)
     writer.writerow(headers)
     for row in data:
         writer.writerow(row)
