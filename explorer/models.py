@@ -33,6 +33,10 @@ class Query(models.Model):
     def __unicode__(self):
         return six.text_type(self.title)
 
+    @property
+    def run_count(self):
+        return QueryLog.objects.filter(query_id=self.id).count() if self.id else None
+
     def passes_blacklist(self):
         return passes_blacklist(self.final_sql())
 
@@ -67,9 +71,8 @@ class Query(models.Model):
     def get_absolute_url(self):
         return reverse("query_detail", kwargs={'query_id': self.id})
 
-    def log(self, user):
-        log_entry = QueryLog(sql=self.sql, query_id=self.id, run_by_user=user, is_playground=not bool(self.id))
-        log_entry.save()
+    def log(self, user=None):
+        QueryLog(sql=self.sql, query_id=self.id, run_by_user=user).save()
 
     @property
     def shared(self):
@@ -78,11 +81,26 @@ class Query(models.Model):
 
 class QueryLog(models.Model):
 
-    sql = models.TextField()
+    sql = models.TextField(null=True, blank=True)
     query = models.ForeignKey(Query, null=True, blank=True, on_delete=models.SET_NULL)
-    is_playground = models.BooleanField(default=False)
     run_by_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
     run_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, **kwargs):
+        self.sql = self.sql if self.sql and self.should_save_sql() else None
+        super(QueryLog, self).save(**kwargs)
+
+    def should_save_sql(self):
+        # If the querylog already has been saved, then the sql should always be saved.
+        if self.id:
+            return bool(self.sql)
+        last_log = QueryLog.objects.filter(query_id=self.query_id).order_by('-run_at').first()
+        last_log_sql = last_log.sql if last_log else None
+        return last_log_sql != self.sql
+
+    @property
+    def is_playground(self):
+        return self.query_id is None
 
     class Meta:
         ordering = ['-run_at']

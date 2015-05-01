@@ -331,10 +331,14 @@ class TestQueryLog(TestCase):
         self.client.post(reverse("query_detail", kwargs={'query_id': query.id}), data)
         self.assertEqual(1, QueryLog.objects.count())
 
-    def test_unchanged_query_doesnt_save_to_log(self):
+    def test_unchanged_query_doesnt_save_sql_to_log(self):
         query = SimpleQueryFactory()
         self.client.post(reverse("query_detail", kwargs={'query_id': query.id}), model_to_dict(query))
-        self.assertEqual(0, QueryLog.objects.count())
+        self.assertEqual(1, QueryLog.objects.count())
+        self.assertIsNotNone(QueryLog.objects.first().sql)
+        self.client.post(reverse("query_detail", kwargs={'query_id': query.id}), model_to_dict(query))
+        self.assertEqual(2, QueryLog.objects.count())
+        self.assertIsNone(QueryLog.objects.order_by('-run_at').first().sql)
 
     def test_retrieving_query_doesnt_save_to_log(self):
         query = SimpleQueryFactory()
@@ -353,3 +357,18 @@ class TestQueryLog(TestCase):
         self.client.logout()
         resp = self.client.get(reverse("explorer_logs"))
         self.assertTemplateUsed(resp, 'admin/login.html')
+
+    def test_sql_changed_query(self):
+        q = SimpleQueryFactory()
+        ql = QueryLog(sql=q.sql, query_id=q.id)
+        self.assertTrue(ql.should_save_sql())
+        ql.save()
+        self.assertTrue(ql.should_save_sql())
+        ql2 = QueryLog(sql=q.sql, query_id=q.id)
+        self.assertFalse(ql2.should_save_sql())
+
+    def test_is_playground(self):
+        self.assertTrue(QueryLog(sql='foo').is_playground)
+
+        q = SimpleQueryFactory()
+        self.assertFalse(QueryLog(sql='foo', query_id=q.id).is_playground)
