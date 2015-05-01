@@ -218,7 +218,7 @@ class PlayQueryView(ExplorerContextMixin, View):
     def get(self, request):
         if url_get_query_id(request):
             query = get_object_or_404(Query, pk=url_get_query_id(request))
-            return self.render_with_sql(request, query)
+            return self.render_with_sql(request, query, show_results=False)
 
         if url_get_log_id(request):
             log = get_object_or_404(QueryLog, pk=url_get_log_id(request))

@@ -16,7 +16,7 @@
                 <tr>
                     <th>Query</th>
                     <th>Last Run</th>
-                    <th>Download CSV</th>
+                    <th>CSV</th>
                 </tr>
             </thead>
             <tbody>
@@ -40,8 +40,9 @@
             <tr>
                 <th>Query</th>
                 <th>Created</th>
-                <th>Download CSV</th>
+                <th>CSV</th>
                 {% if can_change %}
+                    <th>Play</th>
                     <th>Delete</th>
                 {% endif %}
             </tr>
@@ -50,13 +51,13 @@
             {% for object in object_list %}
             <tr {% if object.is_in_category %}class="collapse in collapse-{{ object.collapse_target }}"{% endif %}>
                 {% if object.is_header %}
-                    <td>
+                    <td colspan="100">
                         <strong>
                             <span data-toggle="collapse" data-target=".collapse-{{object.collapse_target}}"
                                       class="toggle">
                             {{ object.title }} ({{ object.count }})</span>
                         </strong>
-                    </td><td></td><td></td><td></td>
+                    </td>
                 {% else %}
                     <td class="name" {% if object.is_in_category %}class="indented"{% endif %}>
                         {% if object.is_in_category %}|-- {% endif %}<a href="{{ object.id }}/">{{ object.title }}</a>
@@ -69,11 +70,15 @@
                     <td class="icon-cell">
                         <a href="{{ object.id }}/download"><i class="glyphicon glyphicon-download"></i></a>
                     </td>
-                    <td class="icon-cell">
-                        {% if can_change %}
+                    {% if can_change %}
+                        <td class="icon-cell">
+                            <a href="play/?query_id={{ object.id }}"><i class="glyphicon glyphicon-new-window"></i></a>
+                        </td>
+                        <td class="icon-cell">
                             <a href="{{ object.id }}/delete"><i class="glyphicon glyphicon-trash"></i></a>
-                        {% endif %}
-                    </td>
+                        </td>
+                    {% endif %}
+
                 {% endif %}
             </tr>
             {% endfor %}
@@ -83,7 +88,7 @@
 {% endblock %}
 
 {% block sql_explorer_scripts %}
-<script>
+    <script>
     $(function() {
         function SearchFocus() {
             $(".search").focus();
