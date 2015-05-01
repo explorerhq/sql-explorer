@@ -167,6 +167,7 @@ class ListQueryView(ExplorerContextMixin, ListView):
             model_dict.update({'is_in_category': headers[header] > 1,
                                'collapse_target': collapse_target,
                                'created_at': q.created_at,
+                               'run_count': q.run_count,
                                'created_by_user': six.text_type(q.created_by_user) if q.created_by_user else None})
             dict_list.append(model_dict)
         return dict_list
@@ -179,6 +180,9 @@ class ListQueryLogView(ExplorerContextMixin, ListView):
     @method_decorator(view_permission)
     def dispatch(self, *args, **kwargs):
         return super(ListQueryLogView, self).dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        return QueryLog.objects.filter(sql__isnull=False).all()
 
     context_object_name = "recent_logs"
     model = QueryLog
@@ -261,8 +265,7 @@ class QueryView(ExplorerContextMixin, View):
 
         query, form = QueryView.get_instance_and_form(request, query_id)
         success = form.is_valid() and form.save()
-        if form.has_changed():
-            query.log(request.user)
+        query.log(request.user)
         vm = query_viewmodel(request, query, form=form, message="Query saved." if success else None)
         return self.render_template('explorer/query.html', vm)
 

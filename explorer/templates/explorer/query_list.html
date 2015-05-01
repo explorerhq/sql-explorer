@@ -45,6 +45,7 @@
                     <th>Play</th>
                     <th>Delete</th>
                 {% endif %}
+                <th>Run Count</th>
             </tr>
         </thead>
         <tbody class="list">
@@ -78,6 +79,9 @@
                             <a href="{{ object.id }}/delete"><i class="glyphicon glyphicon-trash"></i></a>
                         </td>
                     {% endif %}
+                    <td>
+                        {{ object.run_count }}
+                    </td>
 
                 {% endif %}
             </tr>
