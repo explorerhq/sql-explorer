@@ -25,3 +25,5 @@ EXPLORER_GET_USER_QUERY_VIEWS = lambda: getattr(settings, 'EXPLORER_USER_QUERY_V
 EXPLORER_TOKEN_AUTH_ENABLED = lambda: getattr(settings, 'EXPLORER_TOKEN_AUTH_ENABLED', False)
 
 EXPLORER_TOKEN = getattr(settings, 'EXPLORER_TOKEN', 'CHANGEME')
+
+CSV_DELIMETER = getattr(settings, "EXPLORER_CSV_DELIMETER", ";")
