@@ -26,4 +26,4 @@ EXPLORER_TOKEN_AUTH_ENABLED = lambda: getattr(settings, 'EXPLORER_TOKEN_AUTH_ENA
 
 EXPLORER_TOKEN = getattr(settings, 'EXPLORER_TOKEN', 'CHANGEME')
 
-CSV_DELIMETER = getattr(settings, "EXPLORER_CSV_DELIMETER", ";")
+CSV_DELIMETER = getattr(settings, "EXPLORER_CSV_DELIMETER", ",")
