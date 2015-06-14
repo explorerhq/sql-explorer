@@ -1,10 +1,12 @@
 {% extends "explorer/base.html" %}
 
+{% load url from future %}
+
 {% block sql_explorer_navlinks %}
     {% if can_change %}
-      <li><a href="../new/">New Query</a></li>
-      <li class="active"><a href="#">Playground</a></li>
-      <li><a href="../logs/">Logs</a></li>
+      <li><a href="{% url "query_create" %}">New Query</a></li>
+      <li class="active"><a href="">Playground</a></li>
+      <li><a href="{% url "explorer_logs" %}">Logs</a></li>
     {% endif %}
 {% endblock %}
 
@@ -13,7 +15,7 @@
     <div id="query_area" class="col-md-12">
         <h2>Playground</h2>
         <p>The playground is for experimenting and writing ad-hoc queries. By default, nothing you do here will be saved.</p>
-        <form role="form" action="../play/" method="post" id="editor">{% csrf_token %}
+        <form role="form" action="{% url "explorer_playground" %}" method="post" id="editor">{% csrf_token %}
             {% if error %}
                 <div class="alert alert-danger">{{ error|escape }}</div>
             {% endif %}
