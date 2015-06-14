@@ -63,7 +63,7 @@ Features
     - Quick search also works after hitting "Show Schema" on a query view.
     - Command+Enter and Ctrl+Enter will execute a query when typing in the SQL editor area.
     - Hit the "Format" button to format and clean up your SQL (this is non-validating -- just formatting).
-    - Use the Query Logs feature to share one-time queries that aren't worth createing a persistent query for. Just run your SQL in the playground, then navigate to /logs and share the link (e.g. /explorer/play/?querylog_id=2428)
+    - Use the Query Logs feature to share one-time queries that aren't worth creating a persistent query for. Just run your SQL in the playground, then navigate to /logs and share the link (e.g. /explorer/play/?querylog_id=2428)
     - Set env vars for EXPLORER_TOKEN_AUTH_ENABLED=TRUE and EXPLORER_TOKEN=<SOME TOKEN> and you have an instant data API. Just:
 
     ``curl --header "X-API-TOKEN: <TOKEN>" https://www.your-site.com/explorer/<QUERY_ID>/csv``
