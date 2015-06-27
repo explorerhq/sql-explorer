@@ -3,11 +3,11 @@
 
 {% block sql_explorer_navlinks %}
     {% if can_change %}
-      <li{% if not query %} class="active" {% endif %}><a href="../new/">New Query</a></li>
-      <li><a href="../play/">Playground</a></li>
+      <li{% if not query %} class="active" {% endif %}><a href="{% url "query_create" %}">New Query</a></li>
+      <li><a href="{% url "explorer_playground" %}">Playground</a></li>
     {% endif %}
     {% if query %}<li class="active"><a href="">Query Detail</a></li>{% endif %}
-    <li><a href="../logs/">Logs</a></li>
+    <li><a href="{% url "explorer_logs" %}">Logs</a></li>
 {% endblock %}
 
 {% block sql_explorer_content %}
@@ -19,7 +19,11 @@
             <div class="alert alert-info">{{ message }}</div>
         {% endif %}
         <div>
-            <form role="form" class="form-horizontal" action="../{% firstof query.id 'new' %}/" method="post" id="editor">{% csrf_token %}
+            {% if query %}
+                <form role="form" class="form-horizontal" action="{% url "query_detail" query.id %}" method="post" id="editor">{% csrf_token %}
+            {% else %}
+                <form role="form" class="form-horizontal" action="{% url "query_create" %}" method="post" id="editor">{% csrf_token %}
+            {% endif %}
                 {% if error %}
                     <div class="alert alert-danger">{{ error|escape }}</div>
                 {% endif %}
@@ -73,7 +77,7 @@
                             {% if can_change %}
                                 <input type="submit" value="Save & Run" class="btn btn-default" id="save_button" />
                                 {% if query %}
-                                     <button class="btn btn-default download_button" href="csv">Download CSV</button>
+                                     <button class="btn btn-default download_button" href="{% url "query_csv" query.id %}">Download CSV</button>
                                      <input type="submit" value="Open in Playground" class="btn btn-default" id="playground_button"/>
                                 {%  endif %}
                                 <button type="button" class="btn btn-default" id="show_schema_button">Show Schema</button>
@@ -81,7 +85,7 @@
                                 <button type="button" class="btn btn-default" id="format_button">Format</button>
                             {% else %}
                                 <input type="submit" value="Refresh" class="btn btn-default" id="refresh_button" />
-                                <button class="btn btn-default download_button" href="csv">Download CSV</button>
+                                <button class="btn btn-default download_button" href="{% url "query_csv" query.id %}">Download CSV</button>
                             {% endif %}
                         </div>
                     </div>
