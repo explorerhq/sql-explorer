@@ -25,7 +25,8 @@ from explorer.utils import url_get_rows,\
     build_download_response,\
     build_stream_response,\
     user_can_see_query,\
-    fmt_sql
+    fmt_sql,\
+    allowed_query_pks
 
 try:
     from collections import Counter
@@ -45,6 +46,19 @@ def view_permission(f):
                 and not user_can_see_query(request, kwargs)\
                 and not (app_settings.EXPLORER_TOKEN_AUTH_ENABLED()
                          and request.META.get('HTTP_X_API_TOKEN') == app_settings.EXPLORER_TOKEN):
+            return safe_admin_login_prompt(request)
+        return f(request, *args, **kwargs)
+    return wrap
+
+
+# Users who can only see some queries can still see the list.
+# Different than the above because it's not checking for any specific query permissions.
+# And token auth does not give you permission to view the list.
+def view_permission_list(f):
+    @wraps(f)
+    def wrap(request, *args, **kwargs):
+        if not app_settings.EXPLORER_PERMISSION_VIEW(request.user)\
+                and not allowed_query_pks(request.user.id):
             return safe_admin_login_prompt(request)
         return f(request, *args, **kwargs)
     return wrap
@@ -115,18 +129,21 @@ def format_sql(request):
 
 class ListQueryView(ExplorerContextMixin, ListView):
 
-    @method_decorator(view_permission)
+    @method_decorator(view_permission_list)
     def dispatch(self, *args, **kwargs):
         return super(ListQueryView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(ListQueryView, self).get_context_data(**kwargs)
         context['object_list'] = self._build_queries_and_headers()
-        context['recent_queries'] = Query.objects.all().order_by('-last_run_date')[:app_settings.EXPLORER_RECENT_QUERY_COUNT]
+        context['recent_queries'] = self.get_queryset().order_by('-last_run_date')[:app_settings.EXPLORER_RECENT_QUERY_COUNT]
         return context
 
     def get_queryset(self):
-        return Query.objects.prefetch_related('created_by_user').all()
+        if app_settings.EXPLORER_PERMISSION_VIEW(self.request.user):
+            return Query.objects.prefetch_related('created_by_user').all()
+        else:
+            return Query.objects.prefetch_related('created_by_user').filter(pk__in=allowed_query_pks(self.request.user.id))
 
     def _build_queries_and_headers(self):
         """

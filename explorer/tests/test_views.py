@@ -11,6 +11,9 @@ import time
 import json
 
 
+_ = lambda x: x
+
+
 class TestQueryListView(TestCase):
 
     def setUp(self):
@@ -31,6 +34,18 @@ class TestQueryListView(TestCase):
         self.assertContains(resp, 'foo (3)')
         self.assertContains(resp, 'foo - bar2')
         self.assertContains(resp, 'qux - mux')
+
+    def test_permissions_show_only_allowed_queries(self):
+        self.client.logout()
+        q1 = SimpleQueryFactory(title='canseethisone')
+        q2 = SimpleQueryFactory(title='nope')
+        user = User.objects.create_user('user', 'user@user.com', 'pwd')
+        self.client.login(username='user', password='pwd')
+        with self.settings(EXPLORER_USER_QUERY_VIEWS={user.id: [q1.id]}):
+            resp = self.client.get(reverse("explorer_index"))
+        self.assertTemplateUsed(resp, 'explorer/query_list.html')
+        self.assertContains(resp, q1.title)
+        self.assertNotContains(resp, q2.title)
 
 
 class TestQueryCreateView(TestCase):

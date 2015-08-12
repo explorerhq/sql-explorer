@@ -4,7 +4,7 @@ import json
 import re
 import string
 from explorer import app_settings
-from django.db import connections, connection, models, transaction, DatabaseError
+from django.db import connections, connection, models, DatabaseError
 from django.http import HttpResponse
 from six.moves import cStringIO
 import sqlparse
@@ -21,7 +21,6 @@ def passes_blacklist(sql):
 
 def get_connection():
     return connections[app_settings.EXPLORER_CONNECTION_NAME] if app_settings.EXPLORER_CONNECTION_NAME else connection
-
 
 
 def schema_info():
@@ -63,7 +62,7 @@ def schema_info():
 
 
 def _format_field(field):
-    return (field.get_attname_column()[1], field.get_internal_type())
+    return field.get_attname_column()[1], field.get_internal_type()
 
 
 def param(name):
@@ -126,7 +125,6 @@ def csv_report(query):
 
 # Helpers
 from django.contrib.admin.forms import AdminAuthenticationForm
-
 from django.contrib.auth.views import login
 from django.contrib.auth import REDIRECT_FIELD_NAME
 
@@ -191,10 +189,13 @@ def url_get_params(request):
     return get_json_from_request(request, 'params')
 
 
+def allowed_query_pks(user_id):
+    return app_settings.EXPLORER_GET_USER_QUERY_VIEWS().get(user_id, [])
+
+
 def user_can_see_query(request, kwargs):
     if not request.user.is_anonymous() and 'query_id' in kwargs:
-        allowed_queries = app_settings.EXPLORER_GET_USER_QUERY_VIEWS().get(request.user.id, [])
-        return int(kwargs['query_id']) in allowed_queries
+        return int(kwargs['query_id']) in allowed_query_pks(request.user.id)
     return False
 
 
