@@ -271,7 +271,8 @@ class QueryView(ExplorerContextMixin, View):
     def get(self, request, query_id):
         query, form = QueryView.get_instance_and_form(request, query_id)
         query.save()  # updates the modified date
-        vm = query_viewmodel(request, query, form=form)
+        show = bool(int(request.GET.get('show', '1')))  # if a query is timing out, it can be useful to nav to /query/id/?show=0
+        vm = query_viewmodel(request, query, form=form, show_results=show)
         return self.render_template('explorer/query.html', vm)
 
     def post(self, request, query_id):

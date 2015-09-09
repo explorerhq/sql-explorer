@@ -108,6 +108,12 @@ class TestQueryDetailView(TestCase):
         self.client.get(reverse("query_detail", kwargs={'query_id': query.id}))
         self.assertNotEqual(old, Query.objects.get(pk=query.id).last_run_date)
 
+    def test_doesnt_render_results_if_show_is_none(self):
+        query = SimpleQueryFactory(sql='select 6870+1;')
+        resp = self.client.get(reverse("query_detail", kwargs={'query_id': query.id}) + '?show=0')
+        self.assertTemplateUsed(resp, 'explorer/query.html')
+        self.assertNotContains(resp, '6871')
+
     def test_admin_required(self):
         self.client.logout()
         query = SimpleQueryFactory()
