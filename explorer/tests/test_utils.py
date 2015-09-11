@@ -3,7 +3,7 @@ from explorer.actions import generate_report_action
 from explorer.tests.factories import SimpleQueryFactory
 from explorer import app_settings
 from explorer.utils import passes_blacklist, schema_info, param, swap_params, extract_params,\
-    shared_dict_update, EXPLORER_PARAM_TOKEN
+    shared_dict_update, EXPLORER_PARAM_TOKEN, write_csv
 
 
 class TestSqlBlacklist(TestCase):
@@ -86,3 +86,12 @@ class TestParams(TestCase):
         source = {'foo': 1, 'bar': 2}
         target = {'bar': None}  # ha ha!
         self.assertEqual({'bar': 2}, shared_dict_update(target, source))
+
+
+class TestCsv(TestCase):
+
+    def test_writing_unicode(self):
+        headers = ['a', None]
+        data = [[1, None], [u'\xf6', '1']]
+        res = write_csv(headers, data)
+        self.assertEqual(res, 'a,\r\n1,None\r\n\xc3\xb6,1\r\n')

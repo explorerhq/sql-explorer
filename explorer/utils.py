@@ -91,7 +91,7 @@ def write_csv(headers, data, delim=None):
     writer = csv.writer(csv_data, delimiter=delim)
     writer.writerow(headers)
     for row in data:
-        writer.writerow(row)
+        writer.writerow([unicode(s).encode("utf-8") for s in row])
     return csv_data.getvalue()
 
 
