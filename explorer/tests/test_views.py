@@ -182,6 +182,18 @@ class TestDownloadView(TestCase):
         resp = self.client.get(url)
         self.assertContains(resp, "'123'")
 
+    def test_custom_delim_in_download(self):
+        q = SimpleQueryFactory(sql="select 1, 2;")
+        url = '%s?delim=|' % reverse("query_download", kwargs={'query_id': q.id})
+        resp = self.client.get(url)
+        self.assertContains(resp, "1|2")
+
+    def test_tab_delim_in_download(self):
+        q = SimpleQueryFactory(sql="select 1, 2;")
+        url = '%s?delim=tab' % reverse("query_download", kwargs={'query_id': q.id})
+        resp = self.client.get(url)
+        self.assertContains(resp, "1\t2")
+
 
 class TestQueryPlayground(TestCase):
 

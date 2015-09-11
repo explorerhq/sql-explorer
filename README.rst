@@ -56,7 +56,7 @@ Features
     - Explorer will save a snapshot of every query you execute so you can recover lost ad-hoc queries, and see what you've been querying.
     - This also serves as cheap-and-dirty versioning of Queries.
 - **Stable**
-    - 95% according to coverage...for what that's worth. Just install factory_boy and run `manage.py test`
+    - 95% according to coverage...for what that's worth. Just install factory_boy and run `manage.py test --settings=explorer.tests.settings`
     - Battle-tested in production every day by the ePantry team.
 - **Power tips**
     - On the query listing page, focus gets set to a search box so you can just navigate to /explorer and start typing the name of your query to find it.
@@ -64,6 +64,8 @@ Features
     - Command+Enter and Ctrl+Enter will execute a query when typing in the SQL editor area.
     - Hit the "Format" button to format and clean up your SQL (this is non-validating -- just formatting).
     - Use the Query Logs feature to share one-time queries that aren't worth creating a persistent query for. Just run your SQL in the playground, then navigate to /logs and share the link (e.g. /explorer/play/?querylog_id=2428)
+    - If you need to download a query as something other than csv but don't want to globally change delimiters via settings.EXPLORER_CSV_DELIMETER, you can use /query/download?delim=| to get a pipe (or whatever) delimited file. For a tab-delimited file, use delim=tab. Note that the file extension will remain .csv
+    - If a query is taking a long time to run (perhaps timing out) and you want to get in there to optimize it, go to /query/123/?show=0. You'll see the normal query detail page, but the query won't execute.
     - Set env vars for EXPLORER_TOKEN_AUTH_ENABLED=TRUE and EXPLORER_TOKEN=<SOME TOKEN> and you have an instant data API. Just:
 
     ``curl --header "X-API-TOKEN: <TOKEN>" https://www.your-site.com/explorer/<QUERY_ID>/csv``

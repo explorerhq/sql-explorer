@@ -26,7 +26,8 @@ from explorer.utils import url_get_rows,\
     build_stream_response,\
     user_can_see_query,\
     fmt_sql,\
-    allowed_query_pks
+    allowed_query_pks,\
+    url_get_show
 
 try:
     from collections import Counter
@@ -92,19 +93,19 @@ class ExplorerContextMixin(object):
 @view_permission
 @require_GET
 def download_query(request, query_id):
-    return _csv_response(request, query_id, False)
+    return _csv_response(request, query_id, False, delim=request.GET.get('delim', None))
 
 
 @view_permission
 @require_GET
 def view_csv_query(request, query_id):
-    return _csv_response(request, query_id, True)
+    return _csv_response(request, query_id, True, delim=request.GET.get('delim', None))
 
 
-def _csv_response(request, query_id, stream=False):
+def _csv_response(request, query_id, stream=False, delim=None):
     query = get_object_or_404(Query, pk=query_id)
     query.params = url_get_params(request)
-    return build_stream_response(query) if stream else build_download_response(query)
+    return build_stream_response(query, delim) if stream else build_download_response(query, delim)
 
 
 @change_permission
@@ -271,7 +272,7 @@ class QueryView(ExplorerContextMixin, View):
     def get(self, request, query_id):
         query, form = QueryView.get_instance_and_form(request, query_id)
         query.save()  # updates the modified date
-        show = bool(int(request.GET.get('show', '1')))  # if a query is timing out, it can be useful to nav to /query/id/?show=0
+        show = url_get_show(request)  # if a query is timing out, it can be useful to nav to /query/id/?show=0
         vm = query_viewmodel(request, query, form=form, show_results=show)
         return self.render_template('explorer/query.html', vm)
 

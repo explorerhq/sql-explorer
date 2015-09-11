@@ -82,9 +82,13 @@ def extract_params(text):
     return dict(zip(params, ['' for i in range(len(params))]))
 
 
-def write_csv(headers, data):
+def write_csv(headers, data, delim=None):
+    if delim and len(delim) == 1 or delim == 'tab':
+        delim = '\t' if delim == 'tab' else str(delim)
+    else:
+        delim = app_settings.CSV_DELIMETER
     csv_data = cStringIO()
-    writer = csv.writer(csv_data, delimiter=app_settings.CSV_DELIMETER)
+    writer = csv.writer(csv_data, delimiter=delim)
     writer.writerow(headers)
     for row in data:
         writer.writerow(row)
@@ -99,14 +103,14 @@ def get_filename_for_title(title):
     return filename
 
 
-def build_stream_response(query):
-    data = csv_report(query)
+def build_stream_response(query, delim=None):
+    data = csv_report(query, delim)
     response = HttpResponse(data, content_type='text')
     return response
 
 
-def build_download_response(query):
-    data = csv_report(query)
+def build_download_response(query, delim=None):
+    data = csv_report(query, delim)
     response = HttpResponse(data, content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="%s.csv"' % (
         get_filename_for_title(query.title)
@@ -115,10 +119,10 @@ def build_download_response(query):
     return response
 
 
-def csv_report(query):
+def csv_report(query, delim=None):
     try:
         res = query.execute()
-        return write_csv(res.headers, res.data)
+        return write_csv(res.headers, res.data, delim)
     except DatabaseError as e:
         return str(e)
 
@@ -183,6 +187,10 @@ def url_get_query_id(request):
 
 def url_get_log_id(request):
     return get_int_from_request(request, 'querylog_id', None)
+
+
+def url_get_show(request):
+    return bool(get_int_from_request(request, 'show', 1))
 
 
 def url_get_params(request):
