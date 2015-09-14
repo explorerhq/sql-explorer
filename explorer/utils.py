@@ -7,6 +7,7 @@ from explorer import app_settings
 from django.db import connections, connection, models, DatabaseError
 from django.http import HttpResponse
 from six.moves import cStringIO
+import six
 import sqlparse
 
 EXPLORER_PARAM_TOKEN = "$$"
@@ -91,7 +92,7 @@ def write_csv(headers, data, delim=None):
     writer = csv.writer(csv_data, delimiter=delim)
     writer.writerow(headers)
     for row in data:
-        writer.writerow([unicode(s).encode("utf-8") for s in row])
+        writer.writerow([six.text_type(s).encode("utf-8") for s in row])
     return csv_data.getvalue()
 
 

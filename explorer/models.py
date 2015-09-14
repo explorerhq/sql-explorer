@@ -172,7 +172,7 @@ class QueryResult(object):
         transforms = self._get_transforms()
         for r in self.data:
             for u in unicodes:
-                r[u] = unicode(r[u]).encode('utf-8') if r[u] is not None else r[u]
+                r[u] = six.text_type(r[u]).encode('utf-8') if r[u] is not None else r[u]
             for ix, t in transforms:
                 r[ix] = t.format(str(r[ix]))
 
