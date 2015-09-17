@@ -96,4 +96,4 @@ class TestCsv(TestCase):
         headers = ['a', None]
         data = [[1, None], [u"Jenét", '1']]
         res = write_csv(headers, data)
-        self.assertEqual(res, 'a,\r\n1,\r\nJen\xc3\xa9t,1\r\n')
+        self.assertEqual(res, 'a,\r\n1,\r\nJenét,1\r\n')
