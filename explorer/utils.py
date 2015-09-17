@@ -1,5 +1,9 @@
 import functools
-import unicodecsv as csv
+import sys
+if sys.version_info[0] == 3:
+    import csv
+else:
+    import unicodecsv as csv
 import json
 import re
 import string
