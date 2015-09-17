@@ -1,6 +1,10 @@
+
+
 import functools
 import sys
-if sys.version_info[0] == 3:
+PY3 = sys.version_info[0] == 3
+
+if PY3:
     import csv
 else:
     import unicodecsv as csv
@@ -92,7 +96,10 @@ def write_csv(headers, data, delim=None):
     else:
         delim = app_settings.CSV_DELIMETER
     csv_data = cStringIO()
-    writer = csv.writer(csv_data, delimiter=delim, encoding='utf-8')
+    if PY3:
+        writer = csv.writer(csv_data, delimiter=delim)
+    else:
+        writer = csv.writer(csv_data, delimiter=delim, encoding='utf-8')
     writer.writerow(headers)
     for row in data:
         writer.writerow([s for s in row])
