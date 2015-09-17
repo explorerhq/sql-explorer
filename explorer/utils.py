@@ -1,5 +1,5 @@
 import functools
-import csv
+import unicodecsv as csv
 import json
 import re
 import string
@@ -7,7 +7,6 @@ from explorer import app_settings
 from django.db import connections, connection, models, DatabaseError
 from django.http import HttpResponse
 from six.moves import cStringIO
-import six
 import sqlparse
 
 EXPLORER_PARAM_TOKEN = "$$"
@@ -89,10 +88,10 @@ def write_csv(headers, data, delim=None):
     else:
         delim = app_settings.CSV_DELIMETER
     csv_data = cStringIO()
-    writer = csv.writer(csv_data, delimiter=delim)
+    writer = csv.writer(csv_data, delimiter=delim, encoding='utf-8')
     writer.writerow(headers)
     for row in data:
-        writer.writerow([six.text_type(s).encode("utf-8") for s in row])
+        writer.writerow([s for s in row])
     return csv_data.getvalue()
 
 
