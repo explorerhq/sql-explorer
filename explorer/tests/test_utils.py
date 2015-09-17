@@ -1,3 +1,5 @@
+#encoding=utf8
+
 from django.test import TestCase
 from explorer.actions import generate_report_action
 from explorer.tests.factories import SimpleQueryFactory
@@ -92,6 +94,6 @@ class TestCsv(TestCase):
 
     def test_writing_unicode(self):
         headers = ['a', None]
-        data = [[1, None], [u'\xf6', '1']]
+        data = [[1, None], [u"Jenét", '1']]
         res = write_csv(headers, data)
-        self.assertEqual(res, 'a,\r\n1,\r\n\xc3\xb6,1\r\n')
+        self.assertEqual(res, 'a,\r\n1,\r\nJen\xc3\xa9t,1\r\n')
