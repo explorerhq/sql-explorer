@@ -298,25 +298,34 @@ class QueryView(ExplorerContextMixin, View):
 
 def query_viewmodel(request, query, title=None, form=None, message=None, show_results=True):
     rows = url_get_rows(request)
-    res = None
-    error = None
-    if show_results:
-        try:
-            res = query.execute()
-        except DatabaseError as e:
-            error = str(e)
-    return RequestContext(request, {
+    data = {
             'params': query.available_params(),
             'title': title,
             'shared': query.shared,
             'query': query,
             'form': form,
             'message': message,
-            'error': error,
-            'data': res.data[:rows] if not error and show_results else None,
-            'headers': res.headers if not error and show_results else None,
-            'total_rows': len(res.data) if not error and show_results else None,
-            'duration': res.duration if not error and show_results else None,
+            'error': None,
+            'data': None,
+            'headers': None,
+            'total_rows': None,
+            'duration': None,
             'rows': rows,
-            'has_stats': len([h for h in res.headers if h.summary]) if not error and show_results else False,
-            'dataUrl': reverse_lazy('query_csv', kwargs={'query_id': query.id}) if query.id else ''})
+            'has_stats': False,
+            'dataUrl': reverse_lazy('query_csv', kwargs={'query_id': query.id}) if query.id else ''
+    }
+    if show_results:
+        try:
+            res = query.execute()
+        except DatabaseError as e:
+            data['error'] = str(e)
+        else:
+            data.update({
+            'data': res.data[:rows],
+            'headers': res.headers,
+            'total_rows': len(res.data),
+            'duration': res.duration,
+            'has_stats': len([header for header in res.headers if header.summary]),
+            })
+
+    return RequestContext(request, data)

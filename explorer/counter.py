@@ -30,17 +30,15 @@ class Counter(dict):
         >>> c['h']                      # four 'h' in which, witch, and watch
         4
         '''
-        if iterable is not None:
+        if iterable:
             if hasattr(iterable, 'iteritems'):
                 if self:
-                    self_get = self.get
                     for elem, count in iterable.iteritems():
-                        self[elem] = self_get(elem, 0) + count
+                        self[elem] = self.get(elem, 0) + count
                 else:
                     dict.update(self, iterable) # fast path when counter is empty
             else:
-                self_get = self.get
                 for elem in iterable:
-                    self[elem] = self_get(elem, 0) + 1
+                    self[elem] = self.get(elem, 0) + 1
         if kwds:
             self.update(kwds)
