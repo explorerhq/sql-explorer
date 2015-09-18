@@ -66,16 +66,16 @@
                     <div role="tabpanel" class="tab-pane" id="chart">
                         <div class="charts"></div>
                     </div>
-                    {% if query.id and query.snapshot %}
+                    {% if query.id and query.snapshot and query.snapshots %}
                         <div role="tabpanel" class="tab-pane" id="snapshots">
                             <div class="panel panel-default">
                                 <div class="panel-heading">
-                                    <span class="panel-title">{{ query.snapshots|length }} Snapshots <small>(oldest first)</small></span>
+                                    <span class="panel-title">{{ snapshots|length }} Snapshots <small>(oldest first)</small></span>
                                 </div>
                                 <div class="overflow-wrapper">
                                 <p>
                                     <ul>
-                                    {%  for s in query.snapshots %}
+                                    {%  for s in snapshots %}
                                         <li><a href='http://s3.amazonaws.com/{{ bucket }}/{{ s.key }}'>{{ s.last_modified }}</a></li>
                                     {% endfor %}
                                     </ul>

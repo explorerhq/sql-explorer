@@ -307,7 +307,7 @@ def query_viewmodel(request, query, title=None, form=None, message=None, show_re
             res = query.execute()
         except DatabaseError as e:
             error = str(e)
-    return RequestContext(request, {
+    ret = RequestContext(request, {
             'params': query.available_params(),
             'title': title,
             'shared': query.shared,
@@ -322,4 +322,6 @@ def query_viewmodel(request, query, title=None, form=None, message=None, show_re
             'rows': rows,
             'has_stats': len([h for h in res.headers if h.summary]) if not error and show_results else False,
             'dataUrl': reverse_lazy('query_csv', kwargs={'query_id': query.id}) if query.id else '',
-            'bucket': app_settings.S3_BUCKET})
+            'bucket': app_settings.S3_BUCKET,
+            'snapshots': query.snapshots if query.snapshot else []})
+    return ret
