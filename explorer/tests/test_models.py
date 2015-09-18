@@ -35,13 +35,13 @@ class TestQueryModel(TestCase):
             self.assertTrue(q.shared)
             self.assertFalse(q2.shared)
 
-    def test_run_count(self):
+    def test_get_run_count(self):
         q = SimpleQueryFactory()
-        self.assertEqual(q.run_count, 0)
+        self.assertEqual(q.get_run_count(), 0)
         expected = 4
         for i in range(0, expected):
             q.log()
-        self.assertEqual(q.run_count, expected)
+        self.assertEqual(q.get_run_count(), expected)
 
 
 class TestQueryResults(TestCase):

@@ -52,60 +52,8 @@
   visibility: hidden;
 }
 
-body {
-  line-height: 1;
-}
-ol,
-ul {
-  list-style: none;
-}
-blockquote,
-q {
-  quotes: none;
-}
-blockquote:before,
-blockquote:after,
-q:before,
-q:after {
-  content: '';
-  content: none;
-}
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
-}
-/* Resets specifically for Charted */
-*,
-*:before,
-*:after {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
 
-body.dark {
-  background-color: black;
-  color: #b3b3b1;
-}
-button {
-  -webkit-appearance: none;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  margin: 0;
-  outline: none;
-  padding: 0;
-}
 /* mobile browser input styling */
-input {
-  -webkit-appearance: none;
-  border-radius: 0;
-  border: none;
-  margin: 0;
-  padding: 0;
-  resize: none;
-  outline: none;
-}
 .chart-info {
   padding: 12px;
   position: relative;
@@ -140,10 +88,6 @@ input {
 .dark .info-input::before {
   color: #666665;
   opacity: 1;
-}
-.title {
-  color: #333332;
-  font-size: 24px;
 }
 .dark .title {
   color: white;

@@ -5,6 +5,7 @@
                 <ul class="nav nav-tabs" role="tablist">
                     <li role="presentation" class="active"><a href="#previewpane" aria-controls="previewpane" role="tab" data-toggle="tab">Preview</a></li>
                     {% if query.id %}<li role="presentation"><a href="#chart" aria-controls="chart" role="tab" data-toggle="tab">Chart</a></li>{% endif %}
+                    {% if query.id and query.snapshot %}<li role="presentation"><a href="#snapshots" aria-controls="snapshots" role="tab" data-toggle="tab">Snapshots</a></li>{% endif %}
                 </ul>
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active" id="previewpane">
@@ -65,9 +66,26 @@
                     <div role="tabpanel" class="tab-pane" id="chart">
                         <div class="charts"></div>
                     </div>
+                    {% if query.id and query.snapshot %}
+                        <div role="tabpanel" class="tab-pane" id="snapshots">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <span class="panel-title">{{ query.snapshots|length }} Snapshots <small>(oldest first)</small></span>
+                                </div>
+                                <div class="overflow-wrapper">
+                                <p>
+                                    <ul>
+                                    {%  for s in query.snapshots %}
+                                        <li><a href='http://s3.amazonaws.com/{{ bucket }}/{{ s.key }}'>{{ s.last_modified }}</a></li>
+                                    {% endfor %}
+                                    </ul>
+                                </p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
-
         </div>
     </div>
 {% endif %}

@@ -81,9 +81,7 @@
                             <a href="{% url "query_delete" object.id %}"><i class="glyphicon glyphicon-trash"></i></a>
                         </td>
                     {% endif %}
-                    <td>
-                        {{ object.run_count }}
-                    </td>
+                    <td>{{ object.run_count }}</td>
 
                 {% endif %}
             </tr>

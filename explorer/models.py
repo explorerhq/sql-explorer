@@ -1,4 +1,4 @@
-from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection
+from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection, get_s3_connection
 from django.db import models, DatabaseError
 from time import time
 from django.core.urlresolvers import reverse
@@ -20,6 +20,7 @@ class Query(models.Model):
     created_by_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     last_run_date = models.DateTimeField(auto_now=True)
+    snapshot = models.BooleanField(default=False, help_text="Include in snapshot task (if enabled)")
 
     def __init__(self, *args, **kwargs):
         self.params = kwargs.get('params')
@@ -33,9 +34,8 @@ class Query(models.Model):
     def __unicode__(self):
         return six.text_type(self.title)
 
-    @property
-    def run_count(self):
-        return QueryLog.objects.filter(query_id=self.id).count() if self.id else None
+    def get_run_count(self):
+        return self.querylog_set.count()
 
     def passes_blacklist(self):
         return passes_blacklist(self.final_sql())
@@ -77,6 +77,13 @@ class Query(models.Model):
     @property
     def shared(self):
         return self.id in set(sum(app_settings.EXPLORER_GET_USER_QUERY_VIEWS().values(), []))
+
+    @property
+    def snapshots(self):
+        if app_settings.ENABLE_TASKS:
+            conn = get_s3_connection()
+            res = conn.list('query-%s.snap-' % self.id)
+            return sorted(res, key=lambda s: s['last_modified'])
 
 
 class QueryLog(models.Model):

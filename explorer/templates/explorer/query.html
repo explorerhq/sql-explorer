@@ -83,6 +83,7 @@
                                 {% if query %}
                                      <button class="btn btn-default download_button" href="{% url "query_csv" query.id %}">Download CSV</button>
                                      <input type="submit" value="Open in Playground" class="btn btn-default" id="playground_button"/>
+
                                 {%  endif %}
                                 <button type="button" class="btn btn-default" id="show_schema_button">Show Schema</button>
                                 <button type="button" class="btn btn-default" id="hide_schema_button">Hide Schema</button>
@@ -102,6 +103,11 @@
     </div>
 </div>
 {% include 'explorer/preview_pane.html' %}
+<div class="checkbox">
+    <label>
+        {{ form.snapshot }} Snapshot
+    </label>
+</div>
 {% endblock %}
 
 {% block sql_explorer_scripts %}
