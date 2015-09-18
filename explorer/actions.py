@@ -29,7 +29,7 @@ def _package(queries):
     name_root = lambda n: "attachment; filename=%s" % n
     ret["content_type"] = (is_one and 'text/csv') or 'application/zip'
     ret["filename"] = (is_one and name_root('%s.csv' % queries[0].title.replace(',', ''))) or name_root("Report_%s.zip" % date.today())
-    ret["data"] = (is_one and csv_report(queries[0])) or _build_zip(queries)
+    ret["data"] = (is_one and csv_report(queries[0]).getvalue()) or _build_zip(queries)
     ret["length"] = (is_one and len(ret["data"]) or ret["data"].blksize)
     return ret
 
@@ -38,7 +38,7 @@ def _build_zip(queries):
     temp = tempfile.TemporaryFile()
     zip_file = ZipFile(temp, 'w')
     for r in queries:
-        zip_file.writestr('%s.csv' % r.title, csv_report(r) or "Error!")
+        zip_file.writestr('%s.csv' % r.title, csv_report(r).getvalue() or "Error!")
     zip_file.close()
     ret = FileWrapper(temp)
     temp.seek(0)

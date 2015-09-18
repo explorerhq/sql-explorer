@@ -12,6 +12,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.forms.models import model_to_dict
 from django.http import HttpResponse
 from django.db import DatabaseError
+from django.db.models import Count
 
 from explorer.models import Query, QueryLog
 from explorer import app_settings
@@ -142,9 +143,10 @@ class ListQueryView(ExplorerContextMixin, ListView):
 
     def get_queryset(self):
         if app_settings.EXPLORER_PERMISSION_VIEW(self.request.user):
-            return Query.objects.prefetch_related('created_by_user').all()
+            qs = Query.objects.prefetch_related('created_by_user').all()
         else:
-            return Query.objects.prefetch_related('created_by_user').filter(pk__in=allowed_query_pks(self.request.user.id))
+            qs = Query.objects.prefetch_related('created_by_user').filter(pk__in=allowed_query_pks(self.request.user.id))
+        return qs.annotate(run_count=Count('querylog'))
 
     def _build_queries_and_headers(self):
         """
@@ -305,7 +307,7 @@ def query_viewmodel(request, query, title=None, form=None, message=None, show_re
             res = query.execute()
         except DatabaseError as e:
             error = str(e)
-    return RequestContext(request, {
+    ret = RequestContext(request, {
             'params': query.available_params(),
             'title': title,
             'shared': query.shared,
@@ -319,4 +321,7 @@ def query_viewmodel(request, query, title=None, form=None, message=None, show_re
             'duration': res.duration if not error and show_results else None,
             'rows': rows,
             'has_stats': len([h for h in res.headers if h.summary]) if not error and show_results else False,
-            'dataUrl': reverse_lazy('query_csv', kwargs={'query_id': query.id}) if query.id else ''})
+            'dataUrl': reverse_lazy('query_csv', kwargs={'query_id': query.id}) if query.id else '',
+            'bucket': app_settings.S3_BUCKET,
+            'snapshots': query.snapshots if query.snapshot else []})
+    return ret

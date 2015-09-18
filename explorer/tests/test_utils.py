@@ -95,5 +95,5 @@ class TestCsv(TestCase):
     def test_writing_unicode(self):
         headers = ['a', None]
         data = [[1, None], [u"Jenét", '1']]
-        res = write_csv(headers, data)
+        res = write_csv(headers, data).getvalue()
         self.assertEqual(res, 'a,\r\n1,\r\nJenét,1\r\n')

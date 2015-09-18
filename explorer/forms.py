@@ -1,4 +1,5 @@
-from django.forms import ModelForm, Field, ValidationError
+from django.forms import ModelForm, Field, ValidationError, BooleanField
+from django.forms.widgets import CheckboxInput
 from explorer.models import Query, MSG_FAILED_BLACKLIST
 from django.db import DatabaseError
 
@@ -34,6 +35,7 @@ class SqlField(Field):
 class QueryForm(ModelForm):
 
     sql = SqlField()
+    snapshot = BooleanField(widget=CheckboxInput, required=False)
 
     def clean(self):
         if self.instance and self.data.get('created_by_user', None):
@@ -50,4 +52,4 @@ class QueryForm(ModelForm):
 
     class Meta:
         model = Query
-        fields = ['title', 'sql', 'description', 'created_by_user']
+        fields = ['title', 'sql', 'description', 'created_by_user', 'snapshot']

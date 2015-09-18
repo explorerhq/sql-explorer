@@ -14,7 +14,7 @@ class testSqlQueryActions(TestCase):
         expected_csv = 'two\r\n2\r\n'
 
         r = SimpleQueryFactory()
-        result = csv_report(r)
+        result = csv_report(r).getvalue()
 
         self.assertIsNotNone(result, "Query '%s' returned None." % r.title)
         self.assertEqual(result.lower(), expected_csv)
