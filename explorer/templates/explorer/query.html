@@ -103,11 +103,13 @@
     </div>
 </div>
 {% include 'explorer/preview_pane.html' %}
-<div class="checkbox">
-    <label>
-        {{ form.snapshot }} Snapshot
-    </label>
-</div>
+{% if query and can_change %}
+  <div class="checkbox">
+      <label>
+          {{ form.snapshot }} Snapshot
+      </label>
+  </div>
+{% endif %}
 {% endblock %}
 
 {% block sql_explorer_scripts %}
