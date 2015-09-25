@@ -54,6 +54,6 @@ EXPLORER_USER_QUERY_VIEWS = {}
 
 TEST_RUNNER = 'djcelery.contrib.test_runner.CeleryTestSuiteRunner'
 djcelery.setup_loader()
-EXPLORER_ENABLE_TASKS = True
+EXPLORER_TASKS_ENABLED = True
 CELERY_ALWAYS_EAGER = True
 BROKER_BACKEND = 'memory'
