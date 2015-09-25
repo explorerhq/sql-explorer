@@ -22,7 +22,7 @@ EXPLORER_GET_USER_QUERY_VIEWS = lambda: getattr(settings, 'EXPLORER_USER_QUERY_V
 EXPLORER_TOKEN_AUTH_ENABLED = lambda: getattr(settings, 'EXPLORER_TOKEN_AUTH_ENABLED', False)
 
 # Async task related. Note that the EMAIL_HOST settings must be set up for email to work.
-ENABLE_TASKS = getattr(settings, "EXPLORER_ENABLE_TASKS", False)
+ENABLE_TASKS = getattr(settings, "EXPLORER_TASKS_ENABLED", False)
 S3_ACCESS_KEY = getattr(settings, "EXPLORER_S3_ACCESS_KEY", None)
 S3_SECRET_KEY = getattr(settings, "EXPLORER_S3_SECRET_KEY", None)
 S3_BUCKET = getattr(settings, "EXPLORER_S3_BUCKET", None)
