@@ -11,6 +11,7 @@ function ExplorerEditor(queryId, dataUrl) {
     this.$table = $('#preview');
     this.$rows = $('#rows');
     this.$form = $("form");
+    this.$snapshotField = $("#id_snapshot");
     this.$paramFields = this.$form.find(".param");
 
     this.$submit = $("#refresh_play_button, #save_button");
@@ -126,6 +127,8 @@ ExplorerEditor.prototype.bind = function() {
         if(params) {
             this.$form.attr('action', '../' + this.queryId + '/?params=' + JSON.stringify(params));
         }
+        this.$snapshotField.hide();
+        this.$form.append(this.$snapshotField);
     }.bind(this));
 
     $("#refresh_button").click(function(e) {

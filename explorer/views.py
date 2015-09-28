@@ -1,3 +1,4 @@
+from explorer.tasks import execute_query
 import six
 
 from django.http.response import HttpResponseRedirect
@@ -12,6 +13,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.forms.models import model_to_dict
 from django.http import HttpResponse
 from django.db import DatabaseError
+from django.db.models import Count
 
 from explorer.models import Query, QueryLog
 from explorer import app_settings
@@ -102,6 +104,17 @@ def view_csv_query(request, query_id):
     return _csv_response(request, query_id, True, delim=request.GET.get('delim', None))
 
 
+@view_permission
+@require_POST
+def email_csv_query(request, query_id):
+    if request.is_ajax():
+        email = request.POST.get('email', None)
+        if email:
+            execute_query.delay(query_id, email)
+            return HttpResponse(content={'message': 'message was sent successfully'})
+    return HttpResponse(status=403)
+
+
 def _csv_response(request, query_id, stream=False, delim=None):
     query = get_object_or_404(Query, pk=query_id)
     query.params = url_get_params(request)
@@ -142,9 +155,10 @@ class ListQueryView(ExplorerContextMixin, ListView):
 
     def get_queryset(self):
         if app_settings.EXPLORER_PERMISSION_VIEW(self.request.user):
-            return Query.objects.prefetch_related('created_by_user').all()
+            qs = Query.objects.prefetch_related('created_by_user').all()
         else:
-            return Query.objects.prefetch_related('created_by_user').filter(pk__in=allowed_query_pks(self.request.user.id))
+            qs = Query.objects.prefetch_related('created_by_user').filter(pk__in=allowed_query_pks(self.request.user.id))
+        return qs.annotate(run_count=Count('querylog'))
 
     def _build_queries_and_headers(self):
         """
@@ -299,20 +313,20 @@ class QueryView(ExplorerContextMixin, View):
 def query_viewmodel(request, query, title=None, form=None, message=None, show_results=True):
     rows = url_get_rows(request)
     data = {
-            'params': query.available_params(),
-            'title': title,
-            'shared': query.shared,
-            'query': query,
-            'form': form,
-            'message': message,
-            'error': None,
-            'data': None,
-            'headers': None,
-            'total_rows': None,
-            'duration': None,
-            'rows': rows,
-            'has_stats': False,
-            'dataUrl': reverse_lazy('query_csv', kwargs={'query_id': query.id}) if query.id else ''
+        'params': query.available_params(),
+        'title': title,
+        'shared': query.shared,
+        'query': query,
+        'form': form,
+        'message': message,
+        'error': None,
+        'data': None,
+        'headers': None,
+        'total_rows': None,
+        'duration': None,
+        'rows': rows,
+        'has_stats': False,
+        'dataUrl': reverse_lazy('query_csv', kwargs={'query_id': query.id}) if query.id else ''
     }
     if show_results:
         try:
@@ -321,11 +335,11 @@ def query_viewmodel(request, query, title=None, form=None, message=None, show_re
             data['error'] = str(e)
         else:
             data.update({
-            'data': res.data[:rows],
-            'headers': res.headers,
-            'total_rows': len(res.data),
-            'duration': res.duration,
-            'has_stats': len([header for header in res.headers if header.summary]),
+                'data': res.data[:rows],
+                'headers': res.headers,
+                'total_rows': len(res.data),
+                'duration': res.duration,
+                'has_stats': len([header for header in res.headers if header.summary]),
             })
 
     return RequestContext(request, data)

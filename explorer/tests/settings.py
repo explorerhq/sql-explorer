@@ -1,3 +1,4 @@
+import djcelery
 SECRET_KEY = 'shhh'
 SITE_ID = 1
 
@@ -49,6 +50,10 @@ STATIC_URL = '/static/'
 MIDDLEWARE_CLASSES = ('django.contrib.sessions.middleware.SessionMiddleware',
                       'django.contrib.auth.middleware.AuthenticationMiddleware')
 
-TEST_RUNNER = 'django.test.runner.DiscoverRunner'
-
 EXPLORER_USER_QUERY_VIEWS = {}
+
+TEST_RUNNER = 'djcelery.contrib.test_runner.CeleryTestSuiteRunner'
+djcelery.setup_loader()
+EXPLORER_TASKS_ENABLED = True
+CELERY_ALWAYS_EAGER = True
+BROKER_BACKEND = 'memory'

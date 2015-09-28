@@ -47,6 +47,13 @@ class TestQueryListView(TestCase):
         self.assertContains(resp, q1.title)
         self.assertNotContains(resp, q2.title)
 
+    def test_run_count(self):
+        q = SimpleQueryFactory(title='foo - bar1')
+        for i in range(0, 4):
+            q.log()
+        resp = self.client.get(reverse("explorer_index"))
+        self.assertContains(resp, '<td>4</td>')
+
 
 class TestQueryCreateView(TestCase):
 

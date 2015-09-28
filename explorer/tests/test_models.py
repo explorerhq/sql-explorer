@@ -3,6 +3,7 @@ import six
 from django.test import TestCase
 from explorer.tests.factories import SimpleQueryFactory
 from explorer.models import QueryLog, Query, QueryResult, ColumnSummary, ColumnHeader
+from mock import patch, Mock
 
 
 class TestQueryModel(TestCase):
@@ -35,13 +36,25 @@ class TestQueryModel(TestCase):
             self.assertTrue(q.shared)
             self.assertFalse(q2.shared)
 
-    def test_run_count(self):
+    def test_get_run_count(self):
         q = SimpleQueryFactory()
-        self.assertEqual(q.run_count, 0)
+        self.assertEqual(q.get_run_count(), 0)
         expected = 4
         for i in range(0, expected):
             q.log()
-        self.assertEqual(q.run_count, expected)
+        self.assertEqual(q.get_run_count(), expected)
+
+    @patch('explorer.models.get_s3_connection')
+    def test_get_snapshots_sorts_snaps(self, mocked_conn):
+        conn = Mock()
+        conn.list = Mock()
+        conn.list.return_value = [{'key': 'foo', 'last_modified': 'b'}, {'key': 'bar', 'last_modified': 'a'}]
+        mocked_conn.return_value = conn
+        q = SimpleQueryFactory()
+        snaps = q.snapshots
+        self.assertEqual(conn.list.call_count, 1)
+        self.assertEqual(snaps[0]['key'], 'bar')
+        conn.list.assert_called_once_with('query-%s.snap-' % q.id)
 
 
 class TestQueryResults(TestCase):

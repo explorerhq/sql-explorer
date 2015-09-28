@@ -103,7 +103,7 @@ def write_csv(headers, data, delim=None):
     writer.writerow(headers)
     for row in data:
         writer.writerow([s for s in row])
-    return csv_data.getvalue()
+    return csv_data
 
 
 def get_filename_for_title(title):
@@ -115,13 +115,13 @@ def get_filename_for_title(title):
 
 
 def build_stream_response(query, delim=None):
-    data = csv_report(query, delim)
+    data = csv_report(query, delim).getvalue()
     response = HttpResponse(data, content_type='text')
     return response
 
 
 def build_download_response(query, delim=None):
-    data = csv_report(query, delim)
+    data = csv_report(query, delim).getvalue()
     response = HttpResponse(data, content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="%s.csv"' % (
         get_filename_for_title(query.title)
@@ -220,3 +220,14 @@ def user_can_see_query(request, kwargs):
 
 def fmt_sql(sql):
     return sqlparse.format(sql, reindent=True, keyword_case='upper')
+
+
+def noop_decorator(f):
+    return f
+
+
+def get_s3_connection():
+    import tinys3
+    return tinys3.Connection(app_settings.S3_ACCESS_KEY,
+                             app_settings.S3_SECRET_KEY,
+                             default_bucket=app_settings.S3_BUCKET)

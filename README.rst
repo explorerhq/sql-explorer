@@ -13,15 +13,15 @@ django-sql-explorer is MIT licensed, and pull requests are welcome!
 
 **Viewing all queries**
 
-.. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/1.png
+.. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/query-list.png
 
 **Quick access to DB schema info**
 
 .. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/3.png
 
-**Basic visualization**
+**Snapshot query results to S3 & download as csv**
 
-.. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/4.png
+.. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/snapshots.png
 
 
 Features
@@ -35,11 +35,24 @@ Features
     - Built on Django's ORM, so works with Postgresql, Mysql, and Sqlite.
     - Small number of dependencies.
     - Just want to get in and write some ad-hoc queries? Go nuts with the Playground area.
+- *new* **Snapshots**
+    - Tick the 'snapshot' box on a query, and Explorer will upload a .csv snapshot of the query results to S3. Configure the snapshot frequency via a celery cron task, e.g. for daily at 1am:
+
+    .. code-block:: python
+
+       'explorer.tasks.snapshot_queries': {
+           'task': 'explorer.tasks.snapshot_queries',
+           'schedule': crontab(hour=1, minute=0)
+       }
+
+    - Requires celery, obviously. Also uses djcelery and tinys3. All of these deps are optional and can be installed with `pip install -r optional-requirements.txt`
+    - The checkbox for opting a query into a snapshot is ALL THE WAY on the bottom of the query view (underneath the restults table).
+
 - **Parameterized Queries**
     - Use $$foo$$ in your queries and Explorer will build a UI to fill out parameters. When viewing a query like 'SELECT * FROM table WHERE id=$$id$$', Explorer will generate UI for the 'id' parameter.
     - Parameters are stashed in the URL, so you can share links to parameterized queries with colleagues
 - **Schema Helper**
-    - /explorer/schema/ renders a list of your Django apps' table and column names (and types) that you can refer to while writing queries. Apps are excludable from this list so users aren't bogged down in tons of irrelevant tables. See settings documentation below for details.
+    - /explorer/schema/ renders a list of your Django apps' table and column names + types that you can refer to while writing queries. Apps can be excluded from this list so users aren't bogged down with tons of irrelevant tables. See settings documentation below for details.
     - This is available quickly as a sidebar helper while composing queries (see screenshot)
     - Supports many_to_many relations as well.
     - Quick search for the tables/django models you are looking for. Just start typing!
@@ -54,7 +67,7 @@ Features
     - Using the Charted JS library from Medium, you can view results as either a table (default) or a chart. Just click on the "chart" tab.
 - **Query Logs**
     - Explorer will save a snapshot of every query you execute so you can recover lost ad-hoc queries, and see what you've been querying.
-    - This also serves as cheap-and-dirty versioning of Queries.
+    - This also serves as cheap-and-dirty versioning of Queries, and provides the 'run count' property by aggregating the logs.
 - **Stable**
     - 95% according to coverage...for what that's worth. Just install factory_boy and run `manage.py test --settings=explorer.tests.settings`
     - Battle-tested in production every day by the ePantry team.
@@ -128,11 +141,12 @@ An effort has been made to keep the number of dependencies to a minimum.
 ========================================================= ======= ================
 Name                                                      Version License
 ========================================================= ======= ================
-`sqlparse* <https://github.com/andialbrecht/sqlparse/>`_  0.1.11  BSD
+`sqlparse  <https://github.com/andialbrecht/sqlparse/>`_  0.1.11  BSD
 `Factory Boy <https://github.com/rbarrois/factory_boy>`_  2.4.1   MIT
 ========================================================= ======= ================
 
-* Used for SQL formatting only
+- sqlparse is Used for SQL formatting only
+- Facotry Boy is only required for tests
 
 *Front End*
 
@@ -177,5 +191,9 @@ EXPLORER_TRANSFORMS           List of tuples like [('alias', 'Template for {0}')
 EXPLORER_RECENT_QUERY_COUNT   The number of recent queries to show at the top of the query listing.                                           10
 EXPLORER_GET_USER_QUERY_VIEWS A dict granting view permissions on specific queries of the form {userId:[queryId, ...], ...}                   {}
 EXPLORER_TOKEN_AUTH_ENABLED   Bool indicating whether token-authenticated requests should be enabled. See "Power Tips", above.                False
-EXPLORER_TOKEN                Access token for query results.                                                                                 CHANGEME
+EXPLORER_TOKEN                Access token for query results.                                                                                 "CHANGEME"
+EXPLORER_TASKS_ENABLED        Turn on if you want to use the snapshot_queries celery task in tasks.py                                         False
+EXPLORER_S3_ACCESS_KEY        S3 Access Key for snapshot upload                                                                               None
+EXPLORER_S3_SECRET_KEY        S3 Secret Key for snapshot upload                                                                               None
+EXPLORER_S3_BUCKET            S3 Bucket for snapshot upload                                                                                   None
 ============================= =============================================================================================================== ================================================================================================================================================
