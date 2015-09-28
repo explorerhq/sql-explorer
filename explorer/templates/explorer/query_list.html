@@ -1,5 +1,5 @@
 {% extends "explorer/base.html" %}
-
+{% load staticfiles %}
 {% load url from future %}
 
 {% block sql_explorer_navlinks %}
@@ -42,6 +42,7 @@
             <tr>
                 <th>Query</th>
                 <th>Created</th>
+                <th>Email</th>
                 <th>CSV</th>
                 {% if can_change %}
                     <th>Play</th>
@@ -69,6 +70,9 @@
                         {% if object.created_by_user %}
                             by {{ object.created_by_user }}
                         {% endif %}
+                    </td>
+                    <td class="icon-cell">
+                        <a class="email-csv" data-id="{{ object.id }}" href="{% url "email_csv_query" object.id %}"><i class="glyphicon glyphicon-envelope"></i></a>
                     </td>
                     <td class="icon-cell">
                         <a href="{% url "query_download" object.id %}"><i class="glyphicon glyphicon-download"></i></a>
@@ -103,5 +107,7 @@
         };
         var queryList = new List('queries', options);
     });
+
 </script>
+<script src="{% static 'explorer/query-list.js' %}"></script>
 {% endblock %}

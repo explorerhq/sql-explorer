@@ -1,3 +1,4 @@
+from explorer.tasks import execute_query
 import six
 
 from django.http.response import HttpResponseRedirect
@@ -101,6 +102,17 @@ def download_query(request, query_id):
 @require_GET
 def view_csv_query(request, query_id):
     return _csv_response(request, query_id, True, delim=request.GET.get('delim', None))
+
+
+@view_permission
+@require_POST
+def email_csv_query(request, query_id):
+    if request.is_ajax():
+        email = request.POST.get('email', None)
+        if email:
+            execute_query.delay(query_id, email)
+            return HttpResponse(content={'message': 'message was sent successfully'})
+    return HttpResponse(status=403)
 
 
 def _csv_response(request, query_id, stream=False, delim=None):
