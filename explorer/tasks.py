@@ -3,6 +3,9 @@ from explorer.models import Query
 from django.core.mail import send_mail
 from utils import csv_report
 from datetime import date
+import random
+import string
+
 
 if app_settings.ENABLE_TASKS:
     from celery import task
@@ -19,10 +22,11 @@ else:
 def execute_query(query_id, email_address):
     q = Query.objects.get(pk=query_id)
     r = csv_report(q)
-    resp = _upload('%s.csv' % q.title, r)
+    random_part = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(20))
+    resp = _upload('%s.csv' % random_part, r)
 
-    subj = 'Report %s is ready' % q.title
-    msg = 'Results:\n\r%s' % resp.url
+    subj = '[SQL Explorer] Report "%s" is ready' % q.title
+    msg = 'Download results:\n\r%s' % resp.url
 
     send_mail(subj, msg, app_settings.FROM_EMAIL, [email_address])
 

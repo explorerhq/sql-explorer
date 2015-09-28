@@ -22,8 +22,7 @@ class TestTasks(TestCase):
         output.write('a,b,c\r\n1,2,3\r\n')
 
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].subject, 'Report %s is ready' % q.title)
-        self.assertEqual(conn.upload.call_args[0][0], '%s.csv' % q.title)
+        self.assertIn('[SQL Explorer] Report ', mail.outbox[0].subject)
         self.assertEqual(conn.upload.call_args[0][1].getvalue(), output.getvalue())
         self.assertEqual(conn.upload.call_count, 1)
 

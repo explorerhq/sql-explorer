@@ -13,7 +13,7 @@ $emailCsv.each(function () {
     content:
       '<form class="email-csv-form" action="' + $this.prop('href') + '">' +
         '<div class="input-group">' +
-          '<input type="email" name="email" class="form-control" placeholder="Email" />' +
+          '<input type="email" autofocus="true" name="email" class="form-control" placeholder="Email" />' +
           '<span class="input-group-btn">' +
             '<button type="submit" class="btn btn-primary">Send</button>' +
           '</span>' +
@@ -25,7 +25,6 @@ $emailCsv.each(function () {
 $emailCsv.on('click', function (e) {
   e.preventDefault();
   var $this = $(this);
-  var id = $this.data('id');
   $emailCsv.not($this).popover('hide');
   $this.popover('toggle');
 });
