@@ -1,13 +1,14 @@
 0.8.0
 =====
 
-Sometime in September, 2015
+Sometime in October, 2015
 
 - Snapshots!
 - Async queries + email!
 - Run counts!
 - Column Statistics!
 - Python 3!
+- Django 1.9!
 - Delimiters!
 - Listings respect permissions!
 
