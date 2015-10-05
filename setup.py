@@ -27,7 +27,8 @@ setup(
     ],
     install_requires=[
         'Django>=1.6.7',
-        'sqlparse==0.1.11'
+        'sqlparse==0.1.11',
+        'unicodecsv==0.13.0'
     ],
     include_package_data=True,
     zip_safe = False,
