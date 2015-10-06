@@ -1,4 +1,5 @@
 .. image:: https://travis-ci.org/epantry/django-sql-explorer.png?branch=master
+   :target: https://travis-ci.org/epantry/django-sql-explorer
 
 Django SQL Explorer
 ===================
@@ -138,15 +139,17 @@ An effort has been made to keep the number of dependencies to a minimum.
 
 *Back End*
 
-========================================================= ======= ================
-Name                                                      Version License
-========================================================= ======= ================
-`sqlparse  <https://github.com/andialbrecht/sqlparse/>`_  0.1.11  BSD
-`Factory Boy <https://github.com/rbarrois/factory_boy>`_  2.4.1   MIT
-========================================================= ======= ================
+=========================================================== ======= ================
+Name                                                        Version License
+=========================================================== ======= ================
+`sqlparse  <https://github.com/andialbrecht/sqlparse/>`_    0.1.11  BSD
+`Factory Boy <https://github.com/rbarrois/factory_boy>`_    2.4.1   MIT
+`unicodecsv <https://github.com/jdunck/python-unicodecsv>`_ 0.13.0  BSD
+=========================================================== ======= ================
 
 - sqlparse is Used for SQL formatting only
 - Facotry Boy is only required for tests
+- unicodecsv is used for CSV generation
 
 *Front End*
 
