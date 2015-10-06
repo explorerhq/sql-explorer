@@ -1,8 +1,8 @@
 import tempfile
 from zipfile import ZipFile
 from datetime import date
+from wsgiref.util import FileWrapper
 from django.http import HttpResponse
-from django.core.servers.basehttp import FileWrapper
 from collections import defaultdict
 from explorer.utils import csv_report
 
