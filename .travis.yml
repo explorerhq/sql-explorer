@@ -1,12 +1,21 @@
 language: python
 python:
-  - "2.6"
-  - "2.7"
-  - "3.4"
+  - 2.6
+  - 2.7
+  - 3.4
 install:
   - pip install -r requirements.txt
   - pip install -r optional-requirements.txt
-  # Python 2.6 is only supported until Django 1.6
-  - if [[ $TRAVIS_PYTHON_VERSION == '2.6' ]]; then pip install django==1.6.7; fi
+  - pip install Django==${DJANGO}
 
 script:  python manage.py test --settings=explorer.tests.settings
+env:
+  - DJANGO=1.6.11
+  - DJANGO=1.7.7
+  - DJANGO=1.8.5
+matrix:
+  exclude:
+    - python: 2.6
+      env: DJANGO=1.7.7
+    - python: 2.6
+      env: DJANGO=1.8.5
