@@ -9,6 +9,7 @@ from django.views.generic import ListView
 from django.views.generic.edit import CreateView, DeleteView
 from django.views.decorators.http import require_POST, require_GET
 from django.utils.decorators import method_decorator
+from django.conf import settings
 from django.core.urlresolvers import reverse_lazy
 from django.forms.models import model_to_dict
 from django.http import HttpResponse
@@ -326,7 +327,9 @@ def query_viewmodel(request, query, title=None, form=None, message=None, show_re
         'duration': None,
         'rows': rows,
         'has_stats': False,
-        'dataUrl': reverse_lazy('query_csv', kwargs={'query_id': query.id}) if query.id else ''
+        'dataUrl': reverse_lazy('query_csv', kwargs={'query_id': query.id}) if query.id else '',
+        'snapshots': query.snapshots if query.snapshot else None,
+        'bucket': settings.EXPLORER_S3_BUCKET
     }
     if show_results:
         try:
