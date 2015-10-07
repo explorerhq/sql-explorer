@@ -57,3 +57,4 @@ djcelery.setup_loader()
 EXPLORER_TASKS_ENABLED = True
 CELERY_ALWAYS_EAGER = True
 BROKER_BACKEND = 'memory'
+EXPLORER_S3_BUCKET = 'thisismybucket.therearemanylikeit.butthisoneismine'

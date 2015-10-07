@@ -1,12 +1,13 @@
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
+from django.conf import settings
 from django.forms.models import model_to_dict
 from explorer.tests.factories import SimpleQueryFactory, QueryLogFactory
 from explorer.models import Query, QueryLog
 from explorer.views import user_can_see_query
 from explorer.app_settings import EXPLORER_TOKEN
-from mock import Mock
+from mock import Mock, patch
 import time
 import json
 
@@ -166,6 +167,19 @@ class TestQueryDetailView(TestCase):
         request.user.id = 99
         with self.settings(EXPLORER_USER_QUERY_VIEWS={99: [111, 123]}):
             self.assertTrue(user_can_see_query(request, kwargs))
+
+    @patch('explorer.models.get_s3_connection')
+    def test_query_snapshot_renders(self, mocked_conn):
+        conn = Mock()
+        conn.list = Mock()
+        conn.list.return_value = [{'key': 'foo-snapshot', 'last_modified': '2015-01-01'}
+                                  ,{'key': 'bar-snapshot', 'last_modified': '2015-01-02'}]
+        mocked_conn.return_value = conn
+        query = SimpleQueryFactory(sql="select 1;", snapshot=True)
+        resp = self.client.get(reverse("query_detail", kwargs={'query_id': query.id}))
+        self.assertContains(resp, '2015-01-01')
+        self.assertContains(resp, '2015-01-02')
+        self.assertContains(resp, settings.EXPLORER_S3_BUCKET)
 
 
 class TestDownloadView(TestCase):
