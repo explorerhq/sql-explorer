@@ -1,7 +1,7 @@
 from explorer import app_settings
 from explorer.models import Query
 from django.core.mail import send_mail
-from utils import csv_report
+from explorer.utils import csv_report
 from datetime import date
 import random
 import string
@@ -13,7 +13,7 @@ if app_settings.ENABLE_TASKS:
     import tinys3
     logger = get_task_logger(__name__)
 else:
-    from utils import noop_decorator as task
+    from explorer.utils import noop_decorator as task
     import logging
     logger = logging.getLogger(__name__)
 

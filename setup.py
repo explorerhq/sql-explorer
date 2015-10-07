@@ -23,11 +23,23 @@ setup(
     packages=['explorer'],
     long_description=read('README.rst'),
     classifiers=[
-        "Topic :: Utilities",
+    	'Development Status :: 5 - Production/Stable',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: MIT License',
+        'Topic :: Utilities',
+        'Framework :: Django :: 1.6',
+	'Framework :: Django :: 1.7',
+	'Framework :: Django :: 1.8',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.4',
     ],
     install_requires=[
         'Django>=1.6.7',
-        'sqlparse==0.1.11'
+        'sqlparse==0.1.11',
+        'unicodecsv==0.13.0'
     ],
     include_package_data=True,
     zip_safe = False,
