@@ -48,7 +48,8 @@ Features
 
     - Requires celery, obviously. Also uses djcelery and tinys3. All of these deps are optional and can be installed with `pip install -r optional-requirements.txt`
     - The checkbox for opting a query into a snapshot is ALL THE WAY on the bottom of the query view (underneath the restults table).
-
+- *new* **Email query results**
+    - Click the email icon in the query listing view, enter an email address, and the query results (zipped .csv) will be sent to you.
 - **Parameterized Queries**
     - Use $$foo$$ in your queries and Explorer will build a UI to fill out parameters. When viewing a query like 'SELECT * FROM table WHERE id=$$id$$', Explorer will generate UI for the 'id' parameter.
     - Parameters are stashed in the URL, so you can share links to parameterized queries with colleagues

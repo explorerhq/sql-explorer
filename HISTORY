@@ -1,16 +1,15 @@
 0.8.0
 =====
 
-Sometime in October, 2015
+10/21/2015
 
-- Snapshots!
-- Async queries + email!
-- Run counts!
-- Column Statistics!
-- Python 3!
-- Django 1.9!
-- Delimiters!
-- Listings respect permissions!
+- Snapshots! Dump the csv results of a query to S3 on a regular schedule. More details in readme.rst under 'features'.
+- Async queries + email! If you have a query that takes a long time to run, execute it in the background and Explorer will send you an email with the results when they are ready. More details in readme.rst
+- Run counts! Explorer inspects the query log to see how many times a query has been executed.
+- Column Statistics! Click the ... on top of numeric columns in the results pane to see min, max, avg, sum, count, and missing values.
+- Python 3! - Django 1.9!
+- Delimiters! Export with delimiters other than commas.
+- Listings respect permissions! If you've given permission to queries to non-admins, they will see only those queries on the listing page.
 
 0.7.0
 =====

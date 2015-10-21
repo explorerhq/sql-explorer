@@ -7,6 +7,7 @@ from explorer import __version__
 # README file and 2) it's easier to type in the README file than to put a raw
 # string in below ...
 
+
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
@@ -16,20 +17,21 @@ setup(
     author = "Chris Clark",
     author_email = "chris@untrod.com",
     description = ("A pluggable app that allows users (admins) to execute SQL,"
-		   " view, and export the results. Inspired by Stack Exchange Data Explorer."),
+                   " view, and export the results. Inspired by Stack Exchange Data Explorer."),
     license = "MIT",
     keywords = "django sql explorer reports reporting csv database query",
     url = "https://github.com/epantry/django-sql-explorer",
     packages=['explorer'],
     long_description=read('README.rst'),
     classifiers=[
-    	'Development Status :: 5 - Production/Stable',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Topic :: Utilities',
         'Framework :: Django :: 1.6',
-	'Framework :: Django :: 1.7',
-	'Framework :: Django :: 1.8',
+        'Framework :: Django :: 1.7',
+        'Framework :: Django :: 1.8',
+        'Framework :: Django :: 1.9',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
