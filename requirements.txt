@@ -1,6 +1,6 @@
 Django>=1.6.7
 factory-boy==2.4.1
 mock==1.0.1
-six==1.9.0
+six==1.10.0
 sqlparse==0.1.11
 unicodecsv==0.13.0

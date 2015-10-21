@@ -201,3 +201,9 @@ EXPLORER_S3_ACCESS_KEY        S3 Access Key for snapshot upload                 
 EXPLORER_S3_SECRET_KEY        S3 Secret Key for snapshot upload                                                                               None
 EXPLORER_S3_BUCKET            S3 Bucket for snapshot upload                                                                                   None
 ============================= =============================================================================================================== ================================================================================================================================================
+
+
+Release Process
+===============
+
+Release process is documented `here <https://gist.github.com/chrisclark/07a6b4ef0114fdfa2ee0>`_. If there are problems with the release, please help me improve the process so it doesn't happen again!
