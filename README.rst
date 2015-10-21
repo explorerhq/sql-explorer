@@ -71,7 +71,7 @@ Features
     - Explorer will save a snapshot of every query you execute so you can recover lost ad-hoc queries, and see what you've been querying.
     - This also serves as cheap-and-dirty versioning of Queries, and provides the 'run count' property by aggregating the logs.
 - **Stable**
-    - 95% according to coverage...for what that's worth. Just install factory_boy and run `manage.py test --settings=explorer.tests.settings`
+    - 95% according to coverage...for what that's worth. Just install factory_boy and run `python manage.py test explorer.tests --settings=explorer.tests.settings`
     - Battle-tested in production every day by the ePantry team.
 - **Power tips**
     - On the query listing page, focus gets set to a search box so you can just navigate to /explorer and start typing the name of your query to find it.
