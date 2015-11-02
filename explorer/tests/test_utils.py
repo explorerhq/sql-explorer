@@ -12,9 +12,11 @@ class TestSqlBlacklist(TestCase):
 
     def setUp(self):
         self.orig = app_settings.EXPLORER_SQL_BLACKLIST
+        self.orig_wl = app_settings.EXPLORER_SQL_WHITELIST
 
     def tearDown(self):
         app_settings.EXPLORER_SQL_BLACKLIST = self.orig
+        app_settings.EXPLORER_SQL_WHITELIST = self.orig_wl
 
     def test_overriding_blacklist(self):
         app_settings.EXPLORER_SQL_BLACKLIST = []
@@ -36,6 +38,11 @@ class TestSqlBlacklist(TestCase):
     def test_queries_dropping_views_is_not_ok_and_not_case_sensitive(self):
         sql = "SELECT 1+1 AS TWO; drop ViEw foo;"
         self.assertFalse(passes_blacklist(sql))
+
+    def test_sql_whitelist_ok(self):
+        app_settings.EXPLORER_SQL_WHITELIST = ['dropper']
+        sql = "SELECT 1+1 AS TWO; dropper ViEw foo;"
+        self.assertTrue(passes_blacklist(sql))
 
 
 class TestSchemaInfo(TestCase):
