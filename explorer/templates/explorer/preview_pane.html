@@ -49,7 +49,7 @@
 
                                         {% if data %}
                                             {% for row in data %}
-                                            <tr>
+                                            <tr class="data-row">
                                                 {% for i in row %}
                                                     <td>{% autoescape off %}{{ i }}{% endautoescape %}</td>
                                                 {% endfor %}

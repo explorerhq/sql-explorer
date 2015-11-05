@@ -135,3 +135,7 @@
     cursor: pointer;
     height: 20px;
 }
+
+.data-row {
+    white-space: pre;
+}
