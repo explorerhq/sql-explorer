@@ -43,15 +43,18 @@ class Query(models.Model):
     def final_sql(self):
         return swap_params(self.sql, self.params)
 
-    def try_execute(self):
-        """
-        A lightweight version of .execute to just check the validity of the SQL.
-        Skips the processing associated with QueryResult.
-        """
-        QueryResult(self.final_sql())
+    def execute_query_only(self):
+        return QueryResult(self.final_sql())
+
+    def execute_with_logging(self, executing_user):
+        ql = self.log(executing_user)
+        ret = self.execute()
+        ql.duration = ret.duration
+        ql.save()
+        return ret, ql
 
     def execute(self):
-        ret = QueryResult(self.final_sql())
+        ret = self.execute_query_only()
         ret.process()
         return ret
 
@@ -72,7 +75,9 @@ class Query(models.Model):
         return reverse("query_detail", kwargs={'query_id': self.id})
 
     def log(self, user=None):
-        QueryLog(sql=self.sql, query_id=self.id, run_by_user=user).save()
+        ql = QueryLog(sql=self.sql, query_id=self.id, run_by_user=user)
+        ql.save()
+        return ql
 
     @property
     def shared(self):
@@ -92,6 +97,7 @@ class QueryLog(models.Model):
     query = models.ForeignKey(Query, null=True, blank=True, on_delete=models.SET_NULL)
     run_by_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
     run_at = models.DateTimeField(auto_now_add=True)
+    duration = models.FloatField(blank=True, null=True)  # milliseconds
 
     def save(self, **kwargs):
         self.sql = self.sql if self.sql and self.should_save_sql() else None

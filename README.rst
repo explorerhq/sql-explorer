@@ -65,8 +65,6 @@ Features
     ``EXPLORER_TRANSFORMS = [('user', '<a href="https://yoursite.com/profile/{0}/">{0}</a>')]``
 
     - And change your query to 'SELECT id AS "user", email FROM user'. Explorer will match the "user" column alias to the transform and merge each cell in that column into the template string. Cool!
-- **Simple Charts**
-    - Using the Charted JS library from Medium, you can view results as either a table (default) or a chart. Just click on the "chart" tab.
 - **Query Logs**
     - Explorer will save a snapshot of every query you execute so you can recover lost ad-hoc queries, and see what you've been querying.
     - This also serves as cheap-and-dirty versioning of Queries, and provides the 'run count' property by aggregating the logs.
@@ -157,17 +155,14 @@ Name                                                        Version License
 ============================================================ ======= ================
 Name                                                         Version License
 ============================================================ ======= ================
-`Twitter Boostrap <http://getbootstrap.com/>`_               3.3.0   MIT
-`jQuery <http://jquery.com/>`_                               2.1.1   MIT
+`Twitter Boostrap <http://getbootstrap.com/>`_               3.3.6   MIT
+`jQuery <http://jquery.com/>`_                               2.1.4   MIT
 `jQuery Cookie <https://github.com/carhartl/jquery-cookie>`_ 1.4.1   MIT
 `Underscore <http://underscorejs.org/>`_                     1.7.0   MIT
 `Codemirror <http://codemirror.net/>`_                       4.7.0   MIT
 `floatThead <http://mkoryak.github.io/floatThead/>`_         1.2.8   MIT
-`charted <http://charted.co/>`_                              0.1.1   MIT
 `list.js <http://listjs.com>`_                               1.1.1   MIT
 ============================================================ ======= ================
-
-Most are served from cdnjs, except for Charted, which is served locally.
 
 Factory Boy is needed if you'd like to run the tests, which can you do easily:
 
@@ -186,7 +181,7 @@ Setting                       Description                                       
 ============================= =============================================================================================================== ================================================================================================================================================
 EXPLORER_SQL_BLACKLIST        Disallowed words in SQL queries to prevent destructive actions.                                                 ('ALTER', 'RENAME ', 'DROP', 'TRUNCATE', 'INSERT INTO', 'UPDATE', 'REPLACE', 'DELETE', 'ALTER', 'CREATE TABLE', 'SCHEMA', 'GRANT', 'OWNER TO')
 EXPLORER_SQL_WHITELIST        These phrases are allowed, even though part of the phrase appears in the blacklist.                             ('CREATED', 'DELETED')
-EXPLORER_DEFAULT_ROWS         The number of rows to show by default in the preview pane.                                                      100
+EXPLORER_DEFAULT_ROWS         The number of rows to show by default in the preview pane.                                                      1000
 EXPLORER_SCHEMA_EXCLUDE_APPS  Don't show schema for these packages in the schema helper.                                                      ('django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions', 'django.contrib.admin')
 EXPLORER_CONNECTION_NAME      The name of the Django database connection to use. Ideally set this to a connection with read only permissions  None  # Which means use the 'default' connection
 EXPLORER_PERMISSION_VIEW      Callback to check if the user is allowed to view and execute stored queries                                     lambda u: u.is_staff

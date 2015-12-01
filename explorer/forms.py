@@ -21,7 +21,7 @@ class SqlField(Field):
 
         if not error and not query.available_params():
             try:
-                query.try_execute()
+                query.execute_query_only()
             except DatabaseError as e:
                 error = str(e)
 

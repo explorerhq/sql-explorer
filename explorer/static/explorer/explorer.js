@@ -21,6 +21,7 @@ function ExplorerEditor(queryId, dataUrl) {
         mode: "text/x-sql",
         lineNumbers: 't',
         autofocus: true,
+        height: 500,
         extraKeys: {
             "Ctrl-Enter": function() { this.doCodeMirrorSubmit(); }.bind(this),
             "Cmd-Enter": function() { this.doCodeMirrorSubmit(); }.bind(this)
@@ -115,13 +116,6 @@ ExplorerEditor.prototype.bind = function() {
         this.formatSql();
     }.bind(this));
 
-    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-        if(e.target.hash == "#chart") {
-            var pageController = new PageController();
-            pageController.setupPage({dataUrl: this.dataUrl})
-        }
-    }.bind(this));
-
     $("#save_button").click(function() {
         var params = this.getParams(this);
         if(params) {
@@ -170,7 +164,28 @@ ExplorerEditor.prototype.bind = function() {
         e.preventDefault();
         $(".stats-expand").hide();
         $(".stats-wrapper").show();
-    });
+        this.$table.floatThead('reflow');
+    }.bind(this));
+
+    $(".sort").click(function(e){
+        var t = $(e.target).data('sort');
+        var dir = $(e.target).data('dir');
+        if (dir == 'asc'){
+            $(e.target).data('dir', 'desc');
+        } else {
+            $(e.target).data('dir', 'asc');
+        }
+        var vals = [];
+        var ct = 0;
+        while (ct <= this.$table.find('th').length) {
+           vals.push(ct++);
+        }
+        var options = {
+            valueNames: vals
+        };
+        var tableList = new List('preview', options);
+        tableList.sort(t, { order: dir });
+    }.bind(this));
 
     this.$table.floatThead({
         scrollContainer: function() {

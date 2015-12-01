@@ -267,7 +267,6 @@ class PlayQueryView(ExplorerContextMixin, View):
         sql = request.POST.get('sql')
         show_results = request.POST.get('show', True)
         query = Query(sql=sql, title="Playground")
-        query.log(request.user)
         return self.render_with_sql(request, query, show_results)
 
     def render(self, request):
@@ -298,7 +297,6 @@ class QueryView(ExplorerContextMixin, View):
 
         query, form = QueryView.get_instance_and_form(request, query_id)
         success = form.is_valid() and form.save()
-        query.log(request.user)
         vm = query_viewmodel(request, query, form=form, message="Query saved." if success else None)
         return self.render_template('explorer/query.html', vm)
 
@@ -313,10 +311,11 @@ class QueryView(ExplorerContextMixin, View):
 def query_viewmodel(request, query, title=None, form=None, message=None, show_results=True):
     rows = url_get_rows(request)
     res = None
+    ql = None
     error = None
     if show_results:
         try:
-            res = query.execute()
+            res, ql = query.execute_with_logging(request.user)
         except DatabaseError as e:
             error = str(e)
     ret = RequestContext(request, {
@@ -335,5 +334,6 @@ def query_viewmodel(request, query, title=None, form=None, message=None, show_re
             'has_stats': len([h for h in res.headers if h.summary]) if not error and show_results else False,
             'dataUrl': reverse_lazy('query_csv', kwargs={'query_id': query.id}) if query.id else '',
             'bucket': app_settings.S3_BUCKET,
-            'snapshots': query.snapshots if query.snapshot else []})
+            'snapshots': query.snapshots if query.snapshot else [],
+            'ql_id': ql.id if ql else None})
     return ret

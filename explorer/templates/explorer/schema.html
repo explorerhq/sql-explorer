@@ -3,9 +3,11 @@
 {% block sql_explorer_navbar %}{% endblock %}
 {% block sql_explorer_content %}
 
-    <h4 class="center">Schema</h4>
+    <h4 class="text-center">Schema</h4>
     <div id="tables">
-        <input class="search" placeholder="Search" />
+        <p>
+          <input class="form-control search" placeholder="Search" />
+        </p>
         <ul class="list">
             {% for m in schema %}
                 <li>

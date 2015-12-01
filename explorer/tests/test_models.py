@@ -44,6 +44,12 @@ class TestQueryModel(TestCase):
             q.log()
         self.assertEqual(q.get_run_count(), expected)
 
+    def test_log_saves_duration(self):
+        q = SimpleQueryFactory()
+        res, ql = q.execute_with_logging(None)
+        log = QueryLog.objects.first()
+        self.assertEqual(log.duration, res.duration)
+
     @patch('explorer.models.get_s3_connection')
     def test_get_snapshots_sorts_snaps(self, mocked_conn):
         conn = Mock()

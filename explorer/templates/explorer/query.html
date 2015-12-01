@@ -66,17 +66,23 @@
                         <span class="panel-title">SQL</span>
                     </div>
                     <div class="panel-content">
-                        <textarea class="form-control" {% if not can_change %} disabled {% endif %} cols="40" id="id_sql" name="sql" rows="10">{{ form.sql.value|default_if_none:"" }}</textarea>
+                        <textarea class="form-control" {% if not can_change %} disabled {% endif %} cols="40" id="id_sql" name="sql" rows="20">{{ form.sql.value|default_if_none:"" }}</textarea>
                     </div>
                     <div class="panel-footer">
-                        {% include 'explorer/params.html' %}
+                      <div class="row">
+                        <div class="col-md-6">
+                          {% include 'explorer/params.html' %}
+                        </div>
+                          <div class="col-md-6 text-right">
+                            {% if can_change %}
+                              <small>Tip: Use Ctrl+Enter or Cmd+Enter to execute the query</small>
+                            {% endif %}
+                          </div>
+                      </div>
                     </div>
                 </div>
-                {% if can_change %}
-                     <h5 class="tip"><small>Tip: Use Ctrl+Enter or Cmd+Enter to execute the query</small></h5>
-                {% endif %}
                 <div class="form-group">
-                    <div class="btn-group-wrap">
+                    <div class="text-center">
                         <div class="btn-group">
                             {% if can_change %}
                                 <input type="submit" value="Save & Run" class="btn btn-default" id="save_button" />
@@ -86,7 +92,7 @@
 
                                 {%  endif %}
                                 <button type="button" class="btn btn-default" id="show_schema_button">Show Schema</button>
-                                <button type="button" class="btn btn-default" id="hide_schema_button">Hide Schema</button>
+                                <button type="button" class="btn btn-default" id="hide_schema_button" style="display: none;">Hide Schema</button>
                                 <button type="button" class="btn btn-default" id="format_button">Format</button>
                             {% else %}
                                 <input type="submit" value="Refresh" class="btn btn-default" id="refresh_button" />
@@ -98,7 +104,7 @@
             </form>
         </div>
     </div>
-    <div id="schema" class="schema-frame">
+    <div id="schema" style="display: none;">
         <iframe src="" height="630px" frameBorder="0" id="schema_frame"></iframe>
     </div>
 </div>

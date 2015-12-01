@@ -24,27 +24,38 @@
                     <span class="panel-title">SQL</span>
                 </div>
                 <div class="panel-content">
-                    <textarea class="form-control" cols="40" id="id_sql" name="sql" rows="10">{{ query.sql }}</textarea>
+                    <textarea class="form-control" cols="40" id="id_sql" name="sql" rows="20">{{ query.sql }}</textarea>
+                </div>
+                <div class="panel-footer">
+                  <div class="row">
+                    <div class="col-md-6">
+                      {% if ql_id %}
+                        <small><a href="{% url "explorer_playground" %}?querylog_id={{ ql_id }}"><i class="glyphicon glyphicon-link"></i></a></small>
+                      {% endif %}
+                    </div>
+                    <div class="col-md-6 text-right">
+                      <small>Tip: Use Ctrl+Enter or Cmd+Enter to execute the query</small>
+                    </div>
+                  </div>
                 </div>
             </div>
-            <h5 class="tip"><small>Tip: Use Ctrl+Enter or Cmd+Enter to execute the query</small></h5>
             <div class="form-group">
-                <div class="btn-group-wrap">
+                <div class="text-center">
                     <div class="btn-group">
                         <input type="submit" value="Refresh Preview" id="refresh_play_button" class="btn btn-default"/>
                         <input type="submit" value="Save As New Query" id="create_button" class="btn btn-default"/>
                         <input type="submit" value="Download CSV" id="download_play_button" class="btn btn-default"/>
                         <button type="button" class="btn btn-default" id="format_button">Format</button>
                         <button type="button" class="btn btn-default" id="show_schema_button">Show Schema</button>
-                        <button type="button" class="btn btn-default" id="hide_schema_button">Hide Schema</button>
+                        <button type="button" class="btn btn-default" id="hide_schema_button" style="display: none;">Hide Schema</button>
                     </div>
                 </div>
             </div>
             <input type="hidden" value="Playground Query" name="title" />
         </form>
     </div>
-    <div id="schema" class="schema-frame">
-        <iframe src="" height="480px" frameBorder="0" id="schema_frame"></iframe>
+    <div id="schema" style="display: none;">
+        <iframe src="" height="630px" frameBorder="0" id="schema_frame"></iframe>
     </div>
 </div>
 {% include 'explorer/preview_pane.html' %}

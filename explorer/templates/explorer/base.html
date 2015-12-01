@@ -9,23 +9,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SQL Explorer{% if query %} - {{ query.title }}{% elif title %} - {{ title }}{% endif %}</title>
 
-    <link href="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.7.0/codemirror.min.css" rel="stylesheet" />
-    <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="{% static 'explorer/charted/charted.css' %}" />
+    <link href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.9.0/codemirror.min.css" rel="stylesheet" />
+    <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="{% static 'explorer/explorer.css' %}" />
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 
     <script src="{% static 'explorer/explorer.js' %}"></script>
-    <script src="{% static 'explorer/charted/lib/d3.js' %}"></script>
-    <script src="{% static 'explorer/charted/lib/lodash.compat.js' %}"></script>
-    <script src="{% static 'explorer/charted/Utils.js' %}"></script>
-    <script src="{% static 'explorer/charted/PageData.js' %}"></script>
-    <script src="{% static 'explorer/charted/ChartLegend.js' %}"></script>
-    <script src="{% static 'explorer/charted/ChartData.js' %}"></script>
-    <script src="{% static 'explorer/charted/Chart.js' %}"></script>
-    <script src="{% static 'explorer/charted/PageController.js' %}"></script>
     <script type="text/javascript">
         dataUrl = "{{ dataUrl }}";
         queryId = "{% firstof query.id 'new' %}";
@@ -55,20 +46,22 @@
         </div>
     </div>
     {% block sql_explorer_footer %}
-        <div id="footer">
-            <div class="container">
-                <p class="text-muted">
-                    Powered by <a href="https://www.github.com/epantry/django-sql-explorer/">django-sql-explorer</a> from
-                    <a href="https://www.epantry.com">ePantry</a>.
-                </p>
-            </div>
+        <div class="row">
+          <div class="col-md-12">
+              <div class="container">
+                  <p class="text-muted">
+                      Powered by <a href="https://www.github.com/epantry/django-sql-explorer/">django-sql-explorer</a> from
+                      <a href="https://www.epantry.com">ePantry</a>.
+                  </p>
+              </div>
+          </div>
         </div>
     {% endblock %}
     <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.1.1/list.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.7.0/codemirror.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.7.0/mode/sql/sql.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.9.0/codemirror.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.9.0/mode/sql/sql.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/floatthead/1.2.8/jquery.floatThead-slim.min.js"></script>
     {% block sql_explorer_scripts %}{% endblock %}
 </body>
