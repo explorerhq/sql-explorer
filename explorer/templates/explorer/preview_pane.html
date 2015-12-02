@@ -3,8 +3,9 @@
         <div class="col-md-12">
             <div role="tabpanel">
                 <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation" class="active"><a href="#previewpane" aria-controls="previewpane" role="tab" data-toggle="tab">Preview</a></li>
+                    <li role="presentation" class="active"><a href="#previewpane" aria-controls="previewpane" role="tab" data-toggle="tab" id="preview-tab-label">Preview</a></li>
                     {% if query.id and query.snapshot %}<li role="presentation"><a href="#snapshots" aria-controls="snapshots" role="tab" data-toggle="tab">Snapshots</a></li>{% endif %}
+                    {% if data %}<li role="presentation"><a href="#pivot" aria-controls="pivot" role="tab" data-toggle="tab">Pivot</a></li>{% endif %}
                 </ul>
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active" id="previewpane">
@@ -30,16 +31,24 @@
                                     <thead class="data-headers">
                                         <tr>
                                             {% for h in headers %}
-                                                <th class="preview-header"><div><span class="sort" data-sort="{{ forloop.counter0 }}" data-dir="asc">{{ h }}</span>{% if h.summary %}<i class="stats-expand glyphicon glyphicon-zoom-in"></i>
-                                                      <div class="stats-wrapper">
-                                                        {% for label, value in h.summary.stats.items %}
-                                                            <div class="stat-wrapper"><span class="stat-label">{{ label }}:&nbsp;</span><span class="stat-value">{{ value }}</span></div>
-                                                        {% endfor %}
-                                                    </div>
-                                                  {% endif %}
-                                                </div>
+                                                <th class="preview-header">
+                                                  <span class="sort" data-sort="{{ forloop.counter0 }}" data-dir="asc">{{ h }}</span>
                                                 </th>
                                             {% endfor %}
+                                        </tr>
+                                        <tr class="stats-th">
+                                        {% for h in headers %}
+                                          <th>
+                                            {% if h.summary %}
+                                              <i class="stats-expand glyphicon glyphicon-education"></i>
+                                              <div class="stats-wrapper">
+                                                  {% for label, value in h.summary.stats.items %}
+                                                      <div class="stat-wrapper"><span class="stat-label">{{ label }}:&nbsp;</span><span class="stat-value">{{ value }}</span></div>
+                                                  {% endfor %}
+                                              </div>
+                                            {% endif %}
+                                          </th>
+                                        {% endfor %}
                                         </tr>
 
                                     </thead>
@@ -78,6 +87,18 @@
                             </div>
                         </div>
                     {% endif %}
+                  {% if data %}
+                    <div role="tabpanel" class="tab-pane" id="pivot">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <span class="panel-title">Pivot</span>
+                                </div>
+                                <div class="overflow-wrapper">
+                                  <div class="pivot-test">
+                                </div>
+                            </div>
+                        </div>
+                  {% endif %}
                 </div>
             </div>
         </div>
