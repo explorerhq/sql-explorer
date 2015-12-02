@@ -132,7 +132,7 @@ def build_download_response(query, delim=None):
 
 def csv_report(query, delim=None):
     try:
-        res = query.execute()
+        res = query.execute_query_only()
         return write_csv(res.headers, res.data, delim)
     except DatabaseError as e:
         return str(e)
