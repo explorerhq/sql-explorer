@@ -67,6 +67,7 @@
 .stat-wrapper {
     float: left;
     width: 120px;
+    cursor: zoom-in;
 }
 
 .stat-label {
@@ -93,5 +94,8 @@
 
 .table>thead>tr>th.preview-header {
     vertical-align: top;
+}
+
+th.sort {
     cursor: pointer;
 }

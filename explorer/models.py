@@ -37,6 +37,9 @@ class Query(models.Model):
     def get_run_count(self):
         return self.querylog_set.count()
 
+    def avg_duration(self):
+        return self.querylog_set.aggregate(models.Avg('duration'))['duration__avg']
+
     def passes_blacklist(self):
         return passes_blacklist(self.final_sql())
 
@@ -174,7 +177,7 @@ class QueryResult(object):
         self.process_columns()
         self.process_rows()
 
-        logger.info("Explorer Query Processing took in %sms." % ((time() - start_time) * 1000))
+        logger.info("Explorer Query Processing took %sms." % ((time() - start_time) * 1000))
 
     def process_columns(self):
         for ix in self._get_numerics():

@@ -17,6 +17,7 @@
             <tr>
                 <th>Run At</th>
                 <th>Run By</th>
+                <th>Duration</th>
                 <th width="33%">SQL</th>
                 <th>Query ID</th>
                 <th>Playground</th>
@@ -27,6 +28,7 @@
             <tr>
                 <td>{{ object.run_at|date:"SHORT_DATETIME_FORMAT" }}</td>
                 <td>{{ object.run_by_user.email }}</td>
+                <td>{{ object.duration|floatformat:2 }}ms</td>
                 <td class="log-sql">{{ object.sql }}</td>
                 <td> {% if object.query_id %}<a href="{% url "query_detail" object.query_id %}">Query {{ object.query_id }}</a>{% elif object.is_playground %}Playground{% else %}--{% endif %}</td>
                 <td><a href="{% url "explorer_playground" %}?querylog_id={{ object.id }}">Open</a></td>

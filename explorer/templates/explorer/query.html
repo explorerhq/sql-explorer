@@ -109,13 +109,18 @@
     </div>
 </div>
 {% include 'explorer/preview_pane.html' %}
-{% if query and can_change %}
-  <div class="checkbox">
-      <label>
-          {{ form.snapshot }} Snapshot
-      </label>
+<div class="row">
+  <div class="col-md-6">
+    {% if query and can_change %}
+      {{ form.snapshot }} Snapshot
+    {% endif %}
   </div>
-{% endif %}
+  <div class="col-md-6 text-right">
+    {% if query.avg_duration %}
+      Avg. execution: {{ query.avg_duration|floatformat:2 }}ms
+    {% endif %}
+  </div>
+</div>
 {% endblock %}
 
 {% block sql_explorer_scripts %}

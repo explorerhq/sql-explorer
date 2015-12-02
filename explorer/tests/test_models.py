@@ -44,6 +44,18 @@ class TestQueryModel(TestCase):
             q.log()
         self.assertEqual(q.get_run_count(), expected)
 
+    def test_avg_duration(self):
+        q = SimpleQueryFactory()
+        self.assertIsNone(q.avg_duration())
+        expected = 2.5
+        ql = q.log()
+        ql.duration = 2
+        ql.save()
+        ql = q.log()
+        ql.duration = 3
+        ql.save()
+        self.assertEqual(q.avg_duration(), expected)
+
     def test_log_saves_duration(self):
         q = SimpleQueryFactory()
         res, ql = q.execute_with_logging(None)
