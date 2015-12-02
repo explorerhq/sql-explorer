@@ -150,11 +150,6 @@ class QueryResult(object):
             return [ix for ix, _ in enumerate(self._description) if not isinstance(d[ix], six.string_types) and six.text_type(d[ix]).isnumeric()]
         return []
 
-    def _get_unicodes(self):
-        if len(self.data):
-            return [ix for ix, c in enumerate(self.data[0]) if type(c) is six.text_type]
-        return []
-
     def _get_transforms(self):
         transforms = dict(app_settings.EXPLORER_TRANSFORMS)
         return [(ix, transforms[str(h)]) for ix, h in enumerate(self.headers) if str(h) in transforms.keys()]
@@ -175,11 +170,8 @@ class QueryResult(object):
             self.headers[ix].add_summary(self.column(ix))
 
     def process_rows(self):
-        unicodes = self._get_unicodes()
         transforms = self._get_transforms()
         for r in self.data:
-            for u in unicodes:
-                r[u] = r[u].encode('utf-8') if r[u] is not None else r[u]
             for ix, t in transforms:
                 r[ix] = t.format(str(r[ix]))
 
