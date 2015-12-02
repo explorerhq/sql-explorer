@@ -188,7 +188,7 @@ ExplorerEditor.prototype.bind = function() {
         }
         var vals = [];
         var ct = 0;
-        while (ct <= this.$table.find('th').length) {
+        while (ct < this.$table.find('th').length) {
            vals.push(ct++);
         }
         var options = {
@@ -198,6 +198,17 @@ ExplorerEditor.prototype.bind = function() {
         tableList.sort(t, { order: dir });
     }.bind(this));
 
+    $("#preview-tab-label").click(function(e){
+        this.$table.floatThead('reflow');
+    }.bind(this));
+
+    var labels = [];
+    var ct = 0;
+    while (ct < this.$table.find('.sort').length) {
+        labels.push(this.$table.find('.sort')[ct].innerHTML);
+        ct++;
+    }
+    $(".pivot-test").pivotUI(this.$table, {rows: ["price", "name"]});
     this.$table.floatThead({
         scrollContainer: function() {
                             return this.$table.closest('.overflow-wrapper');
