@@ -4,67 +4,61 @@
             <div role="tabpanel">
                 <ul class="nav nav-tabs" role="tablist">
                     <li role="presentation" class="active"><a href="#previewpane" aria-controls="previewpane" role="tab" data-toggle="tab">Preview</a></li>
-                    {% if query.id %}<li role="presentation"><a href="#chart" aria-controls="chart" role="tab" data-toggle="tab">Chart</a></li>{% endif %}
                     {% if query.id and query.snapshot %}<li role="presentation"><a href="#snapshots" aria-controls="snapshots" role="tab" data-toggle="tab">Snapshots</a></li>{% endif %}
                 </ul>
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active" id="previewpane">
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <span class="panel-title">Execution time: {{ duration|floatformat:2 }} ms</span>
-                                <span class="row-control">
-                                    {% if rows > total_rows %}
-                                        Showing {{ total_rows }} of {{ total_rows }} total rows.
-                                    {% else %}
-                                        First <input class="rows-input" type="text" name="rows" id="rows" value="{{ rows }}" /> of {{ total_rows }} total rows.
-                                    {% endif %}
-                                </span>
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <span class="panel-title">Execution time: {{ duration|floatformat:2 }} ms</span>
+                                </div>
+                                <div class="col-md-6 text-right">
+                                  <span class="row-control">
+                                      {% if rows > total_rows %}
+                                          Showing {{ total_rows }} of {{ total_rows }} total rows.
+                                      {% else %}
+                                          First <input class="rows-input" type="text" name="rows" id="rows" value="{{ rows }}" /> of {{ total_rows }} total rows.
+                                      {% endif %}
+                                  </span>
+                                </div>
+                              </div>
                             </div>
                             <div class="overflow-wrapper">
                                 <table class="table table-striped table-hover" id="preview">
                                     <thead class="data-headers">
                                         <tr>
                                             {% for h in headers %}
-                                                <th>{{ h }}</th>
+                                                <th class="preview-header"><div><span class="sort" data-sort="{{ forloop.counter0 }}" data-dir="asc">{{ h }}</span>{% if h.summary %}<i class="stats-expand glyphicon glyphicon-zoom-in"></i>
+                                                      <div class="stats-wrapper">
+                                                        {% for label, value in h.summary.stats.items %}
+                                                            <div class="stat-wrapper"><span class="stat-label">{{ label }}:&nbsp;</span><span class="stat-value">{{ value }}</span></div>
+                                                        {% endfor %}
+                                                    </div>
+                                                  {% endif %}
+                                                </div>
+                                                </th>
                                             {% endfor %}
                                         </tr>
-                                        </thead>
-                                    <tbody>
-                                        {% if has_stats %}
-                                            <tr class="stats">
-                                                {% for h in headers %}
-                                                    <th>
-                                                        {% if h.summary %}
-                                                            <div class="stats-expand">...</div>
-                                                        {% endif %}
-                                                        <div class="stats-wrapper">
-                                                            {% for label, value in h.summary.stats.items %}
-                                                                <div class="stat-wrapper"><span class="stat-label">{{ label }}:&nbsp;</span><span class="stat-value">{{ value }}</span></div>
-                                                            {% endfor %}
-                                                        </div>
-                                                    </th>
-                                                {% endfor %}
-                                            </tr>
-                                        {% endif %}
 
+                                    </thead>
+                                    <tbody class="list">
                                         {% if data %}
                                             {% for row in data %}
                                             <tr class="data-row">
                                                 {% for i in row %}
-                                                    <td>{% autoescape off %}{{ i }}{% endautoescape %}</td>
+                                                    <td class="{{ forloop.counter0 }}">{% autoescape off %}{{ i }}{% endautoescape %}</td>
                                                 {% endfor %}
                                             </tr>
                                             {% endfor %}
                                         {% else %}
-                                            <tr class="center"><td colspan="{{ headers|length }}">Empty Resultset</td></tr>
+                                            <tr class="text-center"><td colspan="{{ headers|length }}">Empty Resultset</td></tr>
                                         {% endif %}
                                     </tbody>
                                 </table>
                             </div>
                         </div>
-                    </div>
-                    <div role="tabpanel" class="tab-pane" id="chart">
-                        <div class="charts"></div>
                     </div>
                     {% if query.id and query.snapshot and query.snapshots %}
                         <div role="tabpanel" class="tab-pane" id="snapshots">

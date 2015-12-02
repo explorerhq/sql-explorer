@@ -21,6 +21,7 @@ function ExplorerEditor(queryId, dataUrl) {
         mode: "text/x-sql",
         lineNumbers: 't',
         autofocus: true,
+        height: 500,
         extraKeys: {
             "Ctrl-Enter": function() { this.doCodeMirrorSubmit(); }.bind(this),
             "Cmd-Enter": function() { this.doCodeMirrorSubmit(); }.bind(this)
@@ -38,6 +39,14 @@ ExplorerEditor.prototype.getParams = function() {
         });
     }
     return o;
+};
+
+ExplorerEditor.prototype.serializeParams = function(params) {
+    var args = [];
+    for(var key in params) {
+        args.push(key + '%3A' + params[key]);
+    }
+    return args.join('+');
 };
 
 ExplorerEditor.prototype.doCodeMirrorSubmit = function() {
@@ -115,17 +124,10 @@ ExplorerEditor.prototype.bind = function() {
         this.formatSql();
     }.bind(this));
 
-    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-        if(e.target.hash == "#chart") {
-            var pageController = new PageController();
-            pageController.setupPage({dataUrl: this.dataUrl})
-        }
-    }.bind(this));
-
     $("#save_button").click(function() {
         var params = this.getParams(this);
         if(params) {
-            this.$form.attr('action', '../' + this.queryId + '/?params=' + JSON.stringify(params));
+            this.$form.attr('action', '../' + this.queryId + '/?params=' + this.serializeParams(params));
         }
         this.$snapshotField.hide();
         this.$form.append(this.$snapshotField);
@@ -135,7 +137,7 @@ ExplorerEditor.prototype.bind = function() {
         e.preventDefault();
         var params = this.getParams();
         if(params) {
-            window.location.href = '../' + this.queryId + '/?params=' + JSON.stringify(params);
+            window.location.href = '../' + this.queryId + '/?params=' + this.serializeParams(params);
         } else {
             window.location.href = '../' + this.queryId + '/';
         }
@@ -170,7 +172,31 @@ ExplorerEditor.prototype.bind = function() {
         e.preventDefault();
         $(".stats-expand").hide();
         $(".stats-wrapper").show();
-    });
+        this.$table.floatThead('reflow');
+    }.bind(this));
+
+    $(".sort").click(function(e){
+        var t = $(e.target).data('sort');
+        var dir = $(e.target).data('dir');
+        $('.sort').css('background-image', 'url(http://cdn.datatables.net/1.10.0/images/sort_both.png)')
+        if (dir == 'asc'){
+            $(e.target).data('dir', 'desc');
+            $(e.target).css('background-image', 'url(http://cdn.datatables.net/1.10.0/images/sort_asc.png)')
+        } else {
+            $(e.target).data('dir', 'asc');
+            $(e.target).css('background-image', 'url(http://cdn.datatables.net/1.10.0/images/sort_desc.png)')
+        }
+        var vals = [];
+        var ct = 0;
+        while (ct <= this.$table.find('th').length) {
+           vals.push(ct++);
+        }
+        var options = {
+            valueNames: vals
+        };
+        var tableList = new List('preview', options);
+        tableList.sort(t, { order: dir });
+    }.bind(this));
 
     this.$table.floatThead({
         scrollContainer: function() {

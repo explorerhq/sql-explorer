@@ -1,9 +1,11 @@
 from django.test import TestCase
-from explorer.tasks import execute_query, snapshot_queries
+from explorer.tasks import execute_query, snapshot_queries, truncate_querylogs
 from explorer.tests.factories import SimpleQueryFactory
 from django.core import mail
 from mock import Mock, patch
 from six.moves import cStringIO
+from explorer.models import QueryLog
+from datetime import datetime, timedelta
 
 
 class TestTasks(TestCase):
@@ -40,3 +42,11 @@ class TestTasks(TestCase):
 
         snapshot_queries()
         self.assertEqual(conn.upload.call_count, 3)
+
+    def test_truncating_querylogs(self):
+        QueryLog(sql='foo').save()
+        QueryLog.objects.filter(sql='foo').update(run_at=datetime.now() - timedelta(days=30))
+        QueryLog(sql='bar').save()
+        QueryLog.objects.filter(sql='bar').update(run_at=datetime.now() - timedelta(days=29))
+        truncate_querylogs(30)
+        self.assertEqual(QueryLog.objects.count(), 1)

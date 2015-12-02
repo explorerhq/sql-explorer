@@ -199,7 +199,7 @@ class TestDownloadView(TestCase):
 
     def test_params_in_download(self):
         q = SimpleQueryFactory(sql="select '$$foo$$';")
-        url = '%s?params=%s' % (reverse("query_download", kwargs={'query_id': q.id}), '{"foo":123}')
+        url = '%s?params=%s' % (reverse("query_download", kwargs={'query_id': q.id}), 'foo:123')
         resp = self.client.get(url)
         self.assertContains(resp, "'123'")
 
@@ -323,18 +323,18 @@ class TestParamsInViews(TestCase):
         self.query = SimpleQueryFactory(sql="select $$swap$$;")
 
     def test_retrieving_query_works_with_params(self):
-        resp = self.client.get(reverse("query_detail", kwargs={'query_id': self.query.id}) + '?params={"swap":123}')
+        resp = self.client.get(reverse("query_detail", kwargs={'query_id': self.query.id}) + '?params=swap:123}')
         self.assertContains(resp, "123")
 
     def test_saving_non_executing_query_with__wrong_url_params_works(self):
         q = SimpleQueryFactory(sql="select $$swap$$;")
         data = model_to_dict(q)
-        url = '%s?params=%s' % (reverse("query_detail", kwargs={'query_id': q.id}), '{"foo":123}')
+        url = '%s?params=%s' % (reverse("query_detail", kwargs={'query_id': q.id}), 'foo:123')
         resp = self.client.post(url, data)
         self.assertContains(resp, 'saved')
 
     def test_users_without_change_permissions_can_use_params(self):
-        resp = self.client.get(reverse("query_detail", kwargs={'query_id': self.query.id}) + '?params={"swap":123}')
+        resp = self.client.get(reverse("query_detail", kwargs={'query_id': self.query.id}) + '?params=swap:123}')
         self.assertContains(resp, "123")
 
 
@@ -393,11 +393,6 @@ class TestQueryLog(TestCase):
         self.client.post(reverse("query_detail", kwargs={'query_id': query.id}), model_to_dict(query))
         self.assertEqual(2, QueryLog.objects.count())
         self.assertIsNone(QueryLog.objects.order_by('-run_at').first().sql)
-
-    def test_retrieving_query_doesnt_save_to_log(self):
-        query = SimpleQueryFactory()
-        self.client.get(reverse("query_detail", kwargs={'query_id': query.id}))
-        self.assertEqual(0, QueryLog.objects.count())
 
     def test_query_gets_logged_and_appears_on_log_page(self):
         query = SimpleQueryFactory()

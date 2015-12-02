@@ -7,13 +7,23 @@ from explorer.utils import csv_report
 from zipfile import ZipFile
 
 
-class testSqlQueryActions(TestCase):
+class TestSqlQueryActions(TestCase):
 
     def test_simple_query_runs(self):
 
         expected_csv = 'two\r\n2\r\n'
 
         r = SimpleQueryFactory()
+        result = csv_report(r).getvalue()
+
+        self.assertIsNotNone(result, "Query '%s' returned None." % r.title)
+        self.assertEqual(result.lower(), expected_csv)
+
+    def test_simple_query_does_not_transform(self):
+
+        expected_csv = 'foo\r\n1\r\n'
+
+        r = SimpleQueryFactory(sql='select 1 as foo')
         result = csv_report(r).getvalue()
 
         self.assertIsNotNone(result, "Query '%s' returned None." % r.title)
