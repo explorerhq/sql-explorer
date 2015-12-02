@@ -3,7 +3,9 @@ from explorer import models
 
 
 class SimpleQueryFactory(factory.DjangoModelFactory):
-    FACTORY_FOR = models.Query
+
+    class Meta:
+        model = models.Query
 
     title = "My simple query"
     sql = "SELECT 1+1 AS TWO"  # same result in postgres and sqlite
@@ -12,6 +14,8 @@ class SimpleQueryFactory(factory.DjangoModelFactory):
 
 
 class QueryLogFactory(factory.DjangoModelFactory):
-    FACTORY_FOR = models.QueryLog
+
+    class Meta:
+        model = models.QueryLog
 
     sql = "SELECT 2+2 AS FOUR"
