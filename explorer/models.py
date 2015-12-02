@@ -182,9 +182,10 @@ class QueryResult(object):
 
     def process_rows(self):
         transforms = self._get_transforms()
-        for r in self.data:
-            for ix, t in transforms:
-                r[ix] = t.format(str(r[ix]))
+        if transforms:
+            for r in self.data:
+                for ix, t in transforms:
+                    r[ix] = t.format(str(r[ix]))
 
     def execute_query(self):
         conn = get_connection()
