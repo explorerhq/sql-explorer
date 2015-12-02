@@ -171,21 +171,22 @@ def safe_cast(val, to_type, default=None):
         return default
 
 
-def safe_json(val):
-    try:
-        return json.loads(val)
-    except ValueError:
-        return None
-
-
 def get_int_from_request(request, name, default):
     val = request.GET.get(name, default)
     return safe_cast(val, int, default) if val else None
 
 
-def get_json_from_request(request, name):
+def get_params_from_request(request, name):
     val = request.GET.get(name, None)
-    return safe_json(val) if val else None
+    try:
+        d = {}
+        tuples = val.split('+')
+        for t in tuples:
+            res = t.split(':')
+            d[res[0]] = res[1]
+        return d
+    except Exception:
+        return None
 
 
 def url_get_rows(request):
@@ -205,7 +206,7 @@ def url_get_show(request):
 
 
 def url_get_params(request):
-    return get_json_from_request(request, 'params')
+    return get_params_from_request(request, 'params')
 
 
 def allowed_query_pks(user_id):

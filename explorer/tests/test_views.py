@@ -199,7 +199,7 @@ class TestDownloadView(TestCase):
 
     def test_params_in_download(self):
         q = SimpleQueryFactory(sql="select '$$foo$$';")
-        url = '%s?params=%s' % (reverse("query_download", kwargs={'query_id': q.id}), '{"foo":123}')
+        url = '%s?params=%s' % (reverse("query_download", kwargs={'query_id': q.id}), 'foo:123')
         resp = self.client.get(url)
         self.assertContains(resp, "'123'")
 
@@ -323,18 +323,18 @@ class TestParamsInViews(TestCase):
         self.query = SimpleQueryFactory(sql="select $$swap$$;")
 
     def test_retrieving_query_works_with_params(self):
-        resp = self.client.get(reverse("query_detail", kwargs={'query_id': self.query.id}) + '?params={"swap":123}')
+        resp = self.client.get(reverse("query_detail", kwargs={'query_id': self.query.id}) + '?params=swap:123}')
         self.assertContains(resp, "123")
 
     def test_saving_non_executing_query_with__wrong_url_params_works(self):
         q = SimpleQueryFactory(sql="select $$swap$$;")
         data = model_to_dict(q)
-        url = '%s?params=%s' % (reverse("query_detail", kwargs={'query_id': q.id}), '{"foo":123}')
+        url = '%s?params=%s' % (reverse("query_detail", kwargs={'query_id': q.id}), 'foo:123')
         resp = self.client.post(url, data)
         self.assertContains(resp, 'saved')
 
     def test_users_without_change_permissions_can_use_params(self):
-        resp = self.client.get(reverse("query_detail", kwargs={'query_id': self.query.id}) + '?params={"swap":123}')
+        resp = self.client.get(reverse("query_detail", kwargs={'query_id': self.query.id}) + '?params=swap:123}')
         self.assertContains(resp, "123")
 
 

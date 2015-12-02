@@ -41,6 +41,14 @@ ExplorerEditor.prototype.getParams = function() {
     return o;
 };
 
+ExplorerEditor.prototype.serializeParams = function(params) {
+    var args = [];
+    for(var key in params) {
+        args.push(key + '%3A' + params[key]);
+    }
+    return args.join('+');
+};
+
 ExplorerEditor.prototype.doCodeMirrorSubmit = function() {
     // Captures the cmd+enter keystroke and figures out which button to trigger.
     this.$submit.click();
@@ -119,7 +127,7 @@ ExplorerEditor.prototype.bind = function() {
     $("#save_button").click(function() {
         var params = this.getParams(this);
         if(params) {
-            this.$form.attr('action', '../' + this.queryId + '/?params=' + JSON.stringify(params));
+            this.$form.attr('action', '../' + this.queryId + '/?params=' + this.serializeParams(params));
         }
         this.$snapshotField.hide();
         this.$form.append(this.$snapshotField);
@@ -129,7 +137,7 @@ ExplorerEditor.prototype.bind = function() {
         e.preventDefault();
         var params = this.getParams();
         if(params) {
-            window.location.href = '../' + this.queryId + '/?params=' + JSON.stringify(params);
+            window.location.href = '../' + this.queryId + '/?params=' + this.serializeParams(params);
         } else {
             window.location.href = '../' + this.queryId + '/';
         }
