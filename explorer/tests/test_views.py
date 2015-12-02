@@ -394,11 +394,6 @@ class TestQueryLog(TestCase):
         self.assertEqual(2, QueryLog.objects.count())
         self.assertIsNone(QueryLog.objects.order_by('-run_at').first().sql)
 
-    def test_retrieving_query_doesnt_save_to_log(self):
-        query = SimpleQueryFactory()
-        self.client.get(reverse("query_detail", kwargs={'query_id': query.id}))
-        self.assertEqual(0, QueryLog.objects.count())
-
     def test_query_gets_logged_and_appears_on_log_page(self):
         query = SimpleQueryFactory()
         data = model_to_dict(query)

@@ -1,8 +1,8 @@
 from explorer import app_settings
-from explorer.models import Query
+from explorer.models import Query, QueryLog
 from django.core.mail import send_mail
 from explorer.utils import csv_report
-from datetime import date
+from datetime import date, datetime, timedelta
 import random
 import string
 
@@ -57,3 +57,11 @@ def snapshot_queries():
     for qid in qs:
         snapshot_query.delay(qid)
     logger.info("Done creating tasks.")
+
+
+@task
+def truncate_querylogs(days):
+    qs = QueryLog.objects.filter(run_at__lt=datetime.now() - timedelta(days=days))
+    logger.info('Deleting %s QueryLog objects older than %s days.' % (qs.count, days))
+    qs.delete()
+    logger.info('Done deleting QueryLog objects.')

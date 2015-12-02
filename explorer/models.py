@@ -78,6 +78,8 @@ class Query(models.Model):
         return reverse("query_detail", kwargs={'query_id': self.id})
 
     def log(self, user=None):
+        if user and user.is_anonymous():
+            user = None
         ql = QueryLog(sql=self.sql, query_id=self.id, run_by_user=user)
         ql.save()
         return ql
