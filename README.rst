@@ -67,7 +67,15 @@ Features
     - And change your query to 'SELECT id AS "user", email FROM user'. Explorer will match the "user" column alias to the transform and merge each cell in that column into the template string. Cool!
 - **Query Logs**
     - Explorer will save a snapshot of every query you execute so you can recover lost ad-hoc queries, and see what you've been querying.
-    - This also serves as cheap-and-dirty versioning of Queries, and provides the 'run count' property by aggregating the logs.
+    - This also serves as cheap-and-dirty versioning of Queries, and provides the 'run count' property and average duration in milliseconds, by aggregating the logs.
+    - If Explorer gets a lot of use, the logs can get beefy. explorer.tasks contains the 'truncate_querylogs' task that will remove log entries older than <days> (30 days and older in the example below).
+    .. code-block:: python
+
+       'explorer.tasks.truncate_querylogs': {
+           'task': 'explorer.tasks.truncate_querylogs',
+           'schedule': crontab(hour=1, minute=0),
+           'kwargs': {'days': 30}
+       }
 - **Stable**
     - 95% according to coverage...for what that's worth. Just install factory_boy and run `python manage.py test explorer.tests --settings=explorer.tests.settings`
     - Battle-tested in production every day by the ePantry team.
