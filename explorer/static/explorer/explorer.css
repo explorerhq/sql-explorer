@@ -67,7 +67,6 @@
 .stat-wrapper {
     float: left;
     width: 120px;
-    cursor: zoom-in;
 }
 
 .stat-label {
@@ -81,7 +80,8 @@
 }
 
 .stats-expand {
-    height: 20px;
+    cursor: pointer;
+    padding-left: 5px;
 }
 
 .data-row {
@@ -96,6 +96,9 @@
     vertical-align: top;
 }
 
-th.sort {
+span.sort {
+    background-image: url('http://cdn.datatables.net/1.10.0/images/sort_both.png');
+    background-repeat: no-repeat;
     cursor: pointer;
+    padding-left: 20px;
 }

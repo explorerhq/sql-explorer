@@ -30,7 +30,7 @@
                                     <thead class="data-headers">
                                         <tr>
                                             {% for h in headers %}
-                                                <th class="preview-header"><div><span class="sort" data-sort="{{ forloop.counter0 }}" data-dir="asc">{{ h }}</span>{% if h.summary %}<span class="stats-expand">...</span>
+                                                <th class="preview-header"><div><span class="sort" data-sort="{{ forloop.counter0 }}" data-dir="asc">{{ h }}</span>{% if h.summary %}<i class="stats-expand glyphicon glyphicon-zoom-in"></i>
                                                       <div class="stats-wrapper">
                                                         {% for label, value in h.summary.stats.items %}
                                                             <div class="stat-wrapper"><span class="stat-label">{{ label }}:&nbsp;</span><span class="stat-value">{{ value }}</span></div>
