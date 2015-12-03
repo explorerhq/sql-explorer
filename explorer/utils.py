@@ -176,11 +176,11 @@ def get_int_from_request(request, name, default):
     return safe_cast(val, int, default) if val else None
 
 
-def get_params_from_request(request, name):
-    val = request.GET.get(name, None)
+def get_params_from_request(request):
+    val = request.GET.get('params', None)
     try:
         d = {}
-        tuples = val.split('+')
+        tuples = val.split('|')
         for t in tuples:
             res = t.split(':')
             d[res[0]] = res[1]
@@ -206,7 +206,7 @@ def url_get_show(request):
 
 
 def url_get_params(request):
-    return get_params_from_request(request, 'params')
+    return get_params_from_request(request)
 
 
 def allowed_query_pks(user_id):

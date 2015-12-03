@@ -46,7 +46,7 @@ ExplorerEditor.prototype.serializeParams = function(params) {
     for(var key in params) {
         args.push(key + '%3A' + params[key]);
     }
-    return args.join('+');
+    return args.join('%7C');
 };
 
 ExplorerEditor.prototype.doCodeMirrorSubmit = function() {
@@ -166,7 +166,7 @@ ExplorerEditor.prototype.bind = function() {
         e.preventDefault();
         var dl_link = 'download';
         var params = this.getParams(this);
-        if(params) { dl_link = dl_link + '?params=' + JSON.stringify(params); }
+        if(params) { dl_link = dl_link + '?params=' + this.serializeParams(params); }
         window.open(dl_link, '_blank');
     }.bind(this));
 

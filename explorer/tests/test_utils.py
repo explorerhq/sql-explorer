@@ -5,7 +5,8 @@ from explorer.actions import generate_report_action
 from explorer.tests.factories import SimpleQueryFactory
 from explorer import app_settings
 from explorer.utils import passes_blacklist, schema_info, param, swap_params, extract_params,\
-    shared_dict_update, EXPLORER_PARAM_TOKEN, write_csv
+    shared_dict_update, EXPLORER_PARAM_TOKEN, write_csv, get_params_from_request
+from mock import Mock
 
 
 class TestSqlBlacklist(TestCase):
@@ -95,6 +96,13 @@ class TestParams(TestCase):
         source = {'foo': 1, 'bar': 2}
         target = {'bar': None}  # ha ha!
         self.assertEqual({'bar': 2}, shared_dict_update(target, source))
+
+    def test_get_params_from_url(self):
+        r = Mock()
+        r.GET = {'params': 'foo:bar|qux:mux'}
+        res = get_params_from_request(r)
+        self.assertEqual(res['foo'], 'bar')
+        self.assertEqual(res['qux'], 'mux')
 
 
 class TestCsv(TestCase):
