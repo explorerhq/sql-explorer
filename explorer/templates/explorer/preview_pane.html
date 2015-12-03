@@ -31,9 +31,7 @@
                                     <thead class="data-headers">
                                         <tr>
                                             {% for h in headers %}
-                                                <th class="preview-header">
-                                                  <span class="sort" data-sort="{{ forloop.counter0 }}" data-dir="asc">{{ h }}</span>
-                                                </th>
+                                                <th class="preview-header"><span class="sort" data-sort="{{ forloop.counter0 }}" data-dir="asc">{{ h }}</span></th>
                                             {% endfor %}
                                         </tr>
                                         <tr class="stats-th">
