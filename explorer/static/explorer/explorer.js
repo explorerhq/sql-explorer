@@ -54,6 +54,12 @@ ExplorerEditor.prototype.doCodeMirrorSubmit = function() {
     this.$submit.click();
 };
 
+ExplorerEditor.prototype.savePivotState = function(state) {
+    bmark = btoa(JSON.stringify(_(state).pick('aggregatorName', 'rows', 'cols', 'rendererName', 'vals')));
+    $el = $('#pivot-bookmark')
+    $el.attr('href', $el.data('baseurl') + '#' + bmark)
+};
+
 ExplorerEditor.prototype.updateQueryString = function(key, value, url) {
     // http://stackoverflow.com/a/11654596/221390
     if (!url) url = window.location.href;
@@ -175,7 +181,7 @@ ExplorerEditor.prototype.bind = function() {
         this.$table.floatThead('reflow');
     }.bind(this));
 
-    $(".sort").click(function(e){
+    $(".sort").click(function(e) {
         var t = $(e.target).data('sort');
         var dir = $(e.target).data('dir');
         $('.sort').css('background-image', 'url(http://cdn.datatables.net/1.10.0/images/sort_both.png)')
@@ -198,17 +204,20 @@ ExplorerEditor.prototype.bind = function() {
         tableList.sort(t, { order: dir });
     }.bind(this));
 
-    $("#preview-tab-label").click(function(e){
+    $("#preview-tab-label").click(function() {
         this.$table.floatThead('reflow');
     }.bind(this));
 
-    var labels = [];
-    var ct = 0;
-    while (ct < this.$table.find('.sort').length) {
-        labels.push(this.$table.find('.sort')[ct].innerHTML);
-        ct++;
+    var pivotState = window.location.hash;
+    if (!pivotState) {
+        pivotState = {onRefresh: this.savePivotState};
+    } else {
+        pivotState = JSON.parse(atob(pivotState.substr(1)));
+        pivotState['onRefresh'] = this.savePivotState;
     }
-    $(".pivot-test").pivotUI(this.$table, {rows: ["price", "name"]});
+
+    $(".pivot-table").pivotUI(this.$table, pivotState);
+
     this.$table.floatThead({
         scrollContainer: function() {
                             return this.$table.closest('.overflow-wrapper');
@@ -216,7 +225,7 @@ ExplorerEditor.prototype.bind = function() {
     });
 
     this.$rows.change(function() { this.showRows(); }.bind(this));
-    this.$rows.keyup(function(event){
+    this.$rows.keyup(function(event) {
         if(event.keyCode == 13){ this.showRows(); }
     }.bind(this));
 };

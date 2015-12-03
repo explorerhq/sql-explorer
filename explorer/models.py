@@ -104,18 +104,6 @@ class QueryLog(models.Model):
     run_at = models.DateTimeField(auto_now_add=True)
     duration = models.FloatField(blank=True, null=True)  # milliseconds
 
-    def save(self, **kwargs):
-        self.sql = self.sql if self.sql and self.should_save_sql() else None
-        super(QueryLog, self).save(**kwargs)
-
-    def should_save_sql(self):
-        # If the querylog already has been saved, then the sql should always be saved.
-        if self.id:
-            return bool(self.sql)
-        last_log = QueryLog.objects.filter(query_id=self.query_id).order_by('-run_at').first()
-        last_log_sql = last_log.sql if last_log else None
-        return last_log_sql != self.sql
-
     @property
     def is_playground(self):
         return self.query_id is None
@@ -204,7 +192,7 @@ class QueryResult(object):
 class ColumnHeader(object):
 
     def __init__(self, title):
-        self.title = title
+        self.title = title.strip()
         self.summary = None
 
     def add_summary(self, column):
