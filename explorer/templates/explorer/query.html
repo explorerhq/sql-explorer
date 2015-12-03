@@ -68,18 +68,9 @@
                     <div class="panel-content">
                         <textarea class="form-control" {% if not can_change %} disabled {% endif %} cols="40" id="id_sql" name="sql" rows="20">{{ form.sql.value|default_if_none:"" }}</textarea>
                     </div>
-                    <div class="panel-footer">
-                      <div class="row">
-                        <div class="col-md-6">
-                          {% include 'explorer/params.html' %}
-                        </div>
-                          <div class="col-md-6 text-right">
-                            {% if can_change %}
-                              <small>Tip: Use Ctrl+Enter or Cmd+Enter to execute the query</small>
-                            {% endif %}
-                          </div>
-                      </div>
-                    </div>
+                    {% if params %}
+                      {% include 'explorer/params.html' %}
+                    {% endif %}
                 </div>
                 <div class="form-group">
                     <div class="text-center">

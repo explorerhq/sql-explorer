@@ -89,7 +89,14 @@
                     <div role="tabpanel" class="tab-pane" id="pivot">
                             <div class="panel panel-default">
                                 <div class="panel-heading">
-                                    <span class="panel-title">Pivot&nbsp;<small><a id="pivot-bookmark" data-baseurl="{% url "explorer_playground" %}?querylog_id={{ ql_id }}" href="#"><i class="glyphicon glyphicon-link"></i></a></small></span>
+                                    <div class="row">
+                                      <div class="col-md-6">
+                                        <span class="panel-title">Pivot</span>
+                                      </div>
+                                      <div class="col-md-6 text-right">
+                                        <small><a id="pivot-bookmark" data-baseurl="{% url "explorer_playground" %}?querylog_id={{ ql_id }}" href="#"><i class="glyphicon glyphicon-link"></i></a></small>
+                                      </div>
+                                    </div>
                                 </div>
                                 <div class="overflow-wrapper">
                                   <div class="pivot-table">

@@ -23,6 +23,10 @@
     overflow: auto; height: 500px;
 }
 
+.list-search {
+    margin-top: 20px;
+}
+
 .data-headers {
     background: white;
 }
@@ -38,15 +42,6 @@
 
 .wrap {
     overflow: hidden; /* for schema navigator */
-}
-
-.icon-cell {
-    padding: 2px 0 0 45px;
-    vertical-align: middle;
-}
-
-.icon-cell a {
-    font-size: 20px;
 }
 
 .toggle {
@@ -97,8 +92,15 @@
 }
 
 span.sort {
-    background-image: url('http://cdn.datatables.net/1.10.0/images/sort_both.png');
-    background-repeat: no-repeat;
+    background: url('http://cdn.datatables.net/1.10.0/images/sort_both.png') no-repeat;
     cursor: pointer;
     padding-left: 20px;
+}
+
+.pivot-table {
+    padding: 15px;
+}
+
+.pvtAxisContainer, .pvtVals {
+    border-color: #ddd;
 }
