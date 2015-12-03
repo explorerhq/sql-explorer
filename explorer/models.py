@@ -204,7 +204,7 @@ class QueryResult(object):
 class ColumnHeader(object):
 
     def __init__(self, title):
-        self.title = title
+        self.title = title.strip()
         self.summary = None
 
     def add_summary(self, column):

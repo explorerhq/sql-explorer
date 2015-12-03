@@ -5,7 +5,7 @@
                 <ul class="nav nav-tabs" role="tablist">
                     <li role="presentation" class="active"><a href="#previewpane" aria-controls="previewpane" role="tab" data-toggle="tab" id="preview-tab-label">Preview</a></li>
                     {% if query.id and query.snapshot %}<li role="presentation"><a href="#snapshots" aria-controls="snapshots" role="tab" data-toggle="tab">Snapshots</a></li>{% endif %}
-                    {% if data %}<li role="presentation"><a href="#pivot" aria-controls="pivot" role="tab" data-toggle="tab">Pivot</a></li>{% endif %}
+                    {% if data %}<li role="presentation"><a href="#pivot" aria-controls="pivot" role="tab" data-toggle="tab" id="pivot-tab-label">Pivot</a></li>{% endif %}
                 </ul>
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active" id="previewpane">
@@ -94,7 +94,7 @@
                                     <span class="panel-title">Pivot</span>
                                 </div>
                                 <div class="overflow-wrapper">
-                                  <div class="pivot-test">
+                                  <div class="pivot-table">
                                 </div>
                             </div>
                         </div>
