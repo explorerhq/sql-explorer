@@ -56,7 +56,8 @@ ExplorerEditor.prototype.doCodeMirrorSubmit = function() {
 
 ExplorerEditor.prototype.savePivotState = function(state) {
     bmark = btoa(JSON.stringify(_(state).pick('aggregatorName', 'rows', 'cols', 'rendererName', 'vals')));
-    history.pushState('','','#' + bmark);
+    $el = $('#pivot-bookmark')
+    $el.attr('href', $el.data('baseurl') + '#' + bmark)
 };
 
 ExplorerEditor.prototype.updateQueryString = function(key, value, url) {
@@ -212,6 +213,7 @@ ExplorerEditor.prototype.bind = function() {
         pivotState = {onRefresh: this.savePivotState};
     } else {
         pivotState = JSON.parse(atob(pivotState.substr(1)));
+        pivotState['onRefresh'] = this.savePivotState;
     }
 
     $(".pivot-table").pivotUI(this.$table, pivotState);
