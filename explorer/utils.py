@@ -79,7 +79,7 @@ def param(name):
 def swap_params(sql, params):
     p = params.items() if params else {}
     for k, v in p:
-        regex = re.compile("\$\$%s[:^\$]*\$\$" % str(k))
+        regex = re.compile("\$\$%s(?:\:([^\$]+))?\$\$" % str(k))
         sql = regex.sub(str(v), sql)
     return sql
 
