@@ -87,10 +87,23 @@ class TestParams(TestCase):
         got = swap_params(sql, params)
         self.assertEqual(got, expected)
 
+    def _assertSwap(self, tuple):
+        self.assertEqual(extract_params(tuple[0]), tuple[1])
+
     def test_extracting_params(self):
-        sql = 'please swap $$this$$'
-        expected = {'this': ''}
-        self.assertEqual(extract_params(sql), expected)
+        tests = [
+            ('please swap $$this$$',          {'this': ''}),
+            ('please swap $$this:that$$',     {'this': 'that'}),
+            ('please swap $$this:foo, bar$$', {'this': 'foo, bar'}),
+            ('please swap $$this:$$',         {'this': ''}),
+            ('do nothing with $$this $$',     {}),
+            ('do nothing with $$this :$$',    {}),
+            ('do something with $$this: $$',  {'this': ' '}),
+            ('do nothing with $$this: ',      {}),
+            ('do nothing with $$this$that$$', {}),
+        ]
+        for s in tests:
+            self._assertSwap(s)
 
     def test_shared_dict_update(self):
         source = {'foo': 1, 'bar': 2}
@@ -103,16 +116,6 @@ class TestParams(TestCase):
         res = get_params_from_request(r)
         self.assertEqual(res['foo'], 'bar')
         self.assertEqual(res['qux'], 'mux')
-
-    def test_extract_defaults_from_params(self):
-        sql = 'please swap $$this:that$$'
-        expected = {'this': 'that'}
-        self.assertEqual(extract_params(sql), expected)
-
-    def test_extract_defaults_strings_from_params(self):
-        sql = 'please swap $$this:foo, bar$$'
-        expected = {'this': 'foo, bar'}
-        self.assertEqual(extract_params(sql), expected)
 
 
 class TestCsv(TestCase):
