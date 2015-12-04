@@ -27,6 +27,14 @@ class TestQueryModel(TestCase):
         self.assertEqual(log.query, q)
         self.assertFalse(log.is_playground)
 
+    def test_query_logs_final_sql(self):
+        q = SimpleQueryFactory(sql="select '$$foo$$';")
+        q.params = {'foo': 'bar'}
+        q.log(None)
+        self.assertEqual(1, QueryLog.objects.count())
+        log = QueryLog.objects.first()
+        self.assertEqual(log.sql, "select 'bar';")
+
     def test_playground_query_log(self):
         query = Query(sql='select 1;', title="Playground")
         query.log(None)
