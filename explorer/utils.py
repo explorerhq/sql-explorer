@@ -87,7 +87,8 @@ def swap_params(sql, params):
 def extract_params(text):
     regex = re.compile("\$\$([a-zA-Z0-9_|-]+):?([^\$]+)?\$\$")
     params = re.findall(regex, text)
-    return {p[0]: p[1] if len(p) > 1 else '' for p in params}
+    # We support Python 2.6 so can't use a dict comprehension
+    return dict(zip([p[0] for p in params], [p[1] if len(p) > 1 else '' for p in params]))
 
 
 def write_csv(headers, data, delim=None):
