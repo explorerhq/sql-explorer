@@ -8,7 +8,6 @@ if PY3:
     import csv
 else:
     import unicodecsv as csv
-import json
 import re
 import string
 from explorer import app_settings
@@ -80,14 +79,15 @@ def param(name):
 def swap_params(sql, params):
     p = params.items() if params else {}
     for k, v in p:
-        sql = sql.replace(param(k), str(v))
+        regex = re.compile("\$\$%s:?[^\$]*\$\$" % str(k))
+        sql = regex.sub(str(v), sql)
     return sql
 
 
 def extract_params(text):
-    regex = re.compile("\$\$([a-zA-Z0-9_|-]+)\$\$")
+    regex = re.compile("\$\$([a-zA-Z0-9_|-]+):?([^\$]+)?\$\$")
     params = re.findall(regex, text)
-    return dict(zip(params, ['' for i in range(len(params))]))
+    return {p[0]: p[1] if len(p) > 1 else '' for p in params}
 
 
 def write_csv(headers, data, delim=None):

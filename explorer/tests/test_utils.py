@@ -104,6 +104,16 @@ class TestParams(TestCase):
         self.assertEqual(res['foo'], 'bar')
         self.assertEqual(res['qux'], 'mux')
 
+    def test_extract_defaults_from_params(self):
+        sql = 'please swap $$this:that$$'
+        expected = {'this': 'that'}
+        self.assertEqual(extract_params(sql), expected)
+
+    def test_extract_defaults_strings_from_params(self):
+        sql = 'please swap $$this:foo, bar$$'
+        expected = {'this': 'foo, bar'}
+        self.assertEqual(extract_params(sql), expected)
+
 
 class TestCsv(TestCase):
 

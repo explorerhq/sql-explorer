@@ -13,6 +13,10 @@ class TestQueryModel(TestCase):
         q.params = {'foo': 'bar', 'mux': 'qux'}
         self.assertEqual(q.available_params(), {'foo': 'bar'})
 
+    def test_default_params_used(self):
+        q = SimpleQueryFactory(sql="select '$$foo:bar$$';")
+        self.assertEqual(q.available_params(), {'foo': 'bar'})
+
     def test_query_log(self):
         self.assertEqual(0, QueryLog.objects.count())
         q = SimpleQueryFactory()
@@ -73,6 +77,12 @@ class TestQueryModel(TestCase):
         self.assertEqual(conn.list.call_count, 1)
         self.assertEqual(snaps[0]['key'], 'bar')
         conn.list.assert_called_once_with('query-%s.snap-' % q.id)
+
+    def test_final_sql_uses_merged_params(self):
+        q = SimpleQueryFactory(sql="select '$$foo:bar$$', '$$qux$$';")
+        q.params = {'qux': 'mux'}
+        expected = "select 'bar', 'mux';"
+        self.assertEqual(q.final_sql(), expected)
 
 
 class TestQueryResults(TestCase):

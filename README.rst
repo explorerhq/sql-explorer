@@ -48,11 +48,12 @@ Features
 
     - Requires celery, obviously. Also uses djcelery and tinys3. All of these deps are optional and can be installed with `pip install -r optional-requirements.txt`
     - The checkbox for opting a query into a snapshot is ALL THE WAY on the bottom of the query view (underneath the restults table).
-- *new* **Email query results**
+- **Email query results**
     - Click the email icon in the query listing view, enter an email address, and the query results (zipped .csv) will be sent to you.
 - **Parameterized Queries**
     - Use $$foo$$ in your queries and Explorer will build a UI to fill out parameters. When viewing a query like 'SELECT * FROM table WHERE id=$$id$$', Explorer will generate UI for the 'id' parameter.
     - Parameters are stashed in the URL, so you can share links to parameterized queries with colleagues
+    - Use $$paramName:defaultValue$$ to provide default values for the parameters.
 - **Schema Helper**
     - /explorer/schema/ renders a list of your Django apps' table and column names + types that you can refer to while writing queries. Apps can be excluded from this list so users aren't bogged down with tons of irrelevant tables. See settings documentation below for details.
     - This is available quickly as a sidebar helper while composing queries (see screenshot)
@@ -65,9 +66,13 @@ Features
     ``EXPLORER_TRANSFORMS = [('user', '<a href="https://yoursite.com/profile/{0}/">{0}</a>')]``
 
     - And change your query to 'SELECT id AS "user", email FROM user'. Explorer will match the "user" column alias to the transform and merge each cell in that column into the template string. Cool!
+- **Pivot Table**
+    - Go to the Pivot tab on query results to use the in-browser pivot functionality (provided by Pivottable JS).
+    - Hit the link icon on the top right to get a URL to recreate the exact pivot setup to share with colleagues.
 - **Query Logs**
     - Explorer will save a snapshot of every query you execute so you can recover lost ad-hoc queries, and see what you've been querying.
     - This also serves as cheap-and-dirty versioning of Queries, and provides the 'run count' property and average duration in milliseconds, by aggregating the logs.
+    - You can also quickly share playground queries by copying the link to the playground's query log record -- look on the top right of the sql editor for the link icon.
     - If Explorer gets a lot of use, the logs can get beefy. explorer.tasks contains the 'truncate_querylogs' task that will remove log entries older than <days> (30 days and older in the example below).
     .. code-block:: python
 
@@ -170,6 +175,7 @@ Name                                                         Version License
 `Codemirror <http://codemirror.net/>`_                       4.7.0   MIT
 `floatThead <http://mkoryak.github.io/floatThead/>`_         1.2.8   MIT
 `list.js <http://listjs.com>`_                               1.1.1   MIT
+`pivottable.js <http://nicolas.kruchten.com/pivottable/>`_   2.0.0   MIT
 ============================================================ ======= ================
 
 Factory Boy is needed if you'd like to run the tests, which can you do easily:

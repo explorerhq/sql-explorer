@@ -35,7 +35,7 @@ ExplorerEditor.prototype.getParams = function() {
     if(this.$paramFields.length) {
         o = {};
         this.$paramFields.each(function() {
-            o[this.id.replace("_param", "")] = $(this).val();
+            o[$(this).data('param')] = $(this).val();
         });
     }
     return o;

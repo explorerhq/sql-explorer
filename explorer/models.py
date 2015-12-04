@@ -44,7 +44,7 @@ class Query(models.Model):
         return passes_blacklist(self.final_sql())
 
     def final_sql(self):
-        return swap_params(self.sql, self.params)
+        return swap_params(self.sql, self.available_params())
 
     def execute_query_only(self):
         return QueryResult(self.final_sql())
