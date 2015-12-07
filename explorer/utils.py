@@ -85,7 +85,7 @@ def swap_params(sql, params):
 
 
 def extract_params(text):
-    regex = re.compile("\$\$([a-z0-9]+)(?:\:([^\$]+))?\$\$")
+    regex = re.compile("\$\$([a-z0-9_]+)(?:\:([^\$]+))?\$\$")
     params = re.findall(regex, text)
     # We support Python 2.6 so can't use a dict comprehension
     return dict(zip([p[0] for p in params], [p[1] if len(p) > 1 else '' for p in params]))
