@@ -209,14 +209,19 @@ ExplorerEditor.prototype.bind = function() {
     }.bind(this));
 
     var pivotState = window.location.hash;
+    var navToPivot = false;
     if (!pivotState) {
         pivotState = {onRefresh: this.savePivotState};
     } else {
         pivotState = JSON.parse(atob(pivotState.substr(1)));
         pivotState['onRefresh'] = this.savePivotState;
+        navToPivot = true;
     }
 
     $(".pivot-table").pivotUI(this.$table, pivotState);
+    if (navToPivot) {
+        $("#pivot-tab-label").tab('show');
+    }
 
     this.$table.floatThead({
         scrollContainer: function() {
