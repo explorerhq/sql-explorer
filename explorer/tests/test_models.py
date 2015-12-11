@@ -73,15 +73,12 @@ class TestQueryResults(TestCase):
     def test_data(self):
         self.assertEqual(self.qr.data, [[1, "qux"]])
 
-    def test_unicode_detection(self):
-        self.assertEqual(self.qr._get_unicodes(), [1])
-
     def test_unicode_with_nulls(self):
         self.qr._headers = [ColumnHeader('num'), ColumnHeader('char')]
         self.qr._description = [("num",), ("char",)]
         self.qr._data = [[2, six.u("a")], [3, None]]
         self.qr.process()
-        self.assertEqual(self.qr.data, [[2, b"a"], [3, None]])
+        self.assertEqual(self.qr.data, [[2, "a"], [3, None]])
 
     def test_summary_gets_built(self):
         self.qr.process()
