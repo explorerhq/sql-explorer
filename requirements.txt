@@ -1,4 +1,4 @@
-Django>=1.6.7
+Django==1.8.3
 factory-boy==2.6.0
 mock==1.0.1
 six==1.10.0
