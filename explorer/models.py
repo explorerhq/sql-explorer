@@ -51,7 +51,7 @@ class Query(models.Model):
 
     def execute_with_logging(self, executing_user):
         ql = self.log(executing_user)
-        if (executing_user is not None) and app_settings.EXPLORER_TABLE_LEVEL_PERMISSION and is_table_restricted(self.final_sql(), executing_user):
+        if (executing_user is not None) and app_settings.EXPLORER_TABLE_LEVEL_PERMISSION() and is_table_restricted(self.final_sql(), executing_user):
             raise DatabaseError("Table access restricted")
         ret = self.execute()
         ql.duration = ret.duration

@@ -157,7 +157,10 @@ def is_table_restricted(query, user):
         from_found = False
         while is_true:
             try:
-                temp = parsed_generator.next()
+                if PY3:
+                    temp = parsed_generator.__next__()
+                else:
+                    temp = parsed_generator.next()
                 if temp.ttype == Name and from_found:
                     stream_new.append(temp.value)
                 elif temp.value.upper() == 'FROM' and temp.ttype == Keyword:
