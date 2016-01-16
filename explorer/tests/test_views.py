@@ -431,7 +431,7 @@ class TestPermissionBasedExecutionView(TestCase):
         self.assertTemplateUsed(resp, 'explorer/play.html')
         self.assertNotContains(resp, 'Table access restricted')
 
-    def test_playground_renders_with_allowed_table_sql(self):
+    def test_playground_renders_with_empty_sql(self):
         with self.settings(EXPLORER_TABLE_LEVEL_PERMISSION=True):
             resp = self.client.post(reverse("explorer_playground"), {'sql': ''})
         self.assertTemplateUsed(resp, 'explorer/play.html')
