@@ -15,6 +15,7 @@ from django.db import connections, connection, models, DatabaseError
 from django.http import HttpResponse
 from six.moves import cStringIO
 import sqlparse
+from sqlparse.tokens import Name, Keyword
 
 EXPLORER_PARAM_TOKEN = "$$"
 
@@ -137,6 +138,38 @@ def csv_report(query, delim=None):
         return write_csv(res.headers, res.data, delim)
     except DatabaseError as e:
         return str(e)
+
+
+def is_table_restricted(query, user):
+    if user.is_anonymous():
+        return True
+    apps = [a for a in models.get_apps()]
+    all_models = []
+    model_to_app = {}
+    for app in apps:
+        for model in models.get_models(app):
+            all_models.append("%s" % (model._meta.db_table.lower()))
+            model_to_app[model._meta.db_table.lower()] = [app.__package__.split('.')[-1], model._meta.model_name.lower()]
+    x = sqlparse.parse(query)[0]
+    b = x.flatten()
+    stream_new = []
+    is_true = True
+    from_found = False
+    while is_true:
+        try:
+            c = b.next()
+            if c.ttype == Name and from_found:
+                stream_new.append(c.value)
+            elif c.value.upper() == 'FROM' and c.ttype == Keyword:
+                from_found = True
+            elif c.ttype == Keyword:
+                from_found = False
+            else:
+                pass
+        except:
+            is_true = False
+    tables_accessed = set(all_models).intersection(set(stream_new))
+    return not user.has_perms(['{0}.change_{1}'.format(model_to_app[table][0], model_to_app[table][1]) for table in tables_accessed])
 
 
 # Helpers

@@ -1,4 +1,4 @@
-from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection, get_s3_connection
+from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection, get_s3_connection, is_table_restricted
 from django.db import models, DatabaseError
 from time import time
 from django.core.urlresolvers import reverse
@@ -51,6 +51,8 @@ class Query(models.Model):
 
     def execute_with_logging(self, executing_user):
         ql = self.log(executing_user)
+        if app_settings.EXPLORER_TABLE_LEVEL_PERMISSION and is_table_restricted(self.final_sql(), executing_user):
+            raise DatabaseError("Table access restricted")
         ret = self.execute()
         ql.duration = ret.duration
         ql.save()

@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
 from django.conf import settings
 from django.forms.models import model_to_dict
 from explorer.tests.factories import SimpleQueryFactory, QueryLogFactory
@@ -403,3 +403,28 @@ class TestQueryLog(TestCase):
 
         q = SimpleQueryFactory()
         self.assertFalse(QueryLog(sql='foo', query_id=q.id).is_playground)
+
+
+class TestPermissionBasedExecutionView(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user('user', 'user@user.com', 'pwd')
+        self.user.is_staff = True
+        self.user.user_permissions.add(Permission.objects.get(codename="change_session"))
+        self.user.save()
+        self.client.login(username='user', password='pwd')
+
+    def test_empty_playground_renders(self):
+        resp = self.client.get(reverse("explorer_playground"))
+        self.assertEqual(resp.status_code, 200)
+        self.assertTemplateUsed(resp, 'explorer/play.html')
+
+    def test_playground_renders_with_restricted_table_sql(self):
+        resp = self.client.post(reverse("explorer_playground"), {'sql': 'select * from auth_user;'})
+        self.assertTemplateUsed(resp, 'explorer/play.html')
+        self.assertContains(resp, 'Table access restricted')
+
+    def test_playground_renders_with_allowed_table_sql(self):
+        resp = self.client.post(reverse("explorer_playground"), {'sql': 'select * from django_session;'})
+        self.assertTemplateUsed(resp, 'explorer/play.html')
+        self.assertNotContains(resp, 'Table access restricted')
