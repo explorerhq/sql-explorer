@@ -29,4 +29,4 @@ S3_BUCKET = getattr(settings, "EXPLORER_S3_BUCKET", None)
 FROM_EMAIL = getattr(settings, 'EXPLORER_FROM_EMAIL', 'django-sql-explorer@example.com')
 
 # Table level permissions
-EXPLORER_TABLE_LEVEL_PERMISSION = getattr(settings, "EXPLORER_TABLE_LEVEL_PERMISSION", False)
+EXPLORER_TABLE_LEVEL_PERMISSION = lambda: getattr(settings, "EXPLORER_TABLE_LEVEL_PERMISSION", False)

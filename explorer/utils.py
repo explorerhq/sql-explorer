@@ -150,26 +150,28 @@ def is_table_restricted(query, user):
         for model in models.get_models(app):
             all_models.append("%s" % (model._meta.db_table.lower()))
             model_to_app[model._meta.db_table.lower()] = [app.__package__.split('.')[-1], model._meta.model_name.lower()]
-    x = sqlparse.parse(query)[0]
-    b = x.flatten()
-    stream_new = []
-    is_true = True
-    from_found = False
-    while is_true:
-        try:
-            c = b.next()
-            if c.ttype == Name and from_found:
-                stream_new.append(c.value)
-            elif c.value.upper() == 'FROM' and c.ttype == Keyword:
-                from_found = True
-            elif c.ttype == Keyword:
-                from_found = False
-            else:
-                pass
-        except:
-            is_true = False
-    tables_accessed = set(all_models).intersection(set(stream_new))
-    return not user.has_perms(['{0}.change_{1}'.format(model_to_app[table][0], model_to_app[table][1]) for table in tables_accessed])
+    parsed_response = sqlparse.parse(query)
+    if parsed_response:
+        parsed_response = parsed_response[0]
+        parsed_generator = parsed_response.flatten()
+        stream_new = []
+        is_true = True
+        from_found = False
+        while is_true:
+            try:
+                temp = parsed_generator.next()
+                if temp.ttype == Name and from_found:
+                    stream_new.append(temp.value)
+                elif temp.value.upper() == 'FROM' and temp.ttype == Keyword:
+                    from_found = True
+                elif temp.ttype == Keyword:
+                    from_found = False
+                else:
+                    pass
+            except:
+                is_true = False
+        tables_accessed = set(all_models).intersection(set(stream_new))
+        return not user.has_perms(['{0}.change_{1}'.format(model_to_app[table][0], model_to_app[table][1]) for table in tables_accessed])
 
 
 # Helpers

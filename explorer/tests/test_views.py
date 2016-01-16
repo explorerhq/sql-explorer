@@ -420,11 +420,19 @@ class TestPermissionBasedExecutionView(TestCase):
         self.assertTemplateUsed(resp, 'explorer/play.html')
 
     def test_playground_renders_with_restricted_table_sql(self):
-        resp = self.client.post(reverse("explorer_playground"), {'sql': 'select * from auth_user;'})
+        with self.settings(EXPLORER_TABLE_LEVEL_PERMISSION=True):
+            resp = self.client.post(reverse("explorer_playground"), {'sql': 'select * from auth_user;'})
         self.assertTemplateUsed(resp, 'explorer/play.html')
         self.assertContains(resp, 'Table access restricted')
 
     def test_playground_renders_with_allowed_table_sql(self):
-        resp = self.client.post(reverse("explorer_playground"), {'sql': 'select * from django_session;'})
+        with self.settings(EXPLORER_TABLE_LEVEL_PERMISSION=True):
+            resp = self.client.post(reverse("explorer_playground"), {'sql': 'select * from django_session;'})
+        self.assertTemplateUsed(resp, 'explorer/play.html')
+        self.assertNotContains(resp, 'Table access restricted')
+
+    def test_playground_renders_with_allowed_table_sql(self):
+        with self.settings(EXPLORER_TABLE_LEVEL_PERMISSION=True):
+            resp = self.client.post(reverse("explorer_playground"), {'sql': ''})
         self.assertTemplateUsed(resp, 'explorer/play.html')
         self.assertNotContains(resp, 'Table access restricted')
