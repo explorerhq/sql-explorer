@@ -141,6 +141,8 @@ def csv_report(query, delim=None):
 
 
 def is_table_restricted(query, user):
+    if user is None:
+        return True
     apps = [a for a in models.get_apps()]
     all_models = []
     model_to_app = {}
