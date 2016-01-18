@@ -101,7 +101,7 @@
 {% include 'explorer/preview_pane.html' %}
 <div class="row">
   <div class="col-md-6">
-    {% if query and can_change %}
+    {% if query and can_change and tasks_enabled %}
       {{ form.snapshot }} Snapshot
     {% endif %}
   </div>

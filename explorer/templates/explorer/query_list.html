@@ -48,7 +48,9 @@
             <tr>
                 <th>Query</th>
                 <th>Created</th>
-                <th>Email</th>
+                {% if tasks_enabled %}
+                  <th>Email</th>
+                {% endif %}
                 <th>CSV</th>
                 {% if can_change %}
                     <th>Play</th>
@@ -77,9 +79,11 @@
                             by {{ object.created_by_user }}
                         {% endif %}
                     </td>
-                    <td class="text-center">
-                        <a class="email-csv" data-id="{{ object.id }}" href="{% url "email_csv_query" object.id %}"><i class="glyphicon glyphicon-envelope"></i></a>
-                    </td>
+                    {% if tasks_enabled %}
+                      <td class="text-center">
+                          <a class="email-csv" data-id="{{ object.id }}" href="{% url "email_csv_query" object.id %}"><i class="glyphicon glyphicon-envelope"></i></a>
+                      </td>
+                    {% endif %}
                     <td class="text-center">
                         <a href="{% url "query_download" object.id %}"><i class="glyphicon glyphicon-download"></i></a>
                     </td>
