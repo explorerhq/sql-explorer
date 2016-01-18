@@ -27,6 +27,9 @@ function ExplorerEditor(queryId, dataUrl) {
             "Cmd-Enter": function() { this.doCodeMirrorSubmit(); }.bind(this)
         }
     });
+    this.editor.on("change", function(cm, change) {
+        document.getElementById('id_sql').classList.add('changed-input');
+    });
     this.bind();
 }
 
@@ -234,3 +237,16 @@ ExplorerEditor.prototype.bind = function() {
         if(event.keyCode == 13){ this.showRows(); }
     }.bind(this));
 };
+
+$(window).on('beforeunload', function () {
+    // Only do this if changed-input is on the page and we're not on the playground page.
+    if ($('.changed-input').length && !$('.playground-form').length) {
+        return 'You have unsaved changes to your query.';
+    }
+});
+
+// Disable unsaved changes warning when submitting the editor form
+$(document).on("submit", "#editor", function(event){
+    // disable warning
+    $(window).off('beforeunload');
+});

@@ -13,7 +13,7 @@
     <div id="query_area" class="col-md-12">
         <h2>Playground</h2>
         <p>The playground is for experimenting and writing ad-hoc queries. By default, nothing you do here will be saved.</p>
-        <form role="form" action="{% url "explorer_playground" %}" method="post" id="editor">{% csrf_token %}
+        <form role="form" action="{% url "explorer_playground" %}" method="post" id="editor" class="playground-form">{% csrf_token %}
             {% if error %}
                 <div class="alert alert-danger">{{ error|escape }}</div>
             {% endif %}
