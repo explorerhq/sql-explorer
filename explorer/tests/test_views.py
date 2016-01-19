@@ -181,13 +181,24 @@ class TestQueryDetailView(TestCase):
         self.assertContains(resp, '2015-01-02')
         self.assertContains(resp, settings.EXPLORER_S3_BUCKET)
 
-    @patch('explorer.models.QueryResult.execute_query')
-    def test_failing_blacklist_means_query_doesnt_execute(self, mocked_execute):
+    @patch('explorer.models.get_connection')
+    def test_failing_blacklist_means_query_doesnt_execute(self, mocked_conn):
+        # I should really learn to set up mocks correctly because this CANT be the most efficient way...
+        cursor_result = Mock()
+        cursor_result.fetchall.return_value = []
+        cursor_result.description = [('foo', 'bar')]
+
+        conn = Mock()
+        conn.cursor.return_value = cursor_result
+        mocked_conn.return_value = conn
+
         query = SimpleQueryFactory(sql="select 1;")
         resp = self.client.post(reverse("query_detail", kwargs={'query_id': query.id}), data={'sql': "select 'delete';"})
         self.assertTemplateUsed(resp, 'explorer/query.html')
         self.assertContains(resp, MSG_FAILED_BLACKLIST)
-        self.assertEqual(mocked_execute.call_count, 0)
+
+        # Feels fragile, but nor sure how else to access the called-with params of .execute
+        self.assertEqual(conn.cursor.mock_calls[1][1][0], "select 1;")
 
 
 class TestDownloadView(TestCase):

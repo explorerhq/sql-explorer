@@ -317,8 +317,8 @@ def query_viewmodel(request, query, title=None, form=None, message=None, show_re
     rows = url_get_rows(request)
     res = None
     ql = None
-    # Do not execute the query if the form is not valid
-    if show_results and (not form or form.is_valid()):
+    # Playground will pass in an error if query fails the blacklist. So don't execute if there is an error!
+    if show_results and not error:
         try:
             res, ql = query.execute_with_logging(request.user)
         except DatabaseError as e:
