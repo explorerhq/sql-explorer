@@ -11,7 +11,7 @@ else:
 import re
 import string
 from explorer import app_settings
-from django.db import connections, connection, models, DatabaseError
+from django.db import connections, connection, DatabaseError
 from django.http import HttpResponse
 from six.moves import cStringIO
 import sqlparse
@@ -46,10 +46,19 @@ def schema_info():
 
     """
 
+    try:  # django >= 1.7
+        from django.apps import apps
+        _apps = apps.app_configs.items()
+        models_for_app = lambda app: apps.get_app_config(app).models
+    except ImportError:  # django < 1.7
+        from django.db.models import get_models, get_apps
+        _apps = get_apps()
+        models_for_app = get_models
+
     ret = []
-    apps = [a for a in models.get_apps() if a.__package__ not in app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS]
-    for app in apps:
-        for model in models.get_models(app):
+    _apps = [a for a in _apps if a.__package__ not in app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS]
+    for app in _apps:
+        for model in models_for_app(app):
             friendly_model = "%s -> %s" % (app.__package__, model._meta.object_name)
             ret.append((
                           friendly_model,
