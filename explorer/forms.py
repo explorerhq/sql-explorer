@@ -17,7 +17,9 @@ class SqlField(Field):
 
         query = Query(sql=value)
 
-        error = MSG_FAILED_BLACKLIST if not query.passes_blacklist() else None
+        passes_blacklist, failing_words = query.passes_blacklist()
+
+        error = MSG_FAILED_BLACKLIST % ', '.join(failing_words) if not passes_blacklist else None
 
         if not error and not query.available_params():
             try:

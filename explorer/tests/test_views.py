@@ -195,7 +195,7 @@ class TestQueryDetailView(TestCase):
         query = SimpleQueryFactory(sql="select 1;")
         resp = self.client.post(reverse("query_detail", kwargs={'query_id': query.id}), data={'sql': "select 'delete';"})
         self.assertTemplateUsed(resp, 'explorer/query.html')
-        self.assertContains(resp, MSG_FAILED_BLACKLIST)
+        self.assertContains(resp, MSG_FAILED_BLACKLIST % '')
 
         # Feels fragile, but nor sure how else to access the called-with params of .execute
         self.assertEqual(conn.cursor.mock_calls[1][1][0], "select 1;")
@@ -285,7 +285,7 @@ class TestQueryPlayground(TestCase):
     def test_fails_blacklist(self):
         resp = self.client.post(reverse("explorer_playground"), {'sql': "select 'delete'"})
         self.assertTemplateUsed(resp, 'explorer/play.html')
-        self.assertContains(resp, MSG_FAILED_BLACKLIST)
+        self.assertContains(resp, MSG_FAILED_BLACKLIST % '')
 
 
 class TestCSVFromSQL(TestCase):

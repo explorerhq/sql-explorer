@@ -7,7 +7,7 @@ from . import app_settings
 import logging
 import six
 
-MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist."
+MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist: %s"
 
 
 logger = logging.getLogger(__name__)

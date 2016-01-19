@@ -269,7 +269,8 @@ class PlayQueryView(ExplorerContextMixin, View):
         sql = request.POST.get('sql')
         show_results = request.POST.get('show', True)
         query = Query(sql=sql, title="Playground")
-        error = MSG_FAILED_BLACKLIST if not query.passes_blacklist() else None
+        passes_blacklist, failing_words = query.passes_blacklist()
+        error = MSG_FAILED_BLACKLIST % ', '.join(failing_words) if not passes_blacklist else None
         show_results = not bool(error) if show_results else False
         return self.render_with_sql(request, query, show_results, error=error)
 
