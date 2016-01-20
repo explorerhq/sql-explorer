@@ -271,15 +271,15 @@ class PlayQueryView(ExplorerContextMixin, View):
         query = Query(sql=sql, title="Playground")
         passes_blacklist, failing_words = query.passes_blacklist()
         error = MSG_FAILED_BLACKLIST % ', '.join(failing_words) if not passes_blacklist else None
-        show_results = not bool(error) if show_results else False
-        return self.render_with_sql(request, query, show_results, error=error)
+        run_query = not bool(error) if show_results else False
+        return self.render_with_sql(request, query, run_query=run_query, error=error)
 
     def render(self, request):
         return self.render_template('explorer/play.html', RequestContext(request, {'title': 'Playground'}))
 
     def render_with_sql(self, request, query, show_results=True, error=None):
         return self.render_template('explorer/play.html', query_viewmodel(request, query, title="Playground"
-                                                                          , show_results=show_results, error=error))
+                                                                          , run_query=show_results, error=error))
 
 
 class QueryView(ExplorerContextMixin, View):
@@ -292,7 +292,7 @@ class QueryView(ExplorerContextMixin, View):
         query, form = QueryView.get_instance_and_form(request, query_id)
         query.save()  # updates the modified date
         show = url_get_show(request)  # if a query is timing out, it can be useful to nav to /query/id/?show=0
-        vm = query_viewmodel(request, query, form=form, show_results=show)
+        vm = query_viewmodel(request, query, form=form, run_query=show)
         return self.render_template('explorer/query.html', vm)
 
     def post(self, request, query_id):
@@ -314,17 +314,16 @@ class QueryView(ExplorerContextMixin, View):
         return query, form
 
 
-def query_viewmodel(request, query, title=None, form=None, message=None, show_results=True, error=None):
+def query_viewmodel(request, query, title=None, form=None, message=None, run_query=True, error=None):
     rows = url_get_rows(request)
     res = None
     ql = None
-    # Playground will pass in an error if query fails the blacklist. So don't execute if there is an error!
-    if show_results and not error:
+    if run_query:
         try:
             res, ql = query.execute_with_logging(request.user)
         except DatabaseError as e:
             error = str(e)
-    has_valid_results = not error and res and show_results
+    has_valid_results = not error and res and run_query
     ret = RequestContext(request, {
             'tasks_enabled': app_settings.ENABLE_TASKS,
             'params': query.available_params(),
