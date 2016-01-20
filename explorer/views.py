@@ -256,7 +256,7 @@ class PlayQueryView(ExplorerContextMixin, View):
     def get(self, request):
         if url_get_query_id(request):
             query = get_object_or_404(Query, pk=url_get_query_id(request))
-            return self.render_with_sql(request, query, show_results=False)
+            return self.render_with_sql(request, query, run_query=False)
 
         if url_get_log_id(request):
             log = get_object_or_404(QueryLog, pk=url_get_log_id(request))
@@ -277,9 +277,9 @@ class PlayQueryView(ExplorerContextMixin, View):
     def render(self, request):
         return self.render_template('explorer/play.html', RequestContext(request, {'title': 'Playground'}))
 
-    def render_with_sql(self, request, query, show_results=True, error=None):
+    def render_with_sql(self, request, query, run_query=True, error=None):
         return self.render_template('explorer/play.html', query_viewmodel(request, query, title="Playground"
-                                                                          , run_query=show_results, error=error))
+                                                                          , run_query=run_query, error=error))
 
 
 class QueryView(ExplorerContextMixin, View):
