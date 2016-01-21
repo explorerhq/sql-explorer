@@ -34,16 +34,20 @@ class TestSqlBlacklist(TestCase):
 
     def test_queries_deleting_stuff_are_not_ok(self):
         sql = "'distraction'; deLeTe from table; SELECT 1+1 AS TWO; drop view foo;"
-        self.assertFalse(passes_blacklist(sql))
+        passes, words = passes_blacklist(sql)
+        self.assertFalse(passes)
+        self.assertTrue(len(words), 2)
+        self.assertEqual(words[0], 'DROP')
+        self.assertEqual(words[1], 'DELETE')
 
     def test_queries_dropping_views_is_not_ok_and_not_case_sensitive(self):
         sql = "SELECT 1+1 AS TWO; drop ViEw foo;"
-        self.assertFalse(passes_blacklist(sql))
+        self.assertFalse(passes_blacklist(sql)[0])
 
     def test_sql_whitelist_ok(self):
         app_settings.EXPLORER_SQL_WHITELIST = ['dropper']
         sql = "SELECT 1+1 AS TWO; dropper ViEw foo;"
-        self.assertTrue(passes_blacklist(sql))
+        self.assertTrue(passes_blacklist(sql)[0])
 
 
 class TestSchemaInfo(TestCase):

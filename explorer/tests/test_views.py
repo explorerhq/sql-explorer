@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.forms.models import model_to_dict
 from explorer.tests.factories import SimpleQueryFactory, QueryLogFactory
-from explorer.models import Query, QueryLog
+from explorer.models import Query, QueryLog, MSG_FAILED_BLACKLIST
 from explorer.views import user_can_see_query
 from explorer.app_settings import EXPLORER_TOKEN
 from mock import Mock, patch
@@ -181,6 +181,25 @@ class TestQueryDetailView(TestCase):
         self.assertContains(resp, '2015-01-02')
         self.assertContains(resp, settings.EXPLORER_S3_BUCKET)
 
+    @patch('explorer.models.get_connection')
+    def test_failing_blacklist_means_query_doesnt_execute(self, mocked_conn):
+        # I should really learn to set up mocks correctly because this CANT be the most efficient way...
+        cursor_result = Mock()
+        cursor_result.fetchall.return_value = []
+        cursor_result.description = [('foo', 'bar')]
+
+        conn = Mock()
+        conn.cursor.return_value = cursor_result
+        mocked_conn.return_value = conn
+
+        query = SimpleQueryFactory(sql="select 1;")
+        resp = self.client.post(reverse("query_detail", kwargs={'query_id': query.id}), data={'sql': "select 'delete';"})
+        self.assertTemplateUsed(resp, 'explorer/query.html')
+        self.assertContains(resp, MSG_FAILED_BLACKLIST % '')
+
+        # Feels fragile, but nor sure how else to access the called-with params of .execute
+        self.assertEqual(conn.cursor.mock_calls[1][1][0], "select 1;")
+
 
 class TestDownloadView(TestCase):
     def setUp(self):
@@ -262,6 +281,11 @@ class TestQueryPlayground(TestCase):
         querylog = QueryLogFactory()
         resp = self.client.get('%s?querylog_id=%s' % (reverse("explorer_playground"), querylog.id))
         self.assertContains(resp, "FOUR")
+
+    def test_fails_blacklist(self):
+        resp = self.client.post(reverse("explorer_playground"), {'sql': "select 'delete'"})
+        self.assertTemplateUsed(resp, 'explorer/play.html')
+        self.assertContains(resp, MSG_FAILED_BLACKLIST % '')
 
 
 class TestCSVFromSQL(TestCase):

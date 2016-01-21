@@ -13,9 +13,10 @@ from django.core.urlresolvers import reverse_lazy
 from django.forms.models import model_to_dict
 from django.http import HttpResponse
 from django.db import DatabaseError
-from django.db.models import Count, Avg
+from django.db.models import Count
+from django.forms import ValidationError
 
-from explorer.models import Query, QueryLog
+from explorer.models import Query, QueryLog, MSG_FAILED_BLACKLIST
 from explorer import app_settings
 from explorer.forms import QueryForm
 from explorer.utils import url_get_rows,\
@@ -255,7 +256,7 @@ class PlayQueryView(ExplorerContextMixin, View):
     def get(self, request):
         if url_get_query_id(request):
             query = get_object_or_404(Query, pk=url_get_query_id(request))
-            return self.render_with_sql(request, query, show_results=False)
+            return self.render_with_sql(request, query, run_query=False)
 
         if url_get_log_id(request):
             log = get_object_or_404(QueryLog, pk=url_get_log_id(request))
@@ -268,13 +269,17 @@ class PlayQueryView(ExplorerContextMixin, View):
         sql = request.POST.get('sql')
         show_results = request.POST.get('show', True)
         query = Query(sql=sql, title="Playground")
-        return self.render_with_sql(request, query, show_results)
+        passes_blacklist, failing_words = query.passes_blacklist()
+        error = MSG_FAILED_BLACKLIST % ', '.join(failing_words) if not passes_blacklist else None
+        run_query = not bool(error) if show_results else False
+        return self.render_with_sql(request, query, run_query=run_query, error=error)
 
     def render(self, request):
         return self.render_template('explorer/play.html', RequestContext(request, {'title': 'Playground'}))
 
-    def render_with_sql(self, request, query, show_results=True):
-        return self.render_template('explorer/play.html', query_viewmodel(request, query, title="Playground", show_results=show_results))
+    def render_with_sql(self, request, query, run_query=True, error=None):
+        return self.render_template('explorer/play.html', query_viewmodel(request, query, title="Playground"
+                                                                          , run_query=run_query, error=error))
 
 
 class QueryView(ExplorerContextMixin, View):
@@ -287,7 +292,7 @@ class QueryView(ExplorerContextMixin, View):
         query, form = QueryView.get_instance_and_form(request, query_id)
         query.save()  # updates the modified date
         show = url_get_show(request)  # if a query is timing out, it can be useful to nav to /query/id/?show=0
-        vm = query_viewmodel(request, query, form=form, show_results=show)
+        vm = query_viewmodel(request, query, form=form, run_query=show)
         return self.render_template('explorer/query.html', vm)
 
     def post(self, request, query_id):
@@ -309,16 +314,16 @@ class QueryView(ExplorerContextMixin, View):
         return query, form
 
 
-def query_viewmodel(request, query, title=None, form=None, message=None, show_results=True):
+def query_viewmodel(request, query, title=None, form=None, message=None, run_query=True, error=None):
     rows = url_get_rows(request)
     res = None
     ql = None
-    error = None
-    if show_results:
+    if run_query:
         try:
             res, ql = query.execute_with_logging(request.user)
         except DatabaseError as e:
             error = str(e)
+    has_valid_results = not error and res and run_query
     ret = RequestContext(request, {
             'tasks_enabled': app_settings.ENABLE_TASKS,
             'params': query.available_params(),
@@ -328,12 +333,12 @@ def query_viewmodel(request, query, title=None, form=None, message=None, show_re
             'form': form,
             'message': message,
             'error': error,
-            'data': res.data[:rows] if not error and show_results else None,
-            'headers': res.headers if not error and show_results else None,
-            'total_rows': len(res.data) if not error and show_results else None,
-            'duration': res.duration if not error and show_results else None,
             'rows': rows,
-            'has_stats': len([h for h in res.headers if h.summary]) if not error and show_results else False,
+            'data': res.data[:rows] if has_valid_results else None,
+            'headers': res.headers if has_valid_results else None,
+            'total_rows': len(res.data) if has_valid_results else None,
+            'duration': res.duration if has_valid_results else None,
+            'has_stats': len([h for h in res.headers if h.summary]) if has_valid_results else False,
             'dataUrl': reverse_lazy('query_csv', kwargs={'query_id': query.id}) if query.id else '',
             'bucket': app_settings.S3_BUCKET,
             'snapshots': query.snapshots if query.snapshot else [],
