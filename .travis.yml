@@ -10,9 +10,9 @@ install:
 
 script:  python manage.py test --settings=explorer.tests.settings
 env:
-  - DJANGO=1.6.11
   - DJANGO=1.7.7
   - DJANGO=1.8.5
+  - DJANGO=1.9.1
 matrix:
   exclude:
     - python: 2.6
