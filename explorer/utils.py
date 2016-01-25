@@ -11,7 +11,7 @@ else:
 import re
 import string
 from explorer import app_settings
-from django.db import connections, connection, models, DatabaseError
+from django.db import connections, connection, DatabaseError
 from django.http import HttpResponse
 from six.moves import cStringIO
 import sqlparse
@@ -47,24 +47,27 @@ def schema_info():
 
     """
 
-    ret = []
-    apps = [a for a in models.get_apps() if a.__package__ not in app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS]
-    for app in apps:
-        for model in models.get_models(app):
-            friendly_model = "%s -> %s" % (app.__package__, model._meta.object_name)
-            ret.append((
-                          friendly_model,
-                          model._meta.db_table,
-                          [_format_field(f) for f in model._meta.fields]
-                      ))
+    from django.apps import apps
 
-            # Do the same thing for many_to_many fields. These don't show up in the field list of the model
-            # because they are stored as separate "through" relations and have their own tables
-            ret += [(
-                       friendly_model,
-                       m2m.rel.through._meta.db_table,
-                       [_format_field(f) for f in m2m.rel.through._meta.fields]
-                    ) for m2m in model._meta.many_to_many]
+    ret = []
+
+    for label, app in apps.app_configs.items():
+        if app.name not in app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS:
+            for model_name, model in apps.get_app_config(label).models.items():
+                friendly_model = "%s -> %s" % (app.name, model._meta.object_name)
+                ret.append((
+                              friendly_model,
+                              model._meta.db_table,
+                              [_format_field(f) for f in model._meta.fields]
+                          ))
+
+                # Do the same thing for many_to_many fields. These don't show up in the field list of the model
+                # because they are stored as separate "through" relations and have their own tables
+                ret += [(
+                           friendly_model,
+                           m2m.rel.through._meta.db_table,
+                           [_format_field(f) for f in m2m.rel.through._meta.fields]
+                        ) for m2m in model._meta.many_to_many]
 
     return sorted(ret, key=lambda t: t[1])
 
