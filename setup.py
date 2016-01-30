@@ -28,11 +28,10 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Topic :: Utilities',
-        'Framework :: Django :: 1.6',
         'Framework :: Django :: 1.7',
-        'Framework :: Django :: 1.8', #       'Framework :: Django :: 1.9', -- not supported on PyPi yet
+        'Framework :: Django :: 1.8',
+        'Framework :: Django :: 1.9',
         'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',

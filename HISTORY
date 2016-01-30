@@ -1,3 +1,28 @@
+0.9.0
+=====
+
+1/28/2016
+
+- Major changes
+    - Dropped support for Django 1.6, added support for Django 1.9. See .travis.yml for test matrix.
+    - Dropped charted.js & visualization because it didn't work well.
+    - Client-side pivot tables with pivot.js. This is ridiculously cool!
+
+- Minor (but awesome!) changes
+    - Cmd-/ to comment/uncomment a block of SQL
+    - Quick 'shortcut' links to the corresponding querylog to more quickly share results. Look at the top-right of the editor. Also works for playground!
+    - Prompt for unsaved changes before navigating away
+    - Support for default parameter values via $$paramName:defaultValue$$
+    - Optional Celery task for truncating query logs as entries build up
+    - Display historical average query runtime
+
+    - Increased default number of rows from 100 to 1000
+    - Increased SQL editor size (5 additional visible lines)
+    - CSS cleanup and streamlining (making better use of foundation)
+    - Various bugfixes (blacklist not enforced on playground being the big one)
+    - Upgraded front-end libraries
+    - Hide Celery-based features if tasks not enabled.
+
 0.8.0
 =====
 

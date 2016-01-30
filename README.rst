@@ -4,9 +4,17 @@
 Django SQL Explorer
 ===================
 
-Django SQL Explorer is inspired by Stack Exchange's `Data Explorer <http://data.stackexchange.com/stackoverflow/queries>`_ and is designed to make the flow of data between people in your company fast, simple, and confusion-free. Quickly write and share SQL queries in a clean, usable query builder, preview the results in the browser, share links to download CSV files, and keep the information flowing baby!
+Django SQL Explorer is inspired by any number of great query and reporting tools out there.
 
-django-sql-explorer is MIT licensed, and pull requests are welcome!
+The original idea came from Stack Exchange's `Data Explorer <http://data.stackexchange.com/stackoverflow/queries>`_, but also owes credit to similar projects like `Redash <http://redash.io/>`_ and `Blazer <https://github.com/ankane/blazer>`_.
+
+SQL Explorer wants to make the flow of data between people fast, simple, and confusion-free.
+
+Quickly write and share SQL queries in a clean, usable query builder, preview the results in the browser, share links to download CSV files, and keep the information flowing!
+
+The product & design principles are: simplicity, intuitive use, unobtrusiveness, stability, and being unsurprising.
+
+django-sql-explorer is MIT licensed, and pull requests are welcome.
 
 **A view of a query**
 
@@ -99,7 +107,7 @@ Features
 Install
 =======
 
-Requires Python 2.6, 2.7 or 3.4. Requires Django 1.6.7 or higher. In theory Explorer should work fine with earlier versions of Django, but this has not been tested. South migrations exist for Django 1.6 and earlier, but by default Explorer uses 1.7 migrations.
+Requires Python 2.7, 3.4, or 3.5. Requires Django 1.7.1 or higher.
 
 Install with pip from github:
 
@@ -123,27 +131,6 @@ Run syncdb to create the tables:
 
 You can now browse to https://yoursite/explorer/ and get exploring! However note it is highly recommended that you also configure Explorer to use a read-only database connection via the EXPLORER_CONNECTION_NAME setting.
 
-
-Using South Migrations
-======================
-
-Explorer by default uses the new migrations in Django 1.7 to manage database schema. However South migrations also exist in the south_migrations folder, for those still using Django 1.6 or earlier. To use South migrations, For South support, customize the SOUTH_MIGRATION_MODULES setting like so:
-
-``SOUTH_MIGRATION_MODULES = {
-'explorer': 'explorer.south_migrations',
-}``
-
-Migrations were introduced in version 0.5. So if you are upgrading from an earlier version of explorer and using South, you'll have to run the following to convert Explorer to a South application:
-
-``python manage.py migrate explorer 0001 --fake``
-
-You can then run the rest of the migrations as usual.
-
-``python manage.py migrate explorer``
-
-If you are installing Explorer for the first time, you can just follow the normal installation instructions.
-
-
 Dependencies
 ============
 
@@ -160,23 +147,26 @@ Name                                                        Version License
 =========================================================== ======= ================
 
 - sqlparse is Used for SQL formatting only
-- Facotry Boy is only required for tests
+- Factory Boy is only required for tests
 - unicodecsv is used for CSV generation
 
 *Front End*
 
-============================================================ ======= ================
-Name                                                         Version License
-============================================================ ======= ================
-`Twitter Boostrap <http://getbootstrap.com/>`_               3.3.6   MIT
-`jQuery <http://jquery.com/>`_                               2.1.4   MIT
-`jQuery Cookie <https://github.com/carhartl/jquery-cookie>`_ 1.4.1   MIT
-`Underscore <http://underscorejs.org/>`_                     1.7.0   MIT
-`Codemirror <http://codemirror.net/>`_                       4.7.0   MIT
-`floatThead <http://mkoryak.github.io/floatThead/>`_         1.2.8   MIT
-`list.js <http://listjs.com>`_                               1.1.1   MIT
-`pivottable.js <http://nicolas.kruchten.com/pivottable/>`_   2.0.0   MIT
-============================================================ ======= ================
+============================================================ ======== ================
+Name                                                         Version  License
+============================================================ ======== ================
+`Twitter Boostrap <http://getbootstrap.com/>`_               3.3.6    MIT
+`jQuery <http://jquery.com/>`_                               2.1.4    MIT
+`jQuery Cookie <https://github.com/carhartl/jquery-cookie>`_ 1.4.1    MIT
+`Underscore <http://underscorejs.org/>`_                     1.7.0    MIT
+`Codemirror <http://codemirror.net/>`_                       5.11.0   MIT
+`floatThead <http://mkoryak.github.io/floatThead/>`_         1.2.8    MIT
+`list.js <http://listjs.com>`_                               1.1.1    MIT
+`pivottable.js <http://nicolas.kruchten.com/pivottable/>`_   2.0.0    MIT
+============================================================ ======== ================
+
+Tests
+=====
 
 Factory Boy is needed if you'd like to run the tests, which can you do easily:
 
@@ -186,6 +176,11 @@ and with coverage:
 
 ``coverage run --source='.' manage.py test --settings=explorer.tests.settings``
 
+then:
+
+``coverage report``
+
+...95%! Huzzah!
 
 Settings
 ========
@@ -205,12 +200,12 @@ EXPLORER_RECENT_QUERY_COUNT   The number of recent queries to show at the top of
 EXPLORER_GET_USER_QUERY_VIEWS A dict granting view permissions on specific queries of the form {userId:[queryId, ...], ...}                   {}
 EXPLORER_TOKEN_AUTH_ENABLED   Bool indicating whether token-authenticated requests should be enabled. See "Power Tips", above.                False
 EXPLORER_TOKEN                Access token for query results.                                                                                 "CHANGEME"
-EXPLORER_TASKS_ENABLED        Turn on if you want to use the snapshot_queries celery task in tasks.py                                         False
+EXPLORER_TASKS_ENABLED        Turn on if you want to use the snapshot_queries celery task, or email report functionality in tasks.py          False
 EXPLORER_S3_ACCESS_KEY        S3 Access Key for snapshot upload                                                                               None
 EXPLORER_S3_SECRET_KEY        S3 Secret Key for snapshot upload                                                                               None
 EXPLORER_S3_BUCKET            S3 Bucket for snapshot upload                                                                                   None
+EXPLORER_FROM_EMAIL           The default 'from' address when using async report email functionality                                          "django-sql-explorer@example.com"
 ============================= =============================================================================================================== ================================================================================================================================================
-
 
 Release Process
 ===============

@@ -24,7 +24,8 @@ function ExplorerEditor(queryId, dataUrl) {
         height: 500,
         extraKeys: {
             "Ctrl-Enter": function() { this.doCodeMirrorSubmit(); }.bind(this),
-            "Cmd-Enter": function() { this.doCodeMirrorSubmit(); }.bind(this)
+            "Cmd-Enter": function() { this.doCodeMirrorSubmit(); }.bind(this),
+            "Cmd-/": function() { this.editor.toggleComment(); }.bind(this)
         }
     });
     this.editor.on("change", function(cm, change) {
