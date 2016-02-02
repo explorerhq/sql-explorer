@@ -82,6 +82,7 @@ Features
     - This also serves as cheap-and-dirty versioning of Queries, and provides the 'run count' property and average duration in milliseconds, by aggregating the logs.
     - You can also quickly share playground queries by copying the link to the playground's query log record -- look on the top right of the sql editor for the link icon.
     - If Explorer gets a lot of use, the logs can get beefy. explorer.tasks contains the 'truncate_querylogs' task that will remove log entries older than <days> (30 days and older in the example below).
+
     .. code-block:: python
 
        'explorer.tasks.truncate_querylogs': {
