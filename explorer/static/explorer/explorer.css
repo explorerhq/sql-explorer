@@ -92,7 +92,7 @@
 }
 
 span.sort {
-    background: url('http://cdn.datatables.net/1.10.0/images/sort_both.png') no-repeat;
+    background: url('//cdn.datatables.net/1.10.0/images/sort_both.png') no-repeat;
     cursor: pointer;
     padding-left: 20px;
 }
