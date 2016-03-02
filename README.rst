@@ -162,7 +162,7 @@ Name                                                         Version  License
 `Underscore <http://underscorejs.org/>`_                     1.7.0    MIT
 `Codemirror <http://codemirror.net/>`_                       5.11.0   MIT
 `floatThead <http://mkoryak.github.io/floatThead/>`_         1.2.8    MIT
-`list.js <http://listjs.com>`_                               1.1.1    MIT
+`list.js <http://listjs.com>`_                               1.2.0    MIT
 `pivottable.js <http://nicolas.kruchten.com/pivottable/>`_   2.0.0    MIT
 ============================================================ ======== ================
 
