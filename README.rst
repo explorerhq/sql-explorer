@@ -1,5 +1,5 @@
-.. image:: https://travis-ci.org/epantry/django-sql-explorer.png?branch=master
-   :target: https://travis-ci.org/epantry/django-sql-explorer
+.. image:: https://travis-ci.org/groveco/django-sql-explorer.png?branch=master
+   :target: https://travis-ci.org/groveco/django-sql-explorer
 
 Django SQL Explorer
 ===================
@@ -92,7 +92,7 @@ Features
        }
 - **Stable**
     - 95% according to coverage...for what that's worth. Just install factory_boy and run `python manage.py test explorer.tests --settings=explorer.tests.settings`
-    - Battle-tested in production every day by the ePantry team.
+    - Battle-tested in production every day by the Grove Collaborative team.
 - **Power tips**
     - On the query listing page, focus gets set to a search box so you can just navigate to /explorer and start typing the name of your query to find it.
     - Quick search also works after hitting "Show Schema" on a query view.
