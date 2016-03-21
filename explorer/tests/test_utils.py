@@ -97,6 +97,7 @@ class TestParams(TestCase):
     def test_extracting_params(self):
         tests = [
             ('please swap $$this0$$',                {'this0': ''}),
+            ('please swap $$THis0$$',                {'this0': ''}),
             ('please swap $$this6$$ $$this6:that$$', {'this6': 'that'}),
             ('please swap $$this_7:foo, bar$$',      {'this_7': 'foo, bar'}),
             ('please swap $$this8:$$',               {}),
