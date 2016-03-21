@@ -140,7 +140,8 @@ def csv_report(query, delim=None):
         res = query.execute_query_only()
         return write_csv(res.headers, res.data, delim)
     except DatabaseError as e:
-        return str(e)
+        resp = cStringIO()
+        return resp.write(str(e))  # consistent return type
 
 
 # Helpers
