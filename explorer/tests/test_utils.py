@@ -72,7 +72,7 @@ class TestParams(TestCase):
         self.assertEqual(expected, param('foo'))
 
     def test_params_get_swapped(self):
-        sql = 'please swap $$this$$ and $$that$$'
+        sql = 'please swap $$this$$ and $$THat$$'
         expected = 'please swap here and there'
         params = {'this': 'here', 'that': 'there'}
         got = swap_params(sql, params)
