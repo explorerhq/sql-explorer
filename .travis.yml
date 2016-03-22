@@ -8,7 +8,7 @@ install:
   - pip install -r optional-requirements.txt
   - pip install Django==${DJANGO}
 
-script:  python manage.py test --settings=explorer.tests.settings
+script:  python manage.py test
 env:
   - DJANGO=1.7.7
   - DJANGO=1.8.5

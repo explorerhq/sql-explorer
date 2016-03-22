@@ -3,7 +3,6 @@ import six
 
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
 from django.views.generic.base import View
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView, DeleteView
@@ -14,7 +13,6 @@ from django.forms.models import model_to_dict
 from django.http import HttpResponse
 from django.db import DatabaseError
 from django.db.models import Count
-from django.forms import ValidationError
 
 from explorer.models import Query, QueryLog, MSG_FAILED_BLACKLIST
 from explorer import app_settings
