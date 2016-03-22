@@ -11,3 +11,4 @@
 .coverage
 /htmlcov/
 *.orig
+tmp

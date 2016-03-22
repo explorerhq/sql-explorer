@@ -91,7 +91,7 @@ Features
            'kwargs': {'days': 30}
        }
 - **Stable**
-    - 95% according to coverage...for what that's worth. Just install factory_boy and run `python manage.py test explorer.tests --settings=explorer.tests.settings`
+    - 95% according to coverage...for what that's worth. Just install factory_boy and run `python manage.py test`
     - Battle-tested in production every day by the Grove Collaborative team.
 - **Power tips**
     - On the query listing page, focus gets set to a search box so you can just navigate to /explorer and start typing the name of your query to find it.
