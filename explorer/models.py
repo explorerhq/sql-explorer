@@ -1,11 +1,13 @@
-from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection, get_s3_connection
-from django.db import models, DatabaseError
+import logging
 from time import time
+import six
+
+from django.db import models, DatabaseError
 from django.core.urlresolvers import reverse
 from django.conf import settings
+
 from . import app_settings
-import logging
-import six
+from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection, get_s3_connection
 
 MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist: %s"
 

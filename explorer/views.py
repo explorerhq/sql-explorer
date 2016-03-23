@@ -1,22 +1,28 @@
-from explorer.tasks import execute_query
+import json
+from functools import wraps
+import re
 import six
 
-from django.http.response import HttpResponseRedirect
-from django.shortcuts import render_to_response, get_object_or_404
-from django.views.generic.base import View
-from django.views.generic import ListView
-from django.views.generic.edit import CreateView, DeleteView
-from django.views.decorators.http import require_POST, require_GET
-from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse_lazy
-from django.forms.models import model_to_dict
-from django.http import HttpResponse
 from django.db import DatabaseError
 from django.db.models import Count
+from django.forms import ValidationError
+from django.forms.models import model_to_dict
+from django.http import HttpResponse
+from django.http.response import HttpResponseRedirect
+from django.shortcuts import render_to_response, get_object_or_404
+from django.template import RequestContext
+from django.utils.decorators import method_decorator
+from django.views.decorators.http import require_POST, require_GET
+from django.views.generic import ListView
+from django.views.generic.base import View
+from django.views.generic.edit import CreateView, DeleteView
 
-from explorer.models import Query, QueryLog, MSG_FAILED_BLACKLIST
 from explorer import app_settings
+from explorer.exporters import get_exporter_class
 from explorer.forms import QueryForm
+from explorer.models import Query, QueryLog, MSG_FAILED_BLACKLIST
+from explorer.tasks import execute_query
 from explorer.utils import url_get_rows,\
     url_get_query_id,\
     url_get_log_id,\
@@ -33,12 +39,7 @@ from explorer.utils import url_get_rows,\
 try:
     from collections import Counter
 except:
-    from counter import Counter
-
-
-import re
-import json
-from functools import wraps
+    from .counter import Counter
 
 
 def view_permission(f):
@@ -94,7 +95,23 @@ class ExplorerContextMixin(object):
 @view_permission
 @require_GET
 def download_query(request, query_id):
-    return _csv_response(request, query_id, False, delim=request.GET.get('delim', None))
+    format = request.GET.get('format', 'csv')
+    exporter_class = get_exporter_class(format)
+    query = get_object_or_404(Query, pk=query_id)
+    query.params = url_get_params(request)
+    exporter = exporter_class(query)
+    return exporter.to_response()
+
+
+@view_permission
+@require_POST
+def download_from_sql(request):
+    format = request.POST.get('format', 'csv')
+    sql = request.POST.get('sql')
+    exporter_class = get_exporter_class(format)
+    query = Query(sql=sql, title="Playground", params=url_get_params(request))
+    exporter = exporter_class(query)
+    return exporter.to_response()
 
 
 @view_permission

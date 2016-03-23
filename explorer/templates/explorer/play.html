@@ -1,5 +1,7 @@
 {% extends "explorer/base.html" %}
 
+{% load explorer_tags %}
+
 {% block sql_explorer_navlinks %}
     {% if can_change %}
       <li><a href="{% url "query_create" %}">New Query</a></li>
@@ -46,6 +48,7 @@
                     </div>
                 </div>
             </div>
+            {% export_buttons %}
             <input type="hidden" value="Playground Query" name="title" />
         </form>
     </div>
