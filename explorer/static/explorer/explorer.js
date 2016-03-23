@@ -166,6 +166,12 @@ ExplorerEditor.prototype.bind = function() {
         this.$form.attr('action', '../csv');
     }.bind(this));
 
+    $(".download-button").click(function(e) {
+        var format = e.target.dataset.format;
+        this.$form.prepend("<input type=hidden name=format value='" + format + "' />");
+        this.$form.attr('action', '../download');
+    }.bind(this));
+
     $(".download_button").click(function(e) {
         e.preventDefault();
         var dl_link = 'download';

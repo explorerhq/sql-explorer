@@ -1,10 +1,12 @@
-from explorer import app_settings
-from explorer.models import Query, QueryLog
-from django.core.mail import send_mail
-from explorer.utils import csv_report
 from datetime import date, datetime, timedelta
 import random
 import string
+
+from django.core.mail import send_mail
+
+from explorer import app_settings
+from explorer.models import Query, QueryLog
+from explorer.utils import csv_report
 
 
 if app_settings.ENABLE_TASKS:

@@ -1,5 +1,7 @@
 {% extends "explorer/base.html" %}
 
+{% load explorer_tags %}
+
 {% block sql_explorer_navlinks %}
     {% if can_change %}
       <li{% if not query %} class="active" {% endif %}><a href="{% url "query_create" %}">New Query</a></li>
@@ -91,6 +93,7 @@
                         </div>
                     </div>
                 </div>
+                {% export_buttons query %}
             </form>
         </div>
     </div>

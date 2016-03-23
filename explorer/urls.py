@@ -7,6 +7,7 @@ from explorer.views import (
     ListQueryView,
     ListQueryLogView,
     download_query,
+    download_from_sql,
     view_csv_query,
     email_csv_query,
     download_csv_from_sql,
@@ -17,6 +18,7 @@ from explorer.views import (
 urlpatterns = [
     url(r'(?P<query_id>\d+)/$', QueryView.as_view(), name='query_detail'),
     url(r'(?P<query_id>\d+)/download$', download_query, name='query_download'),
+    url(r'download$', download_from_sql, name='sql_download'),
     url(r'(?P<query_id>\d+)/csv$', view_csv_query, name='query_csv'),
     url(r'(?P<query_id>\d+)/email_csv$', email_csv_query, name='email_csv_query'),
     url(r'(?P<pk>\d+)/delete$', DeleteQueryView.as_view(), name='query_delete'),

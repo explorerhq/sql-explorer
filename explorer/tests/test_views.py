@@ -1,15 +1,18 @@
+import json
+import time
+
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.forms.models import model_to_dict
+from django.test.utils import override_settings
+
 from explorer.tests.factories import SimpleQueryFactory, QueryLogFactory
 from explorer.models import Query, QueryLog, MSG_FAILED_BLACKLIST
 from explorer.views import user_can_see_query
 from explorer.app_settings import EXPLORER_TOKEN
 from mock import Mock, patch
-import time
-import json
 
 
 _ = lambda x: x
@@ -207,10 +210,6 @@ class TestDownloadView(TestCase):
         self.user = User.objects.create_superuser('admin', 'admin@admin.com', 'pwd')
         self.client.login(username='admin', password='pwd')
 
-    def test_download_query(self):
-        resp = self.client.get(reverse("query_download", kwargs={'query_id': self.query.id}))
-        self.assertEqual(resp['content-type'], 'text/csv')
-
     def test_admin_required(self):
         self.client.logout()
         resp = self.client.get(reverse("query_download", kwargs={'query_id': self.query.id}))
@@ -222,17 +221,37 @@ class TestDownloadView(TestCase):
         resp = self.client.get(url)
         self.assertContains(resp, "'123'")
 
-    def test_custom_delim_in_download(self):
-        q = SimpleQueryFactory(sql="select 1, 2;")
-        url = '%s?delim=|' % reverse("query_download", kwargs={'query_id': q.id})
-        resp = self.client.get(url)
-        self.assertContains(resp, "1|2")
+    def test_download_defaults_to_csv(self):
+        query = SimpleQueryFactory()
+        url = reverse("query_download", args=[query.pk])
 
-    def test_tab_delim_in_download(self):
-        q = SimpleQueryFactory(sql="select 1, 2;")
-        url = '%s?delim=tab' % reverse("query_download", kwargs={'query_id': q.id})
-        resp = self.client.get(url)
-        self.assertContains(resp, "1\t2")
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['content-type'], 'text/csv')
+
+    def test_download_csv(self):
+        query = SimpleQueryFactory()
+        url = reverse("query_download", args=[query.pk]) + '?format=csv'
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['content-type'], 'text/csv')
+
+    def test_download_json(self):
+        query = SimpleQueryFactory()
+        url = reverse("query_download", args=[query.pk]) + '?format=json'
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['content-type'], 'application/json')
+
+        json_data = json.loads(response.content)
+        self.assertIsInstance(json_data, list)
+        self.assertEqual(len(json_data), 1)
+        self.assertEqual(json_data, [{'TWO': 2}])
 
 
 class TestQueryPlayground(TestCase):
@@ -308,6 +327,21 @@ class TestCSVFromSQL(TestCase):
         q = SimpleQueryFactory()
         resp = self.client.get(reverse("query_csv", kwargs={'query_id': q.id}))
         self.assertEqual('text', resp['content-type'])
+
+
+class TestSQLDownloadViews(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_superuser('admin', 'admin@admin.com', 'pwd')
+        self.client.login(username='admin', password='pwd')
+
+    def test_sql_download_csv(self):
+        url = reverse("sql_download") + '?format=csv'
+
+        response = self.client.post(url, {'sql': 'select 1;'})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['content-type'], 'text/csv')
 
 
 class TestSchemaView(TestCase):
