@@ -1,4 +1,8 @@
 import json
+try:
+    import cStringIO as StringIO
+except ImportError:
+    import StringIO
 
 from django.http import HttpResponse
 from django.utils.module_loading import import_string
@@ -16,35 +20,36 @@ class BaseExporter(object):
 
     name = ''
     content_type = ''
+    file_extension = ''
 
     def __init__(self, query):
         self.query = query
 
-    def to_response(self):
+    def get_output(self):
         raise NotImplementedError
+
+    def get_filename(self):
+        return '{}{}'.format(get_filename_for_title(
+            self.query.title), self.file_extension)
 
 
 class CSVExporter(BaseExporter):
 
     name = 'CSV'
     content_type = 'text/csv'
+    file_extension = '.csv'
 
-    def to_response(self):
-        data = csv_report(self.query, app_settings.CSV_DELIMETER).getvalue()
-        response = HttpResponse(data, content_type=self.content_type)
-        response['Content-Disposition'] = 'attachment; filename="%s.csv"' % (
-            get_filename_for_title(self.query.title)
-        )
-        response['Content-Length'] = len(data)
-        return response
+    def get_output(self):
+        return csv_report(self.query, app_settings.CSV_DELIMETER).getvalue()
 
 
 class JSONExporter(BaseExporter):
 
     name = 'JSON'
     content_type = 'application/json'
+    file_extension = '.json'
 
-    def to_response(self):
+    def get_output(self):
         res = self.query.execute_query_only()
         data = []
         for row in res.data:
@@ -53,20 +58,16 @@ class JSONExporter(BaseExporter):
             )
 
         json_data = json.dumps(data)
-        response = HttpResponse(json_data, content_type=self.content_type)
-        response['Content-Disposition'] = 'attachment; filename="%s.json"' % (
-            get_filename_for_title(self.query.title)
-        )
-        response['Content-Length'] = len(json_data)
-        return response
+        return json_data
 
 
 class ExcelExporter(BaseExporter):
 
     name = 'Excel'
     content_type = 'application/vnd.ms-excel'
+    file_extension = '.xls'
 
-    def to_response(self):
+    def get_output(self):
         import xlwt
         res = self.query.execute_query_only()
 
@@ -91,9 +92,6 @@ class ExcelExporter(BaseExporter):
             row += 1
             col = 0
 
-        response = HttpResponse(content_type=self.content_type)
-        response['Content-Disposition'] = 'attachment; filename="%s.xls"' % (
-            get_filename_for_title(self.query.title)
-        )
-        wb.save(response)
-        return response
+        output = StringIO.StringIO()
+        wb.save(output)
+        return output.getvalue()

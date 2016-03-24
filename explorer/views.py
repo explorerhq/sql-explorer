@@ -99,8 +99,14 @@ def download_query(request, query_id):
     exporter_class = get_exporter_class(format)
     query = get_object_or_404(Query, pk=query_id)
     query.params = url_get_params(request)
+
     exporter = exporter_class(query)
-    return exporter.to_response()
+    output = exporter.get_output()
+    response = HttpResponse(output, content_type=exporter.content_type)
+    response['Content-Disposition'] = 'attachment; filename="%s"' % (
+        exporter.get_filename()
+    )
+    return response
 
 
 @view_permission
@@ -110,8 +116,28 @@ def download_from_sql(request):
     sql = request.POST.get('sql')
     exporter_class = get_exporter_class(format)
     query = Query(sql=sql, title="Playground", params=url_get_params(request))
+
     exporter = exporter_class(query)
-    return exporter.to_response()
+    output = exporter.get_output()
+    response = HttpResponse(output, content_type=exporter.content_type)
+    response['Content-Disposition'] = 'attachment; filename="%s"' % (
+        exporter.get_filename()
+    )
+    return response
+
+
+@view_permission
+@require_GET
+def stream_query(request, query_id):
+    format = request.GET.get('format', 'csv')
+    exporter_class = get_exporter_class(format)
+    query = get_object_or_404(Query, pk=query_id)
+    query.params = url_get_params(request)
+
+    exporter = exporter_class(query)
+    output = exporter.get_output()
+    response = HttpResponse(output, content_type=exporter.content_type)
+    return response
 
 
 @view_permission
