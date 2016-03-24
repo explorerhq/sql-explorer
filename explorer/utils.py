@@ -14,7 +14,7 @@ from django.http import HttpResponse
 from six.moves import cStringIO
 import sqlparse
 
-from explorer import app_settings
+from . import app_settings
 
 EXPLORER_PARAM_TOKEN = "$$"
 
