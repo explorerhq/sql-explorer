@@ -8,12 +8,6 @@ from explorer import app_settings
 from explorer.exporters import get_exporter_class
 from explorer.models import Query, QueryLog
 
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
-
-
 if app_settings.ENABLE_TASKS:
     from celery import task
     from celery.utils.log import get_task_logger
@@ -30,7 +24,7 @@ def execute_query(query_id, email_address):
     q = Query.objects.get(pk=query_id)
     exporter = get_exporter_class('csv')(q)
     random_part = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(20))
-    resp = _upload('%s.csv' % random_part, exporter.get_output())
+    resp = _upload('%s.csv' % random_part, exporter.get_file_output())
 
     subj = '[SQL Explorer] Report "%s" is ready' % q.title
     msg = 'Download results:\n\r%s' % resp.url
@@ -45,7 +39,7 @@ def snapshot_query(query_id):
     exporter = get_exporter_class('csv')(q)
     k = 'query-%s.snap-%s.csv' % (q.id, date.today().strftime('%Y%m%d-%H:%M:%S'))
     logger.info("Uploading snapshot for query %s as %s..." % (query_id, k))
-    resp = _upload(k, exporter.get_output())
+    resp = _upload(k, exporter.get_file_output())
     logger.info("Done uploading snapshot for query %s. URL: %s" % (query_id, resp.url))
 
 
@@ -53,7 +47,7 @@ def _upload(key, data):
     conn = tinys3.Connection(app_settings.S3_ACCESS_KEY,
                              app_settings.S3_SECRET_KEY,
                              default_bucket=app_settings.S3_BUCKET)
-    return conn.upload(key, StringIO.StringIO(data))  # expects a file-like object
+    return conn.upload(key, data)  # expects a file-like object
 
 
 @task

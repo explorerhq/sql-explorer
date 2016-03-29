@@ -1,4 +1,5 @@
 from django.db import DatabaseError
+from django.core.serializers.json import DjangoJSONEncoder
 import json
 import string
 try:
@@ -33,14 +34,21 @@ class BaseExporter(object):
         self.query = query
 
     def get_output(self, **kwargs):
+        return self.get_file_output(**kwargs).getvalue()
+
+    def get_file_output(self, **kwargs):
         try:
             res = self.query.execute_query_only()
             return self._get_output(res, **kwargs)
         except DatabaseError as e:
-            resp = StringIO.StringIO()
-            return resp.write(str(e))  # consistent return type
+            return StringIO.StringIO(str(e))
 
-    def _get_output(self, **kwargs):
+    def _get_output(self, res, **kwargs):
+        """
+        :param res: QueryResult
+        :param kwargs: Optional. Any exporter-specific arguments.
+        :return: File-like object
+        """
         raise NotImplementedError
 
     def get_filename(self):
@@ -69,7 +77,7 @@ class CSVExporter(BaseExporter):
         writer.writerow(res.headers)
         for row in res.data:
             writer.writerow([s for s in row])
-        return csv_data.getvalue()
+        return csv_data
 
 
 class JSONExporter(BaseExporter):
@@ -85,8 +93,8 @@ class JSONExporter(BaseExporter):
                 dict(zip([str(h) if h is not None else '' for h in res.headers], row))
             )
 
-        json_data = json.dumps(data)
-        return json_data
+        json_data = json.dumps(data, cls=DjangoJSONEncoder)
+        return StringIO.StringIO(json_data)
 
 
 class ExcelExporter(BaseExporter):
@@ -121,4 +129,4 @@ class ExcelExporter(BaseExporter):
 
         output = StringIO.StringIO()
         wb.save(output)
-        return output.getvalue()
+        return output
