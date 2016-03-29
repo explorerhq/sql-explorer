@@ -4,11 +4,9 @@ try:
 except ImportError:
     import StringIO
 
-from django.http import HttpResponse
 from django.utils.module_loading import import_string
 
 from . import app_settings
-from .utils import csv_report, get_filename_for_title
 
 
 def get_exporter_class(format):
@@ -25,12 +23,23 @@ class BaseExporter(object):
     def __init__(self, query):
         self.query = query
 
-    def get_output(self):
+    def get_output(self, **kwargs):
+        try:
+            res = self.query.execute_query_only()
+            return self._get_output(res, **kwargs)
+        except DatabaseError as e:
+            resp = cStringIO()
+            return resp.write(str(e))  # consistent return type
+
+    def _get_output(self, **kwargs):
         raise NotImplementedError
 
     def get_filename(self):
-        return '{}{}'.format(get_filename_for_title(
-            self.query.title), self.file_extension)
+        # build list of valid chars, build filename from title and replace spaces
+        valid_chars = '-_.() %s%s' % (string.ascii_letters, string.digits)
+        filename = ''.join(c for c in self.query.title if c in valid_chars)
+        filename = filename.replace(' ', '_')
+        return '{}{}'.format(filename, self.file_extension)
 
 
 class CSVExporter(BaseExporter):
@@ -39,8 +48,18 @@ class CSVExporter(BaseExporter):
     content_type = 'text/csv'
     file_extension = '.csv'
 
-    def get_output(self):
-        return csv_report(self.query, app_settings.CSV_DELIMETER).getvalue()
+    def _get_output(self, res, **kwargs):
+        delim = kwargs.get('delim', app_settings.CSV_DELIMETER)
+        delim = '\t' if delim == 'tab' else str(delim)
+        csv_data = cStringIO()
+        if PY3:
+            writer = csv.writer(csv_data, delimiter=delim)
+        else:
+            writer = csv.writer(csv_data, delimiter=delim, encoding='utf-8')
+        writer.writerow(res.headers)
+        for row in res.data:
+            writer.writerow([s for s in row])
+        return csv_data
 
 
 class JSONExporter(BaseExporter):
@@ -49,8 +68,7 @@ class JSONExporter(BaseExporter):
     content_type = 'application/json'
     file_extension = '.json'
 
-    def get_output(self):
-        res = self.query.execute_query_only()
+    def _get_output(self, res, **kwargs):
         data = []
         for row in res.data:
             data.append(
@@ -67,9 +85,8 @@ class ExcelExporter(BaseExporter):
     content_type = 'application/vnd.ms-excel'
     file_extension = '.xls'
 
-    def get_output(self):
+    def _get_output(self, res, **kwargs):
         import xlwt
-        res = self.query.execute_query_only()
 
         wb = xlwt.Workbook()
         ws = wb.add_sheet(self.query.title)

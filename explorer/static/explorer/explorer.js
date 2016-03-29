@@ -162,24 +162,6 @@ ExplorerEditor.prototype.bind = function() {
         this.$form.attr('action', '../play/');
     }.bind(this));
 
-    $("#download_play_button").click(function() {
-        this.$form.attr('action', '../csv');
-    }.bind(this));
-
-    $(".download-button").click(function(e) {
-        var format = e.target.dataset.format;
-        this.$form.prepend("<input type=hidden name=format value='" + format + "' />");
-        this.$form.attr('action', '../download');
-    }.bind(this));
-
-    $(".download_button").click(function(e) {
-        e.preventDefault();
-        var dl_link = 'download';
-        var params = this.getParams(this);
-        if(params) { dl_link = dl_link + '?params=' + this.serializeParams(params); }
-        window.open(dl_link, '_blank');
-    }.bind(this));
-
     $("#create_button").click(function() {
         this.$form.attr('action', '../new/');
     }.bind(this));

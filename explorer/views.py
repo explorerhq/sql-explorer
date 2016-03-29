@@ -6,7 +6,6 @@ import six
 from django.core.urlresolvers import reverse_lazy
 from django.db import DatabaseError
 from django.db.models import Count
-from django.forms import ValidationError
 from django.forms.models import model_to_dict
 from django.http import HttpResponse
 from django.http.response import HttpResponseRedirect
@@ -29,8 +28,6 @@ from explorer.utils import url_get_rows,\
     schema_info,\
     url_get_params,\
     safe_admin_login_prompt,\
-    build_download_response,\
-    build_stream_response,\
     user_can_see_query,\
     fmt_sql,\
     allowed_query_pks,\
@@ -92,58 +89,40 @@ class ExplorerContextMixin(object):
         return render_to_response(template, ctx)
 
 
-@view_permission
-@require_GET
-def download_query(request, query_id):
+def _export(request, query, download=True):
     format = request.GET.get('format', 'csv')
     exporter_class = get_exporter_class(format)
-    query = get_object_or_404(Query, pk=query_id)
     query.params = url_get_params(request)
-
     exporter = exporter_class(query)
     output = exporter.get_output()
     response = HttpResponse(output, content_type=exporter.content_type)
-    response['Content-Disposition'] = 'attachment; filename="%s"' % (
-        exporter.get_filename()
-    )
+    if download:
+        response['Content-Disposition'] = 'attachment; filename="%s"' % (
+            exporter.get_filename()
+        )
     return response
+
+
+@view_permission
+@require_GET
+def download_query(request, query_id):
+    query = get_object_or_404(Query, pk=query_id)
+    return _export(request, query)
 
 
 @view_permission
 @require_POST
 def download_from_sql(request):
-    format = request.POST.get('format', 'csv')
     sql = request.POST.get('sql')
-    exporter_class = get_exporter_class(format)
-    query = Query(sql=sql, title="Playground", params=url_get_params(request))
-
-    exporter = exporter_class(query)
-    output = exporter.get_output()
-    response = HttpResponse(output, content_type=exporter.content_type)
-    response['Content-Disposition'] = 'attachment; filename="%s"' % (
-        exporter.get_filename()
-    )
-    return response
+    query = Query(sql=sql, title="Playground")
+    return _export(request, query)
 
 
 @view_permission
 @require_GET
 def stream_query(request, query_id):
-    format = request.GET.get('format', 'csv')
-    exporter_class = get_exporter_class(format)
     query = get_object_or_404(Query, pk=query_id)
-    query.params = url_get_params(request)
-
-    exporter = exporter_class(query)
-    output = exporter.get_output()
-    response = HttpResponse(output, content_type=exporter.content_type)
-    return response
-
-
-@view_permission
-@require_GET
-def view_csv_query(request, query_id):
-    return _csv_response(request, query_id, True, delim=request.GET.get('delim', None))
+    return _export(request, query, download=False)
 
 
 @view_permission
@@ -155,19 +134,6 @@ def email_csv_query(request, query_id):
             execute_query.delay(query_id, email)
             return HttpResponse(content={'message': 'message was sent successfully'})
     return HttpResponse(status=403)
-
-
-def _csv_response(request, query_id, stream=False, delim=None):
-    query = get_object_or_404(Query, pk=query_id)
-    query.params = url_get_params(request)
-    return build_stream_response(query, delim) if stream else build_download_response(query, delim)
-
-
-@change_permission
-@require_POST
-def download_csv_from_sql(request):
-    sql = request.POST.get('sql')
-    return build_download_response(Query(sql=sql, title="Playground", params=url_get_params(request)))
 
 
 @change_permission

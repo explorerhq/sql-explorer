@@ -79,16 +79,13 @@
                             {% if can_change %}
                                 <input type="submit" value="Save & Run" class="btn btn-default" id="save_button" />
                                 {% if query %}
-                                     <button class="btn btn-default download_button" href="{% url "query_csv" query.id %}">Download CSV</button>
                                      <input type="submit" value="Open in Playground" class="btn btn-default" id="playground_button"/>
-
                                 {%  endif %}
                                 <button type="button" class="btn btn-default" id="show_schema_button">Show Schema</button>
                                 <button type="button" class="btn btn-default" id="hide_schema_button" style="display: none;">Hide Schema</button>
                                 <button type="button" class="btn btn-default" id="format_button">Format</button>
                             {% else %}
                                 <input type="submit" value="Refresh" class="btn btn-default" id="refresh_button" />
-                                <button class="btn btn-default download_button" href="{% url "query_csv" query.id %}">Download CSV</button>
                             {% endif %}
                         </div>
                     </div>

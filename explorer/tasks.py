@@ -5,8 +5,8 @@ import string
 from django.core.mail import send_mail
 
 from explorer import app_settings
+from explorer.exporters import get_exporter_class
 from explorer.models import Query, QueryLog
-from explorer.utils import csv_report
 
 
 if app_settings.ENABLE_TASKS:
@@ -23,9 +23,9 @@ else:
 @task
 def execute_query(query_id, email_address):
     q = Query.objects.get(pk=query_id)
-    r = csv_report(q)
+    exporter = get_exporter_class('csv')(q)
     random_part = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(20))
-    resp = _upload('%s.csv' % random_part, r)
+    resp = _upload('%s.csv' % random_part, exporter.get_output())
 
     subj = '[SQL Explorer] Report "%s" is ready' % q.title
     msg = 'Download results:\n\r%s' % resp.url
@@ -37,10 +37,10 @@ def execute_query(query_id, email_address):
 def snapshot_query(query_id):
     logger.info("Starting snapshot for query %s..." % query_id)
     q = Query.objects.get(pk=query_id)
-    r = csv_report(q)
+    exporter = get_exporter_class('csv')(q)
     k = 'query-%s.snap-%s.csv' % (q.id, date.today().strftime('%Y%m%d-%H:%M:%S'))
     logger.info("Uploading snapshot for query %s as %s..." % (query_id, k))
-    resp = _upload(k, r)
+    resp = _upload(k, exporter.get_output())
     logger.info("Done uploading snapshot for query %s. URL: %s" % (query_id, resp.url))
 
 
