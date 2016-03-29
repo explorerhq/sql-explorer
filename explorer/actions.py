@@ -3,10 +3,7 @@ from datetime import date
 import tempfile
 from zipfile import ZipFile
 from wsgiref.util import FileWrapper
-
 from django.http import HttpResponse
-
-from explorer.utils import csv_report
 
 _ = lambda x: x
 

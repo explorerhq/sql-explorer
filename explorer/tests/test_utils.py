@@ -1,11 +1,9 @@
-#encoding=utf8
-
 from django.test import TestCase
 from explorer.actions import generate_report_action
 from explorer.tests.factories import SimpleQueryFactory
 from explorer import app_settings
 from explorer.utils import passes_blacklist, schema_info, param, swap_params, extract_params,\
-    shared_dict_update, EXPLORER_PARAM_TOKEN, write_csv, get_params_from_request
+    shared_dict_update, EXPLORER_PARAM_TOKEN, get_params_from_request
 from mock import Mock
 
 
@@ -121,12 +119,3 @@ class TestParams(TestCase):
         res = get_params_from_request(r)
         self.assertEqual(res['foo'], 'bar')
         self.assertEqual(res['qux'], 'mux')
-
-
-class TestCsv(TestCase):
-
-    def test_writing_unicode(self):
-        headers = ['a', None]
-        data = [[1, None], [u"Jenét", '1']]
-        res = write_csv(headers, data).getvalue()
-        self.assertEqual(res, 'a,\r\n1,\r\nJenét,1\r\n')

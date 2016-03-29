@@ -212,18 +212,18 @@ class TestDownloadView(TestCase):
 
     def test_admin_required(self):
         self.client.logout()
-        resp = self.client.get(reverse("query_download", kwargs={'query_id': self.query.id}))
+        resp = self.client.get(reverse("download_query", kwargs={'query_id': self.query.id}))
         self.assertTemplateUsed(resp, 'admin/login.html')
 
     def test_params_in_download(self):
         q = SimpleQueryFactory(sql="select '$$foo$$';")
-        url = '%s?params=%s' % (reverse("query_download", kwargs={'query_id': q.id}), 'foo:123')
+        url = '%s?params=%s' % (reverse("download_query", kwargs={'query_id': q.id}), 'foo:123')
         resp = self.client.get(url)
         self.assertContains(resp, "'123'")
 
     def test_download_defaults_to_csv(self):
         query = SimpleQueryFactory()
-        url = reverse("query_download", args=[query.pk])
+        url = reverse("download_query", args=[query.pk])
 
         response = self.client.get(url)
 
@@ -232,7 +232,7 @@ class TestDownloadView(TestCase):
 
     def test_download_csv(self):
         query = SimpleQueryFactory()
-        url = reverse("query_download", args=[query.pk]) + '?format=csv'
+        url = reverse("download_query", args=[query.pk]) + '?format=csv'
 
         response = self.client.get(url)
 
@@ -241,7 +241,7 @@ class TestDownloadView(TestCase):
 
     def test_download_json(self):
         query = SimpleQueryFactory()
-        url = reverse("query_download", args=[query.pk]) + '?format=json'
+        url = reverse("download_query", args=[query.pk]) + '?format=json'
 
         response = self.client.get(url)
 
@@ -315,18 +315,19 @@ class TestCSVFromSQL(TestCase):
 
     def test_admin_required(self):
         self.client.logout()
-        resp = self.client.post(reverse("generate_csv"), {})
+        resp = self.client.post(reverse("download_sql"), {})
         self.assertTemplateUsed(resp, 'admin/login.html')
 
     def test_downloading_from_playground(self):
         sql = "select 1;"
-        resp = self.client.post(reverse("generate_csv"), {'sql': sql})
+        resp = self.client.post(reverse("download_sql"), {'sql': sql})
+        self.assertIn('attachment', resp['Content-Disposition'])
         self.assertEqual('text/csv', resp['content-type'])
 
     def test_stream_csv_from_query(self):
         q = SimpleQueryFactory()
-        resp = self.client.get(reverse("query_csv", kwargs={'query_id': q.id}))
-        self.assertEqual('text', resp['content-type'])
+        resp = self.client.get(reverse("stream_query", kwargs={'query_id': q.id}))
+        self.assertEqual('text/csv', resp['content-type'])
 
 
 class TestSQLDownloadViews(TestCase):
@@ -336,12 +337,20 @@ class TestSQLDownloadViews(TestCase):
         self.client.login(username='admin', password='pwd')
 
     def test_sql_download_csv(self):
-        url = reverse("sql_download") + '?format=csv'
+        url = reverse("download_sql") + '?format=csv'
 
         response = self.client.post(url, {'sql': 'select 1;'})
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['content-type'], 'text/csv')
+
+    def test_sql_download_json(self):
+        url = reverse("download_sql") + '?format=json'
+
+        response = self.client.post(url, {'sql': 'select 1;'})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['content-type'], 'application/json')
 
 
 class TestSchemaView(TestCase):

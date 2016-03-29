@@ -1,8 +1,17 @@
+from django.db import DatabaseError
 import json
+import string
 try:
     import cStringIO as StringIO
 except ImportError:
     import StringIO
+
+import sys
+PY3 = sys.version_info[0] == 3
+if PY3:
+    import csv
+else:
+    import unicodecsv as csv
 
 from django.utils.module_loading import import_string
 
@@ -28,7 +37,7 @@ class BaseExporter(object):
             res = self.query.execute_query_only()
             return self._get_output(res, **kwargs)
         except DatabaseError as e:
-            resp = cStringIO()
+            resp = StringIO.StringIO()
             return resp.write(str(e))  # consistent return type
 
     def _get_output(self, **kwargs):
@@ -51,7 +60,7 @@ class CSVExporter(BaseExporter):
     def _get_output(self, res, **kwargs):
         delim = kwargs.get('delim', app_settings.CSV_DELIMETER)
         delim = '\t' if delim == 'tab' else str(delim)
-        csv_data = cStringIO()
+        csv_data = StringIO.StringIO()
         if PY3:
             writer = csv.writer(csv_data, delimiter=delim)
         else:

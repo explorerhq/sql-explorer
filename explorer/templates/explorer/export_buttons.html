@@ -3,7 +3,7 @@
         <div class="btn-group">
             {% for key, name in exporters.items %}
                 {% if query %}
-                    <a href="{% url "query_download" query.id %}?format={{ key }}" class="btn btn-default">{{ name }}</a>
+                    <a href="{% url "download_query" query.id %}?format={{ key }}" class="btn btn-default">{{ name }}</a>
                 {% else %}
                     <input type="submit" value="{{ name }}" data-format="{{ key }}" class="btn btn-default download-button" />
                 {% endif %}

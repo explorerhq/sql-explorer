@@ -1,17 +1,9 @@
 import functools
 import re
-import string
-import sys
 
-PY3 = sys.version_info[0] == 3
-if PY3:
-    import csv
-else:
-    import unicodecsv as csv
 
-from django.db import connections, connection, DatabaseError
-from django.http import HttpResponse
-from six.moves import cStringIO
+
+from django.db import connections, connection
 import sqlparse
 
 from . import app_settings
