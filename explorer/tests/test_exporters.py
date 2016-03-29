@@ -4,6 +4,7 @@ from django.test import TestCase
 from explorer.exporters import CSVExporter
 from mock import Mock
 
+
 class TestCsv(TestCase):
 
     def test_writing_unicode(self):

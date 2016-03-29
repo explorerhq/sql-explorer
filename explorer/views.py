@@ -93,8 +93,9 @@ def _export(request, query, download=True):
     format = request.GET.get('format', 'csv')
     exporter_class = get_exporter_class(format)
     query.params = url_get_params(request)
+    delim = request.GET.get('delim')
     exporter = exporter_class(query)
-    output = exporter.get_output()
+    output = exporter.get_output(delim=delim)
     response = HttpResponse(output, content_type=exporter.content_type)
     if download:
         response['Content-Disposition'] = 'attachment; filename="%s"' % (
