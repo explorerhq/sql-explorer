@@ -8,6 +8,11 @@ from explorer import app_settings
 from explorer.exporters import get_exporter_class
 from explorer.models import Query, QueryLog
 
+try:
+    import cStringIO as StringIO
+except ImportError:
+    import StringIO
+
 
 if app_settings.ENABLE_TASKS:
     from celery import task
@@ -48,7 +53,7 @@ def _upload(key, data):
     conn = tinys3.Connection(app_settings.S3_ACCESS_KEY,
                              app_settings.S3_SECRET_KEY,
                              default_bucket=app_settings.S3_BUCKET)
-    return conn.upload(key, data)
+    return conn.upload(key, StringIO.StringIO(data))  # expects a file-like object
 
 
 @task

@@ -58,8 +58,9 @@ class CSVExporter(BaseExporter):
     file_extension = '.csv'
 
     def _get_output(self, res, **kwargs):
-        delim = kwargs.get('delim', app_settings.CSV_DELIMETER)
+        delim = kwargs.get('delim') or app_settings.CSV_DELIMETER
         delim = '\t' if delim == 'tab' else str(delim)
+        delim = app_settings.CSV_DELIMETER if len(delim) > 1 else delim
         csv_data = StringIO.StringIO()
         if PY3:
             writer = csv.writer(csv_data, delimiter=delim)
@@ -68,7 +69,7 @@ class CSVExporter(BaseExporter):
         writer.writerow(res.headers)
         for row in res.data:
             writer.writerow([s for s in row])
-        return csv_data
+        return csv_data.getvalue()
 
 
 class JSONExporter(BaseExporter):
@@ -81,7 +82,7 @@ class JSONExporter(BaseExporter):
         data = []
         for row in res.data:
             data.append(
-                dict(zip([str(h) for h in res.headers], row))
+                dict(zip([str(h) if h is not None else '' for h in res.headers], row))
             )
 
         json_data = json.dumps(data)

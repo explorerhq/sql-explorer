@@ -25,7 +25,7 @@ class TestTasks(TestCase):
 
         self.assertEqual(len(mail.outbox), 1)
         self.assertIn('[SQL Explorer] Report ', mail.outbox[0].subject)
-        self.assertEqual(conn.upload.call_args[0][1].getvalue(), output.getvalue())
+        self.assertEqual(conn.upload.call_args[0][1], output.getvalue())
         self.assertEqual(conn.upload.call_count, 1)
 
     @patch('tinys3.Connection')
