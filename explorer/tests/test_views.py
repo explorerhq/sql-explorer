@@ -248,7 +248,7 @@ class TestDownloadView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['content-type'], 'application/json')
 
-        json_data = json.loads(response.content)
+        json_data = json.loads(response.content.decode('utf-8'))
         self.assertIsInstance(json_data, list)
         self.assertEqual(len(json_data), 1)
         self.assertEqual(json_data, [{'TWO': 2}])
@@ -351,7 +351,7 @@ class TestSQLDownloadViews(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['content-type'], 'text/csv')
-        self.assertEqual(response.content, '1|2\r\n1|2\r\n')
+        self.assertEqual(response.content.decode('utf-8'), '1|2\r\n1|2\r\n')
 
     def test_sql_download_csv_with_tab_delim(self):
         url = reverse("download_sql") + '?format=csv&delim=tab'
@@ -360,7 +360,7 @@ class TestSQLDownloadViews(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['content-type'], 'text/csv')
-        self.assertEqual(response.content, '1\t2\r\n1\t2\r\n')
+        self.assertEqual(response.content.decode('utf-8'), '1\t2\r\n1\t2\r\n')
 
     def test_sql_download_csv_with_bad_delim(self):
         url = reverse("download_sql") + '?format=csv&delim=foo'
@@ -369,7 +369,7 @@ class TestSQLDownloadViews(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['content-type'], 'text/csv')
-        self.assertEqual(response.content, '1,2\r\n1,2\r\n')
+        self.assertEqual(response.content.decode('utf-8'), '1,2\r\n1,2\r\n')
 
     def test_sql_download_json(self):
         url = reverse("download_sql") + '?format=json'

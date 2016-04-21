@@ -351,4 +351,4 @@ def query_viewmodel(request, query, title=None, form=None, message=None, run_que
             'bucket': app_settings.S3_BUCKET,
             'snapshots': query.snapshots if query.snapshot else [],
             'ql_id': ql.id if ql else None}
-    return ret
+    return RequestContext(request, dict_=ret)

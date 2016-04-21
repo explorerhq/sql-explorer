@@ -2,11 +2,6 @@ from django.db import DatabaseError
 from django.core.serializers.json import DjangoJSONEncoder
 import json
 import string
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
-
 import sys
 PY3 = sys.version_info[0] == 3
 if PY3:
@@ -15,8 +10,8 @@ else:
     import unicodecsv as csv
 
 from django.utils.module_loading import import_string
-
 from . import app_settings
+from six import StringIO, BytesIO
 
 
 def get_exporter_class(format):
@@ -34,14 +29,14 @@ class BaseExporter(object):
         self.query = query
 
     def get_output(self, **kwargs):
-        return self.get_file_output(**kwargs).getvalue()
+        return str(self.get_file_output(**kwargs).getvalue())
 
     def get_file_output(self, **kwargs):
         try:
             res = self.query.execute_query_only()
             return self._get_output(res, **kwargs)
         except DatabaseError as e:
-            return StringIO.StringIO(str(e))
+            return StringIO(str(e))
 
     def _get_output(self, res, **kwargs):
         """
@@ -69,7 +64,7 @@ class CSVExporter(BaseExporter):
         delim = kwargs.get('delim') or app_settings.CSV_DELIMETER
         delim = '\t' if delim == 'tab' else str(delim)
         delim = app_settings.CSV_DELIMETER if len(delim) > 1 else delim
-        csv_data = StringIO.StringIO()
+        csv_data = StringIO()
         if PY3:
             writer = csv.writer(csv_data, delimiter=delim)
         else:
@@ -94,7 +89,7 @@ class JSONExporter(BaseExporter):
             )
 
         json_data = json.dumps(data, cls=DjangoJSONEncoder)
-        return StringIO.StringIO(json_data)
+        return StringIO(json_data)
 
 
 class ExcelExporter(BaseExporter):
@@ -104,17 +99,18 @@ class ExcelExporter(BaseExporter):
     file_extension = '.xls'
 
     def _get_output(self, res, **kwargs):
-        import xlwt
+        import xlsxwriter
+        output = BytesIO()
 
-        wb = xlwt.Workbook()
-        ws = wb.add_sheet(self.query.title)
+        wb = xlsxwriter.Workbook(output)
+        ws = wb.add_worksheet(name=self.query.title)
 
         # Write headers
         row = 0
         col = 0
-        header_style = xlwt.easyxf('font: bold on; borders: bottom thin')
+        header_style = wb.add_format({'bold': True})
         for header in res.headers:
-            ws.write(row, col, str(header), header_style)
+            ws.write(row, col, header, header_style)
             col += 1
 
         # Write data
@@ -127,6 +123,5 @@ class ExcelExporter(BaseExporter):
             row += 1
             col = 0
 
-        output = StringIO.StringIO()
-        wb.save(output)
+        wb.close()
         return output
