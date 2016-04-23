@@ -7,6 +7,7 @@ from django.template import RequestContext
 from django.views.generic.base import View
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView, DeleteView
+from django.views.decorators.clickjacking import xframe_options_sameorigin
 from django.views.decorators.http import require_POST, require_GET
 from django.utils.decorators import method_decorator
 from django.core.urlresolvers import reverse_lazy
@@ -128,6 +129,7 @@ def download_csv_from_sql(request):
     return build_download_response(Query(sql=sql, title="Playground", params=url_get_params(request)))
 
 
+@xframe_options_sameorigin
 @change_permission
 @require_GET
 def schema(request):
