@@ -2,6 +2,7 @@ import json
 from functools import wraps
 import re
 import six
+import django
 
 from django.core.urlresolvers import reverse_lazy
 from django.db import DatabaseError
@@ -86,6 +87,9 @@ class ExplorerContextMixin(object):
 
     def render_template(self, template, ctx):
         ctx.update(self.gen_ctx())
+        ctx = RequestContext(self.request, dict_=ctx)
+        if django.VERSION >= (1, 8):
+            ctx = ctx.flatten()
         return render_to_response(template, ctx)
 
 
@@ -351,4 +355,4 @@ def query_viewmodel(request, query, title=None, form=None, message=None, run_que
             'bucket': app_settings.S3_BUCKET,
             'snapshots': query.snapshots if query.snapshot else [],
             'ql_id': ql.id if ql else None}
-    return RequestContext(request, dict_=ret)
+    return ret
