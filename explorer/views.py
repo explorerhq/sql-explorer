@@ -88,8 +88,6 @@ class ExplorerContextMixin(object):
     def render_template(self, template, ctx):
         ctx.update(self.gen_ctx())
         ctx = RequestContext(self.request, dict_=ctx)
-        if django.VERSION >= (1, 8):
-            ctx = ctx.flatten()
         return render_to_response(template, ctx)
 
 
