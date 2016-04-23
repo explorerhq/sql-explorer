@@ -3,6 +3,7 @@ import six
 
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
+from django.template import RequestContext
 from django.views.generic.base import View
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView, DeleteView
@@ -273,7 +274,7 @@ class PlayQueryView(ExplorerContextMixin, View):
         return self.render_with_sql(request, query, run_query=run_query, error=error)
 
     def render(self, request):
-        return self.render_template('explorer/play.html', {'title': 'Playground'})
+        return self.render_template('explorer/play.html', RequestContext(request, {'title': 'Playground'}))
 
     def render_with_sql(self, request, query, run_query=True, error=None):
         return self.render_template('explorer/play.html', query_viewmodel(request, query, title="Playground"
@@ -322,7 +323,7 @@ def query_viewmodel(request, query, title=None, form=None, message=None, run_que
         except DatabaseError as e:
             error = str(e)
     has_valid_results = not error and res and run_query
-    ret = {
+    ret = RequestContext(request, {
             'tasks_enabled': app_settings.ENABLE_TASKS,
             'params': query.available_params(),
             'title': title,
@@ -340,5 +341,5 @@ def query_viewmodel(request, query, title=None, form=None, message=None, run_que
             'dataUrl': reverse_lazy('query_csv', kwargs={'query_id': query.id}) if query.id else '',
             'bucket': app_settings.S3_BUCKET,
             'snapshots': query.snapshots if query.snapshot else [],
-            'ql_id': ql.id if ql else None}
+            'ql_id': ql.id if ql else None})
     return ret
