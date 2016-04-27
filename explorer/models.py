@@ -139,6 +139,10 @@ class QueryResult(object):
     def headers(self):
         return self._headers or []
 
+    @property
+    def header_strings(self):
+        return [str(h) for h in self.headers]
+
     def _get_headers(self):
         return [ColumnHeader(d[0]) for d in self._description] if self._description else [ColumnHeader('--')]
 

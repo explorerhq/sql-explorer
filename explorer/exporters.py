@@ -114,7 +114,7 @@ class ExcelExporter(BaseExporter):
         row = 0
         col = 0
         header_style = wb.add_format({'bold': True})
-        for header in res.headers:
+        for header in res.header_strings:
             ws.write(row, col, header, header_style)
             col += 1
 

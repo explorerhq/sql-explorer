@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.core.serializers.json import DjangoJSONEncoder
 from explorer.exporters import CSVExporter, JSONExporter, ExcelExporter
 from explorer.tests.factories import SimpleQueryFactory
-from mock import Mock
+from explorer.models import QueryResult
 import json
 from datetime import date
 from six import b
@@ -13,9 +13,10 @@ from six import b
 class TestCsv(TestCase):
 
     def test_writing_unicode(self):
-        res = Mock()
-        res.headers = ['a', None]
-        res.data = [[1, None], [u"Jenét", '1']]
+        res = QueryResult(SimpleQueryFactory(sql='select 1 as "a", 2 as ""').sql)
+        res.execute_query()
+        res.process()
+        res._data = [[1, None], [u"Jenét", '1']]
 
         res = CSVExporter(query=None)._get_output(res).getvalue()
         self.assertEqual(res, 'a,\r\n1,\r\nJenét,1\r\n')
@@ -30,18 +31,20 @@ class TestCsv(TestCase):
 class TestJson(TestCase):
 
     def test_writing_json(self):
-        res = Mock()
-        res.headers = ['a', None]
-        res.data = [[1, None], [u"Jenét", '1']]
+        res = QueryResult(SimpleQueryFactory(sql='select 1 as "a", 2 as ""').sql)
+        res.execute_query()
+        res.process()
+        res._data = [[1, None], [u"Jenét", '1']]
 
         res = JSONExporter(query=None)._get_output(res).getvalue()
         expected = [{'a': 1, '': None}, {'a': 'Jenét', '': '1'}]
         self.assertEqual(res, json.dumps(expected))
 
     def test_writing_datetimes(self):
-        res = Mock()
-        res.headers = ['a', 'b']
-        res.data = [[1, date.today()]]
+        res = QueryResult(SimpleQueryFactory(sql='select 1 as "a", 2 as "b"').sql)
+        res.execute_query()
+        res.process()
+        res._data = [[1, date.today()]]
 
         res = JSONExporter(query=None)._get_output(res).getvalue()
         expected = [{'a': 1, 'b': date.today()}]
@@ -57,9 +60,10 @@ class TestExcel(TestCase):
             (see https://github.com/jmcnamara/XlsxWriter/blob/master/xlsxwriter/test/helperfunctions.py for reference)
             , by all means submit a pull request!
         """
-        res = Mock()
-        res.headers = ['a', None]
-        res.data = [[1, None], [u"Jenét", '1']]
+        res = QueryResult(SimpleQueryFactory(sql='select 1 as "a", 2 as ""').sql)
+        res.execute_query()
+        res.process()
+        res._data = [[1, None], [u"Jenét", '1']]
 
         res = ExcelExporter(query=SimpleQueryFactory())._get_output(res).getvalue()
 
