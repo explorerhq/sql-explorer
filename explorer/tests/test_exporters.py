@@ -50,6 +50,8 @@ class TestJson(TestCase):
         expected = [{'a': 1, 'b': date.today()}]
         self.assertEqual(res, json.dumps(expected, cls=DjangoJSONEncoder))
 
+from django.utils import timezone
+from datetime import datetime
 
 class TestExcel(TestCase):
 
@@ -60,10 +62,15 @@ class TestExcel(TestCase):
             (see https://github.com/jmcnamara/XlsxWriter/blob/master/xlsxwriter/test/helperfunctions.py for reference)
             , by all means submit a pull request!
         """
-        res = QueryResult(SimpleQueryFactory(sql='select 1 as "a", 2 as ""').sql)
+        res = QueryResult(SimpleQueryFactory(sql='select 1 as "a", 2 as ""',
+                                             title='this title is longer than 32 characters').sql)
         res.execute_query()
         res.process()
-        res._data = [[1, None], [u"Jenét", '1']]
+
+        d = datetime.now()
+        d = timezone.make_aware(d, timezone.get_current_timezone())
+
+        res._data = [[1, None], [u"Jenét", d]]
 
         res = ExcelExporter(query=SimpleQueryFactory())._get_output(res).getvalue()
 

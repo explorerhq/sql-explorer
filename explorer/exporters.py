@@ -3,6 +3,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 import json
 import string
 import sys
+from datetime import datetime
 PY3 = sys.version_info[0] == 3
 if PY3:
     import csv
@@ -123,6 +124,9 @@ class ExcelExporter(BaseExporter):
         col = 0
         for data_row in res.data:
             for data in data_row:
+                # xlsxwriter can't handle timezone-aware datetimes, so we help out here and just cast it to a string
+                if isinstance(data, datetime):
+                    data = str(data)
                 ws.write(row, col, data)
                 col += 1
             row += 1
