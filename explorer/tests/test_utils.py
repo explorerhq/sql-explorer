@@ -3,7 +3,7 @@ from explorer.actions import generate_report_action
 from explorer.tests.factories import SimpleQueryFactory
 from explorer import app_settings
 from explorer.utils import passes_blacklist, schema_info, param, swap_params, extract_params,\
-    shared_dict_update, EXPLORER_PARAM_TOKEN, get_params_from_request
+    shared_dict_update, EXPLORER_PARAM_TOKEN, get_params_from_request, get_params_for_url
 from mock import Mock
 
 
@@ -119,3 +119,11 @@ class TestParams(TestCase):
         res = get_params_from_request(r)
         self.assertEqual(res['foo'], 'bar')
         self.assertEqual(res['qux'], 'mux')
+
+    def test_get_params_for_request(self):
+        q = SimpleQueryFactory(params={'a': 1, 'b': 2})
+        self.assertEqual(get_params_for_url(q), 'a:1|b:2')
+
+    def test_get_params_for_request_empty(self):
+        q = SimpleQueryFactory()
+        self.assertEqual(get_params_for_url(q), None)

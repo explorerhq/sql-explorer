@@ -174,6 +174,15 @@ ExplorerEditor.prototype.bind = function() {
         }
         this.$form.attr('action', url);
     }.bind(this));
+    
+    $(".download-query-button").click(function(e) {
+        var url = '../download?format=' + $(e.target).data('format');
+        var params = this.getParams();
+        if(params) {
+            url = url + '&params=' + params;
+        }
+        this.$form.attr('action', url);
+    }.bind(this));
 
     $(".stats-expand").click(function(e) {
         e.preventDefault();

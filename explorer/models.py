@@ -7,7 +7,8 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 
 from . import app_settings
-from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection, get_s3_connection
+from explorer.utils import (passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection,
+                            get_s3_connection, get_params_for_url)
 
 MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist: %s"
 
@@ -78,6 +79,10 @@ class Query(models.Model):
 
     def get_absolute_url(self):
         return reverse("query_detail", kwargs={'query_id': self.id})
+
+    @property
+    def params_for_url(self):
+        return get_params_for_url(self)
 
     def log(self, user=None):
         if user and user.is_anonymous():

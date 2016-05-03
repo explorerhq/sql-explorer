@@ -1,8 +1,5 @@
 import functools
 import re
-
-
-
 from django.db import connections, connection
 import sqlparse
 
@@ -136,6 +133,11 @@ def get_params_from_request(request):
         return d
     except Exception:
         return None
+
+
+def get_params_for_url(query):
+    if query.params:
+        return '|'.join(['%s:%s' % (p, v) for p, v in query.params.items()])
 
 
 def url_get_rows(request):

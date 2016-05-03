@@ -2,11 +2,12 @@
 
 from django.test import TestCase
 from django.core.serializers.json import DjangoJSONEncoder
+from django.utils import timezone
 from explorer.exporters import CSVExporter, JSONExporter, ExcelExporter
 from explorer.tests.factories import SimpleQueryFactory
 from explorer.models import QueryResult
 import json
-from datetime import date
+from datetime import date, datetime
 from six import b
 
 
@@ -50,8 +51,6 @@ class TestJson(TestCase):
         expected = [{'a': 1, 'b': date.today()}]
         self.assertEqual(res, json.dumps(expected, cls=DjangoJSONEncoder))
 
-from django.utils import timezone
-from datetime import datetime
 
 class TestExcel(TestCase):
 
