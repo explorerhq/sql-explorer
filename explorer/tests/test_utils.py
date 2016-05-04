@@ -122,7 +122,14 @@ class TestParams(TestCase):
 
     def test_get_params_for_request(self):
         q = SimpleQueryFactory(params={'a': 1, 'b': 2})
-        self.assertEqual(get_params_for_url(q), 'a:1|b:2')
+        # For some reason the order of the params is non-deterministic, causing the following to periodically fail:
+        #     self.assertEqual(get_params_for_url(q), 'a:1|b:2')
+        # So instead we go for the following, convoluted, asserts:
+        res = get_params_for_url(q)
+        res = res.split('|')
+        expected = ['a:1', 'b:2']
+        for e in expected:
+            self.assertIn(e, res)
 
     def test_get_params_for_request_empty(self):
         q = SimpleQueryFactory()
