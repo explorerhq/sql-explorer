@@ -1,11 +1,14 @@
-from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection, get_s3_connection
-from django.db import models, DatabaseError
+import logging
 from time import time
+import six
+
+from django.db import models, DatabaseError
 from django.core.urlresolvers import reverse
 from django.conf import settings
+
 from . import app_settings
-import logging
-import six
+from explorer.utils import (passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection,
+                            get_s3_connection, get_params_for_url)
 
 MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist: %s"
 
@@ -77,6 +80,10 @@ class Query(models.Model):
     def get_absolute_url(self):
         return reverse("query_detail", kwargs={'query_id': self.id})
 
+    @property
+    def params_for_url(self):
+        return get_params_for_url(self)
+
     def log(self, user=None):
         if user and user.is_anonymous():
             user = None
@@ -136,6 +143,10 @@ class QueryResult(object):
     @property
     def headers(self):
         return self._headers or []
+
+    @property
+    def header_strings(self):
+        return [str(h) for h in self.headers]
 
     def _get_headers(self):
         return [ColumnHeader(d[0]) for d in self._description] if self._description else [ColumnHeader('--')]

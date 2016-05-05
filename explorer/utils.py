@@ -1,20 +1,9 @@
-
-
 import functools
-import sys
-PY3 = sys.version_info[0] == 3
-
-if PY3:
-    import csv
-else:
-    import unicodecsv as csv
 import re
-import string
-from explorer import app_settings
-from django.db import connections, connection, DatabaseError
-from django.http import HttpResponse
-from six.moves import cStringIO
+from django.db import connections, connection
 import sqlparse
+
+from . import app_settings
 
 EXPLORER_PARAM_TOKEN = "$$"
 
@@ -95,55 +84,6 @@ def extract_params(text):
     return dict(zip([p[0] for p in params], [p[1] if len(p) > 1 else '' for p in params]))
 
 
-def write_csv(headers, data, delim=None):
-    if delim and len(delim) == 1 or delim == 'tab':
-        delim = '\t' if delim == 'tab' else str(delim)
-    else:
-        delim = app_settings.CSV_DELIMETER
-    csv_data = cStringIO()
-    if PY3:
-        writer = csv.writer(csv_data, delimiter=delim)
-    else:
-        writer = csv.writer(csv_data, delimiter=delim, encoding='utf-8')
-    writer.writerow(headers)
-    for row in data:
-        writer.writerow([s for s in row])
-    return csv_data
-
-
-def get_filename_for_title(title):
-    # build list of valid chars, build filename from title and replace spaces
-    valid_chars = '-_.() %s%s' % (string.ascii_letters, string.digits)
-    filename = ''.join(c for c in title if c in valid_chars)
-    filename = filename.replace(' ', '_')
-    return filename
-
-
-def build_stream_response(query, delim=None):
-    data = csv_report(query, delim).getvalue()
-    response = HttpResponse(data, content_type='text')
-    return response
-
-
-def build_download_response(query, delim=None):
-    data = csv_report(query, delim).getvalue()
-    response = HttpResponse(data, content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="%s.csv"' % (
-        get_filename_for_title(query.title)
-    )
-    response['Content-Length'] = len(data)
-    return response
-
-
-def csv_report(query, delim=None):
-    try:
-        res = query.execute_query_only()
-        return write_csv(res.headers, res.data, delim)
-    except DatabaseError as e:
-        resp = cStringIO()
-        return resp.write(str(e))  # consistent return type
-
-
 # Helpers
 from django.contrib.admin.forms import AdminAuthenticationForm
 from django.contrib.auth.views import login
@@ -193,6 +133,11 @@ def get_params_from_request(request):
         return d
     except Exception:
         return None
+
+
+def get_params_for_url(query):
+    if query.params:
+        return '|'.join(['%s:%s' % (p, v) for p, v in query.params.items()])
 
 
 def url_get_rows(request):

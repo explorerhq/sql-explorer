@@ -26,7 +26,7 @@
                     <td><a href="{% url "query_detail" object.id %}">{{ object.title }}</a></td>
                     <td>{{ object.last_run_date|date:"SHORT_DATETIME_FORMAT" }}</td>
                     <td class="text-center">
-                        <a href="{% url "query_download" object.id %}"><i class="glyphicon glyphicon-download"></i></a>
+                        <a href="{% url "download_query" object.id %}"><i class="glyphicon glyphicon-download"></i></a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -85,7 +85,7 @@
                       </td>
                     {% endif %}
                     <td class="text-center">
-                        <a href="{% url "query_download" object.id %}"><i class="glyphicon glyphicon-download"></i></a>
+                        <a href="{% url "download_query" object.id %}"><i class="glyphicon glyphicon-download"></i></a>
                     </td>
                     {% if can_change %}
                         <td class="text-center">

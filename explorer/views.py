@@ -1,32 +1,34 @@
-from explorer.tasks import execute_query
+import json
+from functools import wraps
+import re
 import six
+import django
 
+from django.core.urlresolvers import reverse_lazy
+from django.db import DatabaseError
+from django.db.models import Count
+from django.forms.models import model_to_dict
+from django.http import HttpResponse
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
-from django.views.generic.base import View
-from django.views.generic import ListView
-from django.views.generic.edit import CreateView, DeleteView
-from django.views.decorators.clickjacking import xframe_options_sameorigin
-from django.views.decorators.http import require_POST, require_GET
 from django.utils.decorators import method_decorator
-from django.core.urlresolvers import reverse_lazy
-from django.forms.models import model_to_dict
-from django.http import HttpResponse
-from django.db import DatabaseError
-from django.db.models import Count
+from django.views.decorators.http import require_POST, require_GET
+from django.views.generic import ListView
+from django.views.generic.base import View
+from django.views.generic.edit import CreateView, DeleteView
 
-from explorer.models import Query, QueryLog, MSG_FAILED_BLACKLIST
 from explorer import app_settings
+from explorer.exporters import get_exporter_class
 from explorer.forms import QueryForm
+from explorer.models import Query, QueryLog, MSG_FAILED_BLACKLIST
+from explorer.tasks import execute_query
 from explorer.utils import url_get_rows,\
     url_get_query_id,\
     url_get_log_id,\
     schema_info,\
     url_get_params,\
     safe_admin_login_prompt,\
-    build_download_response,\
-    build_stream_response,\
     user_can_see_query,\
     fmt_sql,\
     allowed_query_pks,\
@@ -35,12 +37,7 @@ from explorer.utils import url_get_rows,\
 try:
     from collections import Counter
 except:
-    from counter import Counter
-
-
-import re
-import json
-from functools import wraps
+    from .counter import Counter
 
 
 def view_permission(f):
@@ -90,19 +87,45 @@ class ExplorerContextMixin(object):
 
     def render_template(self, template, ctx):
         ctx.update(self.gen_ctx())
+        ctx = RequestContext(self.request, dict_=ctx)
         return render_to_response(template, ctx)
+
+
+def _export(request, query, download=True):
+    format = request.GET.get('format', 'csv')
+    exporter_class = get_exporter_class(format)
+    query.params = url_get_params(request)
+    delim = request.GET.get('delim')
+    exporter = exporter_class(query)
+    output = exporter.get_output(delim=delim)
+    response = HttpResponse(output, content_type=exporter.content_type)
+    if download:
+        response['Content-Disposition'] = 'attachment; filename="%s"' % (
+            exporter.get_filename()
+        )
+    return response
 
 
 @view_permission
 @require_GET
 def download_query(request, query_id):
-    return _csv_response(request, query_id, False, delim=request.GET.get('delim', None))
+    query = get_object_or_404(Query, pk=query_id)
+    return _export(request, query)
+
+
+@view_permission
+@require_POST
+def download_from_sql(request):
+    sql = request.POST.get('sql')
+    query = Query(sql=sql, title="Playground")
+    return _export(request, query)
 
 
 @view_permission
 @require_GET
-def view_csv_query(request, query_id):
-    return _csv_response(request, query_id, True, delim=request.GET.get('delim', None))
+def stream_query(request, query_id):
+    query = get_object_or_404(Query, pk=query_id)
+    return _export(request, query, download=False)
 
 
 @view_permission
@@ -116,20 +139,6 @@ def email_csv_query(request, query_id):
     return HttpResponse(status=403)
 
 
-def _csv_response(request, query_id, stream=False, delim=None):
-    query = get_object_or_404(Query, pk=query_id)
-    query.params = url_get_params(request)
-    return build_stream_response(query, delim) if stream else build_download_response(query, delim)
-
-
-@change_permission
-@require_POST
-def download_csv_from_sql(request):
-    sql = request.POST.get('sql')
-    return build_download_response(Query(sql=sql, title="Playground", params=url_get_params(request)))
-
-
-@xframe_options_sameorigin
 @change_permission
 @require_GET
 def schema(request):
@@ -340,7 +349,7 @@ def query_viewmodel(request, query, title=None, form=None, message=None, run_que
             'total_rows': len(res.data) if has_valid_results else None,
             'duration': res.duration if has_valid_results else None,
             'has_stats': len([h for h in res.headers if h.summary]) if has_valid_results else False,
-            'dataUrl': reverse_lazy('query_csv', kwargs={'query_id': query.id}) if query.id else '',
+            'dataUrl': reverse_lazy('stream_query', kwargs={'query_id': query.id}) if query.id else '',
             'bucket': app_settings.S3_BUCKET,
             'snapshots': query.snapshots if query.snapshot else [],
             'ql_id': ql.id if ql else None})

@@ -1,11 +1,9 @@
-#encoding=utf8
-
 from django.test import TestCase
 from explorer.actions import generate_report_action
 from explorer.tests.factories import SimpleQueryFactory
 from explorer import app_settings
 from explorer.utils import passes_blacklist, schema_info, param, swap_params, extract_params,\
-    shared_dict_update, EXPLORER_PARAM_TOKEN, write_csv, get_params_from_request
+    shared_dict_update, EXPLORER_PARAM_TOKEN, get_params_from_request, get_params_for_url
 from mock import Mock
 
 
@@ -122,11 +120,17 @@ class TestParams(TestCase):
         self.assertEqual(res['foo'], 'bar')
         self.assertEqual(res['qux'], 'mux')
 
+    def test_get_params_for_request(self):
+        q = SimpleQueryFactory(params={'a': 1, 'b': 2})
+        # For some reason the order of the params is non-deterministic, causing the following to periodically fail:
+        #     self.assertEqual(get_params_for_url(q), 'a:1|b:2')
+        # So instead we go for the following, convoluted, asserts:
+        res = get_params_for_url(q)
+        res = res.split('|')
+        expected = ['a:1', 'b:2']
+        for e in expected:
+            self.assertIn(e, res)
 
-class TestCsv(TestCase):
-
-    def test_writing_unicode(self):
-        headers = ['a', None]
-        data = [[1, None], [u"Jenét", '1']]
-        res = write_csv(headers, data).getvalue()
-        self.assertEqual(res, 'a,\r\n1,\r\nJenét,1\r\n')
+    def test_get_params_for_request_empty(self):
+        q = SimpleQueryFactory()
+        self.assertEqual(get_params_for_url(q), None)

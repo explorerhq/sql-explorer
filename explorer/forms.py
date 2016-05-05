@@ -1,7 +1,8 @@
+from django.db import DatabaseError
 from django.forms import ModelForm, Field, ValidationError, BooleanField
 from django.forms.widgets import CheckboxInput
+
 from explorer.models import Query, MSG_FAILED_BLACKLIST
-from django.db import DatabaseError
 
 _ = lambda x: x
 

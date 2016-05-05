@@ -1,0 +1,17 @@
+<div class="form-group">
+    <div class="text-center">
+        <div class="btn-group">
+            {% for key, name in exporters.items %}
+                {% if query %}
+                    {% if query.params %}
+                      <a href="{% url "download_query" query.id %}?format={{ key }}&params={{ query.params_for_url }}" class="btn btn-default">{{ name }}</a>
+                    {% else %}
+                      <a href="{% url "download_query" query.id %}?format={{ key }}" class="btn btn-default">{{ name }}</a>
+                    {% endif %}
+                {% else %}
+                    <input type="submit" value="{{ name }}" data-format="{{ key }}" class="btn btn-default download-button" />
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
