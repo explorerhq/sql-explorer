@@ -226,7 +226,10 @@ class ListQueryLogView(ExplorerContextMixin, ListView):
         return super(ListQueryLogView, self).dispatch(*args, **kwargs)
 
     def get_queryset(self):
-        return QueryLog.objects.filter(sql__isnull=False).all()
+        kwargs = {'sql__isnull': False}
+        if url_get_query_id(self.request):
+            kwargs['query_id'] = url_get_query_id(self.request)
+        return QueryLog.objects.filter(**kwargs).all()
 
     context_object_name = "recent_logs"
     model = QueryLog
