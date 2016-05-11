@@ -230,9 +230,6 @@ class ColumnStat(object):
     def __unicode__(self):
         return self.label
 
-    def foo(self):
-        return "foobar"
-
 
 class ColumnSummary(object):
 
