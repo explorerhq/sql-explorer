@@ -34,10 +34,7 @@ from explorer.utils import url_get_rows,\
     allowed_query_pks,\
     url_get_show
 
-try:
-    from collections import Counter
-except:
-    from .counter import Counter
+from collections import Counter
 
 
 def view_permission(f):
