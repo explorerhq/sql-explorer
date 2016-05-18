@@ -117,7 +117,9 @@ def download_query(request, query_id):
 @require_POST
 def download_from_sql(request):
     sql = request.POST.get('sql')
-    query = Query(sql=sql, title="Playground")
+    query = Query(sql=sql, title='')
+    ql = query.log(request.user)
+    query.title = 'Playground - %s' % ql.id
     return _export(request, query)
 
 

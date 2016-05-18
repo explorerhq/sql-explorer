@@ -323,6 +323,8 @@ class TestCSVFromSQL(TestCase):
         resp = self.client.post(reverse("download_sql"), {'sql': sql})
         self.assertIn('attachment', resp['Content-Disposition'])
         self.assertEqual('text/csv', resp['content-type'])
+        ql = QueryLog.objects.first()
+        self.assertIn('filename="Playground_-_%s.csv"' % ql.id, resp['Content-Disposition'])
 
     def test_stream_csv_from_query(self):
         q = SimpleQueryFactory()
