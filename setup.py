@@ -37,7 +37,7 @@ setup(
         'Programming Language :: Python :: 3.4',
     ],
     install_requires=[
-        'Django>=1.6.7',
+        'Django>=1.7.0',
         'sqlparse>=0.1.11',
         'unicodecsv>=0.13.0',
         'six>=1.10.0',
