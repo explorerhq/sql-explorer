@@ -1,6 +1,9 @@
 import functools
 import re
 from django.db import connections, connection
+
+from six import text_type
+
 import sqlparse
 
 from . import app_settings
@@ -73,7 +76,7 @@ def swap_params(sql, params):
     p = params.items() if params else {}
     for k, v in p:
         regex = re.compile("\$\$%s(?:\:([^\$]+))?\$\$" % str(k).lower())
-        sql = regex.sub(str(v), sql.lower())
+        sql = regex.sub(text_type(v), sql.lower())
     return sql
 
 
