@@ -28,7 +28,7 @@ from explorer.utils import url_get_rows,\
     url_get_log_id,\
     schema_info,\
     url_get_params,\
-    safe_admin_login_prompt,\
+    safe_login_prompt,\
     user_can_see_query,\
     fmt_sql,\
     allowed_query_pks,\
@@ -44,7 +44,7 @@ def view_permission(f):
                 and not user_can_see_query(request, kwargs)\
                 and not (app_settings.EXPLORER_TOKEN_AUTH_ENABLED()
                          and request.META.get('HTTP_X_API_TOKEN') == app_settings.EXPLORER_TOKEN):
-            return safe_admin_login_prompt(request)
+            return safe_login_prompt(request)
         return f(request, *args, **kwargs)
     return wrap
 
@@ -57,7 +57,7 @@ def view_permission_list(f):
     def wrap(request, *args, **kwargs):
         if not app_settings.EXPLORER_PERMISSION_VIEW(request.user)\
                 and not allowed_query_pks(request.user.id):
-            return safe_admin_login_prompt(request)
+            return safe_login_prompt(request)
         return f(request, *args, **kwargs)
     return wrap
 
@@ -66,7 +66,7 @@ def change_permission(f):
     @wraps(f)
     def wrap(request, *args, **kwargs):
         if not app_settings.EXPLORER_PERMISSION_CHANGE(request.user):
-            return safe_admin_login_prompt(request)
+            return safe_login_prompt(request)
         return f(request, *args, **kwargs)
     return wrap
 
