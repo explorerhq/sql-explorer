@@ -2,7 +2,6 @@ import json
 from functools import wraps
 import re
 import six
-import django
 
 from django.core.urlresolvers import reverse_lazy
 from django.db import DatabaseError
@@ -10,8 +9,7 @@ from django.db.models import Count
 from django.forms.models import model_to_dict
 from django.http import HttpResponse
 from django.http.response import HttpResponseRedirect
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
+from django.shortcuts import get_object_or_404, render, render_to_response
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_POST, require_GET
 from django.views.generic import ListView
@@ -84,8 +82,7 @@ class ExplorerContextMixin(object):
 
     def render_template(self, template, ctx):
         ctx.update(self.gen_ctx())
-        ctx = RequestContext(self.request, dict_=ctx)
-        return render_to_response(template, ctx)
+        return render(self.request, template, ctx)
 
 
 def _export(request, query, download=True):
@@ -287,7 +284,7 @@ class PlayQueryView(ExplorerContextMixin, View):
         return self.render_with_sql(request, query, run_query=run_query, error=error)
 
     def render(self, request):
-        return self.render_template('explorer/play.html', RequestContext(request, {'title': 'Playground'}))
+        return self.render_template('explorer/play.html', {'title': 'Playground'})
 
     def render_with_sql(self, request, query, run_query=True, error=None):
         return self.render_template('explorer/play.html', query_viewmodel(request, query, title="Playground"
@@ -336,23 +333,24 @@ def query_viewmodel(request, query, title=None, form=None, message=None, run_que
         except DatabaseError as e:
             error = str(e)
     has_valid_results = not error and res and run_query
-    ret = RequestContext(request, {
-            'tasks_enabled': app_settings.ENABLE_TASKS,
-            'params': query.available_params(),
-            'title': title,
-            'shared': query.shared,
-            'query': query,
-            'form': form,
-            'message': message,
-            'error': error,
-            'rows': rows,
-            'data': res.data[:rows] if has_valid_results else None,
-            'headers': res.headers if has_valid_results else None,
-            'total_rows': len(res.data) if has_valid_results else None,
-            'duration': res.duration if has_valid_results else None,
-            'has_stats': len([h for h in res.headers if h.summary]) if has_valid_results else False,
-            'dataUrl': reverse_lazy('stream_query', kwargs={'query_id': query.id}) if query.id else '',
-            'bucket': app_settings.S3_BUCKET,
-            'snapshots': query.snapshots if query.snapshot else [],
-            'ql_id': ql.id if ql else None})
+    ret = {
+        'tasks_enabled': app_settings.ENABLE_TASKS,
+        'params': query.available_params(),
+        'title': title,
+        'shared': query.shared,
+        'query': query,
+        'form': form,
+        'message': message,
+        'error': error,
+        'rows': rows,
+        'data': res.data[:rows] if has_valid_results else None,
+        'headers': res.headers if has_valid_results else None,
+        'total_rows': len(res.data) if has_valid_results else None,
+        'duration': res.duration if has_valid_results else None,
+        'has_stats': len([h for h in res.headers if h.summary]) if has_valid_results else False,
+        'dataUrl': reverse_lazy('stream_query', kwargs={'query_id': query.id}) if query.id else '',
+        'bucket': app_settings.S3_BUCKET,
+        'snapshots': query.snapshots if query.snapshot else [],
+        'ql_id': ql.id if ql else None
+    }
     return ret
