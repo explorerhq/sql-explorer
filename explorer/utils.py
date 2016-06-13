@@ -88,15 +88,15 @@ def extract_params(text):
 
 
 # Helpers
-from django.contrib.admin.forms import AdminAuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import login
 from django.contrib.auth import REDIRECT_FIELD_NAME
 
 
-def safe_admin_login_prompt(request):
+def safe_login_prompt(request):
     defaults = {
         'template_name': 'admin/login.html',
-        'authentication_form': AdminAuthenticationForm,
+        'authentication_form': AuthenticationForm,
         'extra_context': {
             'title': 'Log in',
             'app_path': request.get_full_path(),
