@@ -134,3 +134,49 @@ class ExcelExporter(BaseExporter):
 
         wb.close()
         return output
+
+
+class PdfExporter(BaseExporter):
+
+    name = 'PDF'
+    content_type = 'application/pdf'
+    file_extension = '.pdf'
+
+    # Thanks to https://www.binpress.com/tutorial/manipulating-pdfs-with-python/167
+    def _get_output(self, res, **kwargs):
+        from reportlab.lib import colors
+        from reportlab.lib.pagesizes import A4, landscape
+        from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
+        from reportlab.lib.styles import getSampleStyleSheet
+
+        output = BytesIO()
+
+        doc = SimpleDocTemplate(output, pagesize=A4, rightMargin=30, leftMargin=30, topMargin=30, bottomMargin=18)
+        doc.pagesize = landscape(A4)
+        elements = []
+
+
+        # TODO: Get this line right instead of just copying it from the docs
+        style = TableStyle([('ALIGN', (1, 1), (-2, -2), 'RIGHT'),
+                            ('TEXTCOLOR', (1, 1), (-2, -2), colors.red),
+                            ('VALIGN', (0, 0), (0, -1), 'TOP'),
+                            ('TEXTCOLOR', (0, 0), (0, -1), colors.blue),
+                            ('ALIGN', (0, -1), (-1, -1), 'CENTER'),
+                            ('VALIGN', (0, -1), (-1, -1), 'MIDDLE'),
+                            ('TEXTCOLOR', (0, -1), (-1, -1), colors.green),
+                            ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+                            ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+                            ])
+
+        # Configure style and word wrap
+        s = getSampleStyleSheet()
+        s = s["BodyText"]
+        s.wordWrap = 'CJK'
+        headers = [Paragraph(header, s) for header in res.header_strings]
+        out = [headers] + [[Paragraph(str(cell), s) for cell in row] for row in res.data]
+        t = Table(out)
+        t.setStyle(style)
+        elements.append(t)
+        doc.build(elements)
+        return output
+
