@@ -15,7 +15,8 @@ EXPLORER_RECENT_QUERY_COUNT = getattr(settings, 'EXPLORER_RECENT_QUERY_COUNT', 1
 EXPLORER_DATA_EXPORTERS = getattr(settings, 'EXPLORER_DATA_EXPORTERS', {
     'csv': 'explorer.exporters.CSVExporter',
     'json': 'explorer.exporters.JSONExporter',
-    'excel': 'explorer.exporters.ExcelExporter'
+    'excel': 'explorer.exporters.ExcelExporter',
+    'pdf': 'explorer.exporters.PdfExporter'
 })
 CSV_DELIMETER = getattr(settings, "EXPLORER_CSV_DELIMETER", ",")
 
