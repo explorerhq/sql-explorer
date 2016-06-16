@@ -90,9 +90,6 @@ Features
            'schedule': crontab(hour=1, minute=0),
            'kwargs': {'days': 30}
        }
-- **Stable**
-    - 95% according to coverage...for what that's worth. Just install factory_boy and run `python manage.py test`
-    - Battle-tested in production every day by the Grove Collaborative team.
 - **Power tips**
     - On the query listing page, focus gets set to a search box so you can just navigate to /explorer and start typing the name of your query to find it.
     - Quick search also works after hitting "Show Schema" on a query view.
@@ -126,9 +123,9 @@ Add the following to your urls.py (all Explorer URLs are restricted to staff onl
 
 ``url(r'^explorer/', include('explorer.urls')),``
 
-Run syncdb to create the tables:
+Run migrate to create the tables:
 
-``python manage.py syncdb``
+``python manage.py migrate``
 
 You can now browse to https://yoursite/explorer/ and get exploring! However note it is highly recommended that you also configure Explorer to use a read-only database connection via the EXPLORER_CONNECTION_NAME setting.
 
@@ -137,21 +134,36 @@ Dependencies
 
 An effort has been made to keep the number of dependencies to a minimum.
 
-*Back End*
+*Python*
 
 =========================================================== ======= ================
 Name                                                        Version License
 =========================================================== ======= ================
-`sqlparse  <https://github.com/andialbrecht/sqlparse/>`_    0.1.18  BSD
+`sqlparse <https://github.com/andialbrecht/sqlparse/>`_     0.1.18  BSD
 `Factory Boy <https://github.com/rbarrois/factory_boy>`_    2.6.0   MIT
 `unicodecsv <https://github.com/jdunck/python-unicodecsv>`_ 0.14.1  BSD
 =========================================================== ======= ================
 
-- sqlparse is Used for SQL formatting only
-- Factory Boy is only required for tests
-- unicodecsv is used for CSV generation
+- sqlparse is Used for SQL formatting
 
-*Front End*
+*Python - Optional Dependencies*
+
+=========================================================== ======= ================
+Name                                                        Version License
+=========================================================== ======= ================
+`celery <http://www.celeryproject.org/>`_                   3.1     BSD
+`django-celery <http://www.celeryproject.org/>`_            3.1     BSD
+`Factory Boy <https://github.com/rbarrois/factory_boy>`_    2.6.0   MIT
+`xlsxwriter <http://xlsxwriter.readthedocs.io/>`_           0.8.5   BSD
+`tinys3 <https://github.com/smore-inc/tinys3>`_             0.1.11  MIT
+=========================================================== ======= ================
+
+- Factory Boy is required for tests
+- celery is required for the 'email' feature, and for snapshots
+- tinys3 is required for snapshots
+- xlsxwriter is required for Excel export (csv still works fine without it)
+
+*JavaScript*
 
 ============================================================ ======== ================
 Name                                                         Version  License
@@ -159,29 +171,33 @@ Name                                                         Version  License
 `Twitter Boostrap <http://getbootstrap.com/>`_               3.3.6    MIT
 `jQuery <http://jquery.com/>`_                               2.1.4    MIT
 `jQuery Cookie <https://github.com/carhartl/jquery-cookie>`_ 1.4.1    MIT
+`jQuery UI <https://jqueryui.com>`_                          1.11.4   MIT
 `Underscore <http://underscorejs.org/>`_                     1.7.0    MIT
-`Codemirror <http://codemirror.net/>`_                       5.11.0   MIT
-`floatThead <http://mkoryak.github.io/floatThead/>`_         1.2.8    MIT
+`Codemirror <http://codemirror.net/>`_                       5.15.2   MIT
+`floatThead <http://mkoryak.github.io/floatThead/>`_         1.4.0    MIT
 `list.js <http://listjs.com>`_                               1.2.0    MIT
-`pivottable.js <http://nicolas.kruchten.com/pivottable/>`_   2.0.0    MIT
+`pivottable.js <http://nicolas.kruchten.com/pivottable/>`_   2.0.2    MIT
 ============================================================ ======== ================
+
+- All all served from CDNJS except for jQuery UI, which uses a custom build, served
+locally. pivottable.js relies on jQuery UI but for the Sortable method.
 
 Tests
 =====
 
 Factory Boy is needed if you'd like to run the tests, which can you do easily:
 
-``python manage.py test --settings=explorer.tests.settings``
+``python manage.py test``
 
 and with coverage:
 
-``coverage run --source='.' manage.py test --settings=explorer.tests.settings``
+``coverage run --source='.' manage.py test``
 
 then:
 
 ``coverage report``
 
-...95%! Huzzah!
+...99%! Huzzah!
 
 Settings
 ========
@@ -206,6 +222,7 @@ EXPLORER_S3_ACCESS_KEY        S3 Access Key for snapshot upload                 
 EXPLORER_S3_SECRET_KEY        S3 Secret Key for snapshot upload                                                                               None
 EXPLORER_S3_BUCKET            S3 Bucket for snapshot upload                                                                                   None
 EXPLORER_FROM_EMAIL           The default 'from' address when using async report email functionality                                          "django-sql-explorer@example.com"
+EXPLORER_DATA_EXPORTERS       The export buttons to use. Default includes Excel, xlsxwriter from optional-requirements.txt is needed          { 'csv': 'explorer.exporters.CSVExporter', 'json': 'explorer.exporters.JSONExporter', 'excel': 'explorer.exporters.ExcelExporter' }
 ============================= =============================================================================================================== ================================================================================================================================================
 
 Release Process

@@ -1,2 +1,2 @@
 [run]
-omit = *migrations*
+omit = *migrations*, setup.py

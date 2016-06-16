@@ -2,3 +2,4 @@ celery>=3.1.17
 tinys3==0.1.11
 django-celery>=3.1.0
 xlsxwriter==0.8.5
+factory-boy==2.6.0

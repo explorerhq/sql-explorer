@@ -67,13 +67,13 @@ ExplorerEditor.prototype.savePivotState = function(state) {
 ExplorerEditor.prototype.updateQueryString = function(key, value, url) {
     // http://stackoverflow.com/a/11654596/221390
     if (!url) url = window.location.href;
-    var re = new RegExp("([?&])" + key + "=.*?(&|#|$)(.*)", "gi");
+    var re = new RegExp("([?&])" + key + "=.*?(&|#|$)(.*)", "gi"),
+        hash = url.split('#');
 
     if (re.test(url)) {
         if (typeof value !== 'undefined' && value !== null)
             return url.replace(re, '$1' + key + "=" + value + '$2$3');
         else {
-            var hash = url.split('#');
             url = hash[0].replace(re, '$1$3').replace(/(&|\?)$/, '');
             if (typeof hash[1] !== 'undefined' && hash[1] !== null)
                 url += '#' + hash[1];
@@ -82,8 +82,7 @@ ExplorerEditor.prototype.updateQueryString = function(key, value, url) {
     }
     else {
         if (typeof value !== 'undefined' && value !== null) {
-            var separator = url.indexOf('?') !== -1 ? '&' : '?',
-                hash = url.split('#');
+            var separator = url.indexOf('?') !== -1 ? '&' : '?';
             url = hash[0] + separator + key + '=' + value;
             if (typeof hash[1] !== 'undefined' && hash[1] !== null)
                 url += '#' + hash[1];
@@ -233,11 +232,13 @@ ExplorerEditor.prototype.bind = function() {
         $("#pivot-tab-label").tab('show');
     }
 
-    this.$table.floatThead({
-        scrollContainer: function() {
-                            return this.$table.closest('.overflow-wrapper');
-                        }.bind(this)
-    });
+    setTimeout(function() {
+        this.$table.floatThead({
+            scrollContainer: function() {
+                                return this.$table.closest('.overflow-wrapper');
+                            }.bind(this)
+        })
+    }.bind(this), 1);
 
     this.$rows.change(function() { this.showRows(); }.bind(this));
     this.$rows.keyup(function(event) {
