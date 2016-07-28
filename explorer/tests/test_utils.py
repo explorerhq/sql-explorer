@@ -62,6 +62,29 @@ class TestSchemaInfo(TestCase):
         tables = [a[1] for a in res]
         self.assertNotIn('explorer_query', tables)
 
+    def test_app_inclusion_list(self):
+        app_settings.EXPLORER_SCHEMA_INCLUDE_APPS = []
+        res = schema_info()
+        app_settings.EXPLORER_SCHEMA_INCLUDE_APPS = None
+        tables = [a[1] for a in res]
+        self.assertNotIn('explorer_query', tables)
+
+    def test_app_inclusion_list_included(self):
+        app_settings.EXPLORER_SCHEMA_INCLUDE_APPS = ['explorer']
+        res = schema_info()
+        app_settings.EXPLORER_SCHEMA_INCLUDE_APPS = None
+        tables = [a[1] for a in res]
+        self.assertIn('explorer_query', tables)
+
+    def test_app_inclusion_list_excluded(self):
+        app_settings.EXPLORER_SCHEMA_INCLUDE_APPS = ['explorer', ]
+        app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS = ('explorer', )
+        res = schema_info()
+        app_settings.EXPLORER_SCHEMA_INCLUDE_APPS = None
+        app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS = ('',)
+        tables = [a[1] for a in res]
+        self.assertNotIn('explorer_query', tables)
+
 
 class TestParams(TestCase):
 

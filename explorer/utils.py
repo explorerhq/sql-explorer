@@ -44,6 +44,13 @@ def schema_info():
     ret = []
 
     for label, app in apps.app_configs.items():
+        if app_settings.EXPLORER_SCHEMA_INCLUDE_APPS is not None and \
+                app.name not in app_settings.EXPLORER_SCHEMA_INCLUDE_APPS:
+            continue
+        if app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS is not None and \
+                app.name in app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS:
+            continue
+
         if app.name not in app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS:
             for model in apps.get_app_config(label).get_models(include_auto_created=True):
                 friendly_model = "%s -> %s" % (app.name, model._meta.object_name)
