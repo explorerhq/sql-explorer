@@ -32,6 +32,10 @@ function ExplorerEditor(queryId, dataUrl) {
         document.getElementById('id_sql').classList.add('changed-input');
     });
     this.bind();
+
+    if($.cookie('schema_sidebar_open') == 1){
+        this.showSchema.call($("#show_schema_button"));
+    }
 }
 
 ExplorerEditor.prototype.getParams = function() {
@@ -106,27 +110,32 @@ ExplorerEditor.prototype.showRows = function() {
     $form.submit();
 };
 
-ExplorerEditor.prototype.bind = function() {
-    $("#show_schema_button").click(function() {
-        $("#schema_frame").attr('src', '../schema/');
-        $("#query_area").addClass("col-md-9");
-        var schema$ = $("#schema");
-        schema$.addClass("col-md-3");
-        schema$.show();
-        $(this).hide();
-        $("#hide_schema_button").show();
-        return false;
-    });
+ExplorerEditor.prototype.showSchema = function() {
+    $("#schema_frame").attr('src', '../schema/');
+    $("#query_area").removeClass("col-md-12").addClass("col-md-9");
+    var schema$ = $("#schema");
+    schema$.addClass("col-md-3");
+    schema$.show();
+    $(this).hide();
+    $("#hide_schema_button").show();
+    $.cookie('schema_sidebar_open', 1);
+    return false;
+};
 
-    $("#hide_schema_button").click(function() {
-        $("#query_area").removeClass("col-md-9");
-        var schema$ = $("#schema");
-        schema$.removeClass("col-md-3");
-        schema$.hide();
-        $(this).hide();
-        $("#show_schema_button").show();
-        return false;
-    });
+ExplorerEditor.prototype.hideSchema = function() {
+    $("#query_area").removeClass("col-md-9").addClass("col-md-12");
+    var schema$ = $("#schema");
+    schema$.removeClass("col-md-3");
+    schema$.hide();
+    $(this).hide();
+    $("#show_schema_button").show();
+    $.cookie('schema_sidebar_open', 0);
+    return false;
+};
+
+ExplorerEditor.prototype.bind = function() {
+    $("#show_schema_button").click(this.showSchema);
+    $("#hide_schema_button").click(this.hideSchema);
 
     $("#format_button").click(function(e) {
         e.preventDefault();
@@ -173,7 +182,7 @@ ExplorerEditor.prototype.bind = function() {
         }
         this.$form.attr('action', url);
     }.bind(this));
-    
+
     $(".download-query-button").click(function(e) {
         var url = '../download?format=' + $(e.target).data('format');
         var params = this.getParams();
