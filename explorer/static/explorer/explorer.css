@@ -10,10 +10,6 @@
     transition: height 0.01s ease;
 }
 
-.query-list {
-    table-layout: fixed;
-}
-
 .rows-input {
     text-align: center;
     width: 40px;
@@ -33,6 +29,7 @@
 
 .log-sql {
     word-wrap: break-word;
+    white-space: normal !important;
 }
 
 .list {
