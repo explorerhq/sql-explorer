@@ -104,3 +104,7 @@ span.sort {
 .pvtAxisContainer, .pvtVals {
     border-color: #ddd;
 }
+
+#schema_frame {
+    width: 100%;
+}
