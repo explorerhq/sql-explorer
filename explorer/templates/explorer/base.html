@@ -40,11 +40,13 @@
               </div>
             </div>
         {% endblock %}
-        <div class="container">
-          <div class="starter-template">
-          {% block sql_explorer_content %}{% endblock %}
+        {% block sql_explorer_content_wrapper %}
+          <div class="container">
+            <div class="starter-template">
+            {% block sql_explorer_content %}{% endblock %}
+            </div>
           </div>
-        </div>
+        {% endblock sql_explorer_content_wrapper %}
     </div>
     {% block sql_explorer_footer %}
         <div class="row">

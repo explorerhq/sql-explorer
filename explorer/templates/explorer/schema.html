@@ -1,7 +1,7 @@
 {% extends "explorer/base.html" %}
 
 {% block sql_explorer_navbar %}{% endblock %}
-{% block sql_explorer_content %}
+{% block sql_explorer_content_wrapper %}
 
     <h4 class="text-center">Schema</h4>
     <div id="tables">
@@ -15,19 +15,21 @@
                         <div class="panel-heading">
                             <small class="text-muted app">{{ m.0 }}</small><h4 class="name panel-title">{{ m.1 }}</h4>
                         </div>
-                        <table class="table table-condensed table-hover">
-                            <thead>
-                            </thead>
-                            <tbody>
-                                {% for c in m.2 %}
-                                <tr>
-                                    <td width="50%"><code>{{ c.0 }}</code></td>
-                                    <!-- This will show the type of the column as well -->
-                                    <td width="50%" class="text-muted"><small>{{ c.1 }}</small></td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                        <div class="table-responsive">
+                            <table class="table table-condensed table-hover">
+                                <thead>
+                                </thead>
+                                <tbody>
+                                    {% for c in m.2 %}
+                                    <tr>
+                                        <td width="50%"><code>{{ c.0 }}</code></td>
+                                        <!-- This will show the type of the column as well -->
+                                        <td width="50%" class="text-muted"><small>{{ c.1 }}</small></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </li>
             {% endfor %}
