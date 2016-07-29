@@ -8,21 +8,30 @@
         <p>
           <input class="form-control search" placeholder="Search" />
         </p>
+        <div class="row">
+            <div class="col-xs-6 text-center">
+                <a class="btn btn-link" id="collapse_all">Collapse All</a>
+            </div>
+            <div class="col-xs-6 text-center">
+                <a class="btn btn-link" id="expand_all">Expand All</a>
+            </div>
+        </div>
         <ul class="list">
             {% for m in schema %}
                 <li>
                     <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <small class="text-muted app">{{ m.0 }}</small><h4 class="name panel-title">{{ m.1 }}</h4>
+                        <div class="panel-heading schema-header">
+                            <small class="text-muted app">{{ m.0 }}</small><br/>
+                            <h4 class="name panel-title insertable" style="display: inline-block">{{ m.1 }}</h4>
                         </div>
-                        <div class="table-responsive">
+                        <div class="table-responsive schema-table">
                             <table class="table table-condensed table-hover">
                                 <thead>
                                 </thead>
                                 <tbody>
                                     {% for c in m.2 %}
                                     <tr>
-                                        <td width="50%"><code>{{ c.0 }}</code></td>
+                                        <td width="50%"><code class="insertable">{{ c.0 }}</code></td>
                                         <!-- This will show the type of the column as well -->
                                         <td width="50%" class="text-muted"><small>{{ c.1 }}</small></td>
                                     </tr>
@@ -50,6 +59,16 @@
             handlers: { 'updated': [SearchFocus] }
         };
         var tableList = new List('tables', options);
+
+        $('#collapse_all').click(function(){
+            $('.schema-table').hide();
+        });
+        $('#expand_all').click(function(){
+            $('.schema-table').show();
+        });
+        $('.schema-header').click(function(){
+            $(this).parent().find('.schema-table').toggle();
+        });
     });
 </script>
 {% endblock %}

@@ -105,3 +105,27 @@ span.sort {
 #schema_frame {
     width: 100%;
 }
+
+.schema-header {
+    cursor: pointer;
+}
+.insertable {
+    cursor: default;
+}
+
+.CodeMirror-lines .inserted {
+    animation: inserted-pulse 700ms;
+}
+
+@keyframes inserted-pulse {
+    0% {
+        background-color: #f9f2f4;
+        color: #c7254e;
+        font-weight: bold;
+    }
+    100% {
+        background-color: transparent;
+        color: inherit;
+        font-weight: normal;
+    }
+}
