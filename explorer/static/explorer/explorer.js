@@ -231,9 +231,13 @@ ExplorerEditor.prototype.bind = function() {
     if (!pivotState) {
         pivotState = {onRefresh: this.savePivotState};
     } else {
-        pivotState = JSON.parse(atob(pivotState.substr(1)));
-        pivotState['onRefresh'] = this.savePivotState;
-        navToPivot = true;
+        try {
+            pivotState = JSON.parse(atob(pivotState.substr(1)));
+            pivotState['onRefresh'] = this.savePivotState;
+            navToPivot = true;
+        } catch(e) {
+            pivotState = {onRefresh: this.savePivotState};
+        }
     }
 
     $(".pivot-table").pivotUI(this.$table, pivotState);
