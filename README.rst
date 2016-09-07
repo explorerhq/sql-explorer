@@ -207,7 +207,7 @@ Settings
 Setting                       Description                                                                                                                                                  Default
 ============================= =============================================================================================================== ================================================================================================================================================
 EXPLORER_SQL_BLACKLIST        Disallowed words in SQL queries to prevent destructive actions.                                                 ('ALTER', 'RENAME ', 'DROP', 'TRUNCATE', 'INSERT INTO', 'UPDATE', 'REPLACE', 'DELETE', 'ALTER', 'CREATE TABLE', 'SCHEMA', 'GRANT', 'OWNER TO')
-EXPLORER_SQL_WHITELIST        These phrases are allowed, even though part of the phrase appears in the blacklist.                             ('CREATED', 'DELETED','REGEXP_REPLACE')
+EXPLORER_SQL_WHITELIST        These phrases are allowed, even though part of the phrase appears in the blacklist.                             ('CREATED', 'UPDATED', 'DELETED','REGEXP_REPLACE')
 EXPLORER_DEFAULT_ROWS         The number of rows to show by default in the preview pane.                                                      1000
 EXPLORER_SCHEMA_INCLUDE_APPS  Show schemas for only these packages in the schema helper. If set to None, show all apps.                       None
 EXPLORER_SCHEMA_EXCLUDE_APPS  Don't show schema for these packages in the schema helper, even if listed in EXPLORER_SCHEMA_INCLUDE_APPS.      ('django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions', 'django.contrib.admin')
