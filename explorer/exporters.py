@@ -16,7 +16,7 @@ from six import StringIO, BytesIO
 
 
 def get_exporter_class(format):
-    class_str = getattr(app_settings, 'EXPLORER_DATA_EXPORTERS')[format]
+    class_str = dict(getattr(app_settings, 'EXPLORER_DATA_EXPORTERS'))[format]
     return import_string(class_str)
 
 

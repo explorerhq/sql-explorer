@@ -276,11 +276,11 @@ class PlayQueryView(ExplorerContextMixin, View):
 
     def post(self, request):
         sql = request.POST.get('sql')
-        show_results = request.POST.get('show', True)
+        show = url_get_show(request)
         query = Query(sql=sql, title="Playground")
         passes_blacklist, failing_words = query.passes_blacklist()
         error = MSG_FAILED_BLACKLIST % ', '.join(failing_words) if not passes_blacklist else None
-        run_query = not bool(error) if show_results else False
+        run_query = not bool(error) if show else False
         return self.render_with_sql(request, query, run_query=run_query, error=error)
 
     def render(self, request):
@@ -300,7 +300,7 @@ class QueryView(ExplorerContextMixin, View):
     def get(self, request, query_id):
         query, form = QueryView.get_instance_and_form(request, query_id)
         query.save()  # updates the modified date
-        show = url_get_show(request)  # if a query is timing out, it can be useful to nav to /query/id/?show=0
+        show = url_get_show(request)
         vm = query_viewmodel(request, query, form=form, run_query=show)
         return self.render_template('explorer/query.html', vm)
 
@@ -309,10 +309,14 @@ class QueryView(ExplorerContextMixin, View):
             return HttpResponseRedirect(
                 reverse_lazy('query_detail', kwargs={'query_id': query_id})
             )
-
+        show = url_get_show(request)
         query, form = QueryView.get_instance_and_form(request, query_id)
         success = form.is_valid() and form.save()
-        vm = query_viewmodel(request, query, form=form, message="Query saved." if success else None)
+        vm = query_viewmodel(request,
+                             query,
+                             form=form,
+                             run_query=show,
+                             message="Query saved." if success else None)
         return self.render_template('explorer/query.html', vm)
 
     @staticmethod

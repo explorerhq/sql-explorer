@@ -39,6 +39,7 @@
 
 .wrap {
     overflow: hidden; /* for schema navigator */
+    padding-bottom: 15rem; /* ensure space for drop down buttons */
 }
 
 .toggle {
@@ -128,4 +129,8 @@ span.sort {
         color: inherit;
         font-weight: normal;
     }
+}
+
+.dropdown-menu {
+    z-index: 9999;
 }

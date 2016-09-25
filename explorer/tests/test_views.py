@@ -124,6 +124,12 @@ class TestQueryDetailView(TestCase):
         self.assertTemplateUsed(resp, 'explorer/query.html')
         self.assertNotContains(resp, '6871')
 
+    def test_doesnt_render_results_if_show_is_none_on_post(self):
+        query = SimpleQueryFactory(sql='select 6870+1;')
+        resp = self.client.post(reverse("query_detail", kwargs={'query_id': query.id}) + '?show=0', {'sql': 'select 6870+2;'})
+        self.assertTemplateUsed(resp, 'explorer/query.html')
+        self.assertNotContains(resp, '6872')
+
     def test_admin_required(self):
         self.client.logout()
         query = SimpleQueryFactory()
