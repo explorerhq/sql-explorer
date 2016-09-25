@@ -282,7 +282,7 @@ class TestQueryPlayground(TestCase):
         self.assertContains(resp, '3401')
 
     def test_playground_doesnt_render_with_posted_sql_if_show_is_none(self):
-        resp = self.client.post(reverse("explorer_playground"), {'sql': 'select 1+3400;', 'show': ''})
+        resp = self.client.post(reverse("explorer_playground") + '?show=0', {'sql': 'select 1+3400;'})
         self.assertTemplateUsed(resp, 'explorer/play.html')
         self.assertNotContains(resp, '3401')
 
