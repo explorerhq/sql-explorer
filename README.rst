@@ -224,7 +224,7 @@ EXPLORER_S3_ACCESS_KEY        S3 Access Key for snapshot upload                 
 EXPLORER_S3_SECRET_KEY        S3 Secret Key for snapshot upload                                                                               None
 EXPLORER_S3_BUCKET            S3 Bucket for snapshot upload                                                                                   None
 EXPLORER_FROM_EMAIL           The default 'from' address when using async report email functionality                                          "django-sql-explorer@example.com"
-EXPLORER_DATA_EXPORTERS       The export buttons to use. Default includes Excel, xlsxwriter from optional-requirements.txt is needed          { 'csv': 'explorer.exporters.CSVExporter', 'json': 'explorer.exporters.JSONExporter', 'excel': 'explorer.exporters.ExcelExporter' }
+EXPLORER_DATA_EXPORTERS       The export buttons to use. Default includes Excel, so xlsxwriter from optional-requirements.txt is needed       [('csv', 'explorer.exporters.CSVExporter'), ('excel', 'explorer.exporters.ExcelExporter'), ('json', 'explorer.exporters.JSONExporter')]
 ============================= =============================================================================================================== ================================================================================================================================================
 
 Release Process

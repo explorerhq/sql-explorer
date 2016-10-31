@@ -1,3 +1,9 @@
+1.1.0
+=====
+
+- BREAKING CHANGE: EXPLORER_DATA_EXPORTERS setting is now a list of tuples insead of a dictionary. This only affects you if you have customized this setting. This was to preserve ordering of the export buttons in the UI.
+
+
 1.0.0
 =====
 

@@ -179,6 +179,17 @@ ExplorerEditor.prototype.bind = function() {
         this.$form.append(this.$snapshotField);
     }.bind(this));
 
+    $("#save_only").click(function() {
+        var params = this.getParams(this);
+        if(params) {
+            this.$form.attr('action', '../' + this.queryId + '/?show=0&params=' + this.serializeParams(params));
+        } else {
+            this.$form.attr('action', '../' + this.queryId + '/?show=0');
+        }
+        this.$snapshotField.hide();
+        this.$form.append(this.$snapshotField);
+    }.bind(this));
+
     $("#refresh_button").click(function(e) {
         e.preventDefault();
         var params = this.getParams();
@@ -194,8 +205,7 @@ ExplorerEditor.prototype.bind = function() {
     }.bind(this));
 
     $("#playground_button").click(function() {
-        this.$form.prepend("<input type=hidden name=show value='' />");
-        this.$form.attr('action', '../play/');
+        this.$form.attr('action', '../play/?show=0');
     }.bind(this));
 
     $("#create_button").click(function() {
