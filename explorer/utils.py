@@ -40,28 +40,42 @@ def schema_info():
 
     """
 
-    from django.apps import apps
+    schema_sql_postgres = '''
+    WITH table_names as (
+      select table_name from information_schema.tables WHERE table_schema = 'public'
+    ),
+    object_ids as (
+      SELECT c.oid, c.relname
+      FROM pg_catalog.pg_class c
+      LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+      WHERE c.relname in (select * from table_names)
+    )
 
-    ret = []
+    SELECT
+      oids.relname "Table",
+      a.attname as "Column",
+      pg_catalog.format_type(a.atttypid, a.atttypmod) as "Datatype"
+      FROM
+      pg_catalog.pg_attribute a
+        inner join object_ids oids on oids.oid = a.attrelid
+      WHERE
+        a.attnum > 0
+      AND NOT a.attisdropped;'''
 
-    for label, app in apps.app_configs.items():
-        if app_settings.EXPLORER_SCHEMA_INCLUDE_APPS is not None and \
-                app.name not in app_settings.EXPLORER_SCHEMA_INCLUDE_APPS:
-            continue
-        if app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS is not None and \
-                app.name in app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS:
-            continue
+    schema_sql_mysql = '''
+    SELECT TABLE_NAME AS "Table", COLUMN_NAME AS "Column", DATA_TYPE AS "Datatype"
+    FROM information_schema.columns WHERE table_schema = 'explorertest';'''
 
-        if app.name not in app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS:
-            for model in apps.get_app_config(label).get_models(include_auto_created=True):
-                friendly_model = "%s -> %s" % (app.name, model._meta.object_name)
-                ret.append((
-                              friendly_model,
-                              model._meta.db_table,
-                              [_format_field(f) for f in model._meta.fields]
-                          ))
+    cur = connection.cursor()
 
-    return sorted(ret, key=lambda t: t[1])
+    cur.execute(schema_sql_mysql)
+    res = cur.fetchall()
+    from collections import defaultdict
+    tables = defaultdict(list)
+    for r in res:
+        tables[r[0]].append((r[1], r[2]))
+
+    return sorted(tables.items(), key=lambda x: x[0])
 
 
 def _format_field(field):
