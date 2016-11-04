@@ -6,7 +6,7 @@ Django SQL Explorer
 
 SQL Explorer aims to make the flow of data between people fast, simple, and confusion-free.
 
-Quickly write and share SQL queries in a simple, usable SQL editor, preview the results in the browser, share links to download CSV files, and keep the information flowing!
+Quickly write and share SQL queries for any Django app in a simple, usable SQL editor, preview the results in the browser, share links to download CSV files, and keep the information flowing!
 
 Explorer values simplicity, intuitive use, unobtrusiveness, stability, and the principle of least surprise.
 
