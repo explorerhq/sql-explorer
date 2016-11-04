@@ -1,4 +1,3 @@
-import json
 from functools import wraps
 import re
 import six
@@ -20,16 +19,8 @@ from explorer.exporters import get_exporter_class
 from explorer.forms import QueryForm
 from explorer.models import Query, QueryLog, MSG_FAILED_BLACKLIST
 from explorer.tasks import execute_query
-from explorer.utils import url_get_rows,\
-    url_get_query_id,\
-    url_get_log_id,\
-    schema_info,\
-    url_get_params,\
-    safe_login_prompt,\
-    user_can_see_query,\
-    fmt_sql,\
-    allowed_query_pks,\
-    url_get_show
+from explorer.utils import (url_get_rows, url_get_query_id, url_get_log_id, schema_info, url_get_params,
+    safe_login_prompt, user_can_see_query, fmt_sql, allowed_query_pks, url_get_show, get_connections)
 
 from collections import Counter
 
@@ -343,6 +334,7 @@ def query_viewmodel(request, query, title=None, form=None, message=None, run_que
         'shared': query.shared,
         'query': query,
         'form': form,
+        'connections': get_connections(),
         'message': message,
         'error': error,
         'rows': rows,

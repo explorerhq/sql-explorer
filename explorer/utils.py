@@ -1,6 +1,7 @@
 import functools
 import re
 from django.db import connections, connection
+from django.core.cache import cache
 
 from six import text_type
 
@@ -19,7 +20,7 @@ def passes_blacklist(sql):
     return not any(fails), fails
 
 
-def get_connection():
+def get_default_connection():
     return connections[app_settings.EXPLORER_CONNECTION_NAME] if app_settings.EXPLORER_CONNECTION_NAME else connection
 
 
@@ -185,3 +186,12 @@ def get_s3_connection():
     return tinys3.Connection(app_settings.S3_ACCESS_KEY,
                              app_settings.S3_SECRET_KEY,
                              default_bucket=app_settings.S3_BUCKET)
+
+
+def get_connections():
+    key = 'explorer_db_connections_names'
+    res = cache.get(key)
+    if res is None:
+        res = [c.alias for c in connections.all()]
+        cache.set(key, res)
+    return res
