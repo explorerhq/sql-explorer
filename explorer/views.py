@@ -7,8 +7,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.db import DatabaseError
 from django.db.models import Count
 from django.forms.models import model_to_dict
-from django.http import HttpResponse
-from django.http.response import HttpResponseRedirect
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render, render_to_response
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_POST, require_GET
@@ -131,8 +130,8 @@ def email_csv_query(request, query_id):
         email = request.POST.get('email', None)
         if email:
             execute_query.delay(query_id, email)
-            return HttpResponse(content={'message': 'message was sent successfully'})
-    return HttpResponse(status=403)
+            return JsonResponse({'message': 'message was sent successfully'})
+    return JsonResponse({}, status=403)
 
 
 @change_permission
@@ -145,7 +144,7 @@ def schema(request):
 def format_sql(request):
     sql = request.POST.get('sql', '')
     formatted = fmt_sql(sql)
-    return HttpResponse(json.dumps({"formatted": formatted}), content_type="application/json")
+    return JsonResponse({"formatted": formatted})
 
 
 class ListQueryView(ExplorerContextMixin, ListView):
