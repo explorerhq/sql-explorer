@@ -30,7 +30,8 @@ from explorer.utils import url_get_rows,\
     fmt_sql,\
     allowed_query_pks,\
     url_get_show,\
-    url_get_fullscreen
+    url_get_fullscreen,\
+    get_connections
 
 from collections import Counter
 
@@ -354,6 +355,7 @@ def query_viewmodel(user, query, title=None, form=None, message=None, run_query=
         'shared': query.shared,
         'query': query,
         'form': form,
+        'connections': get_connections(),
         'message': message,
         'error': error,
         'rows': rows,

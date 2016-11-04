@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 
 from . import app_settings
-from explorer.utils import (passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection,
+from explorer.utils import (passes_blacklist, swap_params, extract_params, shared_dict_update, get_default_connection,
                             get_s3_connection, get_params_for_url)
 
 MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist: %s"
@@ -24,6 +24,8 @@ class Query(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     last_run_date = models.DateTimeField(auto_now=True)
     snapshot = models.BooleanField(default=False, help_text="Include in snapshot task (if enabled)")
+    connection = models.CharField(blank=True, null=True, max_length=128,
+                                  help_text="Name of DB connection (as specified in settings) to use for this query. Will use EXPLORER_CONNECTION_NAME if left blank")
 
     def __init__(self, *args, **kwargs):
         self.params = kwargs.get('params')
@@ -50,7 +52,7 @@ class Query(models.Model):
         return swap_params(self.sql, self.available_params())
 
     def execute_query_only(self):
-        return QueryResult(self.final_sql())
+        return QueryResult(self.final_sql(), self.connection)
 
     def execute_with_logging(self, executing_user):
         ql = self.log(executing_user)
@@ -121,9 +123,10 @@ class QueryLog(models.Model):
 
 class QueryResult(object):
 
-    def __init__(self, sql):
+    def __init__(self, sql, conn_label):
 
         self.sql = sql
+        self.connection = self._get_connection(conn_label)
 
         cursor, duration = self.execute_query()
 
@@ -152,9 +155,8 @@ class QueryResult(object):
         return [ColumnHeader(d[0]) for d in self._description] if self._description else [ColumnHeader('--')]
 
     def _get_numerics(self):
-        conn = get_connection()
-        if hasattr(conn.Database, "NUMBER"):
-            return [ix for ix, c in enumerate(self._description) if hasattr(c, 'type_code') and c.type_code in conn.Database.NUMBER.values]
+        if hasattr(self.connection.Database, "NUMBER"):
+            return [ix for ix, c in enumerate(self._description) if hasattr(c, 'type_code') and c.type_code in self.connection.Database.NUMBER.values]
         elif self.data:
             d = self.data[0]
             return [ix for ix, _ in enumerate(self._description) if not isinstance(d[ix], six.string_types) and six.text_type(d[ix]).isnumeric()]
@@ -186,9 +188,19 @@ class QueryResult(object):
                 for ix, t in transforms:
                     r[ix] = t.format(str(r[ix]))
 
+    def _get_connection(self, conn_label):
+        from django import db
+
+        if not conn_label:
+            return get_default_connection()
+
+        res = db.connections.get(conn_label)
+        if res is None:
+            raise Exception('Connection %s does not exist in settings' % res)
+        return res
+
     def execute_query(self):
-        conn = get_connection()
-        cursor = conn.cursor()
+        cursor = self.connection.cursor()
         start_time = time()
 
         try:
