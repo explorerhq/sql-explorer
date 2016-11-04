@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.db import DatabaseError
 from django.db.models import Count
 from django.forms.models import model_to_dict
-from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, render, render_to_response
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_POST, require_GET
@@ -138,8 +138,10 @@ def email_csv_query(request, query_id):
 
 @change_permission
 @require_GET
-def schema(request):
-    return render_to_response('explorer/schema.html', {'schema': schema_info()})
+def schema(request, connection):
+    if connection not in get_connections():
+        raise Http404
+    return render_to_response('explorer/schema.html', {'schema': schema_info(connection)})
 
 
 @require_POST

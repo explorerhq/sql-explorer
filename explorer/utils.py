@@ -7,6 +7,7 @@ from six import text_type
 
 import sqlparse
 
+from schema_sql import SCHEMA_SQL
 from . import app_settings
 
 EXPLORER_PARAM_TOKEN = "$$"
@@ -24,51 +25,26 @@ def get_default_connection():
     return connections[app_settings.EXPLORER_CONNECTION_NAME] if app_settings.EXPLORER_CONNECTION_NAME else connection
 
 
-def schema_info():
+def schema_info(connection):
     """
-    Construct schema information via introspection of the django models in the database.
+    PARAM: connection is an alias to the valid connection
+    Construct schema information via engine-specific queries of the tables in the DB.
 
     :return: Schema information of the following form, sorted by db_table_name.
         [
-            ("package.name -> ModelClass", "db_table_name",
+            ("db_table_name",
                 [
-                    ("db_column_name", "DjangoFieldType"),
+                    ("db_column_name", "DbFieldType"),
                     (...),
                 ]
             )
         ]
 
     """
-
-    schema_sql_postgres = '''
-    WITH table_names as (
-      select table_name from information_schema.tables WHERE table_schema = 'public'
-    ),
-    object_ids as (
-      SELECT c.oid, c.relname
-      FROM pg_catalog.pg_class c
-      LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
-      WHERE c.relname in (select * from table_names)
-    )
-
-    SELECT
-      oids.relname "Table",
-      a.attname as "Column",
-      pg_catalog.format_type(a.atttypid, a.atttypmod) as "Datatype"
-      FROM
-      pg_catalog.pg_attribute a
-        inner join object_ids oids on oids.oid = a.attrelid
-      WHERE
-        a.attnum > 0
-      AND NOT a.attisdropped;'''
-
-    schema_sql_mysql = '''
-    SELECT TABLE_NAME AS "Table", COLUMN_NAME AS "Column", DATA_TYPE AS "Datatype"
-    FROM information_schema.columns WHERE table_schema = 'explorertest';'''
-
+    connection = connections[connection]
+    sql = SCHEMA_SQL[connection.vendor]
     cur = connection.cursor()
-
-    cur.execute(schema_sql_mysql)
+    cur.execute(sql)
     res = cur.fetchall()
     from collections import defaultdict
     tables = defaultdict(list)
