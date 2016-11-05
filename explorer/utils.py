@@ -1,5 +1,6 @@
 import functools
 import re
+from collections import defaultdict
 from django.db import connections, connection
 from django.core.cache import cache
 
@@ -46,10 +47,17 @@ def schema_info(connection):
     cur = connection.cursor()
     cur.execute(sql)
     res = cur.fetchall()
-    from collections import defaultdict
     tables = defaultdict(list)
-    for r in res:
-        tables[r[0]].append((r[1], r[2]))
+
+    if connection.vendor == 'sqlite':
+        for t in res:
+            cur.execute('pragma table_info(%s);' % t)
+            schema = cur.fetchall()
+            for s in schema:
+                tables[t[0]].append((s[1], s[2]))
+    else:
+        for r in res:
+            tables[r[0]].append((r[1], r[2]))
 
     return sorted(tables.items(), key=lambda x: x[0])
 

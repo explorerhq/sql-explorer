@@ -23,6 +23,9 @@ SCHEMA_SQL = {
 
     'mysql': '''
     SELECT TABLE_NAME AS "Table", COLUMN_NAME AS "Column", DATA_TYPE AS "Datatype"
-    FROM information_schema.columns WHERE table_schema = 'explorertest';'''
+    FROM information_schema.columns WHERE table_schema = 'explorertest';''',
+
+    'sqlite': '''
+    SELECT name FROM sqlite_master where type='table';'''
 
 }
