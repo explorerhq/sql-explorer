@@ -44,7 +44,7 @@ Features
     - Built on Django's ORM, so works with Postgresql, Mysql, and Sqlite.
     - Small number of dependencies.
     - Just want to get in and write some ad-hoc queries? Go nuts with the Playground area.
-- *new* **Snapshots**
+- **Snapshots**
     - Tick the 'snapshot' box on a query, and Explorer will upload a .csv snapshot of the query results to S3. Configure the snapshot frequency via a celery cron task, e.g. for daily at 1am:
 
     .. code-block:: python
@@ -127,7 +127,9 @@ Run migrate to create the tables:
 
 ``python manage.py migrate``
 
-You can now browse to https://yoursite/explorer/ and get exploring! It is highly recommended that you also configure Explorer to use a read-only database connection via the EXPLORER_CONNECTION_NAME setting.
+You can now browse to https://yoursite/explorer/ and get exploring! It is highly recommended that you also configure Explorer to use a read-only database connection via the `EXPLORER_CONNECTION_NAME` setting.
+
+There are a handful of features (snapshots, emailing queries) that rely on Celery and the dependencies in optional-requirements.txt. If you have Celery installed, set `EXPLORER_TASKS_ENABLED=True` in your settings.py to enable these features.
 
 Dependencies
 ============
@@ -178,8 +180,9 @@ Name                                                         Version  License
 `pivottable.js <http://nicolas.kruchten.com/pivottable/>`_   2.0.2    MIT
 ============================================================ ======== ================
 
-- All all served from CDNJS except for jQuery UI, which uses a custom build, served
-locally. pivottable.js relies on jQuery UI but for the Sortable method.
+- All all served from CDNJS except for jQuery UI, which uses a custom build, served locally.
+
+pivottable.js relies on jQuery UI but only for the `Sortable` method.
 
 Tests
 =====
