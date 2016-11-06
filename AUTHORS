@@ -1,13 +1,20 @@
-The following people have contributed to django-sql-explorer
+The following people have contributed to django-sql-explorer:
 
-- Chris Clark
-- Anton Shutik
-- Jens Nistler
-- Artyom Chernyakov
-- Josh Miller
-- Pietro Pilolli
-- Rodney Hawkins
 - Lee Brooks
+- Artyom Chernyakov
+- Chris Clark
+- Rodney Hawkins
+- Dane Hillard
+- Wojtek Jurkowlaniec
+- Lee Kagiso
+- Phil Krylov
 - Grant McConnaughey
-- Stanislav Tarazevich
+- Josh Miller
+- Jens Nistler
+- Pietro Pilolli
+- David Sanders
+- Anton Shutik
 - Nick Spacek
+- Stanislav Tarazevich
+- Ming Hsien Tseng
+- Jared Proffitt

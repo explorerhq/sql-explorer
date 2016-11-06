@@ -6,3 +6,6 @@ reportlab==3.3.0
 django-xhtml2pdf==0.0.3
 xhtml2pdf==0.0.6
 html5lib==1.0b8
+factory-boy==2.6.0
+mock==1.0.1
+

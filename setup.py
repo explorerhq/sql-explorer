@@ -12,15 +12,15 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
-    name = "django-sql-explorer",
-    version = __version__,
-    author = "Chris Clark",
-    author_email = "chris@untrod.com",
-    description = ("A pluggable app that allows users (admins) to execute SQL,"
-                   " view, and export the results. Inspired by Stack Exchange Data Explorer."),
-    license = "MIT",
-    keywords = "django sql explorer reports reporting csv database query",
-    url = "https://github.com/epantry/django-sql-explorer",
+    name="django-sql-explorer",
+    version=__version__,
+    author="Chris Clark",
+    author_email="chris@untrod.com",
+    description=("A pluggable app that allows users (admins) to execute SQL,"
+                 " view, and export the results. Inspired by Stack Exchange Data Explorer."),
+    license="MIT",
+    keywords="django sql explorer reports reporting csv database query",
+    url="https://github.com/epantry/django-sql-explorer",
     packages=['explorer'],
     long_description=read('README.rst'),
     classifiers=[
@@ -38,10 +38,10 @@ setup(
     ],
     install_requires=[
         'Django>=1.7.0',
-        'sqlparse>=0.1.11',
-        'unicodecsv>=0.13.0',
+        'sqlparse>=0.1.18',
+        'unicodecsv>=0.14.1',
         'six>=1.10.0',
     ],
     include_package_data=True,
-    zip_safe = False,
+    zip_safe=False,
 )

@@ -1,3 +1,33 @@
+1.1.0
+=====
+
+- BREAKING CHANGE: EXPLORER_DATA_EXPORTERS setting is now a list of tuples insead of a dictionary. This only affects you if you have customized this setting. This was to preserve ordering of the export buttons in the UI.
+
+
+1.0.0
+=====
+
+6/16/16
+
+- BREAKING CHANGE: Dropped support for Python 2.6. See .travis.yml for test matrix.
+
+- BREAKING CHANGE: The 'export' methods have all changed. Those these weren't originally designed to be external APIs, folks have written consuming code that directly called export code.
+  If you had code that looked like:
+
+      > explorer.utils.csv_report(query)
+
+  You will now need to do something like:
+
+      > explorer.exporters.get_exporter_class('csv')(query).get_file_output()
+
+- There is a new export system! v1 is shipping with support for CSV, JSON, and Excel (xlsx). The availablility of these can be configured via the EXPLORER_DATA_EXPORTERS setting.
+    - Note that for Excel export to work, you will need to install xlsxwriter from optional-requirements.txt.
+- Introduced Query History link. Find it towards the top right of a saved query.
+- Front end performance improvements and library upgrades.
+- Allow non-admins with permission to log into explorer.
+- Added a proper test_project for an easier entry-point for contributors, or folks who want to kick the tires.
+- Loads of little bugfixes.
+
 0.9.1, 0.9.2
 =====
 

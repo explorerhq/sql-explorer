@@ -32,6 +32,10 @@ function ExplorerEditor(queryId, dataUrl) {
         document.getElementById('id_sql').classList.add('changed-input');
     });
     this.bind();
+
+    if($.cookie('schema_sidebar_open') == 1){
+        this.showSchema.call($("#show_schema_button"));
+    }
 }
 
 ExplorerEditor.prototype.getParams = function() {
@@ -67,13 +71,13 @@ ExplorerEditor.prototype.savePivotState = function(state) {
 ExplorerEditor.prototype.updateQueryString = function(key, value, url) {
     // http://stackoverflow.com/a/11654596/221390
     if (!url) url = window.location.href;
-    var re = new RegExp("([?&])" + key + "=.*?(&|#|$)(.*)", "gi");
+    var re = new RegExp("([?&])" + key + "=.*?(&|#|$)(.*)", "gi"),
+        hash = url.split('#');
 
     if (re.test(url)) {
         if (typeof value !== 'undefined' && value !== null)
             return url.replace(re, '$1' + key + "=" + value + '$2$3');
         else {
-            var hash = url.split('#');
             url = hash[0].replace(re, '$1$3').replace(/(&|\?)$/, '');
             if (typeof hash[1] !== 'undefined' && hash[1] !== null)
                 url += '#' + hash[1];
@@ -82,8 +86,7 @@ ExplorerEditor.prototype.updateQueryString = function(key, value, url) {
     }
     else {
         if (typeof value !== 'undefined' && value !== null) {
-            var separator = url.indexOf('?') !== -1 ? '&' : '?',
-                hash = url.split('#');
+            var separator = url.indexOf('?') !== -1 ? '&' : '?';
             url = hash[0] + separator + key + '=' + value;
             if (typeof hash[1] !== 'undefined' && hash[1] !== null)
                 url += '#' + hash[1];
@@ -107,26 +110,59 @@ ExplorerEditor.prototype.showRows = function() {
     $form.submit();
 };
 
-ExplorerEditor.prototype.bind = function() {
-    $("#show_schema_button").click(function() {
-        $("#schema_frame").attr('src', '../schema/');
-        $("#query_area").addClass("col-md-9");
-        var schema$ = $("#schema");
-        schema$.addClass("col-md-3");
-        schema$.show();
-        $(this).hide();
-        $("#hide_schema_button").show();
-        return false;
-    });
+ExplorerEditor.prototype.showSchema = function() {
+    $("#schema_frame").attr('src', '../schema/');
+    $("#query_area").removeClass("col-md-12").addClass("col-md-9");
+    var schema$ = $("#schema");
+    schema$.addClass("col-md-3");
+    schema$.show();
+    $(this).hide();
+    $("#hide_schema_button").show();
+    $.cookie('schema_sidebar_open', 1);
+    return false;
+};
 
-    $("#hide_schema_button").click(function() {
-        $("#query_area").removeClass("col-md-9");
-        var schema$ = $("#schema");
-        schema$.removeClass("col-md-3");
-        schema$.hide();
-        $(this).hide();
-        $("#show_schema_button").show();
-        return false;
+ExplorerEditor.prototype.hideSchema = function() {
+    $("#query_area").removeClass("col-md-9").addClass("col-md-12");
+    var schema$ = $("#schema");
+    schema$.removeClass("col-md-3");
+    schema$.hide();
+    $(this).hide();
+    $("#show_schema_button").show();
+    $.cookie('schema_sidebar_open', 0);
+    return false;
+};
+
+ExplorerEditor.prototype.bind = function() {
+    $("#show_schema_button").click(this.showSchema);
+    $("#hide_schema_button").click(this.hideSchema);
+
+    var editor = this.editor;
+    $("#schema_frame").on('load', function(){
+        var insertables = $(this).contents().find('.insertable');
+        insertables.dblclick(function(e){
+            var text = $(this).html();
+            editor.replaceSelection(text);
+            var cursor = editor.getCursor();
+            var marker = editor.markText(
+                CodeMirror.Pos(cursor.line, cursor.ch - text.length),
+                cursor,
+                {'className': 'inserted'}
+            );
+            setTimeout(function(){
+                marker.clear();
+            }, 350);
+            editor.focus();
+            e.preventDefault();
+            return false;
+        });
+
+        insertables.click(function(e){
+            e.preventDefault();
+            return false;
+        });
+        insertables.tooltip({title:'Double click to insert'});
+        insertables.disableSelection();
     });
 
     $("#format_button").click(function(e) {
@@ -138,6 +174,17 @@ ExplorerEditor.prototype.bind = function() {
         var params = this.getParams(this);
         if(params) {
             this.$form.attr('action', '../' + this.queryId + '/?params=' + this.serializeParams(params));
+        }
+        this.$snapshotField.hide();
+        this.$form.append(this.$snapshotField);
+    }.bind(this));
+
+    $("#save_only").click(function() {
+        var params = this.getParams(this);
+        if(params) {
+            this.$form.attr('action', '../' + this.queryId + '/?show=0&params=' + this.serializeParams(params));
+        } else {
+            this.$form.attr('action', '../' + this.queryId + '/?show=0');
         }
         this.$snapshotField.hide();
         this.$form.append(this.$snapshotField);
@@ -158,8 +205,7 @@ ExplorerEditor.prototype.bind = function() {
     }.bind(this));
 
     $("#playground_button").click(function() {
-        this.$form.prepend("<input type=hidden name=show value='' />");
-        this.$form.attr('action', '../play/');
+        this.$form.attr('action', '../play/?show=0');
     }.bind(this));
 
     $("#create_button").click(function() {
@@ -174,7 +220,7 @@ ExplorerEditor.prototype.bind = function() {
         }
         this.$form.attr('action', url);
     }.bind(this));
-    
+
     $(".download-query-button").click(function(e) {
         var url = '../download?format=' + $(e.target).data('format');
         var params = this.getParams();
@@ -223,9 +269,13 @@ ExplorerEditor.prototype.bind = function() {
     if (!pivotState) {
         pivotState = {onRefresh: this.savePivotState};
     } else {
-        pivotState = JSON.parse(atob(pivotState.substr(1)));
-        pivotState['onRefresh'] = this.savePivotState;
-        navToPivot = true;
+        try {
+            pivotState = JSON.parse(atob(pivotState.substr(1)));
+            pivotState['onRefresh'] = this.savePivotState;
+            navToPivot = true;
+        } catch(e) {
+            pivotState = {onRefresh: this.savePivotState};
+        }
     }
 
     $(".pivot-table").pivotUI(this.$table, pivotState);
@@ -233,11 +283,13 @@ ExplorerEditor.prototype.bind = function() {
         $("#pivot-tab-label").tab('show');
     }
 
-    this.$table.floatThead({
-        scrollContainer: function() {
-                            return this.$table.closest('.overflow-wrapper');
-                        }.bind(this)
-    });
+    setTimeout(function() {
+        this.$table.floatThead({
+            scrollContainer: function() {
+                                return this.$table.closest('.overflow-wrapper');
+                            }.bind(this)
+        })
+    }.bind(this), 1);
 
     this.$rows.change(function() { this.showRows(); }.bind(this));
     this.$rows.keyup(function(event) {

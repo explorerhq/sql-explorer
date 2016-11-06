@@ -44,22 +44,21 @@ def schema_info():
     ret = []
 
     for label, app in apps.app_configs.items():
+        if app_settings.EXPLORER_SCHEMA_INCLUDE_APPS is not None and \
+                app.name not in app_settings.EXPLORER_SCHEMA_INCLUDE_APPS:
+            continue
+        if app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS is not None and \
+                app.name in app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS:
+            continue
+
         if app.name not in app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS:
-            for model_name, model in apps.get_app_config(label).models.items():
+            for model in apps.get_app_config(label).get_models(include_auto_created=True):
                 friendly_model = "%s -> %s" % (app.name, model._meta.object_name)
                 ret.append((
                               friendly_model,
                               model._meta.db_table,
                               [_format_field(f) for f in model._meta.fields]
                           ))
-
-                # Do the same thing for many_to_many fields. These don't show up in the field list of the model
-                # because they are stored as separate "through" relations and have their own tables
-                ret += [(
-                           friendly_model,
-                           m2m.rel.through._meta.db_table,
-                           [_format_field(f) for f in m2m.rel.through._meta.fields]
-                        ) for m2m in model._meta.many_to_many]
 
     return sorted(ret, key=lambda t: t[1])
 
@@ -88,15 +87,15 @@ def extract_params(text):
 
 
 # Helpers
-from django.contrib.admin.forms import AdminAuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import login
 from django.contrib.auth import REDIRECT_FIELD_NAME
 
 
-def safe_admin_login_prompt(request):
+def safe_login_prompt(request):
     defaults = {
         'template_name': 'admin/login.html',
-        'authentication_form': AdminAuthenticationForm,
+        'authentication_form': AuthenticationForm,
         'extra_context': {
             'title': 'Log in',
             'app_path': request.get_full_path(),

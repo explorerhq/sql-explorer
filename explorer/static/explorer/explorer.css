@@ -10,10 +10,6 @@
     transition: height 0.01s ease;
 }
 
-.query-list {
-    table-layout: fixed;
-}
-
 .rows-input {
     text-align: center;
     width: 40px;
@@ -33,6 +29,7 @@
 
 .log-sql {
     word-wrap: break-word;
+    white-space: normal !important;
 }
 
 .list {
@@ -42,6 +39,7 @@
 
 .wrap {
     overflow: hidden; /* for schema navigator */
+    padding-bottom: 15rem; /* ensure space for drop down buttons */
 }
 
 .toggle {
@@ -103,4 +101,54 @@ span.sort {
 
 .pvtAxisContainer, .pvtVals {
     border-color: #ddd;
+}
+
+#schema_frame {
+    width: 100%;
+}
+
+.schema-header {
+    cursor: pointer;
+}
+.insertable {
+    cursor: default;
+}
+
+.CodeMirror-lines .inserted {
+    animation: inserted-pulse 700ms;
+}
+
+@keyframes inserted-pulse {
+    0% {
+        background-color: #f9f2f4;
+        color: #c7254e;
+        font-weight: bold;
+    }
+    100% {
+        background-color: transparent;
+        color: inherit;
+        font-weight: normal;
+    }
+}
+
+.dropdown-menu {
+    z-index: 9999;
+}
+
+.dropdown-menu>li>input {
+    display: block;
+    padding: 3px 20px;
+    clear: both;
+    font-weight: 400;
+    line-height: 1.42857143;
+    color: #333;
+    white-space: nowrap;
+    width: 100%;
+    text-align: left;
+}
+
+.dropdown-menu>li>input:hover {
+    color: #262626;
+    text-decoration: none;
+    background-color: #f5f5f5;
 }

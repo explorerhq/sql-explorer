@@ -5,19 +5,20 @@ EXPLORER_CONNECTION_NAME = getattr(settings, 'EXPLORER_CONNECTION_NAME', None)
 
 # Change the behavior of explorer
 EXPLORER_SQL_BLACKLIST = getattr(settings, 'EXPLORER_SQL_BLACKLIST', ('ALTER', 'RENAME ', 'DROP', 'TRUNCATE', 'INSERT INTO', 'UPDATE', 'REPLACE', 'DELETE', 'CREATE TABLE', 'SCHEMA', 'GRANT', 'OWNER TO'))
-EXPLORER_SQL_WHITELIST = getattr(settings, 'EXPLORER_SQL_WHITELIST', ('CREATED', 'DELETED', 'REGEXP_REPLACE'))
+EXPLORER_SQL_WHITELIST = getattr(settings, 'EXPLORER_SQL_WHITELIST', ('CREATED', 'UPDATED', 'DELETED', 'REGEXP_REPLACE'))
 EXPLORER_DEFAULT_ROWS = getattr(settings, 'EXPLORER_DEFAULT_ROWS', 1000)
 EXPLORER_SCHEMA_EXCLUDE_APPS = getattr(settings, 'EXPLORER_SCHEMA_EXCLUDE_APPS', ('django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions', 'django.contrib.admin'))
+EXPLORER_SCHEMA_INCLUDE_APPS = getattr(settings, 'EXPLORER_SCHEMA_INCLUDE_APPS', None)
 EXPLORER_TRANSFORMS = getattr(settings, 'EXPLORER_TRANSFORMS', [])
 EXPLORER_PERMISSION_VIEW = getattr(settings, 'EXPLORER_PERMISSION_VIEW', lambda u: u.is_staff)
 EXPLORER_PERMISSION_CHANGE = getattr(settings, 'EXPLORER_PERMISSION_CHANGE', lambda u: u.is_staff)
 EXPLORER_RECENT_QUERY_COUNT = getattr(settings, 'EXPLORER_RECENT_QUERY_COUNT', 10)
-EXPLORER_DATA_EXPORTERS = getattr(settings, 'EXPLORER_DATA_EXPORTERS', {
-    'csv': 'explorer.exporters.CSVExporter',
-    'json': 'explorer.exporters.JSONExporter',
-    'excel': 'explorer.exporters.ExcelExporter',
-    'pdf': 'explorer.exporters.PdfExporter'
-})
+EXPLORER_DATA_EXPORTERS = getattr(settings, 'EXPLORER_DATA_EXPORTERS', [
+    ('csv', 'explorer.exporters.CSVExporter'),
+    ('excel', 'explorer.exporters.ExcelExporter'),
+    ('json', 'explorer.exporters.JSONExporter'),
+    ('pdf', 'explorer.exporters.PdfExporter'),
+])
 CSV_DELIMETER = getattr(settings, "EXPLORER_CSV_DELIMETER", ",")
 
 # API access

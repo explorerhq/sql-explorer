@@ -6,7 +6,6 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.forms.models import model_to_dict
-from django.test.utils import override_settings
 
 from explorer.tests.factories import SimpleQueryFactory, QueryLogFactory
 from explorer.models import Query, QueryLog, MSG_FAILED_BLACKLIST
@@ -124,6 +123,12 @@ class TestQueryDetailView(TestCase):
         resp = self.client.get(reverse("query_detail", kwargs={'query_id': query.id}) + '?show=0')
         self.assertTemplateUsed(resp, 'explorer/query.html')
         self.assertNotContains(resp, '6871')
+
+    def test_doesnt_render_results_if_show_is_none_on_post(self):
+        query = SimpleQueryFactory(sql='select 6870+1;')
+        resp = self.client.post(reverse("query_detail", kwargs={'query_id': query.id}) + '?show=0', {'sql': 'select 6870+2;'})
+        self.assertTemplateUsed(resp, 'explorer/query.html')
+        self.assertNotContains(resp, '6872')
 
     def test_admin_required(self):
         self.client.logout()
@@ -277,7 +282,7 @@ class TestQueryPlayground(TestCase):
         self.assertContains(resp, '3401')
 
     def test_playground_doesnt_render_with_posted_sql_if_show_is_none(self):
-        resp = self.client.post(reverse("explorer_playground"), {'sql': 'select 1+3400;', 'show': ''})
+        resp = self.client.post(reverse("explorer_playground") + '?show=0', {'sql': 'select 1+3400;'})
         self.assertTemplateUsed(resp, 'explorer/play.html')
         self.assertNotContains(resp, '3401')
 
@@ -499,3 +504,17 @@ class TestQueryLog(TestCase):
 
         q = SimpleQueryFactory()
         self.assertFalse(QueryLog(sql='foo', query_id=q.id).is_playground)
+
+
+class TestEmailQuery(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_superuser('admin', 'admin@admin.com', 'pwd')
+        self.client.login(username='admin', password='pwd')
+
+    @patch('explorer.views.execute_query')
+    def test_email_calls_task(self, mocked_execute):
+        query = SimpleQueryFactory()
+        url = reverse("email_csv_query", kwargs={'query_id': query.id})
+        self.client.post(url, data={'email': 'foo@bar.com'}, **{'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'})
+        self.assertEqual(mocked_execute.delay.call_count, 1)

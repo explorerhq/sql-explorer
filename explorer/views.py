@@ -2,16 +2,13 @@ import json
 from functools import wraps
 import re
 import six
-import django
 
 from django.core.urlresolvers import reverse_lazy
 from django.db import DatabaseError
 from django.db.models import Count
 from django.forms.models import model_to_dict
-from django.http import HttpResponse
-from django.http.response import HttpResponseRedirect
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render, render_to_response
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_POST, require_GET
 from django.views.generic import ListView
@@ -28,7 +25,7 @@ from explorer.utils import url_get_rows,\
     url_get_log_id,\
     schema_info,\
     url_get_params,\
-    safe_admin_login_prompt,\
+    safe_login_prompt,\
     user_can_see_query,\
     fmt_sql,\
     allowed_query_pks,\
@@ -44,7 +41,7 @@ def view_permission(f):
                 and not user_can_see_query(request, kwargs)\
                 and not (app_settings.EXPLORER_TOKEN_AUTH_ENABLED()
                          and request.META.get('HTTP_X_API_TOKEN') == app_settings.EXPLORER_TOKEN):
-            return safe_admin_login_prompt(request)
+            return safe_login_prompt(request)
         return f(request, *args, **kwargs)
     return wrap
 
@@ -57,7 +54,7 @@ def view_permission_list(f):
     def wrap(request, *args, **kwargs):
         if not app_settings.EXPLORER_PERMISSION_VIEW(request.user)\
                 and not allowed_query_pks(request.user.id):
-            return safe_admin_login_prompt(request)
+            return safe_login_prompt(request)
         return f(request, *args, **kwargs)
     return wrap
 
@@ -66,7 +63,7 @@ def change_permission(f):
     @wraps(f)
     def wrap(request, *args, **kwargs):
         if not app_settings.EXPLORER_PERMISSION_CHANGE(request.user):
-            return safe_admin_login_prompt(request)
+            return safe_login_prompt(request)
         return f(request, *args, **kwargs)
     return wrap
 
@@ -84,8 +81,7 @@ class ExplorerContextMixin(object):
 
     def render_template(self, template, ctx):
         ctx.update(self.gen_ctx())
-        ctx = RequestContext(self.request, dict_=ctx)
-        return render_to_response(template, ctx)
+        return render(self.request, template, ctx)
 
 
 def _export(request, query, download=True):
@@ -134,8 +130,8 @@ def email_csv_query(request, query_id):
         email = request.POST.get('email', None)
         if email:
             execute_query.delay(query_id, email)
-            return HttpResponse(content={'message': 'message was sent successfully'})
-    return HttpResponse(status=403)
+            return JsonResponse({'message': 'message was sent successfully'})
+    return JsonResponse({}, status=403)
 
 
 @change_permission
@@ -148,7 +144,7 @@ def schema(request):
 def format_sql(request):
     sql = request.POST.get('sql', '')
     formatted = fmt_sql(sql)
-    return HttpResponse(json.dumps({"formatted": formatted}), content_type="application/json")
+    return JsonResponse({"formatted": formatted})
 
 
 class ListQueryView(ExplorerContextMixin, ListView):
@@ -279,15 +275,15 @@ class PlayQueryView(ExplorerContextMixin, View):
 
     def post(self, request):
         sql = request.POST.get('sql')
-        show_results = request.POST.get('show', True)
+        show = url_get_show(request)
         query = Query(sql=sql, title="Playground")
         passes_blacklist, failing_words = query.passes_blacklist()
         error = MSG_FAILED_BLACKLIST % ', '.join(failing_words) if not passes_blacklist else None
-        run_query = not bool(error) if show_results else False
+        run_query = not bool(error) if show else False
         return self.render_with_sql(request, query, run_query=run_query, error=error)
 
     def render(self, request):
-        return self.render_template('explorer/play.html', RequestContext(request, {'title': 'Playground'}))
+        return self.render_template('explorer/play.html', {'title': 'Playground'})
 
     def render_with_sql(self, request, query, run_query=True, error=None):
         return self.render_template('explorer/play.html', query_viewmodel(request, query, title="Playground"
@@ -303,7 +299,7 @@ class QueryView(ExplorerContextMixin, View):
     def get(self, request, query_id):
         query, form = QueryView.get_instance_and_form(request, query_id)
         query.save()  # updates the modified date
-        show = url_get_show(request)  # if a query is timing out, it can be useful to nav to /query/id/?show=0
+        show = url_get_show(request)
         vm = query_viewmodel(request, query, form=form, run_query=show)
         return self.render_template('explorer/query.html', vm)
 
@@ -312,10 +308,14 @@ class QueryView(ExplorerContextMixin, View):
             return HttpResponseRedirect(
                 reverse_lazy('query_detail', kwargs={'query_id': query_id})
             )
-
+        show = url_get_show(request)
         query, form = QueryView.get_instance_and_form(request, query_id)
         success = form.is_valid() and form.save()
-        vm = query_viewmodel(request, query, form=form, message="Query saved." if success else None)
+        vm = query_viewmodel(request,
+                             query,
+                             form=form,
+                             run_query=show,
+                             message="Query saved." if success else None)
         return self.render_template('explorer/query.html', vm)
 
     @staticmethod
@@ -336,23 +336,24 @@ def query_viewmodel(request, query, title=None, form=None, message=None, run_que
         except DatabaseError as e:
             error = str(e)
     has_valid_results = not error and res and run_query
-    ret = RequestContext(request, {
-            'tasks_enabled': app_settings.ENABLE_TASKS,
-            'params': query.available_params(),
-            'title': title,
-            'shared': query.shared,
-            'query': query,
-            'form': form,
-            'message': message,
-            'error': error,
-            'rows': rows,
-            'data': res.data[:rows] if has_valid_results else None,
-            'headers': res.headers if has_valid_results else None,
-            'total_rows': len(res.data) if has_valid_results else None,
-            'duration': res.duration if has_valid_results else None,
-            'has_stats': len([h for h in res.headers if h.summary]) if has_valid_results else False,
-            'dataUrl': reverse_lazy('stream_query', kwargs={'query_id': query.id}) if query.id else '',
-            'bucket': app_settings.S3_BUCKET,
-            'snapshots': query.snapshots if query.snapshot else [],
-            'ql_id': ql.id if ql else None})
+    ret = {
+        'tasks_enabled': app_settings.ENABLE_TASKS,
+        'params': query.available_params(),
+        'title': title,
+        'shared': query.shared,
+        'query': query,
+        'form': form,
+        'message': message,
+        'error': error,
+        'rows': rows,
+        'data': res.data[:rows] if has_valid_results else None,
+        'headers': res.headers if has_valid_results else None,
+        'total_rows': len(res.data) if has_valid_results else None,
+        'duration': res.duration if has_valid_results else None,
+        'has_stats': len([h for h in res.headers if h.summary]) if has_valid_results else False,
+        'dataUrl': reverse_lazy('stream_query', kwargs={'query_id': query.id}) if query.id else '',
+        'bucket': app_settings.S3_BUCKET,
+        'snapshots': query.snapshots if query.snapshot else [],
+        'ql_id': ql.id if ql else None
+    }
     return ret
