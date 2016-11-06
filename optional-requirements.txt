@@ -1,4 +1,4 @@
-celery>=3.1.17
+celery>=3.1,<4.0
 tinys3==0.1.11
 django-celery>=3.1.0
 xlsxwriter==0.8.5
