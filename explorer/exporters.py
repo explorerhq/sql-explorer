@@ -145,12 +145,6 @@ class PdfExporter(BaseExporter):
     def _get_output(self, res, **kwargs):
         from django_xhtml2pdf.utils import generate_pdf
         output = BytesIO()
-        print res
-        print dir(res)
-        print res.column
-        print res.data
-        print res.duration
-        print res.sql
         
         ctx = {
             'headers': res.header_strings,
