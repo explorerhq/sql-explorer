@@ -18,6 +18,11 @@ EXPLORER_DATA_EXPORTERS = getattr(settings, 'EXPLORER_DATA_EXPORTERS', [
     ('excel', 'explorer.exporters.ExcelExporter'),
     ('json', 'explorer.exporters.JSONExporter'),
 ])
+EXPLORER_SCHEMA_BUILDERS = getattr(settings, 'EXPLORER_SCHEMA_BUILDERS', [
+    ('sqlite', 'explorer.schema.SQLiteSchema'),
+    ('postgresql', 'explorer.schema.PostgreSQLSchema'),
+    ('mysql', 'explorer.schema.MySQLSchema')
+])
 CSV_DELIMETER = getattr(settings, "EXPLORER_CSV_DELIMETER", ",")
 
 # API access

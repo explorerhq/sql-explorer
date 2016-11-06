@@ -209,25 +209,26 @@ Settings
 ============================= =============================================================================================================== ================================================================================================================================================
 Setting                       Description                                                                                                                                                  Default
 ============================= =============================================================================================================== ================================================================================================================================================
+EXPLORER_CONNECTION_NAME      The name of the Django database connection to use. Ideally set this to a connection with read only permissions  None  # Which means use the 'default' connection
+EXPLORER_DATA_EXPORTERS       The export buttons to use. Default includes Excel, so xlsxwriter from optional-requirements.txt is needed       [('csv', 'explorer.exporters.CSVExporter'), ('excel', 'explorer.exporters.ExcelExporter'), ('json', 'explorer.exporters.JSONExporter')]
+EXPLORER_DEFAULT_ROWS         The number of rows to show by default in the preview pane.                                                      1000
+EXPLORER_FROM_EMAIL           The default 'from' address when using async report email functionality                                          "django-sql-explorer@example.com"
+EXPLORER_GET_USER_QUERY_VIEWS A dict granting view permissions on specific queries of the form {userId:[queryId, ...], ...}                   {}
+EXPLORER_PERMISSION_CHANGE    Callback to check if the user is allowed to add/change/delete queries                                           lambda u: u.is_staff
+EXPLORER_PERMISSION_VIEW      Callback to check if the user is allowed to view and execute stored queries                                     lambda u: u.is_staff
+EXPLORER_RECENT_QUERY_COUNT   The number of recent queries to show at the top of the query listing.                                           10
+EXPLORER_S3_ACCESS_KEY        S3 Access Key for snapshot upload                                                                               None
+EXPLORER_S3_BUCKET            S3 Bucket for snapshot upload                                                                                   None
+EXPLORER_S3_SECRET_KEY        S3 Secret Key for snapshot upload                                                                               None
+EXPLORER_SCHEMA_BUILDERS      Registered schema builders (for different DB backends). Ships w/ Postgres, MySQL, & SQLite support              ('sqlite', 'explorer.schema.SQLiteSchema'), ('postgresql', 'explorer.schema.PostgreSQLSchema'), ('mysql', 'explorer.schema.MySQLSchema')
+EXPLORER_SCHEMA_EXCLUDE_APPS  Don't show schema for these packages in the schema helper, even if listed in EXPLORER_SCHEMA_INCLUDE_APPS.      ('django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions', 'django.contrib.admin')
+EXPLORER_SCHEMA_INCLUDE_APPS  Show schemas for only these packages in the schema helper. If set to None, show all apps.                       None
 EXPLORER_SQL_BLACKLIST        Disallowed words in SQL queries to prevent destructive actions.                                                 ('ALTER', 'RENAME ', 'DROP', 'TRUNCATE', 'INSERT INTO', 'UPDATE', 'REPLACE', 'DELETE', 'ALTER', 'CREATE TABLE', 'SCHEMA', 'GRANT', 'OWNER TO')
 EXPLORER_SQL_WHITELIST        These phrases are allowed, even though part of the phrase appears in the blacklist.                             ('CREATED', 'UPDATED', 'DELETED','REGEXP_REPLACE')
-EXPLORER_DEFAULT_ROWS         The number of rows to show by default in the preview pane.                                                      1000
-EXPLORER_SCHEMA_INCLUDE_APPS  Show schemas for only these packages in the schema helper. If set to None, show all apps.                       None
-EXPLORER_SCHEMA_EXCLUDE_APPS  Don't show schema for these packages in the schema helper, even if listed in EXPLORER_SCHEMA_INCLUDE_APPS.      ('django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions', 'django.contrib.admin')
-EXPLORER_CONNECTION_NAME      The name of the Django database connection to use. Ideally set this to a connection with read only permissions  None  # Which means use the 'default' connection
-EXPLORER_PERMISSION_VIEW      Callback to check if the user is allowed to view and execute stored queries                                     lambda u: u.is_staff
-EXPLORER_PERMISSION_CHANGE    Callback to check if the user is allowed to add/change/delete queries                                           lambda u: u.is_staff
-EXPLORER_TRANSFORMS           List of tuples like [('alias', 'Template for {0}')]. See features section of this doc for more info.            []
-EXPLORER_RECENT_QUERY_COUNT   The number of recent queries to show at the top of the query listing.                                           10
-EXPLORER_GET_USER_QUERY_VIEWS A dict granting view permissions on specific queries of the form {userId:[queryId, ...], ...}                   {}
-EXPLORER_TOKEN_AUTH_ENABLED   Bool indicating whether token-authenticated requests should be enabled. See "Power Tips", above.                False
-EXPLORER_TOKEN                Access token for query results.                                                                                 "CHANGEME"
 EXPLORER_TASKS_ENABLED        Turn on if you want to use the snapshot_queries celery task, or email report functionality in tasks.py          False
-EXPLORER_S3_ACCESS_KEY        S3 Access Key for snapshot upload                                                                               None
-EXPLORER_S3_SECRET_KEY        S3 Secret Key for snapshot upload                                                                               None
-EXPLORER_S3_BUCKET            S3 Bucket for snapshot upload                                                                                   None
-EXPLORER_FROM_EMAIL           The default 'from' address when using async report email functionality                                          "django-sql-explorer@example.com"
-EXPLORER_DATA_EXPORTERS       The export buttons to use. Default includes Excel, so xlsxwriter from optional-requirements.txt is needed       [('csv', 'explorer.exporters.CSVExporter'), ('excel', 'explorer.exporters.ExcelExporter'), ('json', 'explorer.exporters.JSONExporter')]
+EXPLORER_TOKEN                Access token for query results.                                                                                 "CHANGEME"
+EXPLORER_TOKEN_AUTH_ENABLED   Bool indicating whether token-authenticated requests should be enabled. See "Power Tips", above.                False
+EXPLORER_TRANSFORMS           List of tuples like [('alias', 'Template for {0}')]. See features section of this doc for more info.            []
 ============================= =============================================================================================================== ================================================================================================================================================
 
 Release Process

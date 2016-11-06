@@ -1,20 +1,14 @@
 import functools
 import re
-from collections import defaultdict
 from django.db import connections, connection
 from django.core.cache import cache
-
 from six import text_type
-
 import sqlparse
-
-from schema_sql import SCHEMA_SQL
 from . import app_settings
 
 EXPLORER_PARAM_TOKEN = "$$"
 
 # SQL Specific Things
-
 
 def passes_blacklist(sql):
     clean = functools.reduce(lambda sql, term: sql.upper().replace(term, ""), [t.upper() for t in app_settings.EXPLORER_SQL_WHITELIST], sql)
@@ -24,42 +18,6 @@ def passes_blacklist(sql):
 
 def get_default_connection():
     return connections[app_settings.EXPLORER_CONNECTION_NAME] if app_settings.EXPLORER_CONNECTION_NAME else connection
-
-
-def schema_info(connection):
-    """
-    PARAM: connection is an alias to the valid connection
-    Construct schema information via engine-specific queries of the tables in the DB.
-
-    :return: Schema information of the following form, sorted by db_table_name.
-        [
-            ("db_table_name",
-                [
-                    ("db_column_name", "DbFieldType"),
-                    (...),
-                ]
-            )
-        ]
-
-    """
-    connection = connections[connection]
-    sql = SCHEMA_SQL[connection.vendor]
-    cur = connection.cursor()
-    cur.execute(sql)
-    res = cur.fetchall()
-    tables = defaultdict(list)
-
-    if connection.vendor == 'sqlite':
-        for t in res:
-            cur.execute('pragma table_info(%s);' % t)
-            schema = cur.fetchall()
-            for s in schema:
-                tables[t[0]].append((s[1], s[2]))
-    else:
-        for r in res:
-            tables[r[0]].append((r[1], r[2]))
-
-    return sorted(tables.items(), key=lambda x: x[0])
 
 
 def _format_field(field):
