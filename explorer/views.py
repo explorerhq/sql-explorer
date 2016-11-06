@@ -29,7 +29,8 @@ from explorer.utils import url_get_rows,\
     user_can_see_query,\
     fmt_sql,\
     allowed_query_pks,\
-    url_get_show
+    url_get_show,\
+    url_get_fullscreen
 
 from collections import Counter
 
@@ -286,7 +287,7 @@ class PlayQueryView(ExplorerContextMixin, View):
         return self.render_template('explorer/play.html', {'title': 'Playground'})
 
     def render_with_sql(self, request, query, run_query=True, error=None):
-        return self.render_template('explorer/play.html', query_viewmodel(request, query, title="Playground"
+        return self.render_template('explorer/play.html', query_viewmodel(request.user, query, title="Playground"
                                                                           , run_query=run_query, error=error))
 
 
@@ -300,8 +301,11 @@ class QueryView(ExplorerContextMixin, View):
         query, form = QueryView.get_instance_and_form(request, query_id)
         query.save()  # updates the modified date
         show = url_get_show(request)
-        vm = query_viewmodel(request, query, form=form, run_query=show)
-        return self.render_template('explorer/query.html', vm)
+        rows = url_get_rows(request)
+        vm = query_viewmodel(request.user, query, form=form, run_query=show, rows=rows)
+        fullscreen = url_get_fullscreen(request)
+        template = 'fullscreen' if fullscreen else 'query'
+        return self.render_template('explorer/%s.html' % template, vm)
 
     def post(self, request, query_id):
         if not app_settings.EXPLORER_PERMISSION_CHANGE(request.user):
@@ -311,10 +315,11 @@ class QueryView(ExplorerContextMixin, View):
         show = url_get_show(request)
         query, form = QueryView.get_instance_and_form(request, query_id)
         success = form.is_valid() and form.save()
-        vm = query_viewmodel(request,
+        vm = query_viewmodel(request.user,
                              query,
                              form=form,
                              run_query=show,
+                             rows=url_get_rows(request),
                              message="Query saved." if success else None)
         return self.render_template('explorer/query.html', vm)
 
@@ -326,13 +331,12 @@ class QueryView(ExplorerContextMixin, View):
         return query, form
 
 
-def query_viewmodel(request, query, title=None, form=None, message=None, run_query=True, error=None):
-    rows = url_get_rows(request)
+def query_viewmodel(user, query, title=None, form=None, message=None, run_query=True, error=None, rows=app_settings.EXPLORER_DEFAULT_ROWS):
     res = None
     ql = None
     if run_query:
         try:
-            res, ql = query.execute_with_logging(request.user)
+            res, ql = query.execute_with_logging(user)
         except DatabaseError as e:
             error = str(e)
     has_valid_results = not error and res and run_query

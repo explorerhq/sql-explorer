@@ -170,6 +170,10 @@ ExplorerEditor.prototype.bind = function() {
         this.formatSql();
     }.bind(this));
 
+    $("#rows").keyup(function() {
+        $("#fullscreen").attr('href', '../' + this.queryId + '/?fullscreen=1&rows=' + $("#rows").val());
+    }.bind(this));
+
     $("#save_button").click(function() {
         var params = this.getParams(this);
         if(params) {
