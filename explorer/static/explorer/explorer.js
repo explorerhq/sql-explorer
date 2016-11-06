@@ -169,6 +169,12 @@ ExplorerEditor.prototype.bind = function() {
         this.formatSql();
     }.bind(this));
 
+    $("#rows").keyup(function() {
+        var curUrl = $("#fullscreen").attr('href');
+        var newUrl = curUrl.replace(/rows=\d+/, 'rows=' + $("#rows").val());
+        $("#fullscreen").attr('href', newUrl);
+    }.bind(this));
+
     $("#save_button").click(function() {
         var params = this.getParams(this);
         if(params) {
