@@ -265,14 +265,14 @@ class PlayQueryView(ExplorerContextMixin, View):
     def get(self, request):
         if url_get_query_id(request):
             query = get_object_or_404(Query, pk=url_get_query_id(request))
-            return self.render_with_sql(request, query, run_query=False)
+            return self.render_with_sql(request.user, query, run_query=False)
 
         if url_get_log_id(request):
             log = get_object_or_404(QueryLog, pk=url_get_log_id(request))
             query = Query(sql=log.sql, title="Playground")
-            return self.render_with_sql(request, query)
+            return self.render_with_sql(request.user, query)
 
-        return self.render(request)
+        return self.render()
 
     def post(self, request):
         sql = request.POST.get('sql')
@@ -283,12 +283,19 @@ class PlayQueryView(ExplorerContextMixin, View):
         run_query = not bool(error) if show else False
         return self.render_with_sql(request, query, run_query=run_query, error=error)
 
-    def render(self, request):
+    def render(self):
         return self.render_template('explorer/play.html', {'title': 'Playground'})
 
-    def render_with_sql(self, request, query, run_query=True, error=None):
-        return self.render_template('explorer/play.html', query_viewmodel(request.user, query, title="Playground"
-                                                                          , run_query=run_query, error=error))
+    def render_with_sql(self, user, query, run_query=True, error=None):
+        rows = url_get_rows(request),
+        fullscreen = url_get_fullscreen(request)
+        template = 'fullscreen' if fullscreen else 'play'
+        return self.render_template('explorer/%s.html' % template, query_viewmodel(user,
+                                                                                   query,
+                                                                                   title="Playground",
+                                                                                   run_query=run_query,
+                                                                                   error=error,
+                                                                                   rows=rows))
 
 
 class QueryView(ExplorerContextMixin, View):
