@@ -171,7 +171,9 @@ ExplorerEditor.prototype.bind = function() {
     }.bind(this));
 
     $("#rows").keyup(function() {
-        $("#fullscreen").attr('href', '../' + this.queryId + '/?fullscreen=1&rows=' + $("#rows").val());
+        var curUrl = $("#fullscreen").attr('href');
+        var newUrl = curUrl.replace(/rows=\d+/, 'rows=' + $("#rows").val());
+        $("#fullscreen").attr('href', newUrl);
     }.bind(this));
 
     $("#save_button").click(function() {
