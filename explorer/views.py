@@ -351,7 +351,6 @@ def query_viewmodel(request, query, title=None, form=None, message=None, run_que
         'total_rows': len(res.data) if has_valid_results else None,
         'duration': res.duration if has_valid_results else None,
         'has_stats': len([h for h in res.headers if h.summary]) if has_valid_results else False,
-        'dataUrl': reverse_lazy('stream_query', kwargs={'query_id': query.id}) if query.id else '',
         'bucket': app_settings.S3_BUCKET,
         'snapshots': query.snapshots if query.snapshot else [],
         'ql_id': ql.id if ql else None

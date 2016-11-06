@@ -5,9 +5,8 @@ $.ajaxSetup({
     }
 });
 
-function ExplorerEditor(queryId, dataUrl) {
+function ExplorerEditor(queryId) {
     this.queryId = queryId;
-    this.dataUrl = dataUrl;
     this.$table = $('#preview');
     this.$rows = $('#rows');
     this.$form = $("form");
