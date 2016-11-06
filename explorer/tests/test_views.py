@@ -208,6 +208,11 @@ class TestQueryDetailView(TestCase):
         # Feels fragile, but nor sure how else to access the called-with params of .execute
         self.assertEqual(conn.cursor.mock_calls[1][1][0], "select 1;")
 
+    def test_fullscreen(self):
+        query = SimpleQueryFactory(sql="select 1;")
+        resp = self.client.get(reverse("query_detail", kwargs={'query_id': query.id}) + '?fullscreen=1')
+        self.assertTemplateUsed(resp, 'explorer/fullscreen.html')
+
 
 class TestDownloadView(TestCase):
     def setUp(self):
@@ -310,6 +315,11 @@ class TestQueryPlayground(TestCase):
         resp = self.client.post(reverse("explorer_playground"), {'sql': "select 'delete'"})
         self.assertTemplateUsed(resp, 'explorer/play.html')
         self.assertContains(resp, MSG_FAILED_BLACKLIST % '')
+
+    def test_fullscreen(self):
+        query = SimpleQueryFactory(sql="")
+        resp = self.client.get('%s?query_id=%s&fullscreen=1' % (reverse("explorer_playground"), query.id))
+        self.assertTemplateUsed(resp, 'explorer/fullscreen.html')
 
 
 class TestCSVFromSQL(TestCase):
