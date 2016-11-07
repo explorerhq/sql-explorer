@@ -5,9 +5,8 @@ $.ajaxSetup({
     }
 });
 
-function ExplorerEditor(queryId, dataUrl) {
+function ExplorerEditor(queryId) {
     this.queryId = queryId;
-    this.dataUrl = dataUrl;
     this.$table = $('#preview');
     this.$rows = $('#rows');
     this.$form = $("form");
@@ -168,6 +167,12 @@ ExplorerEditor.prototype.bind = function() {
     $("#format_button").click(function(e) {
         e.preventDefault();
         this.formatSql();
+    }.bind(this));
+
+    $("#rows").keyup(function() {
+        var curUrl = $("#fullscreen").attr('href');
+        var newUrl = curUrl.replace(/rows=\d+/, 'rows=' + $("#rows").val());
+        $("#fullscreen").attr('href', newUrl);
     }.bind(this));
 
     $("#save_button").click(function() {

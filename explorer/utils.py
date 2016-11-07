@@ -158,6 +158,10 @@ def url_get_show(request):
     return bool(get_int_from_request(request, 'show', 1))
 
 
+def url_get_fullscreen(request):
+    return bool(get_int_from_request(request, 'fullscreen', 0))
+
+
 def url_get_params(request):
     return get_params_from_request(request)
 
