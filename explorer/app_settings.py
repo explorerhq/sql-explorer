@@ -1,3 +1,4 @@
+import sys
 from django.conf import settings
 
 # Required
@@ -17,8 +18,13 @@ EXPLORER_DATA_EXPORTERS = getattr(settings, 'EXPLORER_DATA_EXPORTERS', [
     ('csv', 'explorer.exporters.CSVExporter'),
     ('excel', 'explorer.exporters.ExcelExporter'),
     ('json', 'explorer.exporters.JSONExporter'),
-    ('pdf', 'explorer.exporters.PdfExporter'),
+
 ])
+if sys.version_info[0] < 3:
+    EXPLORER_DATA_EXPORTERS+=(
+        ('pdf', 'explorer.exporters.PdfExporter'),
+    )
+
 CSV_DELIMETER = getattr(settings, "EXPLORER_CSV_DELIMETER", ",")
 
 # API access

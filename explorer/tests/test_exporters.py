@@ -1,5 +1,5 @@
 #encoding=utf8
-
+import sys, unittest
 from django.test import TestCase
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
@@ -76,10 +76,10 @@ class TestExcel(TestCase):
         expected = b('PK')
 
         self.assertEqual(res[:2], expected)
-        
 
 
 
+@unittest.skipIf(sys.version_info[0] > 2,  "not supported in this library version")
 class TestPdf(TestCase):
 
     def test_writing_pdf(self):
