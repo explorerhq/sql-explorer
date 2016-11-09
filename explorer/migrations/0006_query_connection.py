@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='query',
             name='connection',
-            field=models.CharField(help_text=b'Name of DB connection (as specified in settings) to use for this query. Will use EXPLORER_CONNECTION_NAME if left blank', max_length=128, null=True, blank=True),
+            field=models.CharField(help_text=b'Name of DB connection (as specified in settings) to use for this query. Will use EXPLORER_DEFAULT_CONNECTION if left blank', max_length=128, null=True, blank=True),
         ),
     ]

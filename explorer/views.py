@@ -28,8 +28,7 @@ from explorer.utils import url_get_rows,\
     fmt_sql,\
     allowed_query_pks,\
     url_get_show,\
-    url_get_fullscreen,\
-    get_connections
+    url_get_fullscreen
 from explorer.schema import schema_info
 
 from collections import Counter
@@ -138,7 +137,7 @@ def email_csv_query(request, query_id):
 @change_permission
 @require_GET
 def schema(request, connection):
-    if connection not in get_connections():
+    if connection not in app_settings.EXPLORER_CONNECTIONS.values():
         raise Http404
     return render_to_response('explorer/schema.html',
                               {'schema': schema_info(connection)})
@@ -272,7 +271,7 @@ class PlayQueryView(ExplorerContextMixin, View):
 
         if url_get_log_id(request):
             log = get_object_or_404(QueryLog, pk=url_get_log_id(request))
-            query = Query(sql=log.sql, title="Playground")
+            query = Query(sql=log.sql, title="Playground", connection=log.connection)
             return self.render_with_sql(request, query)
 
         return self.render()
@@ -280,7 +279,7 @@ class PlayQueryView(ExplorerContextMixin, View):
     def post(self, request):
         sql = request.POST.get('sql')
         show = url_get_show(request)
-        query = Query(sql=sql, title="Playground")
+        query = Query(sql=sql, title="Playground", connection=request.POST.get('connection'))
         passes_blacklist, failing_words = query.passes_blacklist()
         error = MSG_FAILED_BLACKLIST % ', '.join(failing_words) if not passes_blacklist else None
         run_query = not bool(error) if show else False
@@ -293,12 +292,14 @@ class PlayQueryView(ExplorerContextMixin, View):
         rows = url_get_rows(request)
         fullscreen = url_get_fullscreen(request)
         template = 'fullscreen' if fullscreen else 'play'
+        form = QueryForm(request.POST if len(request.POST) else None, instance=query)
         return self.render_template('explorer/%s.html' % template, query_viewmodel(request.user,
                                                                                    query,
                                                                                    title="Playground",
                                                                                    run_query=run_query,
                                                                                    error=error,
-                                                                                   rows=rows))
+                                                                                   rows=rows,
+                                                                                   form=form))
 
 
 class QueryView(ExplorerContextMixin, View):
@@ -357,7 +358,7 @@ def query_viewmodel(user, query, title=None, form=None, message=None, run_query=
         'shared': query.shared,
         'query': query,
         'form': form,
-        'connections': get_connections(),
+        'connections': app_settings.EXPLORER_CONNECTIONS.items(),
         'message': message,
         'error': error,
         'rows': rows,

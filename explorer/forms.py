@@ -1,7 +1,7 @@
 from django.db import DatabaseError
 from django.forms import ModelForm, Field, ValidationError, BooleanField, CharField
 from django.forms.widgets import CheckboxInput, Select
-from utils import get_connections
+import app_settings
 
 from explorer.models import Query, MSG_FAILED_BLACKLIST
 
@@ -44,7 +44,7 @@ class QueryForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(QueryForm, self).__init__(*args, **kwargs)
-        self.fields['connection'].widget.choices = zip(get_connections(), get_connections())
+        self.fields['connection'].widget.choices = zip(app_settings.EXPLORER_CONNECTIONS.values(), app_settings.EXPLORER_CONNECTIONS.keys())
         self.fields['connection'].widget.attrs['class'] = 'form-control'
 
     def clean(self):

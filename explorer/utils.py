@@ -1,23 +1,15 @@
 import functools
 import re
-from django.db import connections, connection
-from django.core.cache import cache
 from six import text_type
 import sqlparse
 from . import app_settings
 
 EXPLORER_PARAM_TOKEN = "$$"
 
-# SQL Specific Things
-
 def passes_blacklist(sql):
     clean = functools.reduce(lambda sql, term: sql.upper().replace(term, ""), [t.upper() for t in app_settings.EXPLORER_SQL_WHITELIST], sql)
     fails = [bl_word for bl_word in app_settings.EXPLORER_SQL_BLACKLIST if bl_word in clean.upper()]
     return not any(fails), fails
-
-
-def get_default_connection():
-    return connections[app_settings.EXPLORER_CONNECTION_NAME] if app_settings.EXPLORER_CONNECTION_NAME else connection
 
 
 def _format_field(field):
@@ -39,8 +31,7 @@ def swap_params(sql, params):
 def extract_params(text):
     regex = re.compile("\$\$([a-z0-9_]+)(?:\:([^\$]+))?\$\$")
     params = re.findall(regex, text.lower())
-    # We support Python 2.6 so can't use a dict comprehension
-    return dict(zip([p[0] for p in params], [p[1] if len(p) > 1 else '' for p in params]))
+    return {p[0]: p[1] if len(p) > 1 else '' for p in params}
 
 
 # Helpers
@@ -146,12 +137,3 @@ def get_s3_connection():
     return tinys3.Connection(app_settings.S3_ACCESS_KEY,
                              app_settings.S3_SECRET_KEY,
                              default_bucket=app_settings.S3_BUCKET)
-
-
-def get_connections():
-    key = 'explorer_db_connections_names'
-    res = cache.get(key)
-    if res is None:
-        res = [c.alias for c in connections.all()]
-        cache.set(key, res)
-    return res

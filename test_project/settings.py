@@ -29,6 +29,13 @@ DATABASES = {
     }
 }
 
+EXPLORER_CONNECTIONS = {
+    'Postgres': 'default',
+    'MySQL': 'mysql',
+    'SQLite': 'sqlite'
+}
+EXPLORER_DEFAULT_CONNECTION = 'default'
+
 ROOT_URLCONF = 'explorer.tests.urls'
 
 TEMPLATES = [

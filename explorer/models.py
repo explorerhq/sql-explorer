@@ -2,12 +2,12 @@ import logging
 from time import time
 import six
 
-from django.db import models, DatabaseError
+from django.db import models, DatabaseError, connections
 from django.core.urlresolvers import reverse
 from django.conf import settings
 
 from . import app_settings
-from explorer.utils import (passes_blacklist, swap_params, extract_params, shared_dict_update, get_default_connection,
+from explorer.utils import (passes_blacklist, swap_params, extract_params, shared_dict_update,
                             get_s3_connection, get_params_for_url)
 
 MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist: %s"
@@ -25,7 +25,7 @@ class Query(models.Model):
     last_run_date = models.DateTimeField(auto_now=True)
     snapshot = models.BooleanField(default=False, help_text="Include in snapshot task (if enabled)")
     connection = models.CharField(blank=True, null=True, max_length=128,
-                                  help_text="Name of DB connection (as specified in settings) to use for this query. Will use EXPLORER_CONNECTION_NAME if left blank")
+                                  help_text="Name of DB connection (as specified in settings) to use for this query. Will use EXPLORER_DEFAULT_CONNECTION if left blank")
 
     def __init__(self, *args, **kwargs):
         self.params = kwargs.get('params')
@@ -52,7 +52,7 @@ class Query(models.Model):
         return swap_params(self.sql, self.available_params())
 
     def execute_query_only(self):
-        return QueryResult(self.final_sql(), self.connection)
+        return QueryResult(self.final_sql(), connections[self._get_valid_connection_alias()])
 
     def execute_with_logging(self, executing_user):
         ql = self.log(executing_user)
@@ -89,7 +89,7 @@ class Query(models.Model):
     def log(self, user=None):
         if user and user.is_anonymous():
             user = None
-        ql = QueryLog(sql=self.final_sql(), query_id=self.id, run_by_user=user)
+        ql = QueryLog(sql=self.final_sql(), query_id=self.id, run_by_user=user, connection=self._get_valid_connection_alias())
         ql.save()
         return ql
 
@@ -104,6 +104,14 @@ class Query(models.Model):
             res = conn.list('query-%s.snap-' % self.id)
             return sorted(res, key=lambda s: s['last_modified'])
 
+    def _get_valid_connection_alias(self):
+        from app_settings import EXPLORER_DEFAULT_CONNECTION
+        from django.db import connections
+
+        if not self.connection or self.connection not in connections:
+            return EXPLORER_DEFAULT_CONNECTION
+
+        return self.connection
 
 class QueryLog(models.Model):
 
@@ -112,6 +120,7 @@ class QueryLog(models.Model):
     run_by_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
     run_at = models.DateTimeField(auto_now_add=True)
     duration = models.FloatField(blank=True, null=True)  # milliseconds
+    connection = models.CharField(blank=True, null=True, max_length=128)
 
     @property
     def is_playground(self):
@@ -123,10 +132,10 @@ class QueryLog(models.Model):
 
 class QueryResult(object):
 
-    def __init__(self, sql, conn_label):
+    def __init__(self, sql, connection):
 
         self.sql = sql
-        self.connection = self._get_connection(conn_label)
+        self.connection = connection
 
         cursor, duration = self.execute_query()
 
@@ -187,17 +196,6 @@ class QueryResult(object):
             for r in self.data:
                 for ix, t in transforms:
                     r[ix] = t.format(str(r[ix]))
-
-    def _get_connection(self, conn_label):
-        from django import db
-
-        if not conn_label:
-            return get_default_connection()
-
-        res = db.connections.get(conn_label)
-        if res is None:
-            raise Exception('Connection %s does not exist in settings' % res)
-        return res
 
     def execute_query(self):
         cursor = self.connection.cursor()
