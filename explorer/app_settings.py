@@ -20,10 +20,17 @@ EXPLORER_DATA_EXPORTERS = getattr(settings, 'EXPLORER_DATA_EXPORTERS', [
     ('json', 'explorer.exporters.JSONExporter'),
 
 ])
+
+   
 if sys.version_info[0] < 3:
-    EXPLORER_DATA_EXPORTERS+=(
-        ('pdf', 'explorer.exporters.PdfExporter'),
-    )
+    try:
+        # Add pdf export iff python version < 3 and django-xhtml2pdf is installed
+        from django_xhtml2pdf.utils import generate_pdf
+        EXPLORER_DATA_EXPORTERS+=(
+            ('pdf', 'explorer.exporters.PdfExporter'),
+        )
+    except:
+        pass
 
 CSV_DELIMETER = getattr(settings, "EXPLORER_CSV_DELIMETER", ",")
 

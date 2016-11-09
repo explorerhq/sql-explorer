@@ -79,7 +79,7 @@ class TestExcel(TestCase):
 
 
 
-@unittest.skipIf(sys.version_info[0] > 2,  "not supported in this library version")
+@unittest.skipIf(sys.version_info[0] > 2,  "only supported in python 2.7")
 class TestPdf(TestCase):
 
     def test_writing_pdf(self):
