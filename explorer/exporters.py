@@ -134,3 +134,22 @@ class ExcelExporter(BaseExporter):
 
         wb.close()
         return output
+
+
+class PdfExporter(BaseExporter):
+
+    name = 'PDF'
+    content_type = 'application/pdf'
+    file_extension = '.pdf'
+
+    def _get_output(self, res, **kwargs):
+        from django_xhtml2pdf.utils import generate_pdf
+        output = BytesIO()
+        
+        ctx = {
+            'headers': res.header_strings,
+            'data': res.data,
+        }
+        result = generate_pdf('explorer/pdf_template.html', file_object=output, context=ctx)
+        return output
+
