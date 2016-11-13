@@ -30,7 +30,11 @@ class BaseExporter(object):
         self.query = query
 
     def get_output(self, **kwargs):
-        return str(self.get_file_output(**kwargs).getvalue())
+        value = self.get_file_output(**kwargs).getvalue()
+        if PY3:
+            return value
+        else:
+            return str(value)
 
     def get_file_output(self, **kwargs):
         try:
