@@ -100,7 +100,12 @@ Features
     - If a query is taking a long time to run (perhaps timing out) and you want to get in there to optimize it, go to /query/123/?show=0. You'll see the normal query detail page, but the query won't execute.
     - Set env vars for EXPLORER_TOKEN_AUTH_ENABLED=TRUE and EXPLORER_TOKEN=<SOME TOKEN> and you have an instant data API. Just:
 
-    ``curl --header "X-API-TOKEN: <TOKEN>" https://www.your-site.com/explorer/<QUERY_ID>/stream?format=csv``
+      ``curl --header "X-API-TOKEN: <TOKEN>" https://www.your-site.com/explorer/<QUERY_ID>/stream?format=csv``
+    
+      You can also pass the token with a query parameter like this:
+      
+      ``curl https://www.your-site.com/explorer/<QUERY_ID>/stream?format=csv&token=<TOKEN>``
+      
 
 Install
 =======

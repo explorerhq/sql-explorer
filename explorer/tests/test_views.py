@@ -158,6 +158,16 @@ class TestQueryDetailView(TestCase):
         self.assertTemplateUsed(resp, 'explorer/query.html')
         self.assertContains(resp, "124")
 
+    def test_token_auth(self):
+        self.client.logout()
+
+        query = SimpleQueryFactory(sql="select 123+1")
+
+        with self.settings(EXPLORER_TOKEN_AUTH_ENABLED=True):
+            resp = self.client.get(reverse("query_detail", kwargs={'query_id': query.id}) + '?token=%s' % EXPLORER_TOKEN)
+        self.assertTemplateUsed(resp, 'explorer/query.html')
+        self.assertContains(resp, "124")
+
     def test_user_query_views(self):
         request = Mock()
 
