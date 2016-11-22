@@ -209,8 +209,10 @@ ExplorerEditor.prototype.bind = function() {
         this.$form.attr('action', '../play/');
     }.bind(this));
 
-    $("#playground_button").click(function() {
+    $("#playground_button").click(function(e) {
+        e.preventDefault();
         this.$form.attr('action', '../play/?show=0');
+        this.$form.submit();
     }.bind(this));
 
     $("#create_button").click(function() {
