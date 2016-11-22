@@ -20,7 +20,11 @@ EXPLORER_DATA_EXPORTERS = getattr(settings, 'EXPLORER_DATA_EXPORTERS', [
     ('json', 'explorer.exporters.JSONExporter'),
 
 ])
-
+EXPLORER_SCHEMA_BUILDERS = getattr(settings, 'EXPLORER_SCHEMA_BUILDERS', [
+    ('sqlite', 'explorer.schema.SQLiteSchema'),
+    ('postgresql', 'explorer.schema.PostgreSQLSchema'),
+    ('mysql', 'explorer.schema.MySQLSchema')
+])
    
 if sys.version_info[0] < 3:
     try:
