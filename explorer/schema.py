@@ -1,7 +1,10 @@
 from collections import defaultdict
 from django.utils.module_loading import import_string
-from app_settings import EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES, EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES,\
+from app_settings import (
+    EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES,
+    EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES,
     EXPLORER_SCHEMA_BUILDERS
+)
 
 
 # These wrappers make it easy to mock and test

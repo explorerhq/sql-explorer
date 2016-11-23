@@ -7,8 +7,15 @@ from django.core.urlresolvers import reverse
 from django.conf import settings
 
 from . import app_settings
-from explorer.utils import (passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection,
-                            get_s3_connection, get_params_for_url)
+from explorer.utils import (
+    passes_blacklist,
+    swap_params,
+    extract_params,
+    shared_dict_update,
+    get_connection,
+    get_s3_connection,
+    get_params_for_url
+)
 
 MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist: %s"
 

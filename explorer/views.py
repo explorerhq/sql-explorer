@@ -1,4 +1,3 @@
-from functools import wraps
 import re
 import six
 from collections import Counter
@@ -9,8 +8,7 @@ from django.db.models import Count
 from django.forms.models import model_to_dict
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render, render_to_response
-from django.utils.decorators import method_decorator
-from django.views.decorators.http import require_POST, require_GET
+from django.views.decorators.http import require_POST
 from django.views.generic import ListView
 from django.views.generic.base import View
 from django.views.generic.edit import CreateView, DeleteView 
@@ -21,16 +19,18 @@ from explorer.exporters import get_exporter_class
 from explorer.forms import QueryForm
 from explorer.models import Query, QueryLog, MSG_FAILED_BLACKLIST
 from explorer.tasks import execute_query
-from explorer.utils import url_get_rows,\
-    url_get_query_id,\
-    url_get_log_id,\
-    url_get_params,\
-    safe_login_prompt,\
-    fmt_sql,\
-    allowed_query_pks,\
-    url_get_show,\
-    url_get_fullscreen,\
+from explorer.utils import (
+    url_get_rows,
+    url_get_query_id,
+    url_get_log_id,
+    url_get_params,
+    safe_login_prompt,
+    fmt_sql,
+    allowed_query_pks,
+    url_get_show,
+    url_get_fullscreen,
     get_connection
+)
 
 from explorer.schema import schema_info
 from explorer import permissions
@@ -94,7 +94,7 @@ def _export(request, query, download=True):
     return response
 
 
-class _DownloadQuery(PermissionRequiredMixin, View):
+class DownloadQueryView(PermissionRequiredMixin, View):
 
     permission_required = 'view_permission'
 
@@ -103,10 +103,8 @@ class _DownloadQuery(PermissionRequiredMixin, View):
         return _export(request, query)
 
 
-download_query = _DownloadQuery.as_view()
 
-
-class _DownloadFromSql(PermissionRequiredMixin, View):
+class DownloadFromSqlView(PermissionRequiredMixin, View):
 
     permission_required = 'view_permission'
 
@@ -118,10 +116,7 @@ class _DownloadFromSql(PermissionRequiredMixin, View):
         return _export(request, query)
 
 
-download_from_sql = _DownloadFromSql.as_view()
-
-
-class _StreamQuery(PermissionRequiredMixin, View):
+class StreamQueryView(PermissionRequiredMixin, View):
 
     permission_required = 'view_permission'
 
@@ -130,10 +125,8 @@ class _StreamQuery(PermissionRequiredMixin, View):
         return _export(request, query, download=False)
 
 
-stream_query = _StreamQuery.as_view()
 
-
-class _EmailCsvQuery(PermissionRequiredMixin, View):
+class EmailCsvQueryView(PermissionRequiredMixin, View):
 
     permission_required = 'view_permission'
 
@@ -145,17 +138,13 @@ class _EmailCsvQuery(PermissionRequiredMixin, View):
                 return JsonResponse({'message': 'message was sent successfully'})
         return JsonResponse({}, status=403)
 
-email_csv_query = _EmailCsvQuery.as_view()
 
-
-class _Schema(PermissionRequiredMixin, View):
+class SchemaView(PermissionRequiredMixin, View):
     permission_required = 'change_permission'
 
     def get(self, request, *args, **kwargs):
         return render_to_response('explorer/schema.html',
                                   {'schema': schema_info(get_connection())})
-
-schema = _Schema.as_view()
 
 
 @require_POST
