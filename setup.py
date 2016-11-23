@@ -17,7 +17,7 @@ setup(
     author="Chris Clark",
     author_email="chris@untrod.com",
     description=("A pluggable app that allows users (admins) to execute SQL,"
-                 " view, and export the results. Inspired by Stack Exchange Data Explorer."),
+                 " view, and export the results."),
     license="MIT",
     keywords="django sql explorer reports reporting csv database query",
     url="https://github.com/epantry/django-sql-explorer",
