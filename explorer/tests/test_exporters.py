@@ -77,6 +77,21 @@ class TestExcel(TestCase):
 
         self.assertEqual(res[:2], expected)
 
+    def test_writing_dict_fields(self):
+        res = QueryResult(SimpleQueryFactory(sql='select 1 as "a", 2 as ""',
+                                             title='this title is longer than 32 characters').sql)
+
+        res.execute_query()
+        res.process()
+
+        res._data = [[1, ['foo', 'bar']], [2, {'foo': 'bar'}]]
+
+        res = ExcelExporter(query=SimpleQueryFactory())._get_output(res).getvalue()
+
+        expected = b('PK')
+
+        self.assertEqual(res[:2], expected)
+
 
 
 @unittest.skipIf(sys.version_info[0] > 2,  "only supported in python 2.7")

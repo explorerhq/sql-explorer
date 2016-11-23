@@ -131,6 +131,9 @@ class ExcelExporter(BaseExporter):
                 # xlsxwriter can't handle timezone-aware datetimes, so we help out here and just cast it to a string
                 if isinstance(data, datetime):
                     data = str(data)
+                # JSON and Array fields
+                if isinstance(data, dict) or isinstance(data, list):
+                    data = json.dumps(data)
                 ws.write(row, col, data)
                 col += 1
             row += 1
