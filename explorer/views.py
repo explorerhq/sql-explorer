@@ -87,6 +87,24 @@ class ExplorerContextMixin(object):
         return render(self.request, template, ctx)
 
 
+class PermissionMeta(type):
+
+    def __init__(cls, name, bases, spec):
+        super(PermissionMeta, cls).__init__(name, bases, spec)
+        permission_deco = spec.get('PERMISSION', None)
+        dispatch = getattr(cls, 'dispatch', None)
+        if permission_deco and dispatch:
+            cls.dispatch = method_decorator(permission_deco)(dispatch)
+
+
+class ExplorerPermissionMixin(six.with_metaclass(PermissionMeta)):
+
+    PERMISSION = None
+
+    def dispatch(self, *args, **kwargs):
+        return super(ExplorerPermissionMixin, self).dispatch(*args, **kwargs)
+
+
 def _export(request, query, download=True):
     format = request.GET.get('format', 'csv')
     exporter_class = get_exporter_class(format)
@@ -151,11 +169,7 @@ def format_sql(request):
     return JsonResponse({"formatted": formatted})
 
 
-class ListQueryView(ExplorerContextMixin, ListView):
-
-    @method_decorator(view_permission_list)
-    def dispatch(self, *args, **kwargs):
-        return super(ListQueryView, self).dispatch(*args, **kwargs)
+class ListQueryView(ExplorerContextMixin, ExplorerPermissionMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ListQueryView, self).get_context_data(**kwargs)
@@ -215,14 +229,11 @@ class ListQueryView(ExplorerContextMixin, ListView):
             dict_list.append(model_dict)
         return dict_list
 
+    PERMISSION = view_permission_list
     model = Query
 
 
-class ListQueryLogView(ExplorerContextMixin, ListView):
-
-    @method_decorator(view_permission)
-    def dispatch(self, *args, **kwargs):
-        return super(ListQueryLogView, self).dispatch(*args, **kwargs)
+class ListQueryLogView(ExplorerContextMixin, ExplorerPermissionMixin, ListView):
 
     def get_queryset(self):
         kwargs = {'sql__isnull': False}
@@ -230,40 +241,32 @@ class ListQueryLogView(ExplorerContextMixin, ListView):
             kwargs['query_id'] = url_get_query_id(self.request)
         return QueryLog.objects.filter(**kwargs).all()
 
+    PERMISSION = view_permission
     context_object_name = "recent_logs"
     model = QueryLog
     paginate_by = 20
 
 
-class CreateQueryView(ExplorerContextMixin, CreateView):
-
-    @method_decorator(change_permission)
-    def dispatch(self, *args, **kwargs):
-        return super(CreateQueryView, self).dispatch(*args, **kwargs)
+class CreateQueryView(ExplorerContextMixin, ExplorerPermissionMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.created_by_user = self.request.user
         return super(CreateQueryView, self).form_valid(form)
 
+    PERMISSION = change_permission
     form_class = QueryForm
     template_name = 'explorer/query.html'
 
 
-class DeleteQueryView(ExplorerContextMixin, DeleteView):
+class DeleteQueryView(ExplorerContextMixin, ExplorerPermissionMixin, DeleteView):
 
-    @method_decorator(change_permission)
-    def dispatch(self, *args, **kwargs):
-        return super(DeleteQueryView, self).dispatch(*args, **kwargs)
-
+    PERMISSION = change_permission
     model = Query
     success_url = reverse_lazy("explorer_index")
 
 
-class PlayQueryView(ExplorerContextMixin, View):
+class PlayQueryView(ExplorerContextMixin, ExplorerPermissionMixin, View):
 
-    @method_decorator(change_permission)
-    def dispatch(self, *args, **kwargs):
-        return super(PlayQueryView, self).dispatch(*args, **kwargs)
 
     def get(self, request):
         if url_get_query_id(request):
@@ -300,12 +303,9 @@ class PlayQueryView(ExplorerContextMixin, View):
                                                                                    error=error,
                                                                                    rows=rows))
 
+    PERMISSION = change_permission
 
-class QueryView(ExplorerContextMixin, View):
-
-    @method_decorator(view_permission)
-    def dispatch(self, *args, **kwargs):
-        return super(QueryView, self).dispatch(*args, **kwargs)
+class QueryView(ExplorerContextMixin, ExplorerPermissionMixin, View):
 
     def get(self, request, query_id):
         query, form = QueryView.get_instance_and_form(request, query_id)
@@ -339,6 +339,8 @@ class QueryView(ExplorerContextMixin, View):
         query.params = url_get_params(request)
         form = QueryForm(request.POST if len(request.POST) else None, instance=query)
         return query, form
+
+    PERMISSION = view_permission
 
 
 def query_viewmodel(user, query, title=None, form=None, message=None, run_query=True, error=None, rows=app_settings.EXPLORER_DEFAULT_ROWS):
