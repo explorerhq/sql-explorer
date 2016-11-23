@@ -1,7 +1,6 @@
-from django.db import connections
 from collections import defaultdict
 from django.utils.module_loading import import_string
-from . import app_settings
+import app_settings
 
 
 class SchemaBase(object):
@@ -15,10 +14,16 @@ class SchemaBase(object):
         self.cur.execute(self.sql)
         self.results = self.cur.fetchall()
 
+    def _include_table(self, t):
+        if app_settings.EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES is not None:
+            return any([t.startswith(p) for p in app_settings.EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES])
+        return not any([t.startswith(p) for p in app_settings.EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES])
+
     def get(self):
         tables = defaultdict(list)
         for r in self._build():
-            tables[r[0]].append((r[1], r[2]))
+            if self._include_table(r[0]):
+                tables[r[0]].append((r[1], r[2]))
 
         return sorted(tables.items(), key=lambda x: x[0])
 
