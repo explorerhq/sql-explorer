@@ -13,7 +13,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_POST, require_GET
 from django.views.generic import ListView
 from django.views.generic.base import View
-from django.views.generic.edit import CreateView, DeleteView, ProcessFormView
+from django.views.generic.edit import CreateView, DeleteView 
 from django.core.exceptions import ImproperlyConfigured
 
 from explorer import app_settings
