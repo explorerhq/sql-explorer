@@ -1,4 +1,3 @@
-import json
 from functools import wraps
 import re
 import six
@@ -23,14 +22,16 @@ from explorer.tasks import execute_query
 from explorer.utils import url_get_rows,\
     url_get_query_id,\
     url_get_log_id,\
-    schema_info,\
     url_get_params,\
     safe_login_prompt,\
     user_can_see_query,\
     fmt_sql,\
     allowed_query_pks,\
     url_get_show,\
-    url_get_fullscreen
+    url_get_fullscreen,\
+    get_connection
+
+from explorer.schema import schema_info
 
 from collections import Counter
 
@@ -139,7 +140,8 @@ def email_csv_query(request, query_id):
 @change_permission
 @require_GET
 def schema(request):
-    return render_to_response('explorer/schema.html', {'schema': schema_info()})
+    return render_to_response('explorer/schema.html',
+                              {'schema': schema_info(get_connection())})
 
 
 @require_POST

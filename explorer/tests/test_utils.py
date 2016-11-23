@@ -2,7 +2,7 @@ from django.test import TestCase
 from explorer.actions import generate_report_action
 from explorer.tests.factories import SimpleQueryFactory
 from explorer import app_settings
-from explorer.utils import passes_blacklist, schema_info, param, swap_params, extract_params,\
+from explorer.utils import passes_blacklist, param, swap_params, extract_params,\
     shared_dict_update, EXPLORER_PARAM_TOKEN, get_params_from_request, get_params_for_url
 from mock import Mock
 
@@ -46,44 +46,6 @@ class TestSqlBlacklist(TestCase):
         app_settings.EXPLORER_SQL_WHITELIST = ['dropper']
         sql = "SELECT 1+1 AS TWO; dropper ViEw foo;"
         self.assertTrue(passes_blacklist(sql)[0])
-
-
-class TestSchemaInfo(TestCase):
-
-    def test_schema_info_returns_valid_data(self):
-        res = schema_info()
-        tables = [a[1] for a in res]
-        self.assertIn('explorer_query', tables)
-
-    def test_app_exclusion_list(self):
-        app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS = ('explorer',)
-        res = schema_info()
-        app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS = ('',)
-        tables = [a[1] for a in res]
-        self.assertNotIn('explorer_query', tables)
-
-    def test_app_inclusion_list(self):
-        app_settings.EXPLORER_SCHEMA_INCLUDE_APPS = []
-        res = schema_info()
-        app_settings.EXPLORER_SCHEMA_INCLUDE_APPS = None
-        tables = [a[1] for a in res]
-        self.assertNotIn('explorer_query', tables)
-
-    def test_app_inclusion_list_included(self):
-        app_settings.EXPLORER_SCHEMA_INCLUDE_APPS = ['explorer']
-        res = schema_info()
-        app_settings.EXPLORER_SCHEMA_INCLUDE_APPS = None
-        tables = [a[1] for a in res]
-        self.assertIn('explorer_query', tables)
-
-    def test_app_inclusion_list_excluded(self):
-        app_settings.EXPLORER_SCHEMA_INCLUDE_APPS = ['explorer', ]
-        app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS = ('explorer', )
-        res = schema_info()
-        app_settings.EXPLORER_SCHEMA_INCLUDE_APPS = None
-        app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS = ('',)
-        tables = [a[1] for a in res]
-        self.assertNotIn('explorer_query', tables)
 
 
 class TestParams(TestCase):

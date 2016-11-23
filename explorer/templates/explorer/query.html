@@ -68,7 +68,16 @@
                 {% endfor %}{% endif %}
                 <div class="panel panel-default sql-panel">
                     <div class="panel-heading">
-                        <span class="panel-title">SQL</span>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <span class="panel-title">SQL</span>
+                        </div>
+                        <div class="col-md-6 text-right">
+                          {% if query %}
+                            <small><a href="#" title="Open in playground" id="playground_button"><i class="glyphicon glyphicon-new-window"></i></a></small>
+                          {% endif %}
+                        </div>
+                      </div>
                     </div>
                     <div class="panel-content">
                         <textarea class="form-control" {% if not can_change %} disabled {% endif %} cols="40" id="id_sql" name="sql" rows="20">{{ form.sql.value|default_if_none:"" }}</textarea>
@@ -92,9 +101,6 @@
                                 <li><input type="submit" value="Save Only" class="btn btn-link" id="save_only"/></li>
                               </ul>
                             </div>
-                            {% if query %}
-                               <input type="submit" value="Playground" class="btn btn-default" id="playground_button"/>
-                            {%  endif %}
                             <button type="button" class="btn btn-default" id="show_schema_button">Show Schema</button>
                             <button type="button" class="btn btn-default" id="hide_schema_button" style="display: none;">Hide Schema</button>
                             <button type="button" class="btn btn-default" id="format_button">Format</button>
@@ -118,7 +124,7 @@
         </div>
     </div>
     <div id="schema" style="display: none;">
-        <iframe src="" height="630px" frameBorder="0" id="schema_frame"></iframe>
+        <iframe src="" height="828px" frameBorder="0" id="schema_frame"></iframe>
     </div>
 </div>
 {% include 'explorer/preview_pane.html' %}

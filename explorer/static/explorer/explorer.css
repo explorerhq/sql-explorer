@@ -38,8 +38,11 @@
 }
 
 .wrap {
-    overflow: hidden; /* for schema navigator */
     padding-bottom: 15rem; /* ensure space for drop down buttons */
+}
+
+.schema-wrapper {
+    overflow: hidden;
 }
 
 .toggle {
@@ -151,4 +154,8 @@ span.sort {
     color: #262626;
     text-decoration: none;
     background-color: #f5f5f5;
+}
+
+a#fullscreen {
+    padding-left: 1rem;
 }

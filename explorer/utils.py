@@ -23,46 +23,6 @@ def get_connection():
     return connections[app_settings.EXPLORER_CONNECTION_NAME] if app_settings.EXPLORER_CONNECTION_NAME else connection
 
 
-def schema_info():
-    """
-    Construct schema information via introspection of the django models in the database.
-
-    :return: Schema information of the following form, sorted by db_table_name.
-        [
-            ("package.name -> ModelClass", "db_table_name",
-                [
-                    ("db_column_name", "DjangoFieldType"),
-                    (...),
-                ]
-            )
-        ]
-
-    """
-
-    from django.apps import apps
-
-    ret = []
-
-    for label, app in apps.app_configs.items():
-        if app_settings.EXPLORER_SCHEMA_INCLUDE_APPS is not None and \
-                app.name not in app_settings.EXPLORER_SCHEMA_INCLUDE_APPS:
-            continue
-        if app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS is not None and \
-                app.name in app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS:
-            continue
-
-        if app.name not in app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS:
-            for model in apps.get_app_config(label).get_models(include_auto_created=True):
-                friendly_model = "%s -> %s" % (app.name, model._meta.object_name)
-                ret.append((
-                              friendly_model,
-                              model._meta.db_table,
-                              [_format_field(f) for f in model._meta.fields]
-                          ))
-
-    return sorted(ret, key=lambda t: t[1])
-
-
 def _format_field(field):
     return field.get_attname_column()[1], field.get_internal_type()
 
