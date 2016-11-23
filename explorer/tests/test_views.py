@@ -9,7 +9,7 @@ from django.forms.models import model_to_dict
 
 from explorer.tests.factories import SimpleQueryFactory, QueryLogFactory
 from explorer.models import Query, QueryLog, MSG_FAILED_BLACKLIST
-from explorer.views import user_can_see_query
+from explorer.utils import user_can_see_query
 from explorer.app_settings import EXPLORER_TOKEN
 from mock import Mock, patch
 
@@ -173,18 +173,18 @@ class TestQueryDetailView(TestCase):
 
         request.user.is_anonymous = Mock(return_value=True)
         kwargs = {}
-        self.assertFalse(user_can_see_query(request, kwargs))
+        self.assertFalse(user_can_see_query(request, **kwargs))
 
         request.user.is_anonymous = Mock(return_value=True)
-        self.assertFalse(user_can_see_query(request, kwargs))
+        self.assertFalse(user_can_see_query(request, **kwargs))
 
         kwargs = {'query_id': 123}
         request.user.is_anonymous = Mock(return_value=False)
-        self.assertFalse(user_can_see_query(request, kwargs))
+        self.assertFalse(user_can_see_query(request, **kwargs))
 
         request.user.id = 99
         with self.settings(EXPLORER_USER_QUERY_VIEWS={99: [111, 123]}):
-            self.assertTrue(user_can_see_query(request, kwargs))
+            self.assertTrue(user_can_see_query(request, **kwargs))
 
     @patch('explorer.models.get_s3_connection')
     def test_query_snapshot_renders(self, mocked_conn):
