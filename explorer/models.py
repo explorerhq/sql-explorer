@@ -256,8 +256,7 @@ class ColumnSummary(object):
 
     @property
     def stats(self):
-        # dict comprehensions are not supported in Python 2.6, so do this instead
-        return dict((c.label, c.value) for c in self._stats)
+        return {c.label: c.value for c in self._stats}
 
     def __str__(self):
         return str(self._header)
