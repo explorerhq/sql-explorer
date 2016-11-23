@@ -130,7 +130,7 @@ def allowed_query_pks(user_id):
     return app_settings.EXPLORER_GET_USER_QUERY_VIEWS().get(user_id, [])
 
 
-def user_can_see_query(request, kwargs):
+def user_can_see_query(request, **kwargs):
     if not request.user.is_anonymous() and 'query_id' in kwargs:
         return int(kwargs['query_id']) in allowed_query_pks(request.user.id)
     return False
