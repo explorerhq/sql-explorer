@@ -7,8 +7,12 @@ from explorer.schema import schema_info
 class TestSchemaInfo(TestCase):
 
     def setUp(self):
-        app_settings.EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES = None
-        app_settings.EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES = []
+        self.old_incl = app_settings.EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES
+        self.old_excl = app_settings.EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES
+
+    def tearDown(self):
+        app_settings.EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES = self.old_incl
+        app_settings.EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES = self.old_excl
 
     def test_schema_info_returns_valid_data(self):
         res = schema_info(get_connection())
