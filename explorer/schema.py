@@ -1,6 +1,17 @@
 from collections import defaultdict
 from django.utils.module_loading import import_string
-import app_settings
+from app_settings import EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES, EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES,\
+    EXPLORER_SCHEMA_BUILDERS
+
+
+# These wrappers make it easy to mock and test
+
+def _get_includes():
+    return EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES
+
+
+def _get_excludes():
+    return EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES
 
 
 class SchemaBase(object):
@@ -15,9 +26,9 @@ class SchemaBase(object):
         self.results = self.cur.fetchall()
 
     def _include_table(self, t):
-        if app_settings.EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES is not None:
-            return any([t.startswith(p) for p in app_settings.EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES])
-        return not any([t.startswith(p) for p in app_settings.EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES])
+        if _get_includes() is not None:
+            return any([t.startswith(p) for p in _get_includes()])
+        return not any([t.startswith(p) for p in _get_excludes()])
 
     def get(self):
         tables = defaultdict(list)
@@ -96,7 +107,7 @@ def schema_info(connection):
 
     """
 
-    class_str = dict(getattr(app_settings, 'EXPLORER_SCHEMA_BUILDERS'))[connection.vendor]
+    class_str = dict(EXPLORER_SCHEMA_BUILDERS)[connection.vendor]
     Schema = import_string(class_str)
     if not Schema:
         return []
