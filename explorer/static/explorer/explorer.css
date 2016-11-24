@@ -46,12 +46,10 @@
 }
 
 .toggle {
-    text-decoration: underline;
     cursor: pointer;
-    color: #428bca;
 }
 
-.indented {
+td.name.indented {
     padding-left: 30px;
 }
 
@@ -164,4 +162,8 @@ a#fullscreen {
     display: none;
     background-color: #ecf0f1;
     font-family: monospace;
+}
+
+.name a {
+    text-decoration: none !important;
 }
