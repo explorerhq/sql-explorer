@@ -21,7 +21,7 @@
                 <li>
                     <div class="panel panel-default">
                         <div class="panel-heading schema-header">
-                            <h4 class="name panel-title insertable" style="display: inline-block">{{ m.0 }}</h4>
+                            <h4 class="name panel-title" style="display: inline-block">{{ m.0 }}</h4>
                         </div>
                         <div class="table-responsive schema-table">
                             <table class="table table-condensed table-hover">
@@ -30,7 +30,7 @@
                                 <tbody>
                                     {% for c in m.1 %}
                                     <tr>
-                                        <td width="50%"><code class="insertable">{{ c.0 }}</code></td>
+                                        <td width="50%"><code>{{ c.0 }}</code></td>
                                         <!-- This will show the type of the column as well -->
                                         <td width="50%" class="text-muted"><small>{{ c.1 }}</small></td>
                                     </tr>

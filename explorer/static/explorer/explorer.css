@@ -111,9 +111,6 @@ span.sort {
 .schema-header {
     cursor: pointer;
 }
-.insertable {
-    cursor: default;
-}
 
 .CodeMirror-lines .inserted {
     animation: inserted-pulse 700ms;
