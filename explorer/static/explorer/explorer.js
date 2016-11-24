@@ -243,6 +243,12 @@ ExplorerEditor.prototype.bind = function() {
         $(".stats-wrapper").show();
         this.$table.floatThead('reflow');
     }.bind(this));
+    
+    $("#counter-toggle").click(function(e) {
+        e.preventDefault();
+        $('.counter').toggle();
+        this.$table.floatThead('reflow');
+    }.bind(this));
 
     $(".sort").click(function(e) {
         var t = $(e.target).data('sort');
