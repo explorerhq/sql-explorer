@@ -106,6 +106,7 @@ span.sort {
 
 #schema_frame {
     width: 100%;
+    border: 0;
 }
 
 .schema-header {
@@ -163,4 +164,8 @@ a#fullscreen {
 
 .name a {
     text-decoration: none !important;
+}
+
+.sql {
+    width: 33%;
 }

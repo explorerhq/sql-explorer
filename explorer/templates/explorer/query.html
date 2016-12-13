@@ -46,7 +46,7 @@
                     {% if form.description.errors %}
                         <div class="alert alert-danger">{{ form.description.errors }}</div>
                     {% endif %}
-                    <label for="id_title" class="col-sm-2 control-label">Description</label>
+                    <label for="id_description" class="col-sm-2 control-label">Description</label>
                     <div class="col-sm-10">
                         <textarea class="form-control" cols="40" id="id_description" name="description" {% if not can_change %}disabled{% endif %} rows="2">{{ form.description.value|default_if_none:"" }}</textarea>
                     </div>
@@ -56,10 +56,10 @@
                         {% if form.created_by_user.errors %}
                             <div class="alert alert-danger">{{ form.created_by_user.errors }}</div>
                         {% endif %}
-                        <label for="id_title" class="col-sm-2 control-label">Created By</label>
+                        <label for="id_created_by_user_label" class="col-sm-2 control-label">Created By</label>
                         <div class="col-sm-10">
                             <span class="form-control" disabled id="id_created_by_user_label" maxlength="255" name="created_by_user_label">{{ form.created_by_user_email }}</span>
-                            <input type="hidden" id="id_created_by_user" name="created_by_user" value="{{ form.created_by_user_id }}" />
+                            <input type="hidden" id="id_created_by_user" name="created_by_user" value="{{ form.created_by_user_email }}" />
                         </div>
                     </div>
                 {% endif %}

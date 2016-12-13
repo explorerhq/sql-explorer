@@ -9,9 +9,11 @@ from django.forms.models import model_to_dict
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render, render_to_response
 from django.views.decorators.http import require_POST
+from django.utils.decorators import method_decorator
 from django.views.generic import ListView
 from django.views.generic.base import View
-from django.views.generic.edit import CreateView, DeleteView 
+from django.views.generic.edit import CreateView, DeleteView
+from django.views.decorators.clickjacking import xframe_options_sameorigin
 from django.core.exceptions import ImproperlyConfigured
 
 from explorer import app_settings
@@ -103,7 +105,6 @@ class DownloadQueryView(PermissionRequiredMixin, View):
         return _export(request, query)
 
 
-
 class DownloadFromSqlView(PermissionRequiredMixin, View):
 
     permission_required = 'view_permission'
@@ -125,7 +126,6 @@ class StreamQueryView(PermissionRequiredMixin, View):
         return _export(request, query, download=False)
 
 
-
 class EmailCsvQueryView(PermissionRequiredMixin, View):
 
     permission_required = 'view_permission'
@@ -141,6 +141,10 @@ class EmailCsvQueryView(PermissionRequiredMixin, View):
 
 class SchemaView(PermissionRequiredMixin, View):
     permission_required = 'change_permission'
+
+    @method_decorator(xframe_options_sameorigin)
+    def dispatch(self, *args, **kwargs):
+        return super(SchemaView, self).dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         return render_to_response('explorer/schema.html',
