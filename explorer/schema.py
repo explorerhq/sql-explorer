@@ -1,6 +1,9 @@
-from django.db import connections
 from collections import defaultdict
+
+from django.db import connections
 from django.utils.module_loading import import_string
+
+
 from . import app_settings
 
 
@@ -75,7 +78,7 @@ class MySQLSchema(SchemaBase):
     FROM information_schema.columns WHERE table_schema = 'explorertest';'''
 
 
-def schema_info(connection_alias):
+def schema_info(connectionname):
     """
     Construct schema information via engine-specific queries of the tables in the DB.
 
@@ -90,11 +93,19 @@ def schema_info(connection_alias):
         ]
 
     """
+    connection = connections[connectionname]
+    ret = []
+    with connection.cursor() as cursor:
+        tables_to_introspect = connection.introspection.table_names(cursor)
 
-    connection = connections[connection_alias]
+        for table_name in tables_to_introspect:
+            td = []
+            table_description = connection.introspection.get_table_description(cursor, table_name)
+            for row in table_description:
+                column_name = row[0]
+                field_type = connection.introspection.get_field_type(row[1], row)
+                td.append((column_name, field_type))
 
-    class_str = dict(getattr(app_settings, 'EXPLORER_SCHEMA_BUILDERS'))[connection.vendor]
-    Schema = import_string(class_str)
-    if not Schema:
-        return []
-    return Schema(connection).get()
+            ret.append((table_name, td))
+    return ret
+
