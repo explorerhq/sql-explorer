@@ -1,14 +1,16 @@
 import logging
 from time import time
+
+from django.conf import settings
+from django.core.urlresolvers import reverse
+from django.db import models, DatabaseError, connections
 import six
 
-from django.db import models, DatabaseError, connections
-from django.core.urlresolvers import reverse
-from django.conf import settings
-
-from . import app_settings
 from explorer.utils import (passes_blacklist, swap_params, extract_params, shared_dict_update,
                             get_s3_connection, get_params_for_url)
+
+from . import app_settings
+
 
 MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist: %s"
 
@@ -132,7 +134,7 @@ class QueryLog(models.Model):
 
 class QueryResult(object):
 
-    def __init__(self, sql, connection):
+    def __init__(self, sql, connection, limit=1000):
 
         self.sql = sql
         self.connection = connection
@@ -140,7 +142,7 @@ class QueryResult(object):
         cursor, duration = self.execute_query()
 
         self._description = cursor.description or []
-        self._data = [list(r) for r in cursor.fetchall()]
+        self._data = [list(r) for r in cursor.fetchmany(limit)]
         self.duration = duration
 
         cursor.close()
