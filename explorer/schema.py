@@ -78,7 +78,7 @@ class MySQLSchema(SchemaBase):
     FROM information_schema.columns WHERE table_schema = 'explorertest';'''
 
 
-def schema_info(connectionname):
+def schema_info(connection_alias):
     """
     Construct schema information via engine-specific queries of the tables in the DB.
 
@@ -93,7 +93,7 @@ def schema_info(connectionname):
         ]
 
     """
-    connection = connections[connectionname]
+    connection = connections[connection_alias]
     ret = []
     with connection.cursor() as cursor:
         tables_to_introspect = connection.introspection.table_names(cursor)
