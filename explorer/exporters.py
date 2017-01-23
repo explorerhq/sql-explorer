@@ -107,7 +107,7 @@ class ExcelExporter(BaseExporter):
         import xlsxwriter
         output = BytesIO()
 
-        wb = xlsxwriter.Workbook(output)
+        wb = xlsxwriter.Workbook(output, {'in_memory': True})
 
         # XLSX writer wont allow sheet names > 31 characters
         # https://github.com/jmcnamara/XlsxWriter/blob/master/xlsxwriter/test/workbook/test_check_sheetname.py
