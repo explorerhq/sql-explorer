@@ -31,5 +31,6 @@ EXPLORER_TOKEN_AUTH_ENABLED = lambda: getattr(settings, 'EXPLORER_TOKEN_AUTH_ENA
 ENABLE_TASKS = getattr(settings, "EXPLORER_TASKS_ENABLED", False)
 S3_ACCESS_KEY = getattr(settings, "EXPLORER_S3_ACCESS_KEY", None)
 S3_SECRET_KEY = getattr(settings, "EXPLORER_S3_SECRET_KEY", None)
+S3_ENDPOINT = getattr(settings,'EXPLORER_S3_ENDPOINT','s3.amazonaws.com')
 S3_BUCKET = getattr(settings, "EXPLORER_S3_BUCKET", None)
 FROM_EMAIL = getattr(settings, 'EXPLORER_FROM_EMAIL', 'django-sql-explorer@example.com')
