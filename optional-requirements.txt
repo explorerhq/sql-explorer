@@ -6,5 +6,5 @@ reportlab==3.3.0
 django-xhtml2pdf==0.0.3
 xhtml2pdf==0.0.6
 html5lib==1.0b8
-factory-boy==2.6.0
+factory-boy==2.8.1
 
