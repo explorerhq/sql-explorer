@@ -34,13 +34,17 @@ def execute_query(query_id, email_address):
 
 @task
 def snapshot_query(query_id):
-    logger.info("Starting snapshot for query %s..." % query_id)
-    q = Query.objects.get(pk=query_id)
-    exporter = get_exporter_class('csv')(q)
-    k = 'query-%s.snap-%s.csv' % (q.id, date.today().strftime('%Y%m%d-%H:%M:%S'))
-    logger.info("Uploading snapshot for query %s as %s..." % (query_id, k))
-    resp = _upload(k, exporter.get_file_output())
-    logger.info("Done uploading snapshot for query %s. URL: %s" % (query_id, resp.url))
+    try:
+        logger.info("Starting snapshot for query %s..." % query_id)
+        q = Query.objects.get(pk=query_id)
+        exporter = get_exporter_class('csv')(q)
+        k = 'query-%s.snap-%s.csv' % (q.id, date.today().strftime('%Y%m%d-%H:%M:%S'))
+        logger.info("Uploading snapshot for query %s as %s..." % (query_id, k))
+        resp = _upload(k, exporter.get_file_output())
+        logger.info("Done uploading snapshot for query %s. URL: %s" % (query_id, resp.url))
+    except Exception as e:
+        logger.warning("Failed to snapshot query %s (%s). Retrying..." % (query_id, e.message))
+        snapshot_query.retry()
 
 
 def _upload(key, data):
