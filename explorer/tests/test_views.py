@@ -1,8 +1,12 @@
+import django
 import json
 import time
 
 from django.test import TestCase
-from django.core.urlresolvers import reverse
+if django.VERSION[1] >= 10:
+    from django.urls import reverse
+else:
+    from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.forms.models import model_to_dict
