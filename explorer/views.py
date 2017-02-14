@@ -1,8 +1,8 @@
 import django
 import re
 import six
-
 from collections import Counter
+
 if django.VERSION[1] >= 10:
     from django.urls import reverse_lazy
 else:
