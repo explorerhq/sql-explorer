@@ -4,8 +4,6 @@ from django.forms.widgets import CheckboxInput
 
 from explorer.models import Query, MSG_FAILED_BLACKLIST
 
-_ = lambda x: x
-
 
 class SqlField(Field):
 
@@ -30,7 +28,7 @@ class SqlField(Field):
 
         if error:
             raise ValidationError(
-                _(error),
+                error,
                 code="InvalidSql"
             )
 

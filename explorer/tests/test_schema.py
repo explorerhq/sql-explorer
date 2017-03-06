@@ -3,9 +3,6 @@ from explorer.utils import get_connection
 from explorer import schema
 
 
-_ = lambda x: x
-
-
 class TestSchemaInfo(TestCase):
 
     def tearDown(self):

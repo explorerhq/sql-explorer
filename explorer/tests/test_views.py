@@ -14,9 +14,6 @@ from explorer.app_settings import EXPLORER_TOKEN
 from mock import Mock, patch
 
 
-_ = lambda x: x
-
-
 class TestQueryListView(TestCase):
 
     def setUp(self):
