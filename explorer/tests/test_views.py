@@ -148,7 +148,7 @@ class TestQueryDetailView(TestCase):
         self.assertTemplateUsed(resp, 'explorer/query.html')
         self.assertContains(resp, "124")
 
-    def test_token_auth(self):
+    def test_header_token_auth(self):
         self.client.logout()
 
         query = SimpleQueryFactory(sql="select 123+1")
@@ -158,7 +158,7 @@ class TestQueryDetailView(TestCase):
         self.assertTemplateUsed(resp, 'explorer/query.html')
         self.assertContains(resp, "124")
 
-    def test_token_auth(self):
+    def test_url_token_auth(self):
         self.client.logout()
 
         query = SimpleQueryFactory(sql="select 123+1")
