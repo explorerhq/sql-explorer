@@ -70,7 +70,11 @@
                                             <tr class="data-row">
                                               <td class="counter">{{ forloop.counter0 }}</td>
                                                 {% for i in row %}
+                                                  {% if unsafe_rendering %}
                                                     <td class="{{ forloop.counter0 }}">{% autoescape off %}{{ i }}{% endautoescape %}</td>
+                                                  {% else %}
+                                                    <td class="{{ forloop.counter0 }}">{{ i }}</td>
+                                                  {% endif %}
                                                 {% endfor %}
                                             </tr>
                                             {% endfor %}

@@ -27,7 +27,11 @@
         {% for row in data %}
           <tr class="data-row">
             {% for i in row %}
-              <td>{% autoescape off %}{{ i }}{% endautoescape %}</td>
+              {% if unsafe_rendering %}
+                <td>{% autoescape off %}{{ i }}{% endautoescape %}</td>
+              {% else %}
+                <td>{{ i }}</td>
+              {% endif %}
             {% endfor %}
           </tr>
         {% endfor %}
