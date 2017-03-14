@@ -1,9 +1,13 @@
+import django
 import logging
 from time import time
 import six
 
 from django.db import models, DatabaseError
-from django.core.urlresolvers import reverse
+if django.VERSION[1] >= 10:
+    from django.urls import reverse
+else:
+    from django.core.urlresolvers import reverse
 from django.conf import settings
 
 from . import app_settings
@@ -27,7 +31,7 @@ class Query(models.Model):
     title = models.CharField(max_length=255)
     sql = models.TextField()
     description = models.TextField(null=True, blank=True)
-    created_by_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
+    created_by_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     last_run_date = models.DateTimeField(auto_now=True)
     snapshot = models.BooleanField(default=False, help_text="Include in snapshot task (if enabled)")
@@ -114,7 +118,7 @@ class QueryLog(models.Model):
 
     sql = models.TextField(null=True, blank=True)
     query = models.ForeignKey(Query, null=True, blank=True, on_delete=models.SET_NULL)
-    run_by_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
+    run_by_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE)
     run_at = models.DateTimeField(auto_now_add=True)
     duration = models.FloatField(blank=True, null=True)  # milliseconds
 
