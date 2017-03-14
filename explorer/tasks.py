@@ -50,7 +50,8 @@ def snapshot_query(query_id):
 def _upload(key, data):
     conn = tinys3.Connection(app_settings.S3_ACCESS_KEY,
                              app_settings.S3_SECRET_KEY,
-                             default_bucket=app_settings.S3_BUCKET)
+                             default_bucket=app_settings.S3_BUCKET,
+                             endpoint=app_settings.S3_ENDPOINT)
     return conn.upload(key, data)  # expects a file-like object
 
 

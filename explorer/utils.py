@@ -148,4 +148,5 @@ def get_s3_connection():
     import tinys3
     return tinys3.Connection(app_settings.S3_ACCESS_KEY,
                              app_settings.S3_SECRET_KEY,
-                             default_bucket=app_settings.S3_BUCKET)
+                             default_bucket=app_settings.S3_BUCKET,
+                             endpoint=app_settings.S3_ENDPOINT)
