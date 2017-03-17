@@ -96,7 +96,7 @@
                                 <p>
                                     <ul>
                                     {%  for s in snapshots %}
-                                        <li><a href='http://s3.amazonaws.com/{{ bucket }}/{{ s.key }}'>{{ s.last_modified }}</a></li>
+                                        <li><a href='{{ s.url }}'>{{ s.last_modified }}</a></li>
                                     {% endfor %}
                                     </ul>
                                 </p>

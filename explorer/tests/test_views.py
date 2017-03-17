@@ -187,18 +187,23 @@ class TestQueryDetailView(TestCase):
         with self.settings(EXPLORER_USER_QUERY_VIEWS={99: [111, 123]}):
             self.assertTrue(user_can_see_query(request, **kwargs))
 
-    @patch('explorer.models.get_s3_connection')
+    @patch('explorer.models.get_s3_bucket')
     def test_query_snapshot_renders(self, mocked_conn):
         conn = Mock()
         conn.list = Mock()
-        conn.list.return_value = [{'key': 'foo-snapshot', 'last_modified': '2015-01-01'}
-                                  ,{'key': 'bar-snapshot', 'last_modified': '2015-01-02'}]
+        k1 = Mock()
+        k1.generate_url.return_value = 'http://s3.com/foo'
+        k1.last_modified = '2015-01-01'
+        k2 = Mock()
+        k2.generate_url.return_value = 'http://s3.com/bar'
+        k2.last_modified = '2015-01-02'
+        conn.list.return_value = [k1, k2]
         mocked_conn.return_value = conn
+
         query = SimpleQueryFactory(sql="select 1;", snapshot=True)
         resp = self.client.get(reverse("query_detail", kwargs={'query_id': query.id}))
         self.assertContains(resp, '2015-01-01')
         self.assertContains(resp, '2015-01-02')
-        self.assertContains(resp, settings.EXPLORER_S3_BUCKET)
 
     @patch('explorer.models.get_connection')
     def test_failing_blacklist_means_query_doesnt_execute(self, mocked_conn):
