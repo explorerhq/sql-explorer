@@ -363,7 +363,6 @@ def query_viewmodel(user, query, title=None, form=None, message=None, run_query=
         'total_rows': len(res.data) if has_valid_results else None,
         'duration': res.duration if has_valid_results else None,
         'has_stats': len([h for h in res.headers if h.summary]) if has_valid_results else False,
-        'bucket': app_settings.S3_BUCKET,
         'snapshots': query.snapshots if query.snapshot else [],
         'ql_id': ql.id if ql else None,
         'unsafe_rendering': app_settings.UNSAFE_RENDERING,
