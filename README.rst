@@ -159,7 +159,7 @@ Name                                                        Version License
 `unicodecsv <https://github.com/jdunck/python-unicodecsv>`_ 0.14.1  BSD
 =========================================================== ======= ================
 
-- sqlparse is Used for SQL formatting
+- sqlparse is used for SQL formatting
 
 *Python - Optional Dependencies*
 
