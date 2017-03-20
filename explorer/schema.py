@@ -1,6 +1,6 @@
 from collections import defaultdict
 from django.utils.module_loading import import_string
-from app_settings import (
+from explorer.app_settings import (
     EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES,
     EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES,
     EXPLORER_SCHEMA_BUILDERS
