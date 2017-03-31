@@ -15,14 +15,14 @@ DATABASES = {
         'USER': 'postgres',
         'PASSWORD': ''
     },
-    'mysql': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'explorertest',
-        'HOST': '0.0.0.0',
-        'PORT': 6603,
-        'USER': 'root',
-        'PASSWORD': 'root'
-    },
+    # 'mysql': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'explorertest',
+    #     'HOST': '0.0.0.0',
+    #     'PORT': 6603,
+    #     'USER': 'root',
+    #     'PASSWORD': 'root'
+    # },
     'sqlite': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'tmp'
@@ -31,7 +31,7 @@ DATABASES = {
 
 EXPLORER_CONNECTIONS = {
     'Postgres': 'default',
-    'MySQL': 'mysql',
+    #'MySQL': 'mysql',
     'SQLite': 'sqlite'
 }
 EXPLORER_DEFAULT_CONNECTION = 'default'

@@ -16,7 +16,6 @@ from explorer.utils import (
     swap_params,
     extract_params,
     shared_dict_update,
-    get_connection,
     get_s3_bucket,
     get_params_for_url
 )
@@ -117,13 +116,6 @@ class Query(models.Model):
             return [SnapShot(k.generate_url(expires_in=0, query_auth=False),
                              k.last_modified) for k in keys_s]
 
-
-class SnapShot(object):
-
-    def __init__(self, url, last_modified):
-        self.url = url
-        self.last_modified = last_modified
-
     def _get_valid_connection_alias(self):
         from app_settings import EXPLORER_DEFAULT_CONNECTION
         from django.db import connections
@@ -132,6 +124,14 @@ class SnapShot(object):
             return EXPLORER_DEFAULT_CONNECTION
 
         return self.connection
+
+
+class SnapShot(object):
+
+    def __init__(self, url, last_modified):
+        self.url = url
+        self.last_modified = last_modified
+
 
 class QueryLog(models.Model):
 

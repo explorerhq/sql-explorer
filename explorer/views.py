@@ -149,7 +149,8 @@ class SchemaView(PermissionRequiredMixin, View):
     def dispatch(self, *args, **kwargs):
         return super(SchemaView, self).dispatch(*args, **kwargs)
 
-    def get(self, request, connection, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
+        connection = kwargs.get('connection')
         if connection not in app_settings.EXPLORER_CONNECTIONS.values():
             raise Http404
         return render_to_response('explorer/schema.html',
@@ -358,7 +359,6 @@ def query_viewmodel(user, query, title=None, form=None, message=None, run_query=
         'shared': query.shared,
         'query': query,
         'form': form,
-        'connections': app_settings.EXPLORER_CONNECTIONS.items(),
         'message': message,
         'error': error,
         'rows': rows,

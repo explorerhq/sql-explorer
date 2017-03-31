@@ -42,7 +42,7 @@ class QueryForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(QueryForm, self).__init__(*args, **kwargs)
-        self.fields['connection'].widget.choices = zip(app_settings.EXPLORER_CONNECTIONS.values(), app_settings.EXPLORER_CONNECTIONS.keys())
+        self.fields['connection'].widget.choices = self.connections
         self.fields['connection'].widget.attrs['class'] = 'form-control'
 
     def clean(self):
@@ -53,6 +53,10 @@ class QueryForm(ModelForm):
     @property
     def created_by_user_email(self):
         return self.instance.created_by_user.email if self.instance.created_by_user else '--'
+
+    @property
+    def connections(self):
+        return zip(app_settings.EXPLORER_CONNECTIONS.values(), app_settings.EXPLORER_CONNECTIONS.keys())
 
     class Meta:
         model = Query
