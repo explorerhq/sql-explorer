@@ -1,12 +1,12 @@
 {% extends "explorer/base.html" %}
 
-{% block sql_explorer_navbar %}{% endblock %}
-{% block sql_explorer_content_wrapper %}
 
+{% block sql_explorer_content_takeover %}
+<div class="schema-wrapper">
     <h4 class="text-center">Schema</h4>
     <div id="tables">
-        <p>
-          <input class="form-control search" placeholder="Search" />
+        <p class="text-center">
+          <input class="search" placeholder="Search" />
         </p>
         <div class="row">
             <div class="col-xs-6 text-center">
@@ -21,7 +21,7 @@
                 <li>
                     <div class="panel panel-default">
                         <div class="panel-heading schema-header">
-                            <h4 class="name panel-title insertable" style="display: inline-block">{{ m.0 }}</h4>
+                            <h4 class="name panel-title" style="display: inline-block">{{ m.0 }}</h4>
                         </div>
                         <div class="table-responsive schema-table">
                             <table class="table table-condensed table-hover">
@@ -30,7 +30,7 @@
                                 <tbody>
                                     {% for c in m.1 %}
                                     <tr>
-                                        <td width="50%"><code class="insertable">{{ c.0 }}</code></td>
+                                        <td width="50%"><code>{{ c.0 }}</code></td>
                                         <!-- This will show the type of the column as well -->
                                         <td width="50%" class="text-muted"><small>{{ c.1 }}</small></td>
                                     </tr>
@@ -43,7 +43,7 @@
             {% endfor %}
         </ul>
     </div>
-
+</div>
 {% endblock %}
 {% block sql_explorer_footer %}{% endblock %}
 

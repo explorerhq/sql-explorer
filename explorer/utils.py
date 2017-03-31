@@ -118,7 +118,7 @@ def allowed_query_pks(user_id):
     return app_settings.EXPLORER_GET_USER_QUERY_VIEWS().get(user_id, [])
 
 
-def user_can_see_query(request, kwargs):
+def user_can_see_query(request, **kwargs):
     if not request.user.is_anonymous() and 'query_id' in kwargs:
         return int(kwargs['query_id']) in allowed_query_pks(request.user.id)
     return False
@@ -132,8 +132,21 @@ def noop_decorator(f):
     return f
 
 
-def get_s3_connection():
-    import tinys3
-    return tinys3.Connection(app_settings.S3_ACCESS_KEY,
-                             app_settings.S3_SECRET_KEY,
-                             default_bucket=app_settings.S3_BUCKET)
+def get_s3_bucket():
+    from boto.s3.connection import S3Connection
+
+    conn = S3Connection(app_settings.S3_ACCESS_KEY,
+                        app_settings.S3_SECRET_KEY)
+    return conn.get_bucket(app_settings.S3_BUCKET)
+
+
+def s3_upload(key, data):
+    from boto.s3.key import Key
+    bucket = get_s3_bucket()
+    k = Key(bucket)
+    k.key = key
+    k.set_contents_from_file(data, rewind=True)
+    k.set_acl('public-read')
+    k.set_metadata('Content-Type', 'text/csv')
+    return k.generate_url(expires_in=0, query_auth=False)
+

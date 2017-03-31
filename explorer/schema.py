@@ -1,7 +1,20 @@
-from django.db import connections
 from collections import defaultdict
 from django.utils.module_loading import import_string
-from . import app_settings
+from explorer.app_settings import (
+    EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES,
+    EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES,
+    EXPLORER_SCHEMA_BUILDERS
+)
+
+
+# These wrappers make it easy to mock and test
+
+def _get_includes():
+    return EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES
+
+
+def _get_excludes():
+    return EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES
 
 
 class SchemaBase(object):
@@ -15,10 +28,16 @@ class SchemaBase(object):
         self.cur.execute(self.sql)
         self.results = self.cur.fetchall()
 
+    def _include_table(self, t):
+        if _get_includes() is not None:
+            return any([t.startswith(p) for p in _get_includes()])
+        return not any([t.startswith(p) for p in _get_excludes()])
+
     def get(self):
         tables = defaultdict(list)
         for r in self._build():
-            tables[r[0]].append((r[1], r[2]))
+            if self._include_table(r[0]):
+                tables[r[0]].append((r[1], r[2]))
 
         return sorted(tables.items(), key=lambda x: x[0])
 
@@ -75,7 +94,7 @@ class MySQLSchema(SchemaBase):
     FROM information_schema.columns WHERE table_schema = 'explorertest';'''
 
 
-def schema_info(connection_alias):
+def schema_info(connection):
     """
     Construct schema information via engine-specific queries of the tables in the DB.
 
@@ -91,9 +110,7 @@ def schema_info(connection_alias):
 
     """
 
-    connection = connections[connection_alias]
-
-    class_str = dict(getattr(app_settings, 'EXPLORER_SCHEMA_BUILDERS'))[connection.vendor]
+    class_str = dict(EXPLORER_SCHEMA_BUILDERS)[connection.vendor]
     Schema = import_string(class_str)
     if not Schema:
         return []

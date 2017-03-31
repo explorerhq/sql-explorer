@@ -17,7 +17,7 @@ setup(
     author="Chris Clark",
     author_email="chris@untrod.com",
     description=("A pluggable app that allows users (admins) to execute SQL,"
-                 " view, and export the results. Inspired by Stack Exchange Data Explorer."),
+                 " view, and export the results."),
     license="MIT",
     keywords="django sql explorer reports reporting csv database query",
     url="https://github.com/epantry/django-sql-explorer",
@@ -31,10 +31,12 @@ setup(
         'Framework :: Django :: 1.7',
         'Framework :: Django :: 1.8',
         'Framework :: Django :: 1.9',
+        'Framework :: Django :: 1.10',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
     ],
     install_requires=[
         'Django>=1.7.0',

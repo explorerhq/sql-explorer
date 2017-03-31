@@ -23,7 +23,7 @@
             <tbody>
                 {% for object in recent_queries %}
                 <tr>
-                    <td><a href="{% url "query_detail" object.id %}">{{ object.title }}</a></td>
+                    <td class="name"><a href="{% url "query_detail" object.id %}">{{ object.title }}</a></td>
                     <td>{{ object.last_run_date|date:"SHORT_DATETIME_FORMAT" }}</td>
                     <td class="text-center">
                         <a href="{% url "download_query" object.id %}"><i class="glyphicon glyphicon-download"></i></a>
@@ -71,8 +71,8 @@
                         </strong>
                     </td>
                 {% else %}
-                    <td class="name" {% if object.is_in_category %}class="indented"{% endif %}>
-                        {% if object.is_in_category %}&nbsp;&rarr;&nbsp;{% endif %}<a href="{% url "query_detail" object.id %}">{{ object.title }}</a>
+                    <td class="name{% if object.is_in_category %} indented{% endif %}">
+                        <a href="{% url "query_detail" object.id %}">{{ object.title }}</a>
                     </td>
                     <td>{{ object.created_at|date:"SHORT_DATE_FORMAT" }}
                         {% if object.created_by_user %}

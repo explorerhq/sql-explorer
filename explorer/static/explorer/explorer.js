@@ -135,35 +135,7 @@ ExplorerEditor.prototype.hideSchema = function() {
 ExplorerEditor.prototype.bind = function() {
     $("#show_schema_button").click(this.showSchema);
     $("#hide_schema_button").click(this.hideSchema);
-
-    var editor = this.editor;
-    $("#schema_frame").on('load', function(){
-        var insertables = $(this).contents().find('.insertable');
-        insertables.dblclick(function(e){
-            var text = $(this).html();
-            editor.replaceSelection(text);
-            var cursor = editor.getCursor();
-            var marker = editor.markText(
-                CodeMirror.Pos(cursor.line, cursor.ch - text.length),
-                cursor,
-                {'className': 'inserted'}
-            );
-            setTimeout(function(){
-                marker.clear();
-            }, 350);
-            editor.focus();
-            e.preventDefault();
-            return false;
-        });
-
-        insertables.click(function(e){
-            e.preventDefault();
-            return false;
-        });
-        insertables.tooltip({title:'Double click to insert'});
-        insertables.disableSelection();
-    });
-
+    
     $("#format_button").click(function(e) {
         e.preventDefault();
         this.formatSql();
@@ -209,8 +181,10 @@ ExplorerEditor.prototype.bind = function() {
         this.$form.attr('action', '../play/');
     }.bind(this));
 
-    $("#playground_button").click(function() {
+    $("#playground_button").click(function(e) {
+        e.preventDefault();
         this.$form.attr('action', '../play/?show=0');
+        this.$form.submit();
     }.bind(this));
 
     $("#create_button").click(function() {
@@ -239,6 +213,12 @@ ExplorerEditor.prototype.bind = function() {
         e.preventDefault();
         $(".stats-expand").hide();
         $(".stats-wrapper").show();
+        this.$table.floatThead('reflow');
+    }.bind(this));
+    
+    $("#counter-toggle").click(function(e) {
+        e.preventDefault();
+        $('.counter').toggle();
         this.$table.floatThead('reflow');
     }.bind(this));
 

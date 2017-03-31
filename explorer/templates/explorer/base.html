@@ -10,7 +10,7 @@
 
     <link href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.15.2/codemirror.min.css" rel="stylesheet" />
     <link href="//cdnjs.cloudflare.com/ajax/libs/pivottable/2.0.0/pivot.min.css" rel="stylesheet" />
-    <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'explorer/bootstrap.min.css' %}" />
     <link rel="stylesheet" href="{% static 'explorer/explorer.css' %}" />
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
@@ -24,6 +24,7 @@
 </head>
 
 <body>
+  {% block sql_explorer_content_takeover %}
     <div id="wrap" class="wrap">
         {% block sql_explorer_navbar %}
             <div class="navbar navbar-default navbar-static-top" role="navigation">
@@ -39,21 +40,20 @@
               </div>
             </div>
         {% endblock %}
-        {% block sql_explorer_content_wrapper %}
-          <div class="container">
-            <div class="starter-template">
-            {% block sql_explorer_content %}{% endblock %}
-            </div>
+        <div class="container">
+          <div class="starter-template">
+          {% block sql_explorer_content %}{% endblock %}
           </div>
-        {% endblock sql_explorer_content_wrapper %}
+        </div>
     </div>
+  {% endblock %}
     {% block sql_explorer_footer %}
         <div class="container">
             <div class="row">
               <div class="col-md-12 text-center">
                     <p class="text-muted">
                         Powered by <a href="https://www.github.com/groveco/django-sql-explorer/">django-sql-explorer</a> from
-                        <a href="https://www.grove.co">Grove Collaborative</a>.
+                        <a href="https://www.grove.co">Grove Collaborative</a>. Rendered at {% now "SHORT_DATETIME_FORMAT" %}
                     </p>
               </div>
             </div>
