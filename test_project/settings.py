@@ -30,9 +30,9 @@ DATABASES = {
 }
 
 EXPLORER_CONNECTIONS = {
-    'Postgres': 'default',
+    #'Postgres': 'postgres',
     #'MySQL': 'mysql',
-    'SQLite': 'sqlite'
+    'SQLite': 'default'
 }
 EXPLORER_DEFAULT_CONNECTION = 'default'
 
