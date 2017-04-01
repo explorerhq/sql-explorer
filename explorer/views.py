@@ -289,7 +289,7 @@ class PlayQueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
         return self.render_with_sql(request, query, run_query=run_query, error=error)
 
     def render(self):
-        return self.render_template('explorer/play.html', {'title': 'Playground'})
+        return self.render_template('explorer/play.html', {'title': 'Playground', 'form': QueryForm()})
 
     def render_with_sql(self, request, query, run_query=True, error=None):
         rows = url_get_rows(request)

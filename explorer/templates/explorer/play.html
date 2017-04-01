@@ -19,12 +19,14 @@
             {% if error %}
                 <div class="alert alert-danger">{{ error|escape }}</div>
             {% endif %}
-            {% if connections and connections|length > 1 %}
-              <div class="row">
-                <div class="form-group">
-                  <label for="id_connection" class="col-sm-2 control-label">Connection</label>
-                  <div class="col-sm-10">
-                    {{ form.connection }}
+            {% if form.connections|length > 1 %}
+              <div class="form-group">
+                <div class="row">
+                  <div class="form-group">
+                    <label for="id_connection" class="col-sm-2 control-label">Connection</label>
+                    <div class="col-sm-10">
+                      {{ form.connection }}
+                    </div>
                   </div>
                 </div>
               </div>
