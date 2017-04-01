@@ -62,8 +62,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'explorer',
-    'djcelery',
-    'django_extensions'
+    'djcelery'
 )
 
 AUTHENTICATION_BACKENDS = (
