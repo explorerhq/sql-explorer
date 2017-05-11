@@ -1,4 +1,5 @@
 from collections import defaultdict
+from django.db import connection, connections
 from django.utils.module_loading import import_string
 from explorer.app_settings import (
     EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES,
