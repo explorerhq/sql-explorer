@@ -162,3 +162,15 @@ def s3_upload(key, data):
     k.set_metadata('Content-Type', 'text/csv')
     return k.generate_url(expires_in=0, query_auth=False)
 
+
+def s3_upload(key, data, bucket_path):
+    from boto.s3.key import Key
+    bucket = get_s3_bucket()
+    conn = bucket.connection
+    bucket = conn.get_bucket(bucket_path)
+    k = Key(bucket)
+    k.key = key
+    k.set_contents_from_file(data, rewind=True)
+    k.set_acl('public-read')
+    k.set_metadata('Content-Type', 'text/csv')
+    return k.generate_url(expires_in=0, query_auth=False)

@@ -63,3 +63,18 @@ def truncate_querylogs(days):
     logger.info('Deleting %s QueryLog objects older than %s days.' % (qs.count, days))
     qs.delete()
     logger.info('Done deleting QueryLog objects.')
+
+
+@task
+def snapshot_query_on_bucket(query_id):
+    try:
+        logger.info("Starting snapshot for query %s..." % query_id)
+        q = Query.objects.get(pk=query_id)
+        exporter = get_exporter_class('csv')(q)
+        k = 'query-%s.snap-%s.csv' % (q.id, date.today().strftime('%Y%m%d-%H:%M:%S'))
+        logger.info("Uploading snapshot for query %s as %s..." % (query_id, k))
+        url = s3_upload(k, exporter.get_file_output(), q.bucket)
+        logger.info("Done uploading snapshot for query %s. URL: %s" % (query_id, url))
+    except Exception as e:
+        logger.warning("Failed to snapshot query %s (%s). Retrying..." % (query_id, e.message))
+        snapshot_query.retry()

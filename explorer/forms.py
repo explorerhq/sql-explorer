@@ -33,6 +33,7 @@ class SqlField(Field):
             )
 
 
+
 class QueryForm(ModelForm):
 
     sql = SqlField()
@@ -49,4 +50,5 @@ class QueryForm(ModelForm):
 
     class Meta:
         model = Query
-        fields = ['title', 'sql', 'description', 'snapshot']
+        fields = ['title', 'sql', 'description', 'snapshot', 'bucket']
+
