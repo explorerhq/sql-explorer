@@ -33,11 +33,10 @@ class SqlField(Field):
             )
 
 
-
 class QueryForm(ModelForm):
 
     sql = SqlField()
-    snapshot = BooleanField(widget=CheckboxInput, required=False)
+    snapshot = BooleanField(widget=CheckboxInput, required=False, initial=True)
 
     def clean(self):
         if self.instance and self.data.get('created_by_user', None):
