@@ -83,7 +83,7 @@ def snapshot_query_on_bucket(query_id):
 @task
 def snapshot_queries_on_bucket():
     logger.info("Starting query snapshots...")
-    qs = Query.objects.filter(snapshot=True).values_list('id', flat=True)
+    qs = Query.objects.all().values_list('id', flat=True)
     logger.info("Found %s queries to snapshot. Creating snapshot tasks..." % len(qs))
     for qid in qs:
         snapshot_query_on_bucket.delay(qid)
