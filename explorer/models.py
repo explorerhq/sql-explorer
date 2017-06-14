@@ -35,7 +35,7 @@ class Query(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     last_run_date = models.DateTimeField(auto_now=True)
     snapshot = models.BooleanField(default=True, help_text="Include in snapshot task (if enabled)")
-    bucket = models.CharField(max_length=100, blank=True, null=True)
+    bucket = models.CharField(max_length=100)
 
     def __init__(self, *args, **kwargs):
         self.params = kwargs.get('params')
