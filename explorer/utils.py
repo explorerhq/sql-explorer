@@ -163,10 +163,11 @@ def s3_upload(key, data):
     return k.generate_url(expires_in=0, query_auth=False)
 
 
-def s3_upload(key, data, bucket_path):
+def moni_s3_upload(key, data, bucket_path):
     from boto.s3.key import Key
-    bucket = get_s3_bucket()
-    conn = bucket.connection
+    from boto.s3.connection import S3Connection
+    conn = S3Connection(app_settings.S3_ACCESS_KEY,
+                        app_settings.S3_SECRET_KEY)
     bucket = conn.get_bucket(bucket_path)
     k = Key(bucket)
     k.key = key

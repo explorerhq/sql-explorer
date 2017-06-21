@@ -11,7 +11,8 @@ from explorer.models import Query, QueryLog
 if app_settings.ENABLE_TASKS:
     from celery import task
     from celery.utils.log import get_task_logger
-    from explorer.utils import s3_upload
+    from explorer.utils import s3_upload, moni_s3_upload
+
     logger = get_task_logger(__name__)
 else:
     from explorer.utils import noop_decorator as task
@@ -73,7 +74,7 @@ def snapshot_query_on_bucket(query_id):
         exporter = get_exporter_class('csv')(q)
         k = 'query-%s.snap-%s.csv' % (q.id, date.today().strftime('%Y%m%d-%H:%M:%S'))
         logger.info("Uploading snapshot for query %s as %s..." % (query_id, k))
-        url = s3_upload(k, exporter.get_file_output(), q.bucket)
+        url = moni_s3_upload(k, exporter.get_file_output(), q.bucket)
         logger.info("Done uploading snapshot for query %s. URL: %s" % (query_id, url))
     except Exception as e:
         logger.warning("Failed to snapshot query %s (%s). Retrying..." % (query_id, e.message))
