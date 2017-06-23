@@ -71,8 +71,9 @@ def snapshot_query_on_bucket(query_id):
     try:
         logger.info("Starting snapshot for query %s..." % query_id)
         q = Query.objects.get(pk=query_id)
+        q_name = q.slug if q.slug else q.id
         exporter = get_exporter_class('csv')(q)
-        k = 'query-%s.snap-%s.csv' % (q.id, date.today().strftime('%Y%m%d-%H:%M:%S'))
+        k = 'query-%s.snap-%s.csv' % (q_name, date.today().strftime('%Y%m%d-%H:%M:%S'))
         logger.info("Uploading snapshot for query %s as %s..." % (query_id, k))
         url = moni_s3_upload(k, exporter.get_file_output(), q.bucket)
         logger.info("Done uploading snapshot for query %s. URL: %s" % (query_id, url))
