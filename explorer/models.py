@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 
 class Query(models.Model):
     title = models.CharField(max_length=255)
-    slug = models.SlugField(blank=True, null=True, verbose_name='file name')
+    slug = models.SlugField(blank=True, null=True)
     sql = models.TextField()
     description = models.TextField(null=True, blank=True)
     created_by_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE)
