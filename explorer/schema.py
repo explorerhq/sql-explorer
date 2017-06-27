@@ -1,4 +1,5 @@
 from collections import defaultdict
+from django.db import connection, connections
 from django.utils.module_loading import import_string
 from explorer.app_settings import (
     EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES,
@@ -91,7 +92,7 @@ class MySQLSchema(SchemaBase):
     vendor = 'mysql'
     sql = '''
     SELECT TABLE_NAME AS "Table", COLUMN_NAME AS "Column", DATA_TYPE AS "Datatype"
-    FROM information_schema.columns WHERE table_schema = 'explorertest';'''
+    FROM information_schema.columns WHERE table_schema = '%s';''' % (connection.settings_dict['NAME'])
 
 
 def schema_info(connection):
