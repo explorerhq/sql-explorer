@@ -14,10 +14,10 @@ def view_permission(request, **kwargs):
 # And token auth does not give you permission to view the list.
 
 
-def view_permission_list(request, **kwargs):
+def view_permission_list(request):
     return app_settings.EXPLORER_PERMISSION_VIEW(request.user)\
         or allowed_query_pks(request.user.id)
 
 
-def change_permission(request, **kwargs):
+def change_permission(request, *args, **kwargs):
     return app_settings.EXPLORER_PERMISSION_CHANGE(request.user)

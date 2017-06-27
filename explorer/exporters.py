@@ -157,6 +157,6 @@ class PdfExporter(BaseExporter):
             'headers': res.header_strings,
             'data': res.data,
         }
-        result = generate_pdf('explorer/pdf_template.html', file_object=output, context=ctx)
+        generate_pdf('explorer/pdf_template.html', file_object=output, context=ctx)
         return output
 

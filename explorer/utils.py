@@ -3,8 +3,12 @@ import re
 from six import text_type
 import sqlparse
 from . import app_settings
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.views import login
+from django.contrib.auth import REDIRECT_FIELD_NAME
 
 EXPLORER_PARAM_TOKEN = "$$"
+
 
 def passes_blacklist(sql):
     clean = functools.reduce(lambda sql, term: sql.upper().replace(term, ""), [t.upper() for t in app_settings.EXPLORER_SQL_WHITELIST], sql)
@@ -32,12 +36,6 @@ def extract_params(text):
     regex = re.compile("\$\$([a-z0-9_]+)(?:\:([^\$]+))?\$\$")
     params = re.findall(regex, text.lower())
     return {p[0]: p[1] if len(p) > 1 else '' for p in params}
-
-
-# Helpers
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.views import login
-from django.contrib.auth import REDIRECT_FIELD_NAME
 
 
 def safe_login_prompt(request):

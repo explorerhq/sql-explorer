@@ -3,9 +3,11 @@ import sys, unittest
 from django.test import TestCase
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
+from django.db import connections
 from explorer.exporters import CSVExporter, JSONExporter, ExcelExporter, PdfExporter
 from explorer.tests.factories import SimpleQueryFactory
 from explorer.models import QueryResult
+from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
 import json
 from datetime import date, datetime
 from six import b
@@ -14,7 +16,7 @@ from six import b
 class TestCsv(TestCase):
 
     def test_writing_unicode(self):
-        res = QueryResult(SimpleQueryFactory(sql='select 1 as "a", 2 as ""').sql)
+        res = QueryResult(SimpleQueryFactory(sql='select 1 as "a", 2 as ""').sql, connections[CONN])
         res.execute_query()
         res.process()
         res._data = [[1, None], [u"Jenét", '1']]
@@ -32,7 +34,7 @@ class TestCsv(TestCase):
 class TestJson(TestCase):
 
     def test_writing_json(self):
-        res = QueryResult(SimpleQueryFactory(sql='select 1 as "a", 2 as ""').sql)
+        res = QueryResult(SimpleQueryFactory(sql='select 1 as "a", 2 as ""').sql, connections[CONN])
         res.execute_query()
         res.process()
         res._data = [[1, None], [u"Jenét", '1']]
@@ -42,7 +44,7 @@ class TestJson(TestCase):
         self.assertEqual(res, json.dumps(expected))
 
     def test_writing_datetimes(self):
-        res = QueryResult(SimpleQueryFactory(sql='select 1 as "a", 2 as "b"').sql)
+        res = QueryResult(SimpleQueryFactory(sql='select 1 as "a", 2 as "b"').sql, connections[CONN])
         res.execute_query()
         res.process()
         res._data = [[1, date.today()]]
@@ -62,7 +64,7 @@ class TestExcel(TestCase):
             , by all means submit a pull request!
         """
         res = QueryResult(SimpleQueryFactory(sql='select 1 as "a", 2 as ""',
-                                             title='this title is longer than 32 characters').sql)
+                                             title='this title is longer than 32 characters').sql, connections[CONN])
         res.execute_query()
         res.process()
 
@@ -79,7 +81,7 @@ class TestExcel(TestCase):
 
     def test_writing_dict_fields(self):
         res = QueryResult(SimpleQueryFactory(sql='select 1 as "a", 2 as ""',
-                                             title='this title is longer than 32 characters').sql)
+                                             title='this title is longer than 32 characters').sql, connections[CONN])
 
         res.execute_query()
         res.process()
@@ -93,7 +95,6 @@ class TestExcel(TestCase):
         self.assertEqual(res[:2], expected)
 
 
-
 @unittest.skipIf(sys.version_info[0] > 2,  "only supported in python 2.7")
 class TestPdf(TestCase):
 
@@ -101,7 +102,7 @@ class TestPdf(TestCase):
         """ Use same logic as with excel
         """
         res = QueryResult(SimpleQueryFactory(sql='select 1 as "a", 2 as ""',
-                                             title='this title is longer than 32 characters').sql)
+                                             title='this title is longer than 32 characters').sql, connections[CONN])
         res.execute_query()
         res.process()
 

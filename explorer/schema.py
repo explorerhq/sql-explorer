@@ -1,4 +1,5 @@
 from django.db import connections
+from django.core.cache import cache
 from explorer.app_settings import (
     EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES,
     EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES
@@ -20,6 +21,10 @@ def _include_table(t):
     return not any([t.startswith(p) for p in _get_excludes()])
 
 
+def _connection_schema_cache_key(connection_alias):
+    return '_explorer_cache_key_%s' % connection_alias
+
+
 def schema_info(connection_alias):
     """
     Construct schema information via engine-specific queries of the tables in the DB.
@@ -35,6 +40,11 @@ def schema_info(connection_alias):
         ]
 
     """
+    key = _connection_schema_cache_key(connection_alias)
+    ret = cache.get(key)
+    if ret:
+        return ret
+
     connection = connections[connection_alias]
     ret = []
     with connection.cursor() as cursor:
@@ -53,4 +63,5 @@ def schema_info(connection_alias):
                     field_type = 'Unknown'
                 td.append((column_name, field_type))
             ret.append((table_name, td))
+    cache.set(key, ret)
     return ret

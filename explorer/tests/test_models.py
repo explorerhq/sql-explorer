@@ -1,9 +1,11 @@
 import six
 
 from django.test import TestCase
+from django.db import connections
 from explorer.tests.factories import SimpleQueryFactory
 from explorer.models import QueryLog, Query, QueryResult, ColumnSummary, ColumnHeader
 from mock import patch, Mock
+from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
 
 
 class TestQueryModel(TestCase):
@@ -102,7 +104,8 @@ class TestQueryModel(TestCase):
 class TestQueryResults(TestCase):
 
     def setUp(self):
-        self.qr = QueryResult('select 1 as "foo", "qux" as "mux";')
+        conn = connections[CONN]
+        self.qr = QueryResult('select 1 as "foo", "qux" as "mux";', conn)
 
     def test_column_access(self):
         self.qr._data = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
