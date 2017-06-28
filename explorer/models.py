@@ -3,7 +3,7 @@ import logging
 from time import time
 import six
 
-from django.db import models, DatabaseError, connections
+from django.db import models, DatabaseError
 if django.VERSION[1] >= 10:
     from django.urls import reverse
 else:
@@ -17,7 +17,8 @@ from explorer.utils import (
     extract_params,
     shared_dict_update,
     get_s3_bucket,
-    get_params_for_url
+    get_params_for_url,
+    get_valid_connection
 )
 
 MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist: %s"
@@ -61,11 +62,8 @@ class Query(models.Model):
     def final_sql(self):
         return swap_params(self.sql, self.available_params())
 
-    def _get_connection(self):
-        return connections[self._get_valid_connection_alias()]
-
     def execute_query_only(self):
-        return QueryResult(self.final_sql(), self._get_connection())
+        return QueryResult(self.final_sql(), get_valid_connection(self.connection))
 
     def execute_with_logging(self, executing_user):
         ql = self.log(executing_user)
@@ -102,7 +100,7 @@ class Query(models.Model):
     def log(self, user=None):
         if user and user.is_anonymous():
             user = None
-        ql = QueryLog(sql=self.final_sql(), query_id=self.id, run_by_user=user, connection=self._get_valid_connection_alias())
+        ql = QueryLog(sql=self.final_sql(), query_id=self.id, run_by_user=user, connection=self.connection)
         ql.save()
         return ql
 
@@ -118,15 +116,6 @@ class Query(models.Model):
             keys_s = sorted(keys, key=lambda k: k.last_modified)
             return [SnapShot(k.generate_url(expires_in=0, query_auth=False),
                              k.last_modified) for k in keys_s]
-
-    def _get_valid_connection_alias(self):
-        from app_settings import EXPLORER_DEFAULT_CONNECTION
-        from explorer.connections import connections
-
-        if not self.connection or self.connection not in connections:
-            return EXPLORER_DEFAULT_CONNECTION
-
-        return self.connection
 
 
 class SnapShot(object):

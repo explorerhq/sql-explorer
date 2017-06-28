@@ -130,6 +130,24 @@ def noop_decorator(f):
     return f
 
 
+class InvalidExplorerConnectionException(Exception):
+    pass
+
+
+def get_valid_connection(alias=None):
+    from app_settings import EXPLORER_DEFAULT_CONNECTION
+    from connections import connections
+
+    if not alias:
+        return connections[EXPLORER_DEFAULT_CONNECTION]
+
+    if alias not in connections:
+        raise InvalidExplorerConnectionException(
+            'Attempted to access connection %s, but that is not a registered Explorer connection.' % alias
+        )
+    return connections[alias]
+
+
 def get_s3_bucket():
     from boto.s3.connection import S3Connection
 

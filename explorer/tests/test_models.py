@@ -100,6 +100,11 @@ class TestQueryModel(TestCase):
         expected = "select 'bar', 'mux';"
         self.assertEqual(q.final_sql(), expected)
 
+    def test_cant_query_with_unregistered_connection(self):
+        from explorer.utils import InvalidExplorerConnectionException
+        q = SimpleQueryFactory(sql="select '$$foo:bar$$', '$$qux$$';", connection='not_registered')
+        self.assertRaises(InvalidExplorerConnectionException, q.execute_query_only)
+
 
 class TestQueryResults(TestCase):
 

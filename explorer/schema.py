@@ -1,5 +1,5 @@
-from explorer.connections import connections
 from django.core.cache import cache
+from explorer.utils import get_valid_connection
 from explorer.app_settings import (
     EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES,
     EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES
@@ -45,7 +45,7 @@ def schema_info(connection_alias):
     if ret:
         return ret
 
-    connection = connections[connection_alias]
+    connection = get_valid_connection(connection_alias)
     ret = []
     with connection.cursor() as cursor:
         tables_to_introspect = connection.introspection.table_names(cursor)

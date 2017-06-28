@@ -224,6 +224,30 @@ class TestQueryDetailView(TestCase):
         resp = self.client.get(reverse("query_detail", kwargs={'query_id': query.id}) + '?fullscreen=1')
         self.assertTemplateUsed(resp, 'explorer/fullscreen.html')
 
+    def test_multiple_connections_integration(self):
+        from explorer.app_settings import EXPLORER_CONNECTIONS
+        from explorer.connections import connections
+
+        c1_alias = EXPLORER_CONNECTIONS['SQLite']
+        conn = connections[c1_alias]
+        c = conn.cursor()
+        c.execute('CREATE TABLE IF NOT EXISTS animals (name text NOT NULL);')
+        c.execute('INSERT INTO animals ( name ) VALUES (\'peacock\')')
+
+        c2_alias = EXPLORER_CONNECTIONS['Another']
+        conn = connections[c2_alias]
+        c = conn.cursor()
+        c.execute('CREATE TABLE IF NOT EXISTS animals (name text NOT NULL);')
+        c.execute('INSERT INTO animals ( name ) VALUES (\'superchicken\')')
+
+        query = SimpleQueryFactory(sql="select name from animals;", connection=c1_alias)
+        resp = self.client.get(reverse("query_detail", kwargs={'query_id': query.id}))
+        self.assertContains(resp, "peacock")
+
+        query = SimpleQueryFactory(sql="select name from animals;", connection=c2_alias)
+        resp = self.client.get(reverse("query_detail", kwargs={'query_id': query.id}))
+        self.assertContains(resp, "superchicken")
+
 
 class TestDownloadView(TestCase):
     def setUp(self):

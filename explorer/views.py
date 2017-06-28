@@ -21,6 +21,7 @@ from django.views.decorators.clickjacking import xframe_options_sameorigin
 from django.core.exceptions import ImproperlyConfigured
 
 from explorer import app_settings
+from explorer.connections import connections
 from explorer.exporters import get_exporter_class
 from explorer.forms import QueryForm
 from explorer.models import Query, QueryLog, MSG_FAILED_BLACKLIST
@@ -151,7 +152,7 @@ class SchemaView(PermissionRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         connection = kwargs.get('connection')
-        if connection not in app_settings.EXPLORER_CONNECTIONS.values():
+        if connection not in connections:
             raise Http404
         return render_to_response('explorer/schema.html',
                                   {'schema': schema_info(connection)})
