@@ -171,16 +171,12 @@ Name                                                                 Version Lic
 `Factory Boy <https://github.com/rbarrois/factory_boy>`_             2.6.0   MIT
 `xlsxwriter <http://xlsxwriter.readthedocs.io/>`_                    0.8.5   BSD
 `boto <https://github.com/boto/boto>`_                               2.46    MIT
-`xhtml2pdf <https://github.com/xhtml2pdf/xhtml2pdf>`_                0.0.6   Apache
-`django-xhtml2pdf <https://github.com/chrisglass/django-xhtml2pdf>`_ 0.0.3   BSD
-`html5lib <https://github.com/html5lib/html5lib-python>`_            1.0     MIT
 ==================================================================== ======= ================
 
 - Factory Boy is required for tests
 - celery is required for the 'email' feature, and for snapshots
 - boto is required for snapshots
 - xlsxwriter is required for Excel export (csv still works fine without it)
-- xhtml2pdf and html5lib are required for PDF export
 
 *JavaScript*
 

@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
 from django.db import connections
-from explorer.exporters import CSVExporter, JSONExporter, ExcelExporter, PdfExporter
+from explorer.exporters import CSVExporter, JSONExporter, ExcelExporter
 from explorer.tests.factories import SimpleQueryFactory
 from explorer.models import QueryResult
 from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
@@ -93,26 +93,3 @@ class TestExcel(TestCase):
         expected = b('PK')
 
         self.assertEqual(res[:2], expected)
-
-
-@unittest.skipIf(sys.version_info[0] > 2,  "only supported in python 2.7")
-class TestPdf(TestCase):
-
-    def test_writing_pdf(self):
-        """ Use same logic as with excel
-        """
-        res = QueryResult(SimpleQueryFactory(sql='select 1 as "a", 2 as ""',
-                                             title='this title is longer than 32 characters').sql, connections[CONN])
-        res.execute_query()
-        res.process()
-
-        d = datetime.now()
-        d = timezone.make_aware(d, timezone.get_current_timezone())
-
-        res._data = [[1, None], [u"Jenét", d]]
-
-        res = PdfExporter(query=SimpleQueryFactory())._get_output(res).getvalue()
-
-        expected = b('%PDF')
-
-        self.assertEqual(res[:4], expected)
