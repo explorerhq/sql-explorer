@@ -39,8 +39,6 @@ class QueryForm(ModelForm):
 
     sql = SqlField()
     snapshot = BooleanField(widget=CheckboxInput, required=False, initial=True)
-    bucket = CharField(max_length=100, required=False,
-                       help_text="en caso de usar parámetros, dejar vacío")
 
     def clean(self):
         if self.instance and self.data.get('created_by_user', None):
