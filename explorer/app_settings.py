@@ -1,5 +1,15 @@
-from explorer.connections import *
-import sys
+from django.conf import settings
+
+# The 'correct' configuration for Explorer going forward and for new installs looks like:
+
+# EXPLORER_CONNECTIONS = {
+#   'Original Database': 'my_important_database_readonly_connection',
+#   'Client Database 2': 'other_database_connection'
+# }
+# EXPLORER_DEFAULT_CONNECTION = 'my_important_database_readonly_connection'
+
+EXPLORER_CONNECTIONS = getattr(settings, 'EXPLORER_CONNECTIONS', {})
+EXPLORER_DEFAULT_CONNECTION = getattr(settings, 'EXPLORER_DEFAULT_CONNECTION', None)
 
 # Change the behavior of explorer
 EXPLORER_SQL_BLACKLIST = getattr(settings, 'EXPLORER_SQL_BLACKLIST', ('ALTER',
