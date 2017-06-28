@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from django.db import DatabaseError
-from django.forms import ModelForm, Field, ValidationError, BooleanField
+from django.forms import ModelForm, Field, ValidationError, BooleanField, CharField
 from django.forms.widgets import CheckboxInput
 
 from explorer.models import Query, MSG_FAILED_BLACKLIST
@@ -37,6 +39,8 @@ class QueryForm(ModelForm):
 
     sql = SqlField()
     snapshot = BooleanField(widget=CheckboxInput, required=False, initial=True)
+    bucket = CharField(max_length=100, required=False,
+                       help_text="en caso de usar parámetros, dejar vacío")
 
     def clean(self):
         if self.instance and self.data.get('created_by_user', None):
