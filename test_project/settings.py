@@ -29,6 +29,20 @@ DATABASES = {
         'TEST': {
             'NAME': 'tmp'
         }
+    },
+    'alt': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'tmp2',
+        'TEST': {
+            'NAME': 'tmp2'
+        }
+    },
+    'not_registered': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'tmp3',
+        'TEST': {
+            'NAME': 'tmp3'
+        }
     }
 }
 

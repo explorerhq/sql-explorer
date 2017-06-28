@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.db import connections
+from django.db import connections as djcs
 from django.core.exceptions import ImproperlyConfigured
 
 # The 'correct' configuration for Explorer going forward and for new installs looks like:
@@ -20,7 +20,9 @@ if EXPLORER_DEFAULT_CONNECTION not in EXPLORER_CONNECTIONS.values():
 
 
 for name, conn_name in EXPLORER_CONNECTIONS.items():
-    if conn_name not in connections:
+    if conn_name not in djcs:
         raise ImproperlyConfigured(
             'EXPLORER_CONNECTIONS contains (%s, %s), but %s is not a valid Django DB connection.'
             % (name, conn_name, conn_name))
+
+connections = {c: djcs[c] for c in djcs if c in EXPLORER_CONNECTIONS.values()}

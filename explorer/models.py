@@ -121,7 +121,7 @@ class Query(models.Model):
 
     def _get_valid_connection_alias(self):
         from app_settings import EXPLORER_DEFAULT_CONNECTION
-        from django.db import connections
+        from explorer.connections import connections
 
         if not self.connection or self.connection not in connections:
             return EXPLORER_DEFAULT_CONNECTION

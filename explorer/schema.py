@@ -1,4 +1,4 @@
-from django.db import connections
+from explorer.connections import connections
 from django.core.cache import cache
 from explorer.app_settings import (
     EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES,
