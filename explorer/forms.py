@@ -55,6 +55,10 @@ class QueryForm(ModelForm):
         return self.instance.created_by_user.email if self.instance.created_by_user else '--'
 
     @property
+    def created_at_time(self):
+        return self.instance.created_at.strftime('%Y-%m-%d')
+
+    @property
     def connections(self):
         return zip(app_settings.EXPLORER_CONNECTIONS.values(), app_settings.EXPLORER_CONNECTIONS.keys())
 
