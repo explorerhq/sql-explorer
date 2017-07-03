@@ -154,8 +154,12 @@ class SchemaView(PermissionRequiredMixin, View):
         connection = kwargs.get('connection')
         if connection not in connections:
             raise Http404
-        return render_to_response('explorer/schema.html',
-                                  {'schema': schema_info(connection)})
+        schema = schema_info(connection)
+        if schema:
+            return render_to_response('explorer/schema.html',
+                                      {'schema': schema_info(connection)})
+        else:
+            return render_to_response('explorer/schema_building.html')
 
 
 @require_POST

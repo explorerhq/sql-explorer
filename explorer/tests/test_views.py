@@ -453,8 +453,17 @@ class TestSchemaView(TestCase):
         resp = self.client.get(reverse("explorer_schema", kwargs={'connection': CONN}))
         self.assertTemplateUsed(resp, 'admin/login.html')
 
+    @patch('explorer.schema._do_async')
+    def test_builds_async(self, mocked_async_check):
+        mocked_async_check.return_value = True
+        resp = self.client.get(reverse("explorer_schema", kwargs={'connection': CONN}))
+        self.assertTemplateUsed(resp, 'explorer/schema_building.html')
+        resp = self.client.get(reverse("explorer_schema", kwargs={'connection': CONN}))
+        self.assertTemplateUsed(resp, 'explorer/schema.html')
+
 
 class TestFormat(TestCase):
+
     def setUp(self):
         self.user = User.objects.create_superuser('admin', 'admin@admin.com', 'pwd')
         self.client.login(username='admin', password='pwd')

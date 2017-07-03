@@ -1,8 +1,11 @@
 from django.core.cache import cache
 from explorer.utils import get_valid_connection
+from explorer.tasks import build_schema_cache_async
 from explorer.app_settings import (
     EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES,
-    EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES
+    EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES,
+    ENABLE_TASKS,
+    EXPLORER_ASYNC_SCHEMA
 )
 
 
@@ -15,13 +18,17 @@ def _get_excludes():
     return EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES
 
 
+def _do_async():
+    return ENABLE_TASKS and EXPLORER_ASYNC_SCHEMA
+
+
 def _include_table(t):
     if _get_includes() is not None:
         return any([t.startswith(p) for p in _get_includes()])
     return not any([t.startswith(p) for p in _get_excludes()])
 
 
-def _connection_schema_cache_key(connection_alias):
+def connection_schema_cache_key(connection_alias):
     return '_explorer_cache_key_%s' % connection_alias
 
 
@@ -40,11 +47,16 @@ def schema_info(connection_alias):
         ]
 
     """
-    key = _connection_schema_cache_key(connection_alias)
+    key = connection_schema_cache_key(connection_alias)
     ret = cache.get(key)
-    if ret:
-        return ret
+    if not ret and _do_async():
+        build_schema_cache_async.delay(connection_alias)
+    else:
+        ret = build_schema_cache_async(connection_alias)
+    return ret
 
+
+def build_schema_info(connection_alias):
     connection = get_valid_connection(connection_alias)
     ret = []
     with connection.cursor() as cursor:
@@ -63,5 +75,4 @@ def schema_info(connection_alias):
                     field_type = 'Unknown'
                 td.append((column_name, field_type))
             ret.append((table_name, td))
-    cache.set(key, ret)
     return ret
