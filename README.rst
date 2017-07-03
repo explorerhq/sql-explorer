@@ -119,7 +119,7 @@ $ pip install django
 $ django-admin startproject project
 ```
 
-More information [here](https://docs.djangoproject.com/en/1.10/intro/tutorial01/).
+More information [here](https://docs.djangoproject.com/en/1.11/intro/tutorial01/).
 
 Install with pip from github:
 
@@ -140,6 +140,13 @@ Add the following to your urls.py (all Explorer URLs are restricted via the EXPL
 Run migrate to create the tables:
 
 ``python manage.py migrate``
+
+Lastly, configure your settings to something like:
+
+``EXPLORER_CONNECTIONS = { 'Default': 'readonly' }
+EXPLORER_DEFAULT_CONNECTION = 'readonly'``
+
+The first setting lists the connections you want to allow Explorer to use. The keys of the connections dictionary are friendly names to show Explorer users, and the values are the actual database aliases used in settings.DATABASES. It is highly recommended to set
 
 You can now browse to https://yoursite/explorer/ and get exploring! It is highly recommended that you also configure Explorer to use a read-only database connection via the `EXPLORER_CONNECTION_NAME` setting.
 
@@ -228,7 +235,8 @@ EXPLORER_SQL_WHITELIST                  These phrases are allowed, even though p
 EXPLORER_DEFAULT_ROWS                   The number of rows to show by default in the preview pane.                                                      1000
 EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES  If not None, show schema only for tables starting with these prefixes. "Wins" if in conflict with EXCLUDE       None  # shows all tables
 EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES  Don't show schema for tables starting with these prefixes, in the schema helper.                                ('django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions', 'django.contrib.admin')
-EXPLORER_CONNECTION_NAME                The name of the Django database connection to use. Ideally set this to a connection with read only permissions  None  # Which means use the 'default' connection
+EXPLORER_CONNECTION_NAME                The name of the Django database connection to use. Ideally set this to a connection with read only permissions  None  # Must be set for the app to work, as this is required
+EXPLORER_CONNECTIONS                    A dictionary of { 'Friendly Name': 'django_db_alias'}. All                                                      {}  # At a minimum, should be set to something like { 'Default': 'readonly' } or similar. See connections.py for more documentation.
 EXPLORER_PERMISSION_VIEW                Callback to check if the user is allowed to view and execute stored queries                                     lambda u: u.is_staff
 EXPLORER_PERMISSION_CHANGE              Callback to check if the user is allowed to add/change/delete queries                                           lambda u: u.is_staff
 EXPLORER_TRANSFORMS                     List of tuples like [('alias', 'Template for {0}')]. See features section of this doc for more info.            []
