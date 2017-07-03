@@ -44,7 +44,7 @@ class TestSchemaInfo(TestCase):
         tables = [x[0] for x in res]
         self.assertIn('explorer_query', tables)
 
-    @patch('explorer.schema._do_async')
+    @patch('explorer.schema.do_async')
     def test_builds_async(self, mocked_async_check):
         mocked_async_check.return_value = True
         self.assertIsNone(schema.schema_info(CONN))

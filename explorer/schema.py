@@ -5,7 +5,8 @@ from explorer.app_settings import (
     EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES,
     EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES,
     ENABLE_TASKS,
-    EXPLORER_ASYNC_SCHEMA
+    EXPLORER_ASYNC_SCHEMA,
+    EXPLORER_CONNECTIONS
 )
 
 
@@ -18,7 +19,7 @@ def _get_excludes():
     return EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES
 
 
-def _do_async():
+def do_async():
     return ENABLE_TASKS and EXPLORER_ASYNC_SCHEMA
 
 
@@ -49,7 +50,7 @@ def schema_info(connection_alias):
     """
     key = connection_schema_cache_key(connection_alias)
     ret = cache.get(key)
-    if not ret and _do_async():
+    if not ret and do_async():
         build_schema_cache_async.delay(connection_alias)
     else:
         ret = build_schema_cache_async(connection_alias)
@@ -76,3 +77,9 @@ def build_schema_info(connection_alias):
                 td.append((column_name, field_type))
             ret.append((table_name, td))
     return ret
+
+
+def build_async_schemas():
+    if do_async():
+        for c in EXPLORER_CONNECTIONS:
+            schema_info(c)
