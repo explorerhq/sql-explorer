@@ -4,6 +4,7 @@ from django.forms.widgets import CheckboxInput, Select
 import app_settings
 
 from explorer.models import Query, MSG_FAILED_BLACKLIST
+from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION
 
 
 class SqlField(Field):
@@ -43,6 +44,8 @@ class QueryForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(QueryForm, self).__init__(*args, **kwargs)
         self.fields['connection'].widget.choices = self.connections
+        if not self.instance.connection:
+            self.initial['connection'] = EXPLORER_DEFAULT_CONNECTION
         self.fields['connection'].widget.attrs['class'] = 'form-control'
 
     def clean(self):
