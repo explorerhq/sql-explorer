@@ -50,11 +50,13 @@ def schema_info(connection_alias):
     """
     key = connection_schema_cache_key(connection_alias)
     ret = cache.get(key)
-    if not ret and do_async():
+    if ret:
+        return ret
+    if do_async():
         build_schema_cache_async.delay(connection_alias)
     else:
-        ret = build_schema_cache_async(connection_alias)
-    return ret
+        return build_schema_cache_async(connection_alias)
+
 
 
 def build_schema_info(connection_alias):
