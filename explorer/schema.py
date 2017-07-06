@@ -58,7 +58,6 @@ def schema_info(connection_alias):
         return build_schema_cache_async(connection_alias)
 
 
-
 def build_schema_info(connection_alias):
     connection = get_valid_connection(connection_alias)
     ret = []

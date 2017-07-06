@@ -11,7 +11,7 @@ class SqlField(Field):
 
     def validate(self, value):
         """
-        Ensure that the SQL passes the blacklist and executes. Execution check is skipped if params are present.
+        Ensure that the SQL passes the blacklist.
 
         :param value: The SQL for this Query model.
         """
@@ -21,12 +21,6 @@ class SqlField(Field):
         passes_blacklist, failing_words = query.passes_blacklist()
 
         error = MSG_FAILED_BLACKLIST % ', '.join(failing_words) if not passes_blacklist else None
-
-        if not error and not query.available_params():
-            try:
-                query.execute_query_only()
-            except DatabaseError as e:
-                error = str(e)
 
         if error:
             raise ValidationError(
