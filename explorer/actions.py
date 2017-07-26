@@ -6,8 +6,6 @@ from wsgiref.util import FileWrapper
 from django.http import HttpResponse
 from explorer.exporters import CSVExporter
 
-_ = lambda x: x
-
 
 def generate_report_action(description="Generate CSV file from SQL query",):
 

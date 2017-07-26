@@ -74,17 +74,23 @@ class TestQueryModel(TestCase):
         log = QueryLog.objects.first()
         self.assertEqual(log.duration, res.duration)
 
-    @patch('explorer.models.get_s3_connection')
+    @patch('explorer.models.get_s3_bucket')
     def test_get_snapshots_sorts_snaps(self, mocked_conn):
         conn = Mock()
         conn.list = Mock()
-        conn.list.return_value = [{'key': 'foo', 'last_modified': 'b'}, {'key': 'bar', 'last_modified': 'a'}]
+        k1 = Mock()
+        k1.generate_url.return_value = 'http://s3.com/foo'
+        k1.last_modified = 'b'
+        k2 = Mock()
+        k2.generate_url.return_value = 'http://s3.com/bar'
+        k2.last_modified = 'a'
+        conn.list.return_value = [k1, k2]
         mocked_conn.return_value = conn
         q = SimpleQueryFactory()
         snaps = q.snapshots
         self.assertEqual(conn.list.call_count, 1)
-        self.assertEqual(snaps[0]['key'], 'bar')
-        conn.list.assert_called_once_with('query-%s.snap-' % q.id)
+        self.assertEqual(snaps[0].url, 'http://s3.com/bar')
+        conn.list.assert_called_once_with(prefix='query-%s.snap-' % q.id)
 
     def test_final_sql_uses_merged_params(self):
         q = SimpleQueryFactory(sql="select '$$foo:bar$$', '$$qux$$';")

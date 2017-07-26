@@ -6,14 +6,15 @@ python:
 install:
   - pip install -r requirements.txt
   - pip install -r optional-requirements.txt
-  - pip install Django==${DJANGO}
+  - pip install ${DJANGO}
 
 script:  python manage.py test
 env:
-  - DJANGO=1.7.11
-  - DJANGO=1.8.13
-  - DJANGO=1.9.6
+  - DJANGO="Django>=1.7,<1.8"
+  - DJANGO="Django>=1.8,<1.9"
+  - DJANGO="Django>=1.9,<1.10"
+  - DJANGO="Django>=1.10,<1.11"
 matrix:
   exclude:
     - python: 3.5
-      env: DJANGO=1.7.11
+      env: DJANGO="Django>=1.7,<1.8"

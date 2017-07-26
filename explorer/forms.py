@@ -4,8 +4,6 @@ from django.forms.widgets import CheckboxInput
 
 from explorer.models import Query, MSG_FAILED_BLACKLIST
 
-_ = lambda x: x
-
 
 class SqlField(Field):
 
@@ -30,7 +28,7 @@ class SqlField(Field):
 
         if error:
             raise ValidationError(
-                _(error),
+                error,
                 code="InvalidSql"
             )
 
@@ -49,10 +47,6 @@ class QueryForm(ModelForm):
     def created_by_user_email(self):
         return self.instance.created_by_user.email if self.instance.created_by_user else '--'
 
-    @property
-    def created_by_user_id(self):
-        return self.instance.created_by_user.id if self.instance.created_by_user else ''
-
     class Meta:
         model = Query
-        fields = ['title', 'sql', 'description', 'created_by_user', 'snapshot']
+        fields = ['title', 'sql', 'description', 'snapshot']

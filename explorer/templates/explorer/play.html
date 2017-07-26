@@ -38,21 +38,37 @@
             </div>
             <div class="form-group">
                 <div class="text-center">
-                    <div class="btn-group">
-                        <input type="submit" value="Refresh Preview" id="refresh_play_button" class="btn btn-default"/>
-                        <input type="submit" value="Save As New Query" id="create_button" class="btn btn-default"/>
-                        <button type="button" class="btn btn-default" id="show_schema_button">Show Schema</button>
-                        <button type="button" class="btn btn-default" id="hide_schema_button" style="display: none;">Hide Schema</button>
-                        <button type="button" class="btn btn-default" id="format_button">Format</button>
-                    </div>
+                  <div class="btn-group">
+                    <input type="submit" value="Refresh" id="refresh_play_button" class="btn btn-default"/>
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <span class="caret"></span>
+                      <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li><input type="submit" value="Save As New Query" id="create_button" class="btn btn-link"/></li>
+                    </ul>
+                  </div>
+                  <div class="btn-group">
+                    <label class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Download</label>
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <span class="caret"></span>
+                      <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                      {% export_buttons query %}
+                    </ul>
+                  </div>
+
+                  <button type="button" class="btn btn-default" id="show_schema_button">Show Schema</button>
+                  <button type="button" class="btn btn-default" id="hide_schema_button" style="display: none;">Hide Schema</button>
+                  <button type="button" class="btn btn-default" id="format_button">Format</button>
                 </div>
             </div>
-            {% export_buttons %}
             <input type="hidden" value="Playground Query" name="title" />
         </form>
     </div>
     <div id="schema" style="display: none;">
-        <iframe src="" height="630px" frameBorder="0" id="schema_frame"></iframe>
+        <iframe src="about:blank" height="828px" frameBorder="0" id="schema_frame"></iframe>
     </div>
 </div>
 {% include 'explorer/preview_pane.html' %}
@@ -62,7 +78,7 @@
 {% block sql_explorer_scripts %}
     <script>
         $(function() {
-            var e = new ExplorerEditor(queryId, dataUrl);
+            var e = new ExplorerEditor(queryId);
         });
     </script>
 {% endblock %}

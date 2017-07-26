@@ -1,17 +1,11 @@
-<div class="form-group">
-    <div class="text-center">
-        <div class="btn-group">
-            {% for key, name in exporters.items %}
-                {% if query %}
-                    {% if query.params %}
-                      <a href="{% url "download_query" query.id %}?format={{ key }}&params={{ query.params_for_url }}" class="btn btn-default">{{ name }}</a>
-                    {% else %}
-                      <a href="{% url "download_query" query.id %}?format={{ key }}" class="btn btn-default">{{ name }}</a>
-                    {% endif %}
-                {% else %}
-                    <input type="submit" value="{{ name }}" data-format="{{ key }}" class="btn btn-default download-button" />
-                {% endif %}
-            {% endfor %}
-        </div>
-    </div>
-</div>
+{% for key, name in exporters %}
+    {% if query and query.id %}
+        {% if query.params %}
+          <li><a href="{% url "download_query" query.id %}?format={{ key }}&params={{ query.params_for_url }}">{{ name }}</a></li>
+        {% else %}
+          <li><a href="{% url "download_query" query.id %}?format={{ key }}">{{ name }}</a></li>
+        {% endif %}
+    {% else %}
+        <li><input type="submit" value="{{ name }}" data-format="{{ key }}" class="download-button btn btn-link" /></li>
+    {% endif %}
+{% endfor %}

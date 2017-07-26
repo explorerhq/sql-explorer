@@ -1,0 +1,44 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Explorer{% if query %} - {{ query.title }}{% elif title %} - {{ title }}{% endif %}</title>
+
+    <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'explorer/explorer.css' %}" />
+
+</head>
+
+<body>
+  <h2>{% if query %}{{ query.title }}{% if shared %}<small>&nbsp;&nbsp;shared</small>{% endif %}{% else %}New Query{% endif %}</h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        {% for h in headers %}
+          <th>{{ h }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody class="list">
+      {% if data %}
+        {% for row in data %}
+          <tr class="data-row">
+            {% for i in row %}
+              {% if unsafe_rendering %}
+                <td>{% autoescape off %}{{ i }}{% endautoescape %}</td>
+              {% else %}
+                <td>{{ i }}</td>
+              {% endif %}
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      {% else %}
+        <tr class="text-center"><td colspan="{{ headers|length }}">Empty Resultset</td></tr>
+      {% endif %}
+    </tbody>
+  </table>
+</body>
+</html>

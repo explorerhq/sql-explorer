@@ -16,7 +16,7 @@ from six import StringIO, BytesIO
 
 
 def get_exporter_class(format):
-    class_str = getattr(app_settings, 'EXPLORER_DATA_EXPORTERS')[format]
+    class_str = dict(getattr(app_settings, 'EXPLORER_DATA_EXPORTERS'))[format]
     return import_string(class_str)
 
 
@@ -30,7 +30,11 @@ class BaseExporter(object):
         self.query = query
 
     def get_output(self, **kwargs):
-        return str(self.get_file_output(**kwargs).getvalue())
+        value = self.get_file_output(**kwargs).getvalue()
+        if PY3:
+            return value
+        else:
+            return str(value)
 
     def get_file_output(self, **kwargs):
         try:
@@ -127,6 +131,9 @@ class ExcelExporter(BaseExporter):
                 # xlsxwriter can't handle timezone-aware datetimes, so we help out here and just cast it to a string
                 if isinstance(data, datetime):
                     data = str(data)
+                # JSON and Array fields
+                if isinstance(data, dict) or isinstance(data, list):
+                    data = json.dumps(data)
                 ws.write(row, col, data)
                 col += 1
             row += 1
@@ -134,3 +141,22 @@ class ExcelExporter(BaseExporter):
 
         wb.close()
         return output
+
+
+class PdfExporter(BaseExporter):
+
+    name = 'PDF'
+    content_type = 'application/pdf'
+    file_extension = '.pdf'
+
+    def _get_output(self, res, **kwargs):
+        from django_xhtml2pdf.utils import generate_pdf
+        output = BytesIO()
+        
+        ctx = {
+            'headers': res.header_strings,
+            'data': res.data,
+        }
+        result = generate_pdf('explorer/pdf_template.html', file_object=output, context=ctx)
+        return output
+

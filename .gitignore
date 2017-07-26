@@ -12,3 +12,4 @@
 /htmlcov/
 *.orig
 tmp
+venv/

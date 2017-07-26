@@ -1,3 +1,34 @@
+1.1.1
+=====
+
+3/21/17
+
+- Fix #288 (incorrect import)
+
+1.1.0
+=====
+
+3/19/17
+
+- BREAKING CHANGE: EXPLORER_DATA_EXPORTERS setting is now a list of tuples insead of a dictionary. This only affects you if you have customized this setting. This was to preserve ordering of the export buttons in the UI.
+- BREAKING CHANGE: Values from the database are now escaped by default. Disable this behavior (enabling potential XSS attacks) with the EXPLORER_UNSAFE_RENDERING setting.
+
+- Major Changes
+  - Django 1.10 and 2.0 compatibility
+  - Theming & visual updates
+  - PDF export
+  - Query-param based authentication (https://github.com/groveco/django-sql-explorer/pull/254)
+  - Schema built via SQL querying rather than Django app/model introspection. Paves the way for the tool to be pointed at any DB, not just Django DBs
+
+- Minor Changes
+  - Switched from TinyS3 to Boto (will switch to Boto3 in next release)
+  - Optionally show row numbers in results preview pane
+  - Full-screen view (icon on top-right of preview pane)
+  - Moved 'open in playground' to icon on top-right on SQL editor
+  - Save-only option (does not execute query)
+  - Show the time that the query was rendered (useful if you've had a tab open a while)
+
+
 1.0.0
 =====
 
