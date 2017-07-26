@@ -84,7 +84,7 @@ class PostgreSQLSchema(SchemaBase):
         inner join object_ids oids on oids.oid = a.attrelid
       WHERE
         a.attnum > 0
-      AND NOT a.attisdropped;''' % (connection.settings_dict['SCHEMA'])
+      AND NOT a.attisdropped;''' % (connection.settings_dict['SCHEMA']) if 'SCHEMA' in connection.settings_dict else ('public')
 
 
 class MySQLSchema(SchemaBase):
