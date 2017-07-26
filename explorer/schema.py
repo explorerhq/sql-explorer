@@ -66,7 +66,7 @@ class PostgreSQLSchema(SchemaBase):
     vendor = 'postgresql'
     sql = '''
     WITH table_names as (
-      select table_name from information_schema.tables WHERE table_schema = 'public'
+      select table_name from information_schema.tables WHERE table_schema = '%s'
     ),
     object_ids as (
       SELECT c.oid, c.relname
@@ -84,7 +84,7 @@ class PostgreSQLSchema(SchemaBase):
         inner join object_ids oids on oids.oid = a.attrelid
       WHERE
         a.attnum > 0
-      AND NOT a.attisdropped;'''
+      AND NOT a.attisdropped;''' % (connection.settings_dict['SCHEMA'])
 
 
 class MySQLSchema(SchemaBase):
