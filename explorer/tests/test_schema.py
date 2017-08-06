@@ -2,16 +2,16 @@ from django.test import TestCase
 from django.core.cache import cache
 from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
 from explorer import schema
-from mock import patch
-
+#from mock import patch
+from unittest.mock import patch
 
 class TestSchemaInfo(TestCase):
 
     def setUp(self):
         cache.clear()
 
-    @patch('explorer.schema._get_includes')
-    @patch('explorer.schema._get_excludes')
+    @patch('schema._get_includes')
+    @patch('schema._get_excludes')
     def test_schema_info_returns_valid_data(self, mocked_excludes, mocked_includes):
         mocked_includes.return_value = None
         mocked_excludes.return_value = []
@@ -19,8 +19,8 @@ class TestSchemaInfo(TestCase):
         tables = [x[0] for x in res]
         self.assertIn('explorer_query', tables)
 
-    @patch('explorer.schema._get_includes')
-    @patch('explorer.schema._get_excludes')
+    @patch('schema._get_includes')
+    @patch('schema._get_excludes')
     def test_table_exclusion_list(self, mocked_excludes, mocked_includes):
         mocked_includes.return_value = None
         mocked_excludes.return_value = ('explorer_',)
@@ -28,8 +28,8 @@ class TestSchemaInfo(TestCase):
         tables = [x[0] for x in res]
         self.assertNotIn('explorer_query', tables)
 
-    @patch('explorer.schema._get_includes')
-    @patch('explorer.schema._get_excludes')
+    @patch('schema._get_includes')
+    @patch('schema._get_excludes')
     def test_app_inclusion_list(self, mocked_excludes, mocked_includes):
         mocked_includes.return_value = ('auth_',)
         mocked_excludes.return_value = []
@@ -38,8 +38,8 @@ class TestSchemaInfo(TestCase):
         self.assertNotIn('explorer_query', tables)
         self.assertIn('auth_user', tables)
 
-    @patch('explorer.schema._get_includes')
-    @patch('explorer.schema._get_excludes')
+    @patch('schema._get_includes')
+    @patch('schema._get_excludes')
     def test_app_inclusion_list_excluded(self, mocked_excludes, mocked_includes):
         # Inclusion list "wins"
         mocked_includes.return_value = ('explorer_',)
@@ -48,7 +48,7 @@ class TestSchemaInfo(TestCase):
         tables = [x[0] for x in res]
         self.assertIn('explorer_query', tables)
 
-    @patch('explorer.schema.do_async')
+    @patch('schema.do_async')
     def test_builds_async(self, mocked_async_check):
         mocked_async_check.return_value = True
         self.assertIsNone(schema.schema_info(CONN))
