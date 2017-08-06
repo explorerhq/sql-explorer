@@ -1,20 +1,28 @@
 .. image:: https://travis-ci.org/groveco/django-sql-explorer.png?branch=master
    :target: https://travis-ci.org/groveco/django-sql-explorer
 
-Django SQL Explorer
+SQL Explorer
 ===================
 
 SQL Explorer aims to make the flow of data between people fast,
-simple, and confusion-free.
+simple, and confusion-free. It is a Django-based application that you
+can add to an existing Django site, or use as a standalone business
+intelligence tool.
 
-Quickly write and share SQL queries for any Django app in a simple,
-usable SQL editor, preview the results in the browser, share links to
-download CSV files, and keep the information flowing!
+Quickly write and share SQL queries in a simple, usable SQL editor,
+preview the results in the browser, share links, download CSV, JSON,
+or Excel files (and even expose queries as API enspoints, if desired),
+and keep the information flowing!
 
-Explorer values simplicity, intuitive use, unobtrusiveness, stability,
-and the principle of least surprise.
+Comes with support for multiple connections, to many different SQL
+database types, a schema explorer, query history (e.g. lightweight
+version control), a basic security model, in-browser pivot tables, and
+more.
 
-Django SQL Explorer is inspired by any number of great query and
+SQL Explorer values simplicity, intuitive use, unobtrusiveness,
+stability, and the principle of least surprise.
+
+SQL Explorer is inspired by any number of great query and
 reporting tools out there.
 
 The original idea came from Stack Exchange's `Data Explorer
@@ -22,7 +30,7 @@ The original idea came from Stack Exchange's `Data Explorer
 credit to similar projects like `Redash <http://redash.io/>`_ and
 `Blazer <https://github.com/ankane/blazer>`_.
 
-django-sql-explorer is MIT licensed, and pull requests are welcome.
+Sql Explorer is MIT licensed, and pull requests are welcome.
 
 **A view of a query**
 
@@ -65,7 +73,8 @@ Features
       provides reasonable protection.
 - **Easy to get started**
     - Built on Django's ORM, so works with Postgresql, Mysql, and
-      Sqlite.
+      Sqlite. And, between you and me, it works fine on RedShift as
+      well.
     - Small number of dependencies.
     - Just want to get in and write some ad-hoc queries? Go nuts with
       the Playground area.
@@ -100,15 +109,15 @@ Features
     - Use $$paramName:defaultValue$$ to provide default values for the
       parameters.
 - **Schema Helper**
-    - /explorer/schema/ renders a list of your Django apps' table and
-      column names + types that you can refer to while writing
+    - /explorer/schema/<connection-alias> renders a list of your table
+      and column names + types that you can refer to while writing
       queries. Apps can be excluded from this list so users aren't
       bogged down with tons of irrelevant tables. See settings
       documentation below for details.
     - This is available quickly as a sidebar helper while composing
       queries (see screenshot)
-    - Quick search for the tables/django models you are looking
-      for. Just start typing!
+    - Quick search for the tables you are looking for. Just start
+      typing!
     - Explorer uses Django DB introspection to generate the
       schema. This can sometimes be slow, as it issues a separate
       query for each table it introspects. Therefore, once generated,
