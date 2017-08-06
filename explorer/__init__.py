@@ -17,3 +17,5 @@ def get_version(short=False):
     return ''.join(vers)
 
 __version__ = get_version()
+
+default_app_config = 'explorer.apps.ExplorerAppConfig'

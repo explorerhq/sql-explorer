@@ -41,6 +41,14 @@
                     <div class="col-sm-10">
                         <input class="form-control" id="id_title" maxlength="255" name="title" type="text" {% if not can_change %}disabled{% endif %} value="{{ form.title.value|default_if_none:"" }}" />
                     </div>
+                  {% if form.connections|length > 1 and can_change %}
+                    </div>
+                    <div class="form-group">
+                      <label for="id_connection" class="col-sm-2 control-label">Connection</label>
+                      <div class="col-sm-10">
+                        {{ form.connection }}
+                      </div>
+                  {% endif %}
                 </div>
                 <div class="form-group">
                     {% if form.description.errors %}
@@ -51,18 +59,7 @@
                         <textarea class="form-control" cols="40" id="id_description" name="description" {% if not can_change %}disabled{% endif %} rows="2">{{ form.description.value|default_if_none:"" }}</textarea>
                     </div>
                 </div>
-                {% if query %}
-                    <div class="form-group">
-                        {% if form.created_by_user.errors %}
-                            <div class="alert alert-danger">{{ form.created_by_user.errors }}</div>
-                        {% endif %}
-                        <label for="id_created_by_user_label" class="col-sm-2 control-label">Created By</label>
-                        <div class="col-sm-10">
-                            <span class="form-control" disabled id="id_created_by_user_label" maxlength="255" name="created_by_user_label">{{ form.created_by_user_email }}</span>
-                            <input type="hidden" id="id_created_by_user" name="created_by_user" value="{{ form.created_by_user_email }}" />
-                        </div>
-                    </div>
-                {% endif %}
+                <input type="hidden" id="id_created_by_user" name="created_by_user" value="{{ form.created_by_user_email }}" />
                 {% if form.sql.errors %}{% for error in form.sql.errors %}
                     <div class="alert alert-danger">{{ error|escape }}</div>
                 {% endfor %}{% endif %}
@@ -135,9 +132,11 @@
     {% endif %}
   </div>
   <div class="col-md-6 text-right">
-    {% if query.avg_duration %}
-      Avg. execution: {{ query.avg_duration|floatformat:2 }}ms
-    {% endif %}
+    <small>
+      {% if query.avg_duration %}
+        Avg. execution: {{ query.avg_duration|floatformat:2 }}ms. Query created by {{ form.created_by_user_email }} on {{ form.created_at_time }}.
+      {% endif %}
+    </small>
   </div>
 </div>
 {% endblock %}

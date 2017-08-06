@@ -119,3 +119,13 @@ class TestParams(TestCase):
     def test_get_params_for_request_empty(self):
         q = SimpleQueryFactory()
         self.assertEqual(get_params_for_url(q), None)
+
+
+class TestConnections(TestCase):
+
+    def test_only_registered_connections_are_in_connections(self):
+        from explorer.connections import connections
+        from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION
+        from django.db import connections as djcs
+        self.assertTrue(EXPLORER_DEFAULT_CONNECTION in connections)
+        self.assertNotEqual(len(connections), len([c for c in djcs]))

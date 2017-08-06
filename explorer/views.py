@@ -10,7 +10,7 @@ else:
 from django.db import DatabaseError
 from django.db.models import Count
 from django.forms.models import model_to_dict
-from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, render, render_to_response
 from django.views.decorators.http import require_POST
 from django.utils.decorators import method_decorator
@@ -21,6 +21,7 @@ from django.views.decorators.clickjacking import xframe_options_sameorigin
 from django.core.exceptions import ImproperlyConfigured
 
 from explorer import app_settings
+from explorer.connections import connections
 from explorer.exporters import get_exporter_class
 from explorer.forms import QueryForm
 from explorer.models import Query, QueryLog, MSG_FAILED_BLACKLIST
@@ -34,8 +35,7 @@ from explorer.utils import (
     fmt_sql,
     allowed_query_pks,
     url_get_show,
-    url_get_fullscreen,
-    get_connection
+    url_get_fullscreen
 )
 
 from explorer.schema import schema_info
@@ -151,8 +151,15 @@ class SchemaView(PermissionRequiredMixin, View):
         return super(SchemaView, self).dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        return render_to_response('explorer/schema.html',
-                                  {'schema': schema_info(get_connection())})
+        connection = kwargs.get('connection')
+        if connection not in connections:
+            raise Http404
+        schema = schema_info(connection)
+        if schema:
+            return render_to_response('explorer/schema.html',
+                                      {'schema': schema_info(connection)})
+        else:
+            return render_to_response('explorer/schema_building.html')
 
 
 @require_POST
@@ -272,7 +279,7 @@ class PlayQueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
 
         if url_get_log_id(request):
             log = get_object_or_404(QueryLog, pk=url_get_log_id(request))
-            query = Query(sql=log.sql, title="Playground")
+            query = Query(sql=log.sql, title="Playground", connection=log.connection)
             return self.render_with_sql(request, query)
 
         return self.render()
@@ -280,25 +287,27 @@ class PlayQueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
     def post(self, request):
         sql = request.POST.get('sql')
         show = url_get_show(request)
-        query = Query(sql=sql, title="Playground")
+        query = Query(sql=sql, title="Playground", connection=request.POST.get('connection'))
         passes_blacklist, failing_words = query.passes_blacklist()
         error = MSG_FAILED_BLACKLIST % ', '.join(failing_words) if not passes_blacklist else None
         run_query = not bool(error) if show else False
         return self.render_with_sql(request, query, run_query=run_query, error=error)
 
     def render(self):
-        return self.render_template('explorer/play.html', {'title': 'Playground'})
+        return self.render_template('explorer/play.html', {'title': 'Playground', 'form': QueryForm()})
 
     def render_with_sql(self, request, query, run_query=True, error=None):
         rows = url_get_rows(request)
         fullscreen = url_get_fullscreen(request)
         template = 'fullscreen' if fullscreen else 'play'
+        form = QueryForm(request.POST if len(request.POST) else None, instance=query)
         return self.render_template('explorer/%s.html' % template, query_viewmodel(request.user,
                                                                                    query,
                                                                                    title="Playground",
                                                                                    run_query=run_query,
                                                                                    error=error,
-                                                                                   rows=rows))
+                                                                                   rows=rows,
+                                                                                   form=form))
 
 
 class QueryView(PermissionRequiredMixin, ExplorerContextMixin, View):

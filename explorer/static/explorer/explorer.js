@@ -110,7 +110,7 @@ ExplorerEditor.prototype.showRows = function() {
 };
 
 ExplorerEditor.prototype.showSchema = function() {
-    $("#schema_frame").attr('src', '../schema/');
+    $("#schema_frame").attr('src', '../schema/' + $('#id_connection').val());
     $("#query_area").removeClass("col-md-12").addClass("col-md-9");
     var schema$ = $("#schema");
     schema$.addClass("col-md-3");

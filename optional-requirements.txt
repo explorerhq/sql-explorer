@@ -1,10 +1,5 @@
 celery>=3.1,<4.0
 boto>=2.46
 django-celery>=3.1.0
-
 xlsxwriter==0.8.5
-
-django-xhtml2pdf==0.0.3
-xhtml2pdf==0.0.6
-html5lib==1.0b8
 factory-boy==2.8.1

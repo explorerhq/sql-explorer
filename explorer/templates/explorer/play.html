@@ -15,9 +15,17 @@
     <div id="query_area" class="col-md-12">
         <h2>Playground</h2>
         <p>The playground is for experimenting and writing ad-hoc queries. By default, nothing you do here will be saved.</p>
-        <form role="form" action="{% url "explorer_playground" %}" method="post" id="editor" class="playground-form">{% csrf_token %}
+        <form role="form" action="{% url "explorer_playground" %}" method="post" id="editor" class="playground-form form-horizontal">{% csrf_token %}
             {% if error %}
                 <div class="alert alert-danger">{{ error|escape }}</div>
+            {% endif %}
+            {% if form.connections|length > 1 %}
+              <div class="form-group">
+                <label for="id_connection" class="col-sm-2 control-label">Connection</label>
+                <div class="col-sm-10">
+                  {{ form.connection }}
+                </div>
+              </div>
             {% endif %}
             <div class="panel panel-default sql-panel">
                 <div class="panel-heading">

@@ -10,8 +10,33 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'tmp',
+        'TEST': {
+            'NAME': 'tmp'
+        }
+    },
+    'alt': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'tmp2',
+        'TEST': {
+            'NAME': 'tmp2'
+        }
+    },
+    'not_registered': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'tmp3',
+        'TEST': {
+            'NAME': 'tmp3'
+        }
     }
 }
+
+EXPLORER_CONNECTIONS = {
+    #'Postgres': 'postgres',
+    #'MySQL': 'mysql',
+    'SQLite': 'default',
+    'Another': 'alt'
+}
+EXPLORER_DEFAULT_CONNECTION = 'default'
 
 ROOT_URLCONF = 'explorer.tests.urls'
 

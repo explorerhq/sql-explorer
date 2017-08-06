@@ -1,8 +1,15 @@
-import sys
 from django.conf import settings
 
-# Required
-EXPLORER_CONNECTION_NAME = getattr(settings, 'EXPLORER_CONNECTION_NAME', None)
+# The 'correct' configuration for Explorer going forward and for new installs looks like:
+
+# EXPLORER_CONNECTIONS = {
+#   'Original Database': 'my_important_database_readonly_connection',
+#   'Client Database 2': 'other_database_connection'
+# }
+# EXPLORER_DEFAULT_CONNECTION = 'my_important_database_readonly_connection'
+
+EXPLORER_CONNECTIONS = getattr(settings, 'EXPLORER_CONNECTIONS', {})
+EXPLORER_DEFAULT_CONNECTION = getattr(settings, 'EXPLORER_DEFAULT_CONNECTION', None)
 
 # Change the behavior of explorer
 EXPLORER_SQL_BLACKLIST = getattr(settings, 'EXPLORER_SQL_BLACKLIST', ('ALTER',
@@ -35,6 +42,7 @@ EXPLORER_TRANSFORMS = getattr(settings, 'EXPLORER_TRANSFORMS', [])
 EXPLORER_PERMISSION_VIEW = getattr(settings, 'EXPLORER_PERMISSION_VIEW', lambda u: u.is_staff)
 EXPLORER_PERMISSION_CHANGE = getattr(settings, 'EXPLORER_PERMISSION_CHANGE', lambda u: u.is_staff)
 EXPLORER_RECENT_QUERY_COUNT = getattr(settings, 'EXPLORER_RECENT_QUERY_COUNT', 10)
+EXPLORER_ASYNC_SCHEMA = getattr(settings, 'EXPLORER_ASYNC_SCHEMA', False)
 
 EXPLORER_DATA_EXPORTERS = getattr(settings, 'EXPLORER_DATA_EXPORTERS', [
     ('csv', 'explorer.exporters.CSVExporter'),
@@ -42,23 +50,6 @@ EXPLORER_DATA_EXPORTERS = getattr(settings, 'EXPLORER_DATA_EXPORTERS', [
     ('json', 'explorer.exporters.JSONExporter'),
 
 ])
-
-EXPLORER_SCHEMA_BUILDERS = getattr(settings, 'EXPLORER_SCHEMA_BUILDERS', [
-    ('sqlite', 'explorer.schema.SQLiteSchema'),
-    ('postgresql', 'explorer.schema.PostgreSQLSchema'),
-    ('mysql', 'explorer.schema.MySQLSchema')
-])
-   
-if sys.version_info[0] < 3:
-    try:
-        # Add pdf export iff python version < 3 and django-xhtml2pdf is installed
-        from django_xhtml2pdf.utils import generate_pdf
-        EXPLORER_DATA_EXPORTERS += (
-            ('pdf', 'explorer.exporters.PdfExporter'),
-        )
-    except:
-        pass
-
 CSV_DELIMETER = getattr(settings, "EXPLORER_CSV_DELIMETER", ",")
 
 # API access

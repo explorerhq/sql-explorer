@@ -1,9 +1,11 @@
 import six
 
 from django.test import TestCase
+from django.db import connections
 from explorer.tests.factories import SimpleQueryFactory
 from explorer.models import QueryLog, Query, QueryResult, ColumnSummary, ColumnHeader
 from mock import patch, Mock
+from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
 
 
 class TestQueryModel(TestCase):
@@ -19,13 +21,14 @@ class TestQueryModel(TestCase):
 
     def test_query_log(self):
         self.assertEqual(0, QueryLog.objects.count())
-        q = SimpleQueryFactory()
+        q = SimpleQueryFactory(connection='alt')
         q.log(None)
         self.assertEqual(1, QueryLog.objects.count())
         log = QueryLog.objects.first()
         self.assertEqual(log.run_by_user, None)
         self.assertEqual(log.query, q)
         self.assertFalse(log.is_playground)
+        self.assertEqual(log.connection, q.connection)
 
     def test_query_logs_final_sql(self):
         q = SimpleQueryFactory(sql="select '$$foo$$';")
@@ -98,11 +101,17 @@ class TestQueryModel(TestCase):
         expected = "select 'bar', 'mux';"
         self.assertEqual(q.final_sql(), expected)
 
+    def test_cant_query_with_unregistered_connection(self):
+        from explorer.utils import InvalidExplorerConnectionException
+        q = SimpleQueryFactory(sql="select '$$foo:bar$$', '$$qux$$';", connection='not_registered')
+        self.assertRaises(InvalidExplorerConnectionException, q.execute_query_only)
+
 
 class TestQueryResults(TestCase):
 
     def setUp(self):
-        self.qr = QueryResult('select 1 as "foo", "qux" as "mux";')
+        conn = connections[CONN]
+        self.qr = QueryResult('select 1 as "foo", "qux" as "mux";', conn)
 
     def test_column_access(self):
         self.qr._data = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]

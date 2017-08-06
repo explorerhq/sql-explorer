@@ -3,6 +3,7 @@ import random
 import string
 
 from django.core.mail import send_mail
+from django.core.cache import cache
 
 from explorer import app_settings
 from explorer.exporters import get_exporter_class
@@ -63,3 +64,11 @@ def truncate_querylogs(days):
     logger.info('Deleting %s QueryLog objects older than %s days.' % (qs.count, days))
     qs.delete()
     logger.info('Done deleting QueryLog objects.')
+
+
+@task
+def build_schema_cache_async(connection_alias):
+    from schema import build_schema_info, connection_schema_cache_key
+    ret = build_schema_info(connection_alias)
+    cache.set(connection_schema_cache_key(connection_alias), ret)
+    return ret
