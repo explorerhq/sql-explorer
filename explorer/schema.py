@@ -34,20 +34,6 @@ def connection_schema_cache_key(connection_alias):
 
 
 def schema_info(connection_alias):
-    """
-    Construct schema information via engine-specific queries of the tables in the DB.
-
-    :return: Schema information of the following form, sorted by db_table_name.
-        [
-            ("db_table_name",
-                [
-                    ("db_column_name", "DbFieldType"),
-                    (...),
-                ]
-            )
-        ]
-
-    """
     key = connection_schema_cache_key(connection_alias)
     ret = cache.get(key)
     if ret:
@@ -59,6 +45,20 @@ def schema_info(connection_alias):
 
 
 def build_schema_info(connection_alias):
+    """
+        Construct schema information via engine-specific queries of the tables in the DB.
+
+        :return: Schema information of the following form, sorted by db_table_name.
+            [
+                ("db_table_name",
+                    [
+                        ("db_column_name", "DbFieldType"),
+                        (...),
+                    ]
+                )
+            ]
+
+        """
     connection = get_valid_connection(connection_alias)
     ret = []
     with connection.cursor() as cursor:
