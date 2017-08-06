@@ -21,13 +21,14 @@ class TestQueryModel(TestCase):
 
     def test_query_log(self):
         self.assertEqual(0, QueryLog.objects.count())
-        q = SimpleQueryFactory()
+        q = SimpleQueryFactory(connection='alt')
         q.log(None)
         self.assertEqual(1, QueryLog.objects.count())
         log = QueryLog.objects.first()
         self.assertEqual(log.run_by_user, None)
         self.assertEqual(log.query, q)
         self.assertFalse(log.is_playground)
+        self.assertEqual(log.connection, q.connection)
 
     def test_query_logs_final_sql(self):
         q = SimpleQueryFactory(sql="select '$$foo$$';")

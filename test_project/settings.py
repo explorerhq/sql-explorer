@@ -7,22 +7,6 @@ STATIC_URL = '/static/'
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 DATABASES = {
-    # 'postgres': {
-    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    #     'NAME': 'explorertest',
-    #     'HOST': '0.0.0.0',
-    #     'PORT': 54321,
-    #     'USER': 'postgres',
-    #     'PASSWORD': ''
-    # },
-    # 'mysql': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'explorertest',
-    #     'HOST': '0.0.0.0',
-    #     'PORT': 6603,
-    #     'USER': 'root',
-    #     'PASSWORD': 'root'
-    # },
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': 'tmp',
