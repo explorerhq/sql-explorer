@@ -2,8 +2,8 @@ from django.test import TestCase
 from django.core.cache import cache
 from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
 from explorer import schema
-#from mock import patch
-from unittest.mock import patch
+from mock import patch
+
 
 class TestSchemaInfo(TestCase):
 
@@ -48,7 +48,7 @@ class TestSchemaInfo(TestCase):
         tables = [x[0] for x in res]
         self.assertIn('explorer_query', tables)
 
-    @patch('schema.do_async')
+    @patch('explorer.schema.do_async')
     def test_builds_async(self, mocked_async_check):
         mocked_async_check.return_value = True
         self.assertIsNone(schema.schema_info(CONN))
