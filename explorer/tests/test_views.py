@@ -284,6 +284,14 @@ class TestDownloadView(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['content-type'], 'text/csv')
 
+    def test_bad_query_gives_500(self):
+        query = SimpleQueryFactory(sql='bad')
+        url = reverse("download_query", args=[query.pk]) + '?format=csv'
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 500)
+
     def test_download_json(self):
         query = SimpleQueryFactory()
         url = reverse("download_query", args=[query.pk]) + '?format=json'
