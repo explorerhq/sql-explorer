@@ -42,7 +42,10 @@ $('body').on('submit', '.email-csv-form', function (e) {
         email: $this.find('[name=email]').val()
       },
       success: function () {
-        $this.closest('td').find('.email-csv').popover('hide');
+        var $el = $this.closest('td');
+        $el.find('.popover-content').html("Ok! The query results will be emailed to you shortly.");
+        var closeSoon = function() { $el.find('.email-csv').popover('hide'); };
+        setTimeout(closeSoon, 2000);
       }
     });
   } else {
