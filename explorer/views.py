@@ -40,6 +40,8 @@ from explorer.utils import (
 
 from explorer.schema import schema_info
 from explorer import permissions
+import logging
+logger = logging.getLogger(__name__)
 
 
 class ExplorerContextMixin(object):
@@ -91,7 +93,12 @@ def _export(request, query, download=True):
     query.params = url_get_params(request)
     delim = request.GET.get('delim')
     exporter = exporter_class(query)
-    output = exporter.get_output(delim=delim)
+    try:
+        output = exporter.get_output(delim=delim)
+    except DatabaseError as e:
+        msg = "Error executing query %s: %s" % (query.title, e)
+        logger.warning(msg)
+        return HttpResponse(msg, status=500)
     response = HttpResponse(output, content_type=exporter.content_type)
     if download:
         response['Content-Disposition'] = 'attachment; filename="%s"' % (
