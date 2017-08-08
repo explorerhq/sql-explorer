@@ -173,10 +173,24 @@ class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
 
     permission_required = 'view_permission_list'
 
+    def recently_viewed(self):
+        qll = QueryLog.objects.filter(run_by_user=self.request.user, query_id__isnull=False).order_by(
+            '-run_at').select_related('query')
+        ret = []
+        tracker = []
+        for ql in qll:
+            if len(ret) < app_settings.EXPLORER_RECENT_QUERY_COUNT:
+                break
+
+            if ql.query_id not in tracker:
+                ret.append(ql)
+                tracker.append(ql.query_id)
+        return ret
+
     def get_context_data(self, **kwargs):
         context = super(ListQueryView, self).get_context_data(**kwargs)
         context['object_list'] = self._build_queries_and_headers()
-        context['recent_queries'] = self.get_queryset().order_by('-last_run_date')[:app_settings.EXPLORER_RECENT_QUERY_COUNT]
+        context['recent_queries'] = self.recently_viewed()
         context['tasks_enabled'] = app_settings.ENABLE_TASKS
         return context
 
@@ -219,6 +233,7 @@ class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
             if headers[header] > 1 and header not in rendered_headers:
                 dict_list.append({'title': header,
                                   'is_header': True,
+                                  'is_in_category': False,
                                   'collapse_target': collapse_target,
                                   'count': headers[header]})
                 rendered_headers.append(header)
@@ -226,6 +241,7 @@ class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
             model_dict.update({'is_in_category': headers[header] > 1,
                                'collapse_target': collapse_target,
                                'created_at': q.created_at,
+                               'is_header': False,
                                'run_count': q.run_count,
                                'created_by_user': six.text_type(q.created_by_user) if q.created_by_user else None})
             dict_list.append(model_dict)
