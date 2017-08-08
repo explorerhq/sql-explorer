@@ -33,7 +33,7 @@ function ExplorerEditor(queryId) {
     this.bind();
 
     if($.cookie('schema_sidebar_open') == 1){
-        this.showSchema.call($("#show_schema_button"));
+        this.showSchema.call($('#showSchemaButton'), true);
     }
 }
 
@@ -109,13 +109,17 @@ ExplorerEditor.prototype.showRows = function() {
     $form.submit();
 };
 
-ExplorerEditor.prototype.showSchema = function() {
+ExplorerEditor.prototype.showSchema = function(e, noAutofocus) {
     $("#schema_frame").attr('src', '../schema/' + $('#id_connection').val());
+    console.log(noAutofocus);
+    if (noAutofocus) {
+        $("#schema_frame").addClass('no-autofocus');
+    }
     $("#query_area").removeClass("col-md-12").addClass("col-md-9");
     var schema$ = $("#schema");
     schema$.addClass("col-md-3");
     schema$.show();
-    $(this).hide();
+    $("#show_schema_button").hide();
     $("#hide_schema_button").show();
     $.cookie('schema_sidebar_open', 1);
     return false;
@@ -135,7 +139,7 @@ ExplorerEditor.prototype.hideSchema = function() {
 ExplorerEditor.prototype.bind = function() {
     $("#show_schema_button").click(this.showSchema);
     $("#hide_schema_button").click(this.hideSchema);
-    
+
     $("#format_button").click(function(e) {
         e.preventDefault();
         this.formatSql();
@@ -215,7 +219,7 @@ ExplorerEditor.prototype.bind = function() {
         $(".stats-wrapper").show();
         this.$table.floatThead('reflow');
     }.bind(this));
-    
+
     $("#counter-toggle").click(function(e) {
         e.preventDefault();
         $('.counter').toggle();

@@ -1,4 +1,4 @@
-{% extends "explorer/base.html" %}
+{% extends "explorer/base.html" %}
 
 
 {% block sql_explorer_content_takeover %}
@@ -50,8 +50,10 @@
 {% block sql_explorer_scripts %}
 <script>
     $(function() {
-        function SearchFocus() {
-            $(".search").focus();
+    function SearchFocus() {
+            if (!$(window.parent.document.getElementById("schema_frame")).hasClass('no-autofocus')) {
+    $(".search").focus();
+    }
         }
         var options = {
             valueNames: [ 'name', 'app' ],
