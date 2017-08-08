@@ -98,7 +98,7 @@ def _export(request, query, download=True):
     except DatabaseError as e:
         msg = "Error executing query %s: %s" % (query.title, e)
         logger.warning(msg)
-        return HttpResponse(msg, status_code=500)
+        return HttpResponse(msg, status=500)
     response = HttpResponse(output, content_type=exporter.content_type)
     if download:
         response['Content-Disposition'] = 'attachment; filename="%s"' % (
