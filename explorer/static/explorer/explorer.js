@@ -33,7 +33,7 @@ function ExplorerEditor(queryId) {
     this.bind();
 
     if($.cookie('schema_sidebar_open') == 1){
-        this.showSchema.call($('#showSchemaButton'), true);
+      this.showSchema(true);
     }
 }
 
@@ -109,10 +109,9 @@ ExplorerEditor.prototype.showRows = function() {
     $form.submit();
 };
 
-ExplorerEditor.prototype.showSchema = function(e, noAutofocus) {
+ExplorerEditor.prototype.showSchema = function(noAutofocus) {
     $("#schema_frame").attr('src', '../schema/' + $('#id_connection').val());
-    console.log(noAutofocus);
-    if (noAutofocus) {
+    if (noAutofocus === true) {
         $("#schema_frame").addClass('no-autofocus');
     }
     $("#query_area").removeClass("col-md-12").addClass("col-md-9");
