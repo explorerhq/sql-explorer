@@ -179,7 +179,7 @@ class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
         ret = []
         tracker = []
         for ql in qll:
-            if len(ret) < app_settings.EXPLORER_RECENT_QUERY_COUNT:
+            if len(ret) == app_settings.EXPLORER_RECENT_QUERY_COUNT:
                 break
 
             if ql.query_id not in tracker:
