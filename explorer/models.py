@@ -1,3 +1,4 @@
+from decimal import InvalidOperation
 import django
 import logging
 from time import time
@@ -247,7 +248,10 @@ class ColumnStat(object):
         self.handles_null = handles_null
 
     def __call__(self, coldata):
-        self.value = round(float(self.statfn(coldata)), self.precision) if coldata else 0
+        try:
+            self.value = round(float(self.statfn(coldata)), self.precision) if coldata else 0
+        except InvalidOperation:
+            self.value = 0
 
     def __unicode__(self):
         return self.label
