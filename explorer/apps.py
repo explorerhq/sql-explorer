@@ -28,7 +28,7 @@ def _validate_connections():
     # Validate connections
     if _get_default() not in _get_explorer_connections().values():
         raise ImproperlyConfigured(
-            'EXPLORER_DEFAULT_CONNECTION is %s, but that alias is not present in the vaules of EXPLORER_CONNECTIONS'
+            'EXPLORER_DEFAULT_CONNECTION is %s, but that alias is not present in the values of EXPLORER_CONNECTIONS'
             % _get_default())
 
     for name, conn_name in _get_explorer_connections().items():
