@@ -2,7 +2,7 @@ import functools
 import re
 from six import text_type
 import sqlparse
-from . import app_settings
+from explorer import app_settings
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import login
 from django.contrib.auth import REDIRECT_FIELD_NAME
