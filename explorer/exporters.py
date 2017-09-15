@@ -99,7 +99,6 @@ class ExcelExporter(BaseExporter):
     name = 'Excel'
     content_type = 'application/vnd.ms-excel'
     file_extension = '.xlsx'
-   
 
     def _get_output(self, res, **kwargs):
         import xlsxwriter
