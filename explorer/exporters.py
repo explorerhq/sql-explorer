@@ -136,7 +136,7 @@ class ExcelExporter(BaseExporter):
         wb.close()
         return output
 
-    def _format_title(self)
+    def _format_title(self):
         # XLSX writer wont allow sheet names > 31 characters or that contain invalid characters
         # https://github.com/jmcnamara/XlsxWriter/blob/master/xlsxwriter/test/workbook/test_check_sheetname.py
          title = self.query.title

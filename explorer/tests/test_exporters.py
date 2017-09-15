@@ -64,7 +64,8 @@ class TestExcel(TestCase):
             , by all means submit a pull request!
         """
         res = QueryResult(SimpleQueryFactory(sql='select 1 as "a", 2 as ""',
-                                             title='this title is longer than 32 characters').sql, connections[CONN])
+                                             title='\\/*[]:?this title is longer than 32 characters').sql, connections[CONN])
+
         res.execute_query()
         res.process()
 
@@ -81,7 +82,7 @@ class TestExcel(TestCase):
 
     def test_writing_dict_fields(self):
         res = QueryResult(SimpleQueryFactory(sql='select 1 as "a", 2 as ""',
-                                             title='this title is longer than 32 characters').sql, connections[CONN])
+                                             title='\\/*[]:?this title is longer than 32 characters').sql, connections[CONN])
 
         res.execute_query()
         res.process()
