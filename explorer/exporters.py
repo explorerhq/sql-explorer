@@ -99,6 +99,7 @@ class ExcelExporter(BaseExporter):
     name = 'Excel'
     content_type = 'application/vnd.ms-excel'
     file_extension = '.xlsx'
+   
 
     def _get_output(self, res, **kwargs):
         import xlsxwriter
@@ -106,11 +107,7 @@ class ExcelExporter(BaseExporter):
 
         wb = xlsxwriter.Workbook(output, {'in_memory': True})
 
-        # XLSX writer wont allow sheet names > 31 characters
-        # https://github.com/jmcnamara/XlsxWriter/blob/master/xlsxwriter/test/workbook/test_check_sheetname.py
-        title = self.query.title[:31]
-
-        ws = wb.add_worksheet(name=title)
+        ws = wb.add_worksheet(name=self._format_title())
 
         # Write headers
         row = 0
@@ -138,3 +135,12 @@ class ExcelExporter(BaseExporter):
 
         wb.close()
         return output
+
+    def _format_title(self)
+        # XLSX writer wont allow sheet names > 31 characters or that contain invalid characters
+        # https://github.com/jmcnamara/XlsxWriter/blob/master/xlsxwriter/test/workbook/test_check_sheetname.py
+         title = self.query.title
+         for char in ['\\', '/', '*', '[', ']', ':', '?']:
+            if char in title:
+                title = title.replace(char, ' ')
+         return title[:31]
