@@ -1,4 +1,6 @@
+import ftplib
 import functools
+import io
 import re
 from django.db import connections, connection
 
@@ -175,3 +177,18 @@ def moni_s3_upload(key, data, bucket_path):
     k.set_acl('public-read')
     k.set_metadata('Content-Type', 'text/csv')
     return k.generate_url(expires_in=0, query_auth=False)
+
+
+def moni_s3_transfer_file_to_ftp(ftp_export, io_file, file_name):
+    """
+    sends a file to a ftp folder
+    :param ftp_export: the FTPExport model
+    :param io_file: the StringIO file
+    :param file_name: the name of the StringIO file
+    """
+    session = ftplib.FTP(ftp_export.host, ftp_export.user, ftp_export.password)
+    session.cwd(ftp_export.folder_path)  # move to correct directory
+    session.set_pasv(0)
+    io.BytesIO(io_file)
+    session.storbinary('STOR {}'.format(file_name), io_file)
+    session.quit()

@@ -125,6 +125,14 @@ class SnapShot(object):
         self.last_modified = last_modified
 
 
+class FTPExport(models.Model):
+    query = models.ForeignKey(Query)
+    host = models.CharField(max_length=100)
+    user = models.CharField(max_length=100)
+    password = models.CharField(max_length=30)
+    folder_path = models.CharField(max_length=200)
+
+
 class QueryLog(models.Model):
 
     sql = models.TextField(null=True, blank=True)

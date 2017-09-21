@@ -11,7 +11,7 @@ from explorer.models import Query, QueryLog
 if app_settings.ENABLE_TASKS:
     from celery import task
     from celery.utils.log import get_task_logger
-    from explorer.utils import s3_upload, moni_s3_upload
+    from explorer.utils import s3_upload, moni_s3_upload, moni_s3_transfer_file_to_ftp
 
     logger = get_task_logger(__name__)
 else:
@@ -75,8 +75,12 @@ def snapshot_query_on_bucket(query_id):
         exporter = get_exporter_class('csv')(q)
         k = '%s-%s.csv' % (q_name, date.today().strftime('%Y%m%d'))
         logger.info("Uploading snapshot for query %s as %s..." % (query_id, k))
-        url = moni_s3_upload(k, exporter.get_file_output(), q.bucket)
+        file_output = exporter.get_file_output()
+        url = moni_s3_upload(k, file_output, q.bucket)
         logger.info("Done uploading snapshot for query %s. URL: %s" % (query_id, url))
+        # sends the file of the query via all the FTP exports
+        for ftp_export in q.ftpexport_set.all():
+            moni_s3_transfer_file_to_ftp(ftp_export, file_output, k)
     except Exception as e:
         logger.warning("Failed to snapshot query %s (%s). Retrying..." % (query_id, e.message))
         snapshot_query.retry()
