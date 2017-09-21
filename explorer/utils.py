@@ -189,6 +189,5 @@ def moni_s3_transfer_file_to_ftp(ftp_export, io_file, file_name):
     session = ftplib.FTP(ftp_export.host, ftp_export.user, ftp_export.password)
     session.cwd(ftp_export.folder_path)  # move to correct directory
     session.set_pasv(0)
-    io.BytesIO(io_file)
     session.storbinary('STOR {}'.format(file_name), io_file)
     session.quit()

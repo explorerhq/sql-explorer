@@ -6,7 +6,7 @@ from django.core.mail import send_mail
 
 from explorer import app_settings
 from explorer.exporters import get_exporter_class
-from explorer.models import Query, QueryLog
+from explorer.models import Query, QueryLog, FTPExport
 
 if app_settings.ENABLE_TASKS:
     from celery import task
@@ -74,10 +74,11 @@ def snapshot_query_on_bucket(query_id):
         q_name = q.slug if q.slug else q.id
         exporter = get_exporter_class('csv')(q)
         k = '%s-%s.csv' % (q_name, date.today().strftime('%Y%m%d'))
-        logger.info("Uploading snapshot for query %s as %s..." % (query_id, k))
         file_output = exporter.get_file_output()
-        url = moni_s3_upload(k, file_output, q.bucket)
-        logger.info("Done uploading snapshot for query %s. URL: %s" % (query_id, url))
+        if q.bucket != '':
+            logger.info("Uploading snapshot for query %s as %s..." % (query_id, k))
+            url = moni_s3_upload(k, file_output, q.bucket)
+            logger.info("Done uploading snapshot for query %s. URL: %s" % (query_id, url))
         # sends the file of the query via all the FTP exports
         for ftp_export in q.ftpexport_set.all():
             moni_s3_transfer_file_to_ftp(ftp_export, file_output, k)
@@ -86,11 +87,14 @@ def snapshot_query_on_bucket(query_id):
         snapshot_query.retry()
 
 
+
 @task
 def snapshot_queries_on_bucket():
     logger.info("Starting query snapshots...")
-    qs = Query.objects.exclude(bucket__exact='').values_list('id', flat=True)
+    qs_bucket = Query.objects.exclude(bucket__exact='').values_list('id', flat=True)
+    qs_ftp = FTPExport.objects.all().values('query__id', flat=True)
+    total_ids = set(list(qs_bucket)+list(qs_ftp))
     logger.info("Found %s queries to snapshot. Creating snapshot tasks..." % len(qs))
-    for qid in qs:
+    for qid in total_ids:
         snapshot_query_on_bucket.delay(qid)
     logger.info("Done creating tasks.")
