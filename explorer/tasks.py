@@ -93,7 +93,7 @@ def snapshot_queries_on_bucket():
     qs_bucket = Query.objects.exclude(bucket__exact='').values_list('id', flat=True)
     qs_ftp = FTPExport.objects.all().values_list('query__id', flat=True)
     total_ids = set(list(qs_bucket)+list(qs_ftp))
-    logger.info("Found %s queries to snapshot. Creating snapshot tasks..." % len(qs))
+    logger.info("Found %s queries to snapshot. Creating snapshot tasks..." % len(total_ids))
     for qid in total_ids:
         snapshot_query_on_bucket.delay(qid)
     logger.info("Done creating tasks.")
