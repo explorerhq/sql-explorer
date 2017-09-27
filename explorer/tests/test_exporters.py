@@ -93,3 +93,21 @@ class TestExcel(TestCase):
         expected = b('PK')
 
         self.assertEqual(res[:2], expected)
+
+    def test_writing_excel_with_invalid_characters_in_worksheet_name(self):
+        res = QueryResult(SimpleQueryFactory(sql='select 1 as "a", 2 as ""',
+                                             title='[]:*?/\\this title is longer than 32 characters').sql, connections[CONN])
+        res.execute_query()
+        res.process()
+
+        d = datetime.now()
+        d = timezone.make_aware(d, timezone.get_current_timezone())
+
+        res._data = [[1, None], [u"Jenét", d]]
+
+        res = ExcelExporter(query=SimpleQueryFactory())._get_output(res).getvalue()
+
+        expected = b('PK')
+
+        self.assertEqual(res[:2], expected)
+
