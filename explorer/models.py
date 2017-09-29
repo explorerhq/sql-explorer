@@ -131,6 +131,7 @@ class FTPExport(models.Model):
     user = models.CharField(max_length=100)
     password = models.CharField(max_length=30)
     folder_path = models.CharField(max_length=200)
+    passive = models.BooleanField(default=False)
 
 
 class QueryLog(models.Model):

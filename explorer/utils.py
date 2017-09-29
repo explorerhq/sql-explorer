@@ -179,7 +179,7 @@ def moni_s3_upload(key, data, bucket_path):
     return k.generate_url(expires_in=0, query_auth=False)
 
 
-def moni_s3_transfer_file_to_ftp(ftp_export, io_file, file_name):
+def moni_s3_transfer_file_to_ftp(ftp_export, io_file, file_name, passive):
     """
     sends a file to a ftp folder
     :param ftp_export: the FTPExport model
@@ -188,6 +188,7 @@ def moni_s3_transfer_file_to_ftp(ftp_export, io_file, file_name):
     """
     session = ftplib.FTP(ftp_export.host, ftp_export.user, ftp_export.password)
     session.cwd(ftp_export.folder_path)  # move to correct directory
-    session.set_pasv(0)
+    if passive:
+        session.set_pasv(0)
     session.storbinary('STOR {}'.format(file_name), io_file)
     session.quit()
