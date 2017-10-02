@@ -190,5 +190,6 @@ def moni_s3_transfer_file_to_ftp(ftp_export, io_file, file_name, passive):
     session.cwd(ftp_export.folder_path)  # move to correct directory
     if passive:
         session.set_pasv(0)
+    io_file.seek(0)
     session.storbinary('STOR {}'.format(file_name), io_file)
     session.quit()
