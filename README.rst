@@ -11,7 +11,7 @@ intelligence tool.
 
 Quickly write and share SQL queries in a simple, usable SQL editor,
 preview the results in the browser, share links, download CSV, JSON,
-or Excel files (and even expose queries as API enspoints, if desired),
+or Excel files (and even expose queries as API endpoints, if desired),
 and keep the information flowing!
 
 Comes with support for multiple connections, to many different SQL
