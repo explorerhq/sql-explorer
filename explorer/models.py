@@ -9,6 +9,7 @@ if django.VERSION[1] >= 10:
 else:
     from django.core.urlresolvers import reverse
 from django.conf import settings
+from django.utils.safestring import mark_safe
 
 from . import app_settings
 from explorer.utils import (
@@ -207,7 +208,7 @@ class QueryResult(object):
         if transforms:
             for r in self.data:
                 for ix, t in transforms:
-                    r[ix] = t.format(str(r[ix]))
+                    r[ix] = mark_safe(t.format(str(r[ix])))
 
     def execute_query(self):
         cursor = self.connection.cursor()
