@@ -2,6 +2,8 @@ import ftplib
 import functools
 import io
 import re
+import zipfile
+
 from django.db import connections, connection
 
 from six import text_type
@@ -179,7 +181,7 @@ def moni_s3_upload(key, data, bucket_path):
     return k.generate_url(expires_in=0, query_auth=False)
 
 
-def moni_s3_transfer_file_to_ftp(ftp_export, io_file, file_name, passive):
+def moni_s3_transfer_file_to_ftp(ftp_export, io_file, file_name, passive, compress=False):
     """
     sends a file to a ftp folder
     :param ftp_export: the FTPExport model
@@ -191,5 +193,9 @@ def moni_s3_transfer_file_to_ftp(ftp_export, io_file, file_name, passive):
     if passive:
         session.set_pasv(0)
     io_file.seek(0)
-    session.storbinary('STOR {}'.format(file_name), io_file)
+    if compress:
+        archive = zipfile.ZipFile(io_file, 'w', zipfile.ZIP_DEFLATED)
+    else:
+        archive = io_file
+    session.storbinary('STOR {}'.format(file_name), archive)
     session.quit()

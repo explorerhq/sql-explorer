@@ -133,6 +133,9 @@ class FTPExport(models.Model):
     folder_path = models.CharField(max_length=200)
     passive = models.BooleanField(default=False)
 
+    def __unicode__(self):
+        return '{}: query-{}, path: {}:{}'.format(self.pk, self.query, self.host, self.folder_path)
+
 
 class QueryLog(models.Model):
 
