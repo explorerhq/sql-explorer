@@ -1,6 +1,6 @@
 from django.contrib import admin
 from explorer.models import Query
-from explorer.actions import generate_report_action
+from explorer.actions import generate_report_action, generate_excel_report_action
 
 
 class QueryAdmin(admin.ModelAdmin):
