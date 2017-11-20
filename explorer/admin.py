@@ -8,6 +8,6 @@ class QueryAdmin(admin.ModelAdmin):
     list_filter = ('title',)
     raw_id_fields = ('created_by_user',)
     
-    actions = [generate_report_action()]
+    actions = [generate_report_action(), generate_excel_report_action()]
 
 admin.site.register(Query, QueryAdmin)
