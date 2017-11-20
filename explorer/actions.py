@@ -4,8 +4,54 @@ import tempfile
 from zipfile import ZipFile
 from wsgiref.util import FileWrapper
 from django.http import HttpResponse
-from explorer.exporters import CSVExporter
+from explorer.exporters import CSVExporter, ExcelExporter
 
+def generate_excel_report_action(description="Generate Excel file from SQL query",):
+    
+    def generate_excel_report(modeladmin, request, queryset):
+        results = [report for report in queryset if report.passes_blacklist()[0]]
+        queries = (len(results) > 0 and _package_excel(results)) or defaultdict(int)
+        response = HttpResponse(queries["data"], content_type=queries["content_type"])
+        response['Content-Disposition'] = queries["filename"]
+        response['Content-Length'] = queries["length"]
+        return response
+
+    generate_excel_report.short_description = description
+    return generate_excel_report
+
+def _package_excel(queries):
+    ret = {}
+    is_one = len(queries) == 1
+    name_root = lambda n: "attachment; filename=%s" % n
+    ret["content_type"] = (is_one and 'application/vnd.ms-excel') or 'application/zip'
+    ret["filename"] = (is_one and name_root('%s.xlsx' % queries[0].title.replace(',', ''))) or name_root("Report_%s.zip" % date.today())
+    ret["data"] = (is_one and ExcelExporter(queries[0]).get_output()) or _build_zip_excel(queries)
+    ret["length"] = (is_one and len(ret["data"]) or ret["data"].size)
+    return ret
+
+def _build_zip_excel(queries):
+    temp = tempfile.TemporaryFile()
+    zip_file = ZipFile(temp, 'w')
+    for r in queries:
+            zip_file.writestr('%s.xlsx' % r.title, ExcelExporter(r).get_output() or "Error!")
+    zip_file.close()
+    ret = FileWrapper(temp)
+    ret.size = temp.tell()
+    temp.seek(0)
+    return ret
+
+def generate_report_action(description="Generate CSV file from SQL query",):
+
+    def generate_report(modeladmin, request, queryset):
+        results = [report for report in queryset if report.passes_blacklist()[0]]
+        queries = (len(results) > 0 and _package(results)) or defaultdict(int)
+        response = HttpResponse(queries["data"], content_type=queries["content_type"])
+        response['Content-Disposition'] = queries["filename"]
+        response['Content-Length'] = queries["length"]
+        return response
+
+    generate_report.short_description = description
+    return generate_report
 
 def generate_report_action(description="Generate CSV file from SQL query",):
 
@@ -30,7 +76,6 @@ def _package(queries):
     ret["data"] = (is_one and CSVExporter(queries[0]).get_output()) or _build_zip(queries)
     ret["length"] = (is_one and len(ret["data"]) or ret["data"].blksize)
     return ret
-
 
 def _build_zip(queries):
     temp = tempfile.TemporaryFile()
