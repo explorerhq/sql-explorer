@@ -37,6 +37,7 @@ class Query(models.Model):
     last_run_date = models.DateTimeField(auto_now=True)
     snapshot = models.BooleanField(default=True, help_text="Include in snapshot task (if enabled)")
     bucket = models.CharField(max_length=100, blank=True, null=True)
+    priority = models.BooleanField(default=False)
 
     def __init__(self, *args, **kwargs):
         self.params = kwargs.get('params')

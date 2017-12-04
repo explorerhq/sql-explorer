@@ -2,6 +2,8 @@ from datetime import date, datetime, timedelta
 import random
 import string
 
+from celery import chain
+from celery import group
 from django.core.mail import send_mail
 
 from explorer import app_settings
@@ -91,10 +93,19 @@ def snapshot_query_on_bucket(query_id):
 @task
 def snapshot_queries_on_bucket():
     logger.info("Starting query snapshots...")
-    qs_bucket = Query.objects.exclude(bucket__exact='').values_list('id', flat=True)
-    qs_ftp = FTPExport.objects.all().values_list('query__id', flat=True)
-    total_ids = set(list(qs_bucket)+list(qs_ftp))
+    qs_bucket = Query.objects.exclude(bucket__exact='').values('id', 'priority')
+    qs_ftp = FTPExport.objects.all().values_list('query__id', 'priority')
+    total_ids = list(qs_bucket)+list(qs_ftp)
+    mandatory_ids = {x["id"] for x in total_ids if x["priority"] is True}
+    not_mandatory_ids = {x["id"] for x in total_ids if x["priority"] is False}
     logger.info("Found %s queries to snapshot. Creating snapshot tasks..." % len(total_ids))
-    for qid in total_ids:
-        snapshot_query_on_bucket.delay(qid)
+    high_priority_group = group([snapshot_query_on_bucket.s(qid) for qid in mandatory_ids]),
+    low_priority_group = group([snapshot_query_on_bucket.s(qid) for qid in not_mandatory_ids])
+    chain(
+        high_priority_group,
+        low_priority_group
+
+    ).apply_async()
+    # for qid in total_ids:
+    #     snapshot_query_on_bucket.delay(qid)
     logger.info("Done creating tasks.")
