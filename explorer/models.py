@@ -1,13 +1,13 @@
-import django
 import logging
 from time import time
 import six
 
 from django.db import models, DatabaseError
-if django.VERSION[1] >= 10:
+try:
     from django.urls import reverse
-else:
+except ImportError:
     from django.core.urlresolvers import reverse
+
 from django.conf import settings
 
 from . import app_settings

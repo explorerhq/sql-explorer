@@ -1,12 +1,12 @@
-import django
 import json
 import time
 
 from django.test import TestCase
-if django.VERSION[1] >= 10:
+try:
     from django.urls import reverse
-else:
+except ImportError:
     from django.core.urlresolvers import reverse
+
 from django.contrib.auth.models import User
 from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
 from django.forms.models import model_to_dict

@@ -1,12 +1,12 @@
-import django
 import re
 import six
 from collections import Counter
 
-if django.VERSION[1] >= 10:
+try:
     from django.urls import reverse_lazy
-else:
+except ImportError:
     from django.core.urlresolvers import reverse_lazy
+
 from django.db import DatabaseError
 from django.db.models import Count
 from django.forms.models import model_to_dict
