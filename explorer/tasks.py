@@ -2,9 +2,9 @@ from datetime import date, datetime, timedelta
 import random
 import string
 
-from celery import chain
 from celery import group
 from django.core.mail import send_mail
+from django.db.models import F
 
 from explorer import app_settings
 from explorer.exporters import get_exporter_class
@@ -19,6 +19,7 @@ if app_settings.ENABLE_TASKS:
 else:
     from explorer.utils import noop_decorator as task
     import logging
+
     logger = logging.getLogger(__name__)
 
 
@@ -71,6 +72,7 @@ def truncate_querylogs(days):
 @task
 def snapshot_query_on_bucket(query_id):
     try:
+        import time
         logger.info("Starting snapshot for query %s..." % query_id)
         q = Query.objects.get(pk=query_id)
         q_name = q.slug if q.slug else q.id
@@ -83,29 +85,29 @@ def snapshot_query_on_bucket(query_id):
             logger.info("Done uploading snapshot for query %s. URL: %s" % (query_id, url))
         # sends the file of the query via all the FTP exports
         for ftp_export in q.ftpexport_set.all():
-            import time
             moni_s3_transfer_file_to_ftp(ftp_export, file_output, k, ftp_export.passive)
             time.sleep(2)
     except Exception as e:
-        logger.warning("Failed to snapshot query %s (%s). Retrying..." % (query_id, e.message))
+        logger.warning("Failed to snapshot query %s (%s)." % (query_id, e.message))
+    return datetime.now()
 
 
 @task
 def snapshot_queries_on_bucket():
     logger.info("Starting query snapshots...")
-    qs_bucket = Query.objects.exclude(bucket__exact='').values('id', 'priority')
-    qs_ftp = FTPExport.objects.all().values_list('query__id', 'priority')
-    total_ids = list(qs_bucket)+list(qs_ftp)
-    mandatory_ids = {x["id"] for x in total_ids if x["priority"] is True}
-    not_mandatory_ids = {x["id"] for x in total_ids if x["priority"] is False}
+    qs_bucket = Query.objects.exclude(bucket__exact='').annotate(query_id=F('id'),
+                                                                 query_priority=F('priority')).values(
+        'query_id',
+        'query_priority')
+    qs_ftp = FTPExport.objects.all().annotate(query_id=F('query__id'),
+                                              query_priority=F('query__priority')).values('query__id',
+                                                                                          'query__priority')
+    total_ids = list(qs_bucket) + list(qs_ftp)
+    mandatory_ids = {x["query_id"] for x in total_ids if x["query_priority"] is True}
+    not_mandatory_ids = {x["query_id"] for x in total_ids if x["query_priority"] is False}
     logger.info("Found %s queries to snapshot. Creating snapshot tasks..." % len(total_ids))
-    high_priority_group = group([snapshot_query_on_bucket.s(qid) for qid in mandatory_ids]),
-    low_priority_group = group([snapshot_query_on_bucket.s(qid) for qid in not_mandatory_ids])
-    chain(
-        high_priority_group,
-        low_priority_group
-
-    ).apply_async()
-    # for qid in total_ids:
-    #     snapshot_query_on_bucket.delay(qid)
-    logger.info("Done creating tasks.")
+    high_priority_group = group([snapshot_query_on_bucket.s(qid) for qid in mandatory_ids])()
+    # this forces the first group to check for the result and until this function does not finish,
+    # the secondary group does not start.
+    high_priority_group.get()
+    group([snapshot_query_on_bucket.s(qid) for qid in not_mandatory_ids])()
