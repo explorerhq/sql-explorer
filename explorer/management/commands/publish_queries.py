@@ -1,6 +1,8 @@
 from celery import group
 from celery.utils.log import get_task_logger
 from django.core.management.base import BaseCommand
+from django.db.models import F
+
 from explorer.models import Query, FTPExport
 from explorer.tasks import snapshot_query_on_bucket
 
