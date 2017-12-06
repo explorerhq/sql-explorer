@@ -100,8 +100,8 @@ def snapshot_queries_on_bucket():
         'query_id',
         'query_priority')
     qs_ftp = FTPExport.objects.all().annotate(query_id=F('query__id'),
-                                              query_priority=F('query__priority')).values('query__id',
-                                                                                          'query__priority')
+                                              query_priority=F('query__priority')).values('query_id',
+                                                                                          'query_priority')
     total_ids = list(qs_bucket) + list(qs_ftp)
     mandatory_ids = {x["query_id"] for x in total_ids if x["query_priority"] is True}
     not_mandatory_ids = {x["query_id"] for x in total_ids if x["query_priority"] is False}
