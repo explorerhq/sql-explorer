@@ -1,6 +1,7 @@
 import json
 import time
 
+import django
 from django.test import TestCase
 try:
     from django.urls import reverse
@@ -174,15 +175,24 @@ class TestQueryDetailView(TestCase):
     def test_user_query_views(self):
         request = Mock()
 
-        request.user.is_anonymous = Mock(return_value=True)
+        if django.VERSION < (1, 10):
+            request.user.is_anonymous = Mock(return_value=True)
+        else:
+            request.user.is_anonymous = True
         kwargs = {}
         self.assertFalse(user_can_see_query(request, **kwargs))
 
-        request.user.is_anonymous = Mock(return_value=True)
+        if django.VERSION < (1, 10):
+            request.user.is_anonymous = Mock(return_value=True)
+        else:
+            request.user.is_anonymous = True
         self.assertFalse(user_can_see_query(request, **kwargs))
 
         kwargs = {'query_id': 123}
-        request.user.is_anonymous = Mock(return_value=False)
+        if django.VERSION < (1, 10):
+            request.user.is_anonymous = Mock(return_value=False)
+        else:
+            request.user.is_anonymous = False
         self.assertFalse(user_can_see_query(request, **kwargs))
 
         request.user.id = 99
