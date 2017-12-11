@@ -11,7 +11,7 @@ else:
     import unicodecsv as csv
 
 from django.utils.module_loading import import_string
-from . import app_settings
+from explorer import app_settings
 from six import StringIO, BytesIO
 
 
