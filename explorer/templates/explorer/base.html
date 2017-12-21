@@ -1,0 +1,73 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Explorer{% if query %} - {{ query.title }}{% elif title %} - {{ title }}{% endif %}</title>
+
+    <link href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.15.2/codemirror.min.css" rel="stylesheet" />
+    <link href="//cdnjs.cloudflare.com/ajax/libs/pivottable/2.0.0/pivot.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'explorer/bootstrap.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'explorer/explorer.css' %}" />
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+
+    <script src="{% static 'explorer/jquery-ui.11.4.min.js' %}"></script>
+    <script src="{% static 'explorer/explorer.js' %}"></script>
+    <script type="text/javascript">
+        queryId = "{% firstof query.id 'new' %}";
+    </script>
+</head>
+
+<body>
+  {% block sql_explorer_content_takeover %}
+    <div id="wrap" class="wrap">
+        {% block sql_explorer_navbar %}
+            <div class="navbar navbar-default navbar-static-top" role="navigation">
+              <div class="container">
+                <div class="navbar-header">
+                  <a class="navbar-brand" href="{% url "explorer_index" %}">SQL Explorer</a>
+                </div>
+                <div class="navbar-collapse collapse">
+                  <ul class="nav navbar-nav">
+                    {% block sql_explorer_navlinks %}{% endblock %}
+                  </ul>
+                </div>
+              </div>
+            </div>
+        {% endblock %}
+        <div class="container">
+          <div class="starter-template">
+          {% block sql_explorer_content %}{% endblock %}
+          </div>
+        </div>
+    </div>
+  {% endblock %}
+    {% block sql_explorer_footer %}
+        <div class="container">
+            <div class="row">
+              <div class="col-md-12 text-center">
+                    <p class="text-muted">
+                        Powered by <a href="https://www.github.com/groveco/django-sql-explorer/">django-sql-explorer</a> from
+                        <a href="https://www.grove.co">Grove Collaborative</a>. Rendered at {% now "SHORT_DATETIME_FORMAT" %}
+                    </p>
+              </div>
+            </div>
+        </div>
+    {% endblock %}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.2.0/list.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.15.2/codemirror.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.15.2/mode/sql/sql.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.15.2/addon/comment/comment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/floatthead/1.4.0/jquery.floatThead-slim.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/pivottable/2.0.2/pivot.min.js"></script>
+    {% block sql_explorer_scripts %}{% endblock %}
+</body>
+
+</html>

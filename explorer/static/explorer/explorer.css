@@ -1,0 +1,171 @@
+.collapse.in {
+    display: table-row;
+}
+
+.collapsing {
+    position: relative;
+    height: 0;
+    overflow: hidden;
+    -webkit-transition: height 0.01s ease;
+    transition: height 0.01s ease;
+}
+
+.rows-input {
+    text-align: center;
+    width: 40px;
+}
+
+.overflow-wrapper {
+    overflow: auto; height: 500px;
+}
+
+.list-search {
+    margin-top: 20px;
+}
+
+.data-headers {
+    background: white;
+}
+
+.log-sql {
+    word-wrap: break-word;
+    white-space: normal !important;
+}
+
+.list {
+    -webkit-padding-start: 0px;
+    list-style: none;
+}
+
+.wrap {
+    padding-bottom: 15rem; /* ensure space for drop down buttons */
+}
+
+.schema-wrapper {
+    overflow: hidden;
+}
+
+.toggle {
+    cursor: pointer;
+}
+
+td.name.indented {
+    padding-left: 30px;
+}
+
+.stats-wrapper {
+    width: 120px;
+    display: none;
+}
+
+.stat-wrapper {
+    float: left;
+    width: 120px;
+}
+
+.stat-label {
+    width: 50%;
+    font-weight: 300;
+}
+
+.stat-value {
+    width: 50%;
+    font-weight: 500;
+}
+
+.stats-expand {
+    cursor: pointer;
+    padding-left: 5px;
+}
+
+.data-row {
+    white-space: pre;
+}
+
+.CodeMirror {
+    height: 400px;
+}
+
+.table>thead>tr>th.preview-header {
+    vertical-align: top;
+}
+
+span.sort {
+    background: url('//cdn.datatables.net/1.10.0/images/sort_both.png') no-repeat;
+    cursor: pointer;
+    padding-left: 20px;
+}
+
+.pivot-table {
+    padding: 15px;
+}
+
+.pvtAxisContainer, .pvtVals {
+    border-color: #ddd;
+}
+
+#schema_frame {
+    width: 100%;
+    border: 0;
+}
+
+.schema-header {
+    cursor: pointer;
+}
+
+.CodeMirror-lines .inserted {
+    animation: inserted-pulse 700ms;
+}
+
+@keyframes inserted-pulse {
+    0% {
+        background-color: #f9f2f4;
+        color: #c7254e;
+        font-weight: bold;
+    }
+    100% {
+        background-color: transparent;
+        color: inherit;
+        font-weight: normal;
+    }
+}
+
+.dropdown-menu {
+    z-index: 9999;
+}
+
+.dropdown-menu>li>input {
+    display: block;
+    padding: 3px 20px;
+    clear: both;
+    font-weight: 400;
+    line-height: 1.42857143;
+    color: #333;
+    white-space: nowrap;
+    width: 100%;
+    text-align: left;
+}
+
+.dropdown-menu>li>input:hover {
+    color: #262626;
+    text-decoration: none;
+    background-color: #f5f5f5;
+}
+
+a#fullscreen {
+    padding-left: 1rem;
+}
+
+.counter {
+    display: none;
+    background-color: #ecf0f1;
+    font-family: monospace;
+}
+
+.name a {
+    text-decoration: none !important;
+}
+
+.sql {
+    width: 33%;
+}

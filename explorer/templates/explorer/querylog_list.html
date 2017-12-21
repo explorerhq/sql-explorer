@@ -1,0 +1,54 @@
+{% extends "explorer/base.html" %}
+
+{% block sql_explorer_navlinks %}
+    {% if can_change %}
+      <li><a href="{% url "query_create" %}">New Query</a></li>
+      <li><a href="{% url "explorer_playground" %}">Playground</a></li>
+      <li class="active"><a href="">Logs</a></li>
+    {% endif %}
+{% endblock %}
+
+{% block sql_explorer_content %}
+    <h3>Recent Query Logs - Page {{ page_obj.number }}</h3>
+    <div class="table-responsive">
+        <table class="table table-striped query-list">
+            <thead>
+                <tr>
+                    <th>Run At</th>
+                    <th>Run By</th>
+                    <th>Duration</th>
+                    <th class="sql">SQL</th>
+                    <th>Query ID</th>
+                    <th>Playground</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for object in recent_logs %}
+                <tr>
+                    <td>{{ object.run_at|date:"SHORT_DATETIME_FORMAT" }}</td>
+                    <td>{{ object.run_by_user.email }}</td>
+                    <td>{{ object.duration|floatformat:2 }}ms</td>
+                    <td class="log-sql">{{ object.sql }}</td>
+                    <td> {% if object.query_id %}<a href="{% url "query_detail" object.query_id %}">Query {{ object.query_id }}</a>{% elif object.is_playground %}Playground{% else %}--{% endif %}</td>
+                    <td><a href="{% url "explorer_playground" %}?querylog_id={{ object.id }}">Open</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if is_paginated %}
+        <div class="pagination">
+            <span class="page-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}"><<</a>
+                {% endif %}
+                <span class="page-current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                </span>
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">>></a>
+                {% endif %}
+            </span>
+        </div>
+    {% endif %}
+{% endblock %}

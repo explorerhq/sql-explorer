@@ -1,0 +1,16 @@
+language: python
+python:
+  - 2.7
+  - 3.5
+  - 3.6
+install:
+  - pip install -r requirements.txt
+  - pip install -r optional-requirements.txt
+  - pip install ${DJANGO}
+
+script:  python manage.py test
+env:
+  - DJANGO="Django>=1.8,<1.9"
+  - DJANGO="Django>=1.9,<1.10"
+  - DJANGO="Django>=1.10,<1.11"
+  - DJANGO="Django>=1.11,<1.12"

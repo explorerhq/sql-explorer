@@ -1,0 +1,11 @@
+{% for key, name in exporters %}
+    {% if query and query.id %}
+        {% if query.params %}
+          <li><a href="{% url "download_query" query.id %}?format={{ key }}&params={{ query.params_for_url }}">{{ name }}</a></li>
+        {% else %}
+          <li><a href="{% url "download_query" query.id %}?format={{ key }}">{{ name }}</a></li>
+        {% endif %}
+    {% else %}
+        <li><input type="submit" value="{{ name }}" data-format="{{ key }}" class="download-button btn btn-link" /></li>
+    {% endif %}
+{% endfor %}
