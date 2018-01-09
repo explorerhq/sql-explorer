@@ -93,7 +93,7 @@ class TestQueryModel(TestCase):
         snaps = q.snapshots
         self.assertEqual(conn.list.call_count, 1)
         self.assertEqual(snaps[0].url, 'http://s3.com/bar')
-        conn.list.assert_called_once_with(prefix='query-%s.snap-' % q.id)
+        conn.list.assert_called_once_with(prefix='query-%s/snap-' % q.id)
 
     def test_final_sql_uses_merged_params(self):
         q = SimpleQueryFactory(sql="select '$$foo:bar$$', '$$qux$$';")
