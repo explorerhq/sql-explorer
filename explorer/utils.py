@@ -2,7 +2,10 @@ import functools
 import re
 from six import text_type
 import sqlparse
-from . import app_settings
+
+from explorer import app_settings
+from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION 
+from explorer.connections import connections
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import login
 from django.contrib.auth import REDIRECT_FIELD_NAME
@@ -135,9 +138,6 @@ class InvalidExplorerConnectionException(Exception):
 
 
 def get_valid_connection(alias=None):
-    from app_settings import EXPLORER_DEFAULT_CONNECTION
-    from connections import connections
-
     if not alias:
         return connections[EXPLORER_DEFAULT_CONNECTION]
 

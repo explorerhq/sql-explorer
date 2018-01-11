@@ -1,8 +1,8 @@
 from django.db import DatabaseError
 from django.forms import ModelForm, Field, ValidationError, BooleanField, CharField
 from django.forms.widgets import CheckboxInput, Select
-import app_settings
 
+from explorer import app_settings
 from explorer.models import Query, MSG_FAILED_BLACKLIST
 from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION
 
