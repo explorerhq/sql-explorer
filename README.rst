@@ -139,6 +139,9 @@ Features
       user'. Explorer will match the "user" column alias to the
       transform and merge each cell in that column into the template
       string. Cool!
+    - Note you *must* set `EXPLORER_UNSAFE_RENDERING` to `True` if you
+      want to see rendered HTML (vs string literals) in the output.
+      And be aware of the implications of enabling that setting.
 - **Pivot Table**
     - Go to the Pivot tab on query results to use the in-browser pivot
       functionality (provided by Pivottable JS).
