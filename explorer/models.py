@@ -10,7 +10,7 @@ except ImportError:
 
 from django.conf import settings
 
-from . import app_settings
+from explorer import app_settings
 from explorer.utils import (
     passes_blacklist,
     swap_params,
