@@ -11,6 +11,7 @@ else:
     import unicodecsv as csv
 
 from django.utils.module_loading import import_string
+from django.utils.text import slugify
 from explorer import app_settings
 from six import StringIO, BytesIO
 
@@ -106,11 +107,7 @@ class ExcelExporter(BaseExporter):
 
         wb = xlsxwriter.Workbook(output, {'in_memory': True})
 
-        # XLSX writer wont allow sheet names > 31 characters
-        # https://github.com/jmcnamara/XlsxWriter/blob/master/xlsxwriter/test/workbook/test_check_sheetname.py
-        title = self.query.title[:31]
-
-        ws = wb.add_worksheet(name=title)
+        ws = wb.add_worksheet(name=self._format_title())
 
         # Write headers
         row = 0
@@ -138,3 +135,9 @@ class ExcelExporter(BaseExporter):
 
         wb.close()
         return output
+
+    def _format_title(self):
+        # XLSX writer wont allow sheet names > 31 characters or that contain invalid characters
+        # https://github.com/jmcnamara/XlsxWriter/blob/master/xlsxwriter/test/workbook/test_check_sheetname.py
+        title = slugify(self.query.title)
+        return title[:31]
