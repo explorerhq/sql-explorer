@@ -1,16 +1,16 @@
-import django
 import logging
 from time import time
 import six
 
 from django.db import models, DatabaseError
-if django.VERSION[1] >= 10:
+try:
     from django.urls import reverse
-else:
+except ImportError:
     from django.core.urlresolvers import reverse
+
 from django.conf import settings
 
-from . import app_settings
+from explorer import app_settings
 from explorer.utils import (
     passes_blacklist,
     swap_params,
@@ -98,8 +98,14 @@ class Query(models.Model):
         return get_params_for_url(self)
 
     def log(self, user=None):
-        if user and user.is_anonymous():
-            user = None
+        if user:
+            # In Django<1.10, is_anonymous was a method.
+            try:
+                is_anonymous = user.is_anonymous()
+            except TypeError:
+                is_anonymous = user.is_anonymous
+            if is_anonymous:
+                user = None
         ql = QueryLog(sql=self.final_sql(), query_id=self.id, run_by_user=user, connection=self.connection)
         ql.save()
         return ql
@@ -112,7 +118,7 @@ class Query(models.Model):
     def snapshots(self):
         if app_settings.ENABLE_TASKS:
             b = get_s3_bucket()
-            keys = b.list(prefix='query-%s.snap-' % self.id)
+            keys = b.list(prefix='query-%s/snap-' % self.id)
             keys_s = sorted(keys, key=lambda k: k.last_modified)
             return [SnapShot(k.generate_url(expires_in=0, query_auth=False),
                              k.last_modified) for k in keys_s]

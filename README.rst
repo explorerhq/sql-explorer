@@ -11,7 +11,7 @@ intelligence tool.
 
 Quickly write and share SQL queries in a simple, usable SQL editor,
 preview the results in the browser, share links, download CSV, JSON,
-or Excel files (and even expose queries as API enspoints, if desired),
+or Excel files (and even expose queries as API endpoints, if desired),
 and keep the information flowing!
 
 Comes with support for multiple connections, to many different SQL
@@ -139,6 +139,9 @@ Features
       user'. Explorer will match the "user" column alias to the
       transform and merge each cell in that column into the template
       string. Cool!
+    - Note you *must* set `EXPLORER_UNSAFE_RENDERING` to `True` if you
+      want to see rendered HTML (vs string literals) in the output.
+      And be aware of the implications of enabling that setting.
 - **Pivot Table**
     - Go to the Pivot tab on query results to use the in-browser pivot
       functionality (provided by Pivottable JS).

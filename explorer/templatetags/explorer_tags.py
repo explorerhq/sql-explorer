@@ -1,7 +1,7 @@
 from django import template
 from django.utils.module_loading import import_string
 
-from .. import app_settings
+from explorer import app_settings
 
 
 register = template.Library()

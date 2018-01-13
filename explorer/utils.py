@@ -1,11 +1,13 @@
 import functools
 import re
-from six import text_type
-import sqlparse
-from . import app_settings
+
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import login
 from django.contrib.auth import REDIRECT_FIELD_NAME
+from six import text_type
+import sqlparse
+
+from explorer import app_settings
 
 EXPLORER_PARAM_TOKEN = "$$"
 
@@ -117,7 +119,12 @@ def allowed_query_pks(user_id):
 
 
 def user_can_see_query(request, **kwargs):
-    if not request.user.is_anonymous() and 'query_id' in kwargs:
+    # In Django<1.10, is_anonymous was a method.
+    try:
+        is_anonymous = request.user.is_anonymous()
+    except TypeError:
+        is_anonymous = request.user.is_anonymous
+    if not is_anonymous and 'query_id' in kwargs:
         return int(kwargs['query_id']) in allowed_query_pks(request.user.id)
     return False
 
@@ -135,11 +142,10 @@ class InvalidExplorerConnectionException(Exception):
 
 
 def get_valid_connection(alias=None):
-    from app_settings import EXPLORER_DEFAULT_CONNECTION
-    from connections import connections
+    from explorer.connections import connections
 
     if not alias:
-        return connections[EXPLORER_DEFAULT_CONNECTION]
+        return connections[app_settings.EXPLORER_DEFAULT_CONNECTION]
 
     if alias not in connections:
         raise InvalidExplorerConnectionException(
