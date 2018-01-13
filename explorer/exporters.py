@@ -11,6 +11,7 @@ else:
     import unicodecsv as csv
 
 from django.utils.module_loading import import_string
+from django.utils.text import slugify
 from . import app_settings
 from six import StringIO, BytesIO
 
@@ -138,8 +139,5 @@ class ExcelExporter(BaseExporter):
     def _format_title(self):
         # XLSX writer wont allow sheet names > 31 characters or that contain invalid characters
         # https://github.com/jmcnamara/XlsxWriter/blob/master/xlsxwriter/test/workbook/test_check_sheetname.py
-        title = self.query.title
-        for char in ['\\', '/', '*', '[', ']', ':', '?']:
-            if char in title:
-                title = title.replace(char, ' ')
+        title = slugify(self.query.title)
         return title[:31]
