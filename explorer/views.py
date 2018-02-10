@@ -286,7 +286,7 @@ class CreateQueryView(PermissionRequiredMixin, ExplorerContextMixin, CreateView)
 
 class DeleteQueryView(PermissionRequiredMixin, ExplorerContextMixin, DeleteView):
 
-    permission_required = 'change_permission'
+    permission_required = 'delete_permission'
     model = Query
     success_url = reverse_lazy("explorer_index")
 
