@@ -1,6 +1,7 @@
 from django.db import DatabaseError
 from django.core.serializers.json import DjangoJSONEncoder
 import json
+import uuid
 import string
 import sys
 from datetime import datetime
@@ -122,8 +123,10 @@ class ExcelExporter(BaseExporter):
         col = 0
         for data_row in res.data:
             for data in data_row:
-                # xlsxwriter can't handle timezone-aware datetimes, so we help out here and just cast it to a string
-                if isinstance(data, datetime):
+                # xlsxwriter can't handle timezone-aware datetimes or
+                # UUIDs, so we help out here and just cast it to a
+                # string
+                if isinstance(data, datetime) or isinstance(data, uuid.UUID):
                     data = str(data)
                 # JSON and Array fields
                 if isinstance(data, dict) or isinstance(data, list):
