@@ -228,13 +228,13 @@ ExplorerEditor.prototype.bind = function() {
     $(".sort").click(function(e) {
         var t = $(e.target).data('sort');
         var dir = $(e.target).data('dir');
-        $('.sort').css('background-image', 'url(http://cdn.datatables.net/1.10.0/images/sort_both.png)')
+        $('.sort').css('background-image', 'url(//cdn.datatables.net/1.10.0/images/sort_both.png)')
         if (dir == 'asc'){
             $(e.target).data('dir', 'desc');
-            $(e.target).css('background-image', 'url(http://cdn.datatables.net/1.10.0/images/sort_asc.png)')
+            $(e.target).css('background-image', 'url(//cdn.datatables.net/1.10.0/images/sort_asc.png)')
         } else {
             $(e.target).data('dir', 'asc');
-            $(e.target).css('background-image', 'url(http://cdn.datatables.net/1.10.0/images/sort_desc.png)')
+            $(e.target).css('background-image', 'url(//cdn.datatables.net/1.10.0/images/sort_desc.png)')
         }
         var vals = [];
         var ct = 0;
