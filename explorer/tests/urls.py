@@ -6,7 +6,7 @@ from explorer.urls import urlpatterns
 admin.autodiscover()
 
 urlpatterns += [
-    url(r'^admin/', include(admin.site.get_urls(), 'admin')),
+    url(r'^admin/', include(admin.site.get_urls(), namespace='admin')),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
