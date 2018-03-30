@@ -1,4 +1,4 @@
-{% load staticfiles %}
+{% load staticfiles %}
 <!DOCTYPE html>
 <html>
 
@@ -8,15 +8,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SQL Explorer{% if query %} - {{ query.title }}{% elif title %} - {{ title }}{% endif %}</title>
 
-    <link href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.15.2/codemirror.min.css" rel="stylesheet" />
-    <link href="//cdnjs.cloudflare.com/ajax/libs/pivottable/2.0.0/pivot.min.css" rel="stylesheet" />
+    <link href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.36.0/codemirror.min.css" rel="stylesheet" />
+    <link href="//cdnjs.cloudflare.com/ajax/libs/pivottable/2.20.0/pivot.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="{% static 'explorer/bootstrap.min.css' %}" />
     <link rel="stylesheet" href="{% static 'explorer/explorer.css' %}" />
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 
-    <script src="{% static 'explorer/jquery-ui.11.4.min.js' %}"></script>
+    <script src="{% static 'explorer/jquery-ui.min.js' %}"></script>
     <script src="{% static 'explorer/explorer.js' %}"></script>
     <script type="text/javascript">
         queryId = "{% firstof query.id 'new' %}";
@@ -59,14 +59,14 @@
             </div>
         </div>
     {% endblock %}
-    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.2.0/list.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.15.2/codemirror.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.15.2/mode/sql/sql.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.15.2/addon/comment/comment.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/floatthead/1.4.0/jquery.floatThead-slim.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/pivottable/2.0.2/pivot.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.36.0/codemirror.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.36.0/mode/sql/sql.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.36.0/addon/comment/comment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/floatthead/2.1.1/jquery.floatThead.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/pivottable/2.20.0/pivot.min.js"></script>
     {% block sql_explorer_scripts %}{% endblock %}
 </body>
 

@@ -5,6 +5,8 @@ SECRET_KEY = 'shhh'
 DEBUG = True
 STATIC_URL = '/static/'
 
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost']
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 DATABASES = {

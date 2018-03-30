@@ -33,7 +33,7 @@ $('body').on('submit', '.email-csv-form', function (e) {
   e.preventDefault();
   var url = this.action;
   var $this = $(this);
-  var email = $this.find('[name=email]').val()
+  var email = $this.find('[name=email]').val();
   if (isValidEmail(email)) {
     $.ajax({
       url: url,
@@ -56,6 +56,6 @@ $('body').on('submit', '.email-csv-form', function (e) {
     $this.tooltip('show');
     setTimeout(function () {
       $this.tooltip('hide');
-    }, 3000)
+    }, 3000);
   }
 });

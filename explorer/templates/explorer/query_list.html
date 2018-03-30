@@ -1,4 +1,4 @@
-{% extends "explorer/base.html" %}
+{% extends "explorer/base.html" %}
 {% load staticfiles %}
 
 {% block sql_explorer_navlinks %}
@@ -80,18 +80,18 @@
                         {% endif %}
                     </td>
                     {% if tasks_enabled %}
-                      <td class="text-center">
+                      <td>
                           <a class="email-csv" data-id="{{ object.id }}" href="{% url "email_csv_query" object.id %}"><i class="glyphicon glyphicon-envelope"></i></a>
                       </td>
                     {% endif %}
-                    <td class="text-center">
+                    <td>
                         <a href="{% url "download_query" object.id %}"><i class="glyphicon glyphicon-download"></i></a>
                     </td>
                     {% if can_change %}
-                        <td class="text-center">
+                        <td>
                             <a href="{% url "explorer_playground" %}?query_id={{ object.id }}"><i class="glyphicon glyphicon-new-window"></i></a>
                         </td>
-                        <td class="text-center">
+                        <td>
                             <a href="{% url "query_delete" object.id %}"><i class="glyphicon glyphicon-trash"></i></a>
                         </td>
                     {% endif %}

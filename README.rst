@@ -282,7 +282,7 @@ minimum.
 =========================================================== ======= ================
 Name                                                        Version License
 =========================================================== ======= ================
-`sqlparse <https://github.com/andialbrecht/sqlparse/>`_     0.1.18  BS
+`sqlparse <https://github.com/andialbrecht/sqlparse/>`_     0.2.4   BSD
 `unicodecsv <https://github.com/jdunck/python-unicodecsv>`_ 0.14.1  BSD
 =========================================================== ======= ================
 
@@ -295,8 +295,8 @@ Name                                                                 Version Lic
 ==================================================================== ======= ================
 `celery <http://www.celeryproject.org/>`_                            3.1     BSD
 `django-celery <http://www.celeryproject.org/>`_                     3.1     BSD
-`Factory Boy <https://github.com/rbarrois/factory_boy>`_             2.6.0   MIT
-`xlsxwriter <http://xlsxwriter.readthedocs.io/>`_                    0.8.5   BSD
+`Factory Boy <https://github.com/rbarrois/factory_boy>`_             2.10    MIT
+`xlsxwriter <http://xlsxwriter.readthedocs.io/>`_                    1.0.2   BSD
 `boto <https://github.com/boto/boto>`_                               2.46    MIT
 ==================================================================== ======= ================
 
