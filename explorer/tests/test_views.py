@@ -414,6 +414,29 @@ class TestSQLDownloadViews(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['content-type'], 'text/csv')
 
+    def test_sql_download_respects_connection(self):
+        from explorer.app_settings import EXPLORER_CONNECTIONS
+        from explorer.connections import connections
+
+        c1_alias = EXPLORER_CONNECTIONS['SQLite']
+        conn = connections[c1_alias]
+        c = conn.cursor()
+        c.execute('CREATE TABLE IF NOT EXISTS animals (name text NOT NULL);')
+        c.execute('INSERT INTO animals ( name ) VALUES (\'peacock\')')
+
+        c2_alias = EXPLORER_CONNECTIONS['Another']
+        conn = connections[c2_alias]
+        c = conn.cursor()
+        c.execute('CREATE TABLE IF NOT EXISTS animals (name text NOT NULL);')
+        c.execute('INSERT INTO animals ( name ) VALUES (\'superchicken\')')
+
+        url = reverse("download_sql") + '?format=csv'
+
+        response = self.client.post(url, {'sql': 'select * from animals;', 'connection': c2_alias})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'superchicken')
+
     def test_sql_download_csv_with_custom_delim(self):
         url = reverse("download_sql") + '?format=csv&delim=|'
 

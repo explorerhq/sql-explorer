@@ -40,8 +40,6 @@ from explorer.utils import (
 
 from explorer.schema import schema_info
 from explorer import permissions
-import logging
-logger = logging.getLogger(__name__)
 
 
 class ExplorerContextMixin(object):
@@ -97,7 +95,6 @@ def _export(request, query, download=True):
         output = exporter.get_output(delim=delim)
     except DatabaseError as e:
         msg = "Error executing query %s: %s" % (query.title, e)
-        logger.warning(msg)
         return HttpResponse(msg, status=500)
     response = HttpResponse(output, content_type=exporter.content_type)
     if download:
@@ -122,7 +119,8 @@ class DownloadFromSqlView(PermissionRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         sql = request.POST.get('sql')
-        query = Query(sql=sql, title='')
+        connection = request.POST.get('connection')
+        query = Query(sql=sql, connection=connection, title='')
         ql = query.log(request.user)
         query.title = 'Playground - %s' % ql.id
         return _export(request, query)
