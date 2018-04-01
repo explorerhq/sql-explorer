@@ -82,7 +82,8 @@ MIDDLEWARE = [
 ]
 
 if django.VERSION < (1, 10):
-    MIDDLEWARE_CLASSES = MIDDLEWARE.append('django.contrib.auth.middleware.SessionAuthenticationMiddleware')
+    MIDDLEWARE_CLASSES = MIDDLEWARE
+    MIDDLEWARE_CLASSES.append('django.contrib.auth.middleware.SessionAuthenticationMiddleware')
 
 TEST_RUNNER = 'djcelery.contrib.test_runner.CeleryTestSuiteRunner'
 
