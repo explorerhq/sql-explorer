@@ -26,6 +26,11 @@
                   {{ form.connection }}
                 </div>
               </div>
+            {% else %}
+              {# still need to submit the connection, just hide the UI element #}
+              <div class="hidden">
+                {{ form.connection }}
+              </div>
             {% endif %}
             <div class="panel panel-default sql-panel">
                 <div class="panel-heading">

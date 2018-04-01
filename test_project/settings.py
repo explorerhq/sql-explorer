@@ -5,7 +5,7 @@ SECRET_KEY = 'shhh'
 DEBUG = True
 STATIC_URL = '/static/'
 
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost']
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1']
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
