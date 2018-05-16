@@ -56,7 +56,7 @@ class QueryForm(ModelForm):
 
     @property
     def connections(self):
-        return zip(app_settings.EXPLORER_CONNECTIONS.values(), app_settings.EXPLORER_CONNECTIONS.keys())
+        return [(v, k) for k, v in app_settings.EXPLORER_CONNECTIONS.items()]
 
     class Meta:
         model = Query
