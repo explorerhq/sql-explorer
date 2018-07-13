@@ -1,5 +1,6 @@
 from django.test import TestCase
-from explorer.tasks import execute_query, snapshot_queries, truncate_querylogs
+from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
+from explorer.tasks import execute_query, snapshot_queries, truncate_querylogs, build_schema_cache_async
 from explorer.tests.factories import SimpleQueryFactory
 from django.core import mail
 from mock import Mock, patch
@@ -59,3 +60,10 @@ class TestTasks(TestCase):
         QueryLog.objects.filter(sql='bar').update(run_at=datetime.now() - timedelta(days=29))
         truncate_querylogs(30)
         self.assertEqual(QueryLog.objects.count(), 1)
+
+    @patch('explorer.schema.build_schema_info')
+    def test_build_schema_cache_async(self, mocked_build):
+        mocked_build.return_value = ['list_of_tuples']
+        schema = build_schema_cache_async(CONN)
+        assert mocked_build.called
+        self.assertEqual(schema, ['list_of_tuples'])
