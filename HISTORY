@@ -1,3 +1,20 @@
+1.1.2
+=====
+
+7/??/18
+
+- Fix #269
+- Fix bug when deleting query
+- Fix bug when invalid characters present in Excel worksheet name
+
+- Major Changes
+  - Django 2.0 compatibility
+  - Improved interface to database connection management
+
+- Minor Changes
+  - Documentation updates
+  - Load images over same protocol as originating page
+
 1.1.1
 =====
 

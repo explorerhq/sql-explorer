@@ -20,7 +20,7 @@ setup(
                  " view, and export the results."),
     license="MIT",
     keywords="django sql explorer reports reporting csv database query",
-    url="https://github.com/epantry/django-sql-explorer",
+    url="https://github.com/groveco/django-sql-explorer",
     packages=['explorer'],
     long_description=read('README.rst'),
     classifiers=[
@@ -35,11 +35,11 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
     ],
     install_requires=[
-        'Django>=1.7.0',
+        'Django>=1.8.0',
         'sqlparse>=0.1.18',
         'unicodecsv>=0.14.1',
         'six>=1.10.0',
