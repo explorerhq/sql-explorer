@@ -21,7 +21,9 @@ from django.views.generic.edit import CreateView, DeleteView
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 from django.core.exceptions import ImproperlyConfigured
 from django.contrib.auth import REDIRECT_FIELD_NAME
-from django.contrib.auth.views import LoginView
+
+if django.VERSION >= (1, 11):
+    from django.contrib.auth.views import LoginView
 
 from explorer import app_settings
 from explorer.connections import connections
