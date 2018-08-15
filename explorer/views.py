@@ -93,8 +93,9 @@ class PermissionRequiredMixin(object):
         return super(PermissionRequiredMixin, self).dispatch(request, *args, **kwargs)
 
 
-class SafeLoginView(LoginView):
-    template_name = 'admin/login.html'
+if django.VERSION > (1, 11):
+    class SafeLoginView(LoginView):
+        template_name = 'admin/login.html'
 
 
 def _export(request, query, download=True):
