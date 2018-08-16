@@ -7,6 +7,7 @@ try:
 except ImportError:
     from django.core.urlresolvers import reverse_lazy
 
+import django
 from django.db import DatabaseError
 from django.db.models import Count
 from django.forms.models import model_to_dict
@@ -19,6 +20,10 @@ from django.views.generic.base import View
 from django.views.generic.edit import CreateView, DeleteView
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 from django.core.exceptions import ImproperlyConfigured
+from django.contrib.auth import REDIRECT_FIELD_NAME
+
+if django.VERSION >= (1, 11):
+    from django.contrib.auth.views import LoginView
 
 from explorer import app_settings
 from explorer.connections import connections
@@ -77,12 +82,20 @@ class PermissionRequiredMixin(object):
         return handler(request, *args, **kwargs)
 
     def handle_no_permission(self, request):
+        if django.VERSION >= (1, 11):
+            return SafeLoginView.as_view(
+                extra_context={'title': 'Log in', REDIRECT_FIELD_NAME: request.get_full_path()})(request)
         return safe_login_prompt(request)
 
     def dispatch(self, request, *args, **kwargs):
         if not self.has_permission(request, *args, **kwargs):
             return self.handle_no_permission(request)
         return super(PermissionRequiredMixin, self).dispatch(request, *args, **kwargs)
+
+
+if django.VERSION > (1, 11):
+    class SafeLoginView(LoginView):
+        template_name = 'admin/login.html'
 
 
 def _export(request, query, download=True):
