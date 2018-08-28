@@ -209,10 +209,13 @@ class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
 
     def get_queryset(self):
         if app_settings.EXPLORER_PERMISSION_VIEW(self.request.user):
-            qs = Query.objects.prefetch_related('created_by_user').all()
+            qs = (Query.objects
+                  .prefetch_related('created_by_user', 'querylog_set').all())
         else:
-            qs = Query.objects.prefetch_related('created_by_user').filter(pk__in=allowed_query_pks(self.request.user.id))
-        return qs.annotate(run_count=Count('querylog'))
+            qs = (Query.objects
+                  .prefetch_related('created_by_user', 'querylog_set')
+                  .filter(pk__in=allowed_query_pks(self.request.user.id)))
+        return qs
 
     def _build_queries_and_headers(self):
         """
@@ -255,7 +258,7 @@ class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
                                'collapse_target': collapse_target,
                                'created_at': q.created_at,
                                'is_header': False,
-                               'run_count': q.run_count,
+                               'run_count': q.querylog_set.count(),
                                'created_by_user': six.text_type(q.created_by_user) if q.created_by_user else None})
             dict_list.append(model_dict)
         return dict_list
