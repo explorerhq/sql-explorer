@@ -32,12 +32,12 @@ logger = logging.getLogger(__name__)
 class Query(models.Model):
     title = models.CharField(max_length=255)
     sql = models.TextField()
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField(default='', blank=True)
     created_by_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     last_run_date = models.DateTimeField(auto_now=True)
     snapshot = models.BooleanField(default=False, help_text="Include in snapshot task (if enabled)")
-    connection = models.CharField(blank=True, null=True, max_length=128,
+    connection = models.CharField(blank=True, max_length=128, default='',
                                   help_text="Name of DB connection (as specified in settings) to use for this query. Will use EXPLORER_DEFAULT_CONNECTION if left blank")
 
     def __init__(self, *args, **kwargs):
@@ -135,12 +135,12 @@ class SnapShot(object):
 
 class QueryLog(models.Model):
 
-    sql = models.TextField(null=True, blank=True)
+    sql = models.TextField(default='', blank=True)
     query = models.ForeignKey(Query, null=True, blank=True, on_delete=models.SET_NULL)
     run_by_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE)
     run_at = models.DateTimeField(auto_now_add=True)
     duration = models.FloatField(blank=True, null=True)  # milliseconds
-    connection = models.CharField(blank=True, null=True, max_length=128)
+    connection = models.CharField(blank=True, max_length=128, default='')
 
     @property
     def is_playground(self):
