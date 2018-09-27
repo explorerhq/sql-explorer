@@ -95,6 +95,7 @@ Features
       install -r optional-requirements.txt`
     - The checkbox for opting a query into a snapshot is ALL THE WAY
       on the bottom of the query view (underneath the results table).
+    - You must also have the setting EXPLORER_TASKS_ENABLED enabled.
 - **Email query results**
     - Click the email icon in the query listing view, enter an email
       address, and the query results (zipped .csv) will be sent to you
