@@ -64,6 +64,7 @@ class CSVExporter(BaseExporter):
     name = 'CSV'
     content_type = 'text/csv'
     file_extension = '.csv'
+    default_encoding = 'utf-8'
 
     def _get_output(self, res, **kwargs):
         delim = kwargs.get('delim') or app_settings.CSV_DELIMETER
@@ -73,7 +74,9 @@ class CSVExporter(BaseExporter):
         if PY3:
             writer = csv.writer(csv_data, delimiter=delim)
         else:
-            writer = csv.writer(csv_data, delimiter=delim, encoding='utf-8')
+            encoding = kwargs.get('encoding') or self.default_encoding
+            writer = csv.writer(csv_data, delimiter=delim, encoding=encoding)
+
         writer.writerow(res.headers)
         for row in res.data:
             writer.writerow([s for s in row])
