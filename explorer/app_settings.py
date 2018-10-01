@@ -77,3 +77,5 @@ S3_BUCKET = getattr(settings, "EXPLORER_S3_BUCKET", None)
 FROM_EMAIL = getattr(settings, 'EXPLORER_FROM_EMAIL', 'django-sql-explorer@example.com')
 
 UNSAFE_RENDERING = getattr(settings, "EXPLORER_UNSAFE_RENDERING", False)
+
+EXPLORER_CSV_ENCODING = getattr(settings, "EXPLORER_ENCODING", None)
