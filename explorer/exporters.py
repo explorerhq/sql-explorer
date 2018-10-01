@@ -74,7 +74,7 @@ class CSVExporter(BaseExporter):
         if PY3:
             writer = csv.writer(csv_data, delimiter=delim)
         else:
-            encoding = app_settings.EXPLORER_ENCODING or self.default_encoding
+            encoding = kwargs.get('encoding') or self.default_encoding
             writer = csv.writer(csv_data, delimiter=delim, encoding=encoding)
 
         writer.writerow(res.headers)

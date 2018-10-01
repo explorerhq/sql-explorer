@@ -38,6 +38,7 @@ class Query(models.Model):
     snapshot = models.BooleanField(default=True, help_text="Include in snapshot task (if enabled)")
     bucket = models.CharField(max_length=100, blank=True, null=True)
     priority = models.BooleanField(default=False)
+    encoding = models.CharField(max_length=100, blank=True, null=True, default='utf-8')
 
     def __init__(self, *args, **kwargs):
         self.params = kwargs.get('params')
