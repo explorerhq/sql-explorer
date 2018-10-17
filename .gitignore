@@ -14,3 +14,9 @@
 tmp
 venv/
 tags
+
+# IDE settings
+.project
+.pydevproject
+.settings/
+
