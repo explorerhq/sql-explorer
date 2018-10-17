@@ -36,7 +36,7 @@ class Query(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     last_run_date = models.DateTimeField(auto_now=True)
     snapshot = models.BooleanField(default=True, help_text="Include in snapshot task (if enabled)")
-    bucket = models.CharField(max_length=100, blank=True, default='')
+    bucket = models.CharField(max_length=100, blank=True, null=True)
     priority = models.BooleanField(default=False)
     encoding = models.CharField(max_length=100, blank=True, null=True, default='utf-8')
 
