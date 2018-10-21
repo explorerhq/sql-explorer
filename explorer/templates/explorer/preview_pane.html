@@ -1,11 +1,12 @@
+{% load i18n %}
 {% if headers %}
     <div class="row">
         <div class="col-md-12">
             <div role="tabpanel">
                 <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation" class="active"><a href="#previewpane" aria-controls="previewpane" role="tab" data-toggle="tab" id="preview-tab-label">Preview</a></li>
-                    {% if query.id and query.snapshot %}<li role="presentation"><a href="#snapshots" aria-controls="snapshots" role="tab" data-toggle="tab">Snapshots</a></li>{% endif %}
-                    {% if data %}<li role="presentation"><a href="#pivot" aria-controls="pivot" role="tab" data-toggle="tab" id="pivot-tab-label">Pivot</a></li>{% endif %}
+                    <li role="presentation" class="active"><a href="#previewpane" aria-controls="previewpane" role="tab" data-toggle="tab" id="preview-tab-label">{% trans "Preview" %}</a></li>
+                    {% if query.id and query.snapshot %}<li role="presentation"><a href="#snapshots" aria-controls="snapshots" role="tab" data-toggle="tab">{% trans "Snapshots" %}</a></li>{% endif %}
+                    {% if data %}<li role="presentation"><a href="#pivot" aria-controls="pivot" role="tab" data-toggle="tab" id="pivot-tab-label">{% trans "Pivot" %}</a></li>{% endif %}
                 </ul>
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active" id="previewpane">
@@ -14,7 +15,7 @@
                               <div class="row">
                                 <div class="col-md-6">
                                   {% if data %}<a title="Show row numbers" id="counter-toggle" href="#">#</a>&nbsp;{% endif %}
-                                  <span class="panel-title">Execution time: {{ duration|floatformat:2 }} ms</span>
+                                  <span class="panel-title">{% blocktrans %}Execution time: {{ duration|floatformat:2 }} ms{% endblocktrans %}</span>
                                 </div>
                                 <div class="col-md-6 text-right">
                                   <span class="row-control">

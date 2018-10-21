@@ -1,11 +1,13 @@
 from django.apps import AppConfig
 from django.db import connections as djcs
 from django.core.exceptions import ImproperlyConfigured
+from django.utils.translation import ugettext_lazy as _
 
 
 class ExplorerAppConfig(AppConfig):
 
     name = 'explorer'
+    verbose_name = _('SQL Explorer')
 
     def ready(self):
         from explorer.schema import build_async_schemas
