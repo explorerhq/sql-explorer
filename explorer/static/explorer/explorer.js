@@ -51,9 +51,9 @@ ExplorerEditor.prototype.getParams = function() {
 ExplorerEditor.prototype.serializeParams = function(params) {
     var args = [];
     for(var key in params) {
-        args.push(key + '%3A' + params[key]);
+        args.push(key + ':' + params[key]);
     }
-    return args.join('%7C');
+    return encodeURIComponent(args.join('|'))
 };
 
 ExplorerEditor.prototype.doCodeMirrorSubmit = function() {
