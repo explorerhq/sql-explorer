@@ -21,6 +21,7 @@ from django.views.generic.edit import CreateView, DeleteView
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 from django.core.exceptions import ImproperlyConfigured
 from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.shortcuts import redirect
 
 if django.VERSION >= (1, 11):
     from django.contrib.auth.views import LoginView
@@ -83,6 +84,9 @@ class PermissionRequiredMixin(object):
 
     def handle_no_permission(self, request):
         if django.VERSION >= (1, 11):
+            login_url = getattr(app_settings, 'EXPLORER_LOGIN_URL')
+            if login_url:
+                return redirect(login_url)
             return SafeLoginView.as_view(
                 extra_context={'title': 'Log in', REDIRECT_FIELD_NAME: request.get_full_path()})(request)
         return safe_login_prompt(request)

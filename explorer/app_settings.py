@@ -8,6 +8,8 @@ from django.conf import settings
 # }
 # EXPLORER_DEFAULT_CONNECTION = 'my_important_database_readonly_connection'
 
+EXPLORER_LOGIN_URL = getattr(settings, 'EXPLORER_LOGIN_URL', None)
+
 EXPLORER_CONNECTIONS = getattr(settings, 'EXPLORER_CONNECTIONS', {})
 EXPLORER_DEFAULT_CONNECTION = getattr(settings, 'EXPLORER_DEFAULT_CONNECTION', None)
 
