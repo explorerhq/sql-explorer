@@ -93,7 +93,7 @@ class JSONExporter(BaseExporter):
         data = []
         for row in res.data:
             data.append(
-                dict(zip([str(h) if h is not None else '' for h in res.headers], row))
+                dict(list(zip([str(h) if h is not None else '' for h in res.headers], row)))
             )
 
         json_data = json.dumps(data, cls=DjangoJSONEncoder)

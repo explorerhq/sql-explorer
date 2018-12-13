@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 from django.db import DatabaseError
 from django.forms import ModelForm, Field, ValidationError, BooleanField, CharField
 from django.forms.widgets import CheckboxInput

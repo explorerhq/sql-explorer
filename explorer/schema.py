@@ -39,7 +39,7 @@ class SchemaBase(object):
             if self._include_table(r[0]):
                 tables[r[0]].append((r[1], r[2]))
 
-        return sorted(tables.items(), key=lambda x: x[0])
+        return sorted(list(tables.items()), key=lambda x: x[0])
 
     def _build(self):
         return self.results

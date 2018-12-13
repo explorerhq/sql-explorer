@@ -108,7 +108,7 @@ class Query(models.Model):
 
     @property
     def shared(self):
-        return self.id in set(sum(app_settings.EXPLORER_GET_USER_QUERY_VIEWS().values(), []))
+        return self.id in set(sum(list(app_settings.EXPLORER_GET_USER_QUERY_VIEWS().values()), []))
 
     @property
     def snapshots(self):
@@ -198,7 +198,7 @@ class QueryResult(object):
 
     def _get_transforms(self):
         transforms = dict(app_settings.EXPLORER_TRANSFORMS)
-        return [(ix, transforms[str(h)]) for ix, h in enumerate(self.headers) if str(h) in transforms.keys()]
+        return [(ix, transforms[str(h)]) for ix, h in enumerate(self.headers) if str(h) in list(transforms.keys())]
 
     def column(self, ix):
         return [r[ix] for r in self.data]
@@ -276,9 +276,9 @@ class ColumnSummary(object):
             ColumnStat("Avg", lambda x: float(sum(x)) / float(len(x))),
             ColumnStat("Min", min),
             ColumnStat("Max", max),
-            ColumnStat("NUL", lambda x: int(sum(map(lambda y: 1 if y is None else 0, x))), 0, True)
+            ColumnStat("NUL", lambda x: int(sum([1 if y is None else 0 for y in x])), 0, True)
         ]
-        without_nulls = list(map(lambda x: 0 if x is None else x, col))
+        without_nulls = list([0 if x is None else x for x in col])
 
         for stat in self._stats:
             stat(col) if stat.handles_null else stat(without_nulls)

@@ -36,7 +36,7 @@ def param(name):
 
 
 def swap_params(sql, params):
-    p = params.items() if params else {}
+    p = list(params.items()) if params else {}
     for k, v in p:
         regex = re.compile("\$\$%s(?:\:([^\$]+))?\$\$" % str(k).lower(), re.I)
         sql = regex.sub(text_type(v), sql)
@@ -47,7 +47,7 @@ def extract_params(text):
     regex = re.compile("\$\$([a-z0-9_]+)(?:\:([^\$]+))?\$\$")
     params = re.findall(regex, text.lower())
     # We support Python 2.6 so can't use a dict comprehension
-    return dict(zip([p[0] for p in params], [p[1] if len(p) > 1 else '' for p in params]))
+    return dict(list(zip([p[0] for p in params], [p[1] if len(p) > 1 else '' for p in params])))
 
 
 # Helpers
@@ -103,7 +103,7 @@ def get_params_from_request(request):
 
 def get_params_for_url(query):
     if query.params:
-        return '|'.join(['%s:%s' % (p, v) for p, v in query.params.items()])
+        return '|'.join(['%s:%s' % (p, v) for p, v in list(query.params.items())])
 
 
 def url_get_rows(request):

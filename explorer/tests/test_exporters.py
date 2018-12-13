@@ -17,7 +17,7 @@ class TestCsv(TestCase):
         res = QueryResult(SimpleQueryFactory(sql='select 1 as "a", 2 as ""').sql)
         res.execute_query()
         res.process()
-        res._data = [[1, None], [u"Jenét", '1']]
+        res._data = [[1, None], ["Jenét", '1']]
 
         res = CSVExporter(query=None)._get_output(res).getvalue()
         self.assertEqual(res, 'a,\r\n1,\r\nJenét,1\r\n')
@@ -35,7 +35,7 @@ class TestJson(TestCase):
         res = QueryResult(SimpleQueryFactory(sql='select 1 as "a", 2 as ""').sql)
         res.execute_query()
         res.process()
-        res._data = [[1, None], [u"Jenét", '1']]
+        res._data = [[1, None], ["Jenét", '1']]
 
         res = JSONExporter(query=None)._get_output(res).getvalue()
         expected = [{'a': 1, '': None}, {'a': 'Jenét', '': '1'}]
@@ -69,7 +69,7 @@ class TestExcel(TestCase):
         d = datetime.now()
         d = timezone.make_aware(d, timezone.get_current_timezone())
 
-        res._data = [[1, None], [u"Jenét", d]]
+        res._data = [[1, None], ["Jenét", d]]
 
         res = ExcelExporter(query=SimpleQueryFactory())._get_output(res).getvalue()
 
@@ -108,7 +108,7 @@ class TestPdf(TestCase):
         d = datetime.now()
         d = timezone.make_aware(d, timezone.get_current_timezone())
 
-        res._data = [[1, None], [u"Jenét", d]]
+        res._data = [[1, None], ["Jenét", d]]
 
         res = PdfExporter(query=SimpleQueryFactory())._get_output(res).getvalue()
 
