@@ -20,6 +20,7 @@ from django.views.generic.base import View
 from django.views.generic.edit import CreateView, DeleteView
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 from django.core.exceptions import ImproperlyConfigured
+from django.contrib import admin
 from django.contrib.auth import REDIRECT_FIELD_NAME
 
 if django.VERSION >= (1, 11):
@@ -95,7 +96,7 @@ class PermissionRequiredMixin(object):
 
 if django.VERSION > (1, 11):
     class SafeLoginView(LoginView):
-        template_name = 'admin/login.html'
+        template_name = admin.site.login_template
 
 
 def _export(request, query, download=True):
