@@ -53,7 +53,7 @@ def snapshot_query(query_id):
         url = s3_upload(k, exporter.get_file_output())
         logger.info("Done uploading snapshot for query %s. URL: %s" % (query_id, url))
     except Exception as e:
-        logger.warning("Failed to snapshot query %s (%s). Retrying..." % (query_id, e.message))
+        logger.warning("Failed to snapshot query %s (%s). Retrying..." % (query_id, e))
         snapshot_query.retry()
 
 
