@@ -360,7 +360,7 @@ EXPLORER_SQL_BLACKLIST                  Disallowed words in SQL queries to preve
 EXPLORER_SQL_WHITELIST                  These phrases are allowed, even though part of the phrase appears in the blacklist.                             ('CREATED', 'UPDATED', 'DELETED','REGEXP_REPLACE')
 EXPLORER_DEFAULT_ROWS                   The number of rows to show by default in the preview pane.                                                      1000
 EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES  If not None, show schema only for tables starting with these prefixes. "Wins" if in conflict with EXCLUDE       None  # shows all tables
-EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES  Don't show schema for tables starting with these prefixes, in the schema helper.                                ('django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions', 'django.contrib.admin')
+EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES  Don't show schema for tables starting with these prefixes, in the schema helper.                                ('auth_', 'contentypes_', 'sessions_', 'admin_', 'explorer_')
 EXPLORER_SCHEMA_INCLUDE_VIEWS           Include database views                                                                                          False
 EXPLORER_ASYNC_SCHEMA                   Generate DB schema asynchronously. Requires Celery and EXPLORER_TASKS_ENABLED                                   False
 EXPLORER_CONNECTION_NAME                The name of the Django database connection to use. Ideally set this to a connection with read only permissions  None  # Must be set for the app to work, as this is required
