@@ -254,8 +254,10 @@ Run migrate to create the tables:
 
 Lastly, configure your settings to something like:
 
-``EXPLORER_CONNECTIONS = { 'Default': 'readonly' }
-EXPLORER_DEFAULT_CONNECTION = 'readonly'``
+```python
+EXPLORER_CONNECTIONS = {'Default': 'default'}
+EXPLORER_DEFAULT_CONNECTION = 'default'
+```
 
 The first setting lists the connections you want to allow Explorer to
 use. The keys of the connections dictionary are friendly names to show
