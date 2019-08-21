@@ -10,6 +10,7 @@ except ImportError:
 import django
 from django.db import DatabaseError
 from django.db.models import Count
+from django.conf import settings
 from django.forms.models import model_to_dict
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, render, render_to_response
@@ -51,7 +52,8 @@ class ExplorerContextMixin(object):
 
     def gen_ctx(self):
         return {'can_view': app_settings.EXPLORER_PERMISSION_VIEW(self.request.user),
-                'can_change': app_settings.EXPLORER_PERMISSION_CHANGE(self.request.user)}
+                'can_change': app_settings.EXPLORER_PERMISSION_CHANGE(self.request.user),
+                'csrf_cookie_name': settings.CSRF_COOKIE_NAME}
 
     def get_context_data(self, **kwargs):
         ctx = super(ExplorerContextMixin, self).get_context_data(**kwargs)
