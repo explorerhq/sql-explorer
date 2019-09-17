@@ -4,7 +4,7 @@ import logging
 from time import time
 import six
 
-from django.db import models, DatabaseError
+from django.db import models, DatabaseError, transaction
 try:
     from django.urls import reverse
 except ImportError:
@@ -222,7 +222,8 @@ class QueryResult(object):
         start_time = time()
 
         try:
-            cursor.execute(self.sql)
+            with transaction.atomic(self.connection.alias):
+                cursor.execute(self.sql)
         except DatabaseError as e:
             cursor.close()
             raise e
