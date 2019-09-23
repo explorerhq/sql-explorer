@@ -1,3 +1,21 @@
+1.1.3
+=====
+
+2019-09-23
+
+- #347: URL-friendly parameter encoding
+- #354: Updating dependency reference for Python 3 compatibility
+- #357: Include database views in list of tables
+- #359: Fix unicode issue when generating migration with py2 or py3
+- #363: Do not use "message" attribute on exception
+- #368: Update EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES
+
+- Minor Changes
+  - release checklist included in repo
+  - readme updated with new screenshots
+  - python dependencies/optional-dependencies updated to latest
+    - six, xlsxwriter, factory-boy, sqlparse
+
 1.1.2
 =====
 
