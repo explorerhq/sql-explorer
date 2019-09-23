@@ -283,10 +283,12 @@ minimum.
 =========================================================== ======= ================
 Name                                                        Version License
 =========================================================== ======= ================
-`sqlparse <https://github.com/andialbrecht/sqlparse/>`_     0.2.4   BSD
+`six <https://github.com/benjaminp/six/>`_                  1.12.0  MIT
+`sqlparse <https://github.com/andialbrecht/sqlparse/>`_     0.3.0   BSD
 `unicodecsv <https://github.com/jdunck/python-unicodecsv>`_ 0.14.1  BSD
 =========================================================== ======= ================
 
+- six is used for py2-3 compatibility
 - sqlparse is used for SQL formatting
 
 *Python - Optional Dependencies*
@@ -296,8 +298,8 @@ Name                                                                 Version Lic
 ==================================================================== ======= ================
 `celery <http://www.celeryproject.org/>`_                            3.1     BSD
 `django-celery <http://www.celeryproject.org/>`_                     3.1     BSD
-`Factory Boy <https://github.com/rbarrois/factory_boy>`_             2.10    MIT
-`xlsxwriter <http://xlsxwriter.readthedocs.io/>`_                    1.0.2   BSD
+`Factory Boy <https://github.com/rbarrois/factory_boy>`_             2.12.0  MIT
+`xlsxwriter <http://xlsxwriter.readthedocs.io/>`_                    1.2.1   BSD
 `boto <https://github.com/boto/boto>`_                               2.46    MIT
 ==================================================================== ======= ================
 
