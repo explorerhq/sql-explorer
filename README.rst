@@ -345,6 +345,9 @@ then:
 
 ...99%! Huzzah!
 
+Running Locally
+=====
+
 There is also a test_project that you can use to kick the tires. Just
 create a new virtualenv, cd into test_project and run start.sh (or
 walk through the steps yourself) to get a test instance of the app up
