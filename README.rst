@@ -34,19 +34,19 @@ Sql Explorer is MIT licensed, and pull requests are welcome.
 
 **A view of a query**
 
-.. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/2.png
+.. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/2019_2.png
 
 **Viewing all queries**
 
-.. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/query-list.png
+.. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/2019_querylist.png
 
 **Quick access to DB schema info**
 
-.. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/3.png
+.. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/2019_3.png
 
 **Snapshot query results to S3 & download as csv**
 
-.. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/snapshots.png
+.. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/2019_snapshots.png
 
 
 Features
@@ -388,6 +388,6 @@ Release Process
 ===============
 
 Release process is documented `here
-<https://gist.github.com/chrisclark/07a6b4ef0114fdfa2ee0>`_. If there
+<https://github.com/groveco/django-sql-explorer/blob/master/pypi-release-checklist.md>`_. If there
 are problems with the release, please help me improve the process so
 it doesn't happen again!
