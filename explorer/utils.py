@@ -2,12 +2,7 @@ import functools
 import re
 
 from django.contrib.auth.forms import AuthenticationForm
-
-try:
-    from django.contrib.auth.views import login
-except ImportError:
-    pass
-
+from django.contrib.auth.views import LoginView
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from six import text_type
 import sqlparse
@@ -55,7 +50,7 @@ def safe_login_prompt(request):
             REDIRECT_FIELD_NAME: request.get_full_path(),
         },
     }
-    return login(request, **defaults)
+    return LoginView.as_view(**defaults)(request)
 
 
 def shared_dict_update(target, source):
