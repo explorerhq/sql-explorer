@@ -4,6 +4,7 @@ from explorer.tasks import build_schema_cache_async
 from explorer.app_settings import (
     EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES,
     EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES,
+    EXPLORER_SCHEMA_INCLUDE_VIEWS,
     ENABLE_TASKS,
     EXPLORER_ASYNC_SCHEMA,
     EXPLORER_CONNECTIONS
@@ -17,6 +18,10 @@ def _get_includes():
 
 def _get_excludes():
     return EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES
+
+
+def _include_views():
+    return EXPLORER_SCHEMA_INCLUDE_VIEWS is True
 
 
 def do_async():
@@ -62,7 +67,7 @@ def build_schema_info(connection_alias):
     connection = get_valid_connection(connection_alias)
     ret = []
     with connection.cursor() as cursor:
-        tables_to_introspect = connection.introspection.table_names(cursor)
+        tables_to_introspect = connection.introspection.table_names(cursor, include_views=_include_views())
 
         for table_name in tables_to_introspect:
             if not _include_table(table_name):

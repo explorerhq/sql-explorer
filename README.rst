@@ -34,19 +34,19 @@ Sql Explorer is MIT licensed, and pull requests are welcome.
 
 **A view of a query**
 
-.. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/2.png
+.. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/2019_2.png
 
 **Viewing all queries**
 
-.. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/query-list.png
+.. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/2019_querylist.png
 
 **Quick access to DB schema info**
 
-.. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/3.png
+.. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/2019_3.png
 
 **Snapshot query results to S3 & download as csv**
 
-.. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/snapshots.png
+.. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/2019_snapshots.png
 
 
 Features
@@ -95,6 +95,7 @@ Features
       install -r optional-requirements.txt`
     - The checkbox for opting a query into a snapshot is ALL THE WAY
       on the bottom of the query view (underneath the results table).
+    - You must also have the setting EXPLORER_TASKS_ENABLED enabled.
 - **Email query results**
     - Click the email icon in the query listing view, enter an email
       address, and the query results (zipped .csv) will be sent to you
@@ -282,10 +283,12 @@ minimum.
 =========================================================== ======= ================
 Name                                                        Version License
 =========================================================== ======= ================
-`sqlparse <https://github.com/andialbrecht/sqlparse/>`_     0.2.4   BSD
+`six <https://github.com/benjaminp/six/>`_                  1.12.0  MIT
+`sqlparse <https://github.com/andialbrecht/sqlparse/>`_     0.3.0   BSD
 `unicodecsv <https://github.com/jdunck/python-unicodecsv>`_ 0.14.1  BSD
 =========================================================== ======= ================
 
+- six is used for py2-3 compatibility
 - sqlparse is used for SQL formatting
 
 *Python - Optional Dependencies*
@@ -295,8 +298,8 @@ Name                                                                 Version Lic
 ==================================================================== ======= ================
 `celery <http://www.celeryproject.org/>`_                            3.1     BSD
 `django-celery <http://www.celeryproject.org/>`_                     3.1     BSD
-`Factory Boy <https://github.com/rbarrois/factory_boy>`_             2.10    MIT
-`xlsxwriter <http://xlsxwriter.readthedocs.io/>`_                    1.0.2   BSD
+`Factory Boy <https://github.com/rbarrois/factory_boy>`_             2.12.0  MIT
+`xlsxwriter <http://xlsxwriter.readthedocs.io/>`_                    1.2.1   BSD
 `boto <https://github.com/boto/boto>`_                               2.46    MIT
 ==================================================================== ======= ================
 
@@ -344,6 +347,9 @@ then:
 
 ...99%! Huzzah!
 
+Running Locally
+===============
+
 There is also a test_project that you can use to kick the tires. Just
 create a new virtualenv, cd into test_project and run start.sh (or
 walk through the steps yourself) to get a test instance of the app up
@@ -360,6 +366,7 @@ EXPLORER_SQL_WHITELIST                  These phrases are allowed, even though p
 EXPLORER_DEFAULT_ROWS                   The number of rows to show by default in the preview pane.                                                      1000
 EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES  If not None, show schema only for tables starting with these prefixes. "Wins" if in conflict with EXCLUDE       None  # shows all tables
 EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES  Don't show schema for tables starting with these prefixes, in the schema helper.                                ('django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions', 'django.contrib.admin')
+EXPLORER_SCHEMA_INCLUDE_VIEWS           Include database views                                                                                          False
 EXPLORER_ASYNC_SCHEMA                   Generate DB schema asynchronously. Requires Celery and EXPLORER_TASKS_ENABLED                                   False
 EXPLORER_CONNECTION_NAME                The name of the Django database connection to use. Ideally set this to a connection with read only permissions  None  # Must be set for the app to work, as this is required
 EXPLORER_CONNECTIONS                    A dictionary of { 'Friendly Name': 'django_db_alias'}. All                                                      {}  # At a minimum, should be set to something like { 'Default': 'readonly' } or similar. See connections.py for more documentation.
@@ -383,6 +390,6 @@ Release Process
 ===============
 
 Release process is documented `here
-<https://gist.github.com/chrisclark/07a6b4ef0114fdfa2ee0>`_. If there
+<https://github.com/groveco/django-sql-explorer/blob/master/pypi-release-checklist.md>`_. If there
 are problems with the release, please help me improve the process so
 it doesn't happen again!

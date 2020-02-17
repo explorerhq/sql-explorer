@@ -1,5 +1,5 @@
 celery>=3.1,<4.0
 boto>=2.46
 django-celery>=3.1.0
-xlsxwriter==1.0.2
-factory-boy==2.10.0
+xlsxwriter==1.2.1
+factory-boy==2.12.0

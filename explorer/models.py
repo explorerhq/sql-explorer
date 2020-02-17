@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import logging
 from time import time
 import six
@@ -26,7 +28,7 @@ MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist: %s"
 
 logger = logging.getLogger(__name__)
 
-
+@six.python_2_unicode_compatible
 class Query(models.Model):
     title = models.CharField(max_length=255)
     sql = models.TextField()
@@ -47,7 +49,7 @@ class Query(models.Model):
         ordering = ['title']
         verbose_name_plural = 'Queries'
 
-    def __unicode__(self):
+    def __str__(self):
         return six.text_type(self.title)
 
     def get_run_count(self):
@@ -228,6 +230,7 @@ class QueryResult(object):
         return cursor, ((time() - start_time) * 1000)
 
 
+@six.python_2_unicode_compatible
 class ColumnHeader(object):
 
     def __init__(self, title):
@@ -237,13 +240,11 @@ class ColumnHeader(object):
     def add_summary(self, column):
         self.summary = ColumnSummary(self, column)
 
-    def __unicode__(self):
-        return self.title
-
     def __str__(self):
         return self.title
 
 
+@six.python_2_unicode_compatible
 class ColumnStat(object):
 
     def __init__(self, label, statfn, precision=2, handles_null=False):
@@ -255,10 +256,11 @@ class ColumnStat(object):
     def __call__(self, coldata):
         self.value = round(float(self.statfn(coldata)), self.precision) if coldata else 0
 
-    def __unicode__(self):
+    def __str__(self):
         return self.label
 
 
+@six.python_2_unicode_compatible
 class ColumnSummary(object):
 
     def __init__(self, header, col):
