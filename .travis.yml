@@ -10,15 +10,15 @@ install:
 
 script:  python manage.py test
 env:
-  - DJANGO="Django>=1.8,<1.9"
-  - DJANGO="Django>=1.9,<1.10"
-  - DJANGO="Django>=1.10,<1.11"
-  - DJANGO="Django>=1.11,<1.12"
-  - DJANGO="Django>=2.0,<2.1"
-  - DJANGO="Django>=2.1,<2.2"
+  - DJANGO="Django==1.8.*"
+  - DJANGO="Django==1.9.*"
+  - DJANGO="Django==1.10.*"
+  - DJANGO="Django==1.11.*"
+  - DJANGO="Django==2.0.*"
+  - DJANGO="Django==2.1.*"
 matrix:
   exclude:
     - python: 2.7
-      env: DJANGO="Django>=2.0,<2.1"
+      env: DJANGO="Django==2.0.*"
     - python: 2.7
-      env: DJANGO="Django>=2.1,<2.2"
+      env: DJANGO="Django==2.1.*"
