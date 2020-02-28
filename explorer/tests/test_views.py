@@ -81,6 +81,7 @@ class TestQueryCreateView(TestCase):
 
 
 class TestQueryDetailView(TestCase):
+    databases = ['default', 'alt']
 
     def setUp(self):
         self.user = User.objects.create_superuser('admin', 'admin@admin.com', 'pwd')
@@ -392,6 +393,7 @@ class TestCSVFromSQL(TestCase):
 
 
 class TestSQLDownloadViews(TestCase):
+    databases = ['default', 'alt']
 
     def setUp(self):
         self.user = User.objects.create_superuser('admin', 'admin@admin.com', 'pwd')
