@@ -540,6 +540,7 @@ class TestCreatedBy(TestCase):
         self.client.login(username='admin', password='pwd')
         self.query = SimpleQueryFactory.build()
         self.data = model_to_dict(self.query)
+        del self.data['id']
         self.data["created_by_user"] = 2
 
     def test_query_update_doesnt_change_created_user(self):
