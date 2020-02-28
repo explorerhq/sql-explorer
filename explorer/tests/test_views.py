@@ -538,21 +538,21 @@ class TestCreatedBy(TestCase):
         self.user = User.objects.create_superuser('admin', 'admin@admin.com', 'pwd')
         self.user2 = User.objects.create_superuser('admin2', 'admin2@admin.com', 'pwd')
         self.client.login(username='admin', password='pwd')
-        self.query = SimpleQueryFactory.build()
+        self.query = SimpleQueryFactory.build(created_by_user=self.user)
         self.data = model_to_dict(self.query)
         del self.data['id']
-        self.data["created_by_user"] = 2
+        self.data["created_by_user_id"] = self.user2.id
 
     def test_query_update_doesnt_change_created_user(self):
         self.query.save()
         self.client.post(reverse("query_detail", kwargs={'query_id': self.query.id}), self.data)
         q = Query.objects.get(id=self.query.id)
-        self.assertEqual(q.created_by_user_id, 1)
+        self.assertEqual(q.created_by_user_id, self.user.id)
 
     def test_new_query_gets_created_by_logged_in_user(self):
         self.client.post(reverse("query_create"), self.data)
         q = Query.objects.first()
-        self.assertEqual(q.created_by_user_id, 1)
+        self.assertEqual(q.created_by_user_id, self.user.id)
 
 
 class TestQueryLog(TestCase):
