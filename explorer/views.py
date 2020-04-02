@@ -12,7 +12,7 @@ from django.db import DatabaseError
 from django.db.models import Count
 from django.forms.models import model_to_dict
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect, Http404
-from django.shortcuts import get_object_or_404, render, render_to_response
+from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_POST
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView
@@ -169,10 +169,9 @@ class SchemaView(PermissionRequiredMixin, View):
             raise Http404
         schema = schema_info(connection)
         if schema:
-            return render_to_response('explorer/schema.html',
-                                      {'schema': schema_info(connection)})
+            return render(None, 'explorer/schema.html', {'schema': schema_info(connection)})
         else:
-            return render_to_response('explorer/schema_building.html')
+            return render(None, 'explorer/schema_building.html')
 
 
 @require_POST
