@@ -2,3 +2,4 @@ Django>=1.11.0
 six==1.12.0
 sqlparse==0.3.0
 unicodecsv==0.14.1
+XlsxWriter==1.2.8
