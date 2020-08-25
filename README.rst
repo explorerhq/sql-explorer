@@ -223,10 +223,10 @@ Requires Python 2.7, 3.5 or higher. Requires Django 1.11.0 or higher.
 
 Set up a Django project with the following:
 
-```bash
-$ pip install django
-$ django-admin startproject project
-```
+.. code-block:: shell-session
+
+    $ pip install django
+    $ django-admin startproject project
 
 More information [here](https://docs.djangoproject.com/en/1.11/intro/tutorial01/).
 
@@ -236,11 +236,13 @@ Install with pip from github:
 
 Add to your `INSTALLED_APPS`, located in the `settings.py` file in your project folder:
 
-``INSTALLED_APPS = (
-...,
-'explorer',
-...
-)``
+.. code-block:: python
+
+    INSTALLED_APPS = (
+        ...,
+        'explorer',
+        ...
+    )
 
 Add the following to your urls.py (all Explorer URLs are restricted
 via the EXPLORER_PERMISSION_VIEW and EXPLORER_PERMISSION_CHANGE
@@ -254,8 +256,10 @@ Run migrate to create the tables:
 
 Lastly, configure your settings to something like:
 
-``EXPLORER_CONNECTIONS = { 'Default': 'readonly' }
-EXPLORER_DEFAULT_CONNECTION = 'readonly'``
+.. code-block:: python
+
+    EXPLORER_CONNECTIONS = { 'Default': 'readonly' }
+    EXPLORER_DEFAULT_CONNECTION = 'readonly'
 
 The first setting lists the connections you want to allow Explorer to
 use. The keys of the connections dictionary are friendly names to show
