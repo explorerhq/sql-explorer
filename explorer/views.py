@@ -127,7 +127,7 @@ class DownloadFromSqlView(PermissionRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         sql = request.POST.get('sql')
-        connection = request.POST.get('connection')
+        connection = request.POST.get('connection', '')
         query = Query(sql=sql, connection=connection, title='')
         ql = query.log(request.user)
         query.title = 'Playground - %s' % ql.id
@@ -164,7 +164,7 @@ class SchemaView(PermissionRequiredMixin, View):
         return super(SchemaView, self).dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        connection = kwargs.get('connection')
+        connection = kwargs.get('connection', '')
         if connection not in connections:
             raise Http404
         schema = schema_info(connection)
@@ -209,10 +209,13 @@ class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
 
     def get_queryset(self):
         if app_settings.EXPLORER_PERMISSION_VIEW(self.request.user):
-            qs = Query.objects.prefetch_related('created_by_user').all()
+            qs = (Query.objects
+                  .prefetch_related('created_by_user', 'querylog_set').all())
         else:
-            qs = Query.objects.prefetch_related('created_by_user').filter(pk__in=allowed_query_pks(self.request.user.id))
-        return qs.annotate(run_count=Count('querylog'))
+            qs = (Query.objects
+                  .prefetch_related('created_by_user', 'querylog_set')
+                  .filter(pk__in=allowed_query_pks(self.request.user.id)))
+        return qs
 
     def _build_queries_and_headers(self):
         """
@@ -255,7 +258,7 @@ class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
                                'collapse_target': collapse_target,
                                'created_at': q.created_at,
                                'is_header': False,
-                               'run_count': q.run_count,
+                               'run_count': q.querylog_set.count(),
                                'created_by_user': six.text_type(q.created_by_user) if q.created_by_user else None})
             dict_list.append(model_dict)
         return dict_list
@@ -308,7 +311,8 @@ class PlayQueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
 
         if url_get_log_id(request):
             log = get_object_or_404(QueryLog, pk=url_get_log_id(request))
-            query = Query(sql=log.sql, title="Playground", connection=log.connection)
+            c = log.connection or ''
+            query = Query(sql=log.sql, title="Playground", connection=c)
             return self.render_with_sql(request, query)
 
         return self.render()
@@ -316,7 +320,8 @@ class PlayQueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
     def post(self, request):
         sql = request.POST.get('sql')
         show = url_get_show(request)
-        query = Query(sql=sql, title="Playground", connection=request.POST.get('connection'))
+        c = request.POST.get('connection', '')
+        query = Query(sql=sql, title="Playground", connection=c)
         passes_blacklist, failing_words = query.passes_blacklist()
         error = MSG_FAILED_BLACKLIST % ', '.join(failing_words) if not passes_blacklist else None
         run_query = not bool(error) if show else False
