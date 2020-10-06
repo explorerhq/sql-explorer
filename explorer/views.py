@@ -169,10 +169,10 @@ class SchemaView(PermissionRequiredMixin, View):
             raise Http404
         schema = schema_info(connection)
         if schema:
-            return render(None, 'explorer/schema.html',
-                                      {'schema': schema_info(connection)})
+            return render(request, 'explorer/schema.html',
+                          {'schema': schema_info(connection)})
         else:
-            return render(None, 'explorer/schema_building.html')
+            return render(request, 'explorer/schema_building.html')
 
 
 @require_POST
