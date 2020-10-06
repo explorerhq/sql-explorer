@@ -78,7 +78,7 @@ def build_schema_info(connection_alias):
                 column_name = row[0]
                 try:
                     field_type = connection.introspection.get_field_type(row[1], row)
-                except KeyError as e:
+                except KeyError:
                     field_type = 'Unknown'
                 td.append((column_name, field_type))
             ret.append((table_name, td))

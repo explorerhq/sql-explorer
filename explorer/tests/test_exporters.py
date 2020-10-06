@@ -1,4 +1,3 @@
-import sys, unittest
 from django.test import TestCase
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
