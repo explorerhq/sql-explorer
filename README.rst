@@ -230,9 +230,13 @@ Set up a Django project with the following:
 
 More information in the `django tutorial <https://docs.djangoproject.com/en/3.1/intro/tutorial01/>`_.
 
-Install with pip from github:
+Install with pip from pypi:
 
 ``pip install django-sql-explorer``
+
+If you would also like to support downloading Excel files install with the dependency using:
+
+``pip install django-sql-explorer[xls]``
 
 Add to your ``INSTALLED_APPS``, located in the ``settings.py`` file in your project folder:
 

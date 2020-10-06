@@ -62,6 +62,11 @@ setup(
         'unicodecsv>=0.14.1',
         'six>=1.10.0',
     ],
+    extras_require={
+        "xls": [
+            'xlsxwriter>=1.2.1'
+        ]
+    },
     include_package_data=True,
     zip_safe=False,
 )
