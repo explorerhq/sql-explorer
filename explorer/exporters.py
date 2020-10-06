@@ -17,7 +17,7 @@ def get_exporter_class(format):
     return import_string(class_str)
 
 
-class BaseExporter(object):
+class BaseExporter:
 
     name = ''
     content_type = ''
@@ -44,7 +44,7 @@ class BaseExporter(object):
 
     def get_filename(self):
         # build list of valid chars, build filename from title and replace spaces
-        valid_chars = '-_.() %s%s' % (string.ascii_letters, string.digits)
+        valid_chars = '-_.() {}{}'.format(string.ascii_letters, string.digits)
         filename = ''.join(c for c in self.query.title if c in valid_chars)
         filename = filename.replace(' ', '_')
         return '{}{}'.format(filename, self.file_extension)

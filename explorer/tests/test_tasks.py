@@ -3,7 +3,7 @@ from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
 from explorer.tasks import execute_query, snapshot_queries, truncate_querylogs, build_schema_cache_async
 from explorer.tests.factories import SimpleQueryFactory
 from django.core import mail
-from mock import Mock, patch
+from unittest.mock import Mock, patch
 from six import StringIO
 from explorer.models import QueryLog
 from datetime import datetime, timedelta

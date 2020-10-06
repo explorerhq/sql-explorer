@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.db import connections
 from explorer.tests.factories import SimpleQueryFactory
 from explorer.models import QueryLog, Query, QueryResult, ColumnSummary, ColumnHeader
-from mock import patch, Mock
+from unittest.mock import patch, Mock
 from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
 
 
@@ -127,7 +127,7 @@ class TestQueryResults(TestCase):
     def test_unicode_with_nulls(self):
         self.qr._headers = [ColumnHeader('num'), ColumnHeader('char')]
         self.qr._description = [("num",), ("char",)]
-        self.qr._data = [[2, six.u("a")], [3, None]]
+        self.qr._data = [[2, "a"], [3, None]]
         self.qr.process()
         self.assertEqual(self.qr.data, [[2, "a"], [3, None]])
 
