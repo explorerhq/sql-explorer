@@ -55,14 +55,14 @@ Features
 - **Security**
     - Let's not kid ourselves - this tool is all about giving people
       access to running SQL in production. So if that makes you
-      nervous (and it should) - you've been warned. Explorer makes an
+      nervous (**and it should**) - you've been warned. Explorer makes an
       effort to not allow terrible things to happen, but be careful!
-      It's recommended you use the EXPLORER_CONNECTION_NAME setting to
+      It's recommended you use the ``EXPLORER_CONNECTION_NAME`` setting to
       connect SQL Explorer to a read-only database role.
     - Explorer supports two different permission checks for users of
-      the tool. Users passing the EXPLORER_PERMISSION_CHANGE test can
+      the tool. Users passing the ``EXPLORER_PERMISSION_CHANGE`` test can
       create, edit, delete, and execute queries. Users who do not pass
-      this test but pass the EXPLORER_PERMISSION_VIEW test can only
+      this test but pass the ``EXPLORER_PERMISSION_VIEW`` test can only
       execute queries. Other users cannot access any part of
       Explorer. Both permission groups are set to is_staff by default
       and can be overridden in your settings file.
@@ -91,26 +91,26 @@ Features
        }
 
     - Requires celery, obviously. Also uses djcelery and tinys3. All
-      of these deps are optional and can be installed with `pip
-      install -r optional-requirements.txt`
+      of these deps are optional and can be installed with
+      ``pip install -r optional-requirements.txt``
     - The checkbox for opting a query into a snapshot is ALL THE WAY
       on the bottom of the query view (underneath the results table).
-    - You must also have the setting EXPLORER_TASKS_ENABLED enabled.
+    - You must also have the setting ``EXPLORER_TASKS_ENABLED`` enabled.
 - **Email query results**
     - Click the email icon in the query listing view, enter an email
       address, and the query results (zipped .csv) will be sent to you
       asynchronously. Very handy for long-running queries.
 - **Parameterized Queries**
     - Use $$foo$$ in your queries and Explorer will build a UI to fill
-      out parameters. When viewing a query like 'SELECT * FROM table
-      WHERE id=$$id$$', Explorer will generate UI for the 'id'
+      out parameters. When viewing a query like ``SELECT * FROM table
+      WHERE id=$$id$$``, Explorer will generate UI for the ``id``
       parameter.
     - Parameters are stashed in the URL, so you can share links to
       parameterized queries with colleagues
-    - Use $$paramName:defaultValue$$ to provide default values for the
+    - Use ``$$paramName:defaultValue$$`` to provide default values for the
       parameters.
 - **Schema Helper**
-    - /explorer/schema/<connection-alias> renders a list of your table
+    - ``/explorer/schema/<connection-alias>`` renders a list of your table
       and column names + types that you can refer to while writing
       queries. Apps can be excluded from this list so users aren't
       bogged down with tons of irrelevant tables. See settings
@@ -125,8 +125,8 @@ Features
       Explorer caches the schema information. There is also the option
       to generate the schema information asyncronously, via Celery. To
       enable this, make sure Celery is installed and configured, and
-      set `EXPLORER_ENABLE_TASKS` and `EXPLORER_ASYNC_SCHEMA` to
-      `True`.
+      set ``EXPLORER_ENABLE_TASKS`` and ``EXPLORER_ASYNC_SCHEMA`` to
+      ``True``.
 - **Template Columns**
     - Let's say you have a query like 'select id, email from user' and
       you'd like to quickly drill through to the profile page for each
@@ -136,11 +136,11 @@ Features
 
     ``EXPLORER_TRANSFORMS = [('user', '<a href="https://yoursite.com/profile/{0}/">{0}</a>')]``
 
-    - And change your query to 'SELECT id AS "user", email FROM
-      user'. Explorer will match the "user" column alias to the
+    - And change your query to ``SELECT id AS "user", email FROM
+      user``. Explorer will match the "user" column alias to the
       transform and merge each cell in that column into the template
       string. Cool!
-    - Note you *must* set `EXPLORER_UNSAFE_RENDERING` to `True` if you
+    - Note you *must* set ``EXPLORER_UNSAFE_RENDERING`` to ``True`` if you
       want to see rendered HTML (vs string literals) in the output.
       And be aware of the implications of enabling that setting.
 - **Pivot Table**
@@ -191,22 +191,22 @@ Features
       non-validating -- just formatting).
     - Use the Query Logs feature to share one-time queries that aren't
       worth creating a persistent query for. Just run your SQL in the
-      playground, then navigate to /logs and share the link
-      (e.g. /explorer/play/?querylog_id=2428)
+      playground, then navigate to ``/logs`` and share the link
+      (e.g. ``/explorer/play/?querylog_id=2428``)
     - Click the 'history' link towards the top-right of a saved query
       to filter the logs down to changes to just that query.
     - If you need to download a query as something other than csv but
       don't want to globally change delimiters via
-      settings.EXPLORER_CSV_DELIMETER, you can use
-      /query/download?delim=| to get a pipe (or whatever) delimited
-      file. For a tab-delimited file, use delim=tab. Note that the
+      ``settings.EXPLORER_CSV_DELIMETER``, you can use
+      ``/query/download?delim=|`` to get a pipe (or whatever) delimited
+      file. For a tab-delimited file, use ``delim=tab``. Note that the
       file extension will remain .csv
     - If a query is taking a long time to run (perhaps timing out) and
       you want to get in there to optimize it, go to
-      /query/123/?show=0. You'll see the normal query detail page, but
+      ``/query/123/?show=0``. You'll see the normal query detail page, but
       the query won't execute.
-    - Set env vars for EXPLORER_TOKEN_AUTH_ENABLED=TRUE and
-      EXPLORER_TOKEN=<SOME TOKEN> and you have an instant data
+    - Set env vars for ``EXPLORER_TOKEN_AUTH_ENABLED=TRUE`` and
+      ``EXPLORER_TOKEN=<SOME TOKEN>`` and you have an instant data
       API. Just:
 
       ``curl --header "X-API-TOKEN: <TOKEN>" https://www.your-site.com/explorer/<QUERY_ID>/stream?format=csv``
@@ -219,7 +219,7 @@ Features
 Install
 =======
 
-Requires Python 2.7, 3.5 or higher. Requires Django 1.11.0 or higher.
+Requires Python 3.5 or higher. Requires Django 2.2 or higher.
 
 Set up a Django project with the following:
 
@@ -228,13 +228,13 @@ Set up a Django project with the following:
     $ pip install django
     $ django-admin startproject project
 
-More information [here](https://docs.djangoproject.com/en/1.11/intro/tutorial01/).
+More information in the `django tutorial <https://docs.djangoproject.com/en/3.1/intro/tutorial01/>`_.
 
 Install with pip from github:
 
 ``pip install django-sql-explorer``
 
-Add to your `INSTALLED_APPS`, located in the `settings.py` file in your project folder:
+Add to your ``INSTALLED_APPS``, located in the ``settings.py`` file in your project folder:
 
 .. code-block:: python
 
@@ -245,7 +245,7 @@ Add to your `INSTALLED_APPS`, located in the `settings.py` file in your project 
     )
 
 Add the following to your urls.py (all Explorer URLs are restricted
-via the EXPLORER_PERMISSION_VIEW and EXPLORER_PERMISSION_CHANGE
+via the ``EXPLORER_PERMISSION_VIEW`` and ``EXPLORER_PERMISSION_CHANGE``
 settings. See Settings section below for further documentation.):
 
 ``url(r'^explorer/', include('explorer.urls')),``
@@ -268,12 +268,12 @@ settings.DATABASES. It is highly recommended to set
 
 You can now browse to https://yoursite/explorer/ and get exploring! It
 is highly recommended that you also configure Explorer to use a
-read-only database connection via the `EXPLORER_CONNECTION_NAME`
+read-only database connection via the ``EXPLORER_CONNECTION_NAME``
 setting.
 
 There are a handful of features (snapshots, emailing queries) that
 rely on Celery and the dependencies in optional-requirements.txt. If
-you have Celery installed, set `EXPLORER_TASKS_ENABLED=True` in your
+you have Celery installed, set ``EXPLORER_TASKS_ENABLED=True`` in your
 settings.py to enable these features.
 
 Dependencies
@@ -331,7 +331,7 @@ Name                                                         Version  License
 - All all served from CDNJS except for jQuery UI, which uses a custom
   build, served locally.
 
-pivottable.js relies on jQuery UI but only for the `Sortable` method.
+pivottable.js relies on jQuery UI but only for the ``Sortable`` method.
 
 Tests
 =====
@@ -355,7 +355,7 @@ Running Locally
 ===============
 
 There is also a test_project that you can use to kick the tires. Just
-create a new virtualenv, cd into test_project and run start.sh (or
+create a new virtualenv, cd into ``test_project`` and run ``start.sh`` (or
 walk through the steps yourself) to get a test instance of the app up
 and running.
 
