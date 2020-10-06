@@ -13,3 +13,4 @@
 *.orig
 tmp
 venv/
+.venv/
