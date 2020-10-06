@@ -4,7 +4,6 @@ import re
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import REDIRECT_FIELD_NAME
-from six import text_type
 import sqlparse
 
 from explorer import app_settings

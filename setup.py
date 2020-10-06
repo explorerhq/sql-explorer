@@ -59,8 +59,6 @@ setup(
     install_requires=[
         'Django>=2.2.14',
         'sqlparse>=0.1.18',
-        'unicodecsv>=0.14.1',
-        'six>=1.10.0',
     ],
     extras_require={
         "xls": [

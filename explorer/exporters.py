@@ -9,7 +9,7 @@ import csv
 from django.utils.module_loading import import_string
 from django.utils.text import slugify
 from explorer import app_settings
-from six import StringIO, BytesIO
+from io import StringIO, BytesIO
 
 
 def get_exporter_class(format):

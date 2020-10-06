@@ -9,7 +9,6 @@ from explorer.models import QueryResult
 from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
 import json
 from datetime import date, datetime
-from six import b
 
 
 class TestCsv(TestCase):

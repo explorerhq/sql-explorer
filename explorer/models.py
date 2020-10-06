@@ -1,6 +1,5 @@
 import logging
 from time import time
-import six
 
 from django.db import models, DatabaseError, transaction
 try:

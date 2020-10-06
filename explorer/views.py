@@ -1,5 +1,4 @@
 import re
-import six
 from collections import Counter
 
 try:

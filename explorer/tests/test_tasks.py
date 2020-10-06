@@ -4,7 +4,7 @@ from explorer.tasks import execute_query, snapshot_queries, truncate_querylogs, 
 from explorer.tests.factories import SimpleQueryFactory
 from django.core import mail
 from unittest.mock import Mock, patch
-from six import StringIO
+from io import StringIO
 from explorer.models import QueryLog
 from datetime import datetime, timedelta
 
