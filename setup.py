@@ -55,6 +55,7 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3 :: Only',
     ],
+    python_requires='>=3.5',
     install_requires=[
         'Django>=2.2.14',
         'sqlparse>=0.1.18',
