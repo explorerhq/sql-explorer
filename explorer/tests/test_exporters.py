@@ -1,5 +1,3 @@
-#encoding=utf-8
-import sys, unittest
 from django.test import TestCase
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
@@ -10,7 +8,6 @@ from explorer.models import QueryResult
 from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
 import json
 from datetime import date, datetime
-from six import b
 
 
 class TestCsv(TestCase):
@@ -19,7 +16,7 @@ class TestCsv(TestCase):
         res = QueryResult(SimpleQueryFactory(sql='select 1 as "a", 2 as ""').sql, connections[CONN])
         res.execute_query()
         res.process()
-        res._data = [[1, None], [u"Jenét", '1']]
+        res._data = [[1, None], ["Jenét", '1']]
 
         res = CSVExporter(query=None)._get_output(res).getvalue()
         self.assertEqual(res, 'a,\r\n1,\r\nJenét,1\r\n')
@@ -37,7 +34,7 @@ class TestJson(TestCase):
         res = QueryResult(SimpleQueryFactory(sql='select 1 as "a", 2 as ""').sql, connections[CONN])
         res.execute_query()
         res.process()
-        res._data = [[1, None], [u"Jenét", '1']]
+        res._data = [[1, None], ["Jenét", '1']]
 
         res = JSONExporter(query=None)._get_output(res).getvalue()
         expected = [{'a': 1, '': None}, {'a': 'Jenét', '': '1'}]
@@ -72,11 +69,11 @@ class TestExcel(TestCase):
         d = datetime.now()
         d = timezone.make_aware(d, timezone.get_current_timezone())
 
-        res._data = [[1, None], [u"Jenét", d]]
+        res._data = [[1, None], ["Jenét", d]]
 
         res = ExcelExporter(query=SimpleQueryFactory())._get_output(res).getvalue()
 
-        expected = b('PK')
+        expected = b'PK'
 
         self.assertEqual(res[:2], expected)
 
@@ -91,6 +88,6 @@ class TestExcel(TestCase):
 
         res = ExcelExporter(query=SimpleQueryFactory())._get_output(res).getvalue()
 
-        expected = b('PK')
+        expected = b'PK'
 
         self.assertEqual(res[:2], expected)

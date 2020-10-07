@@ -3,7 +3,7 @@ from django.core.cache import cache
 from django.db import connection
 from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
 from explorer import schema
-from mock import patch
+from unittest.mock import patch
 
 
 class TestSchemaInfo(TestCase):

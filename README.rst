@@ -219,7 +219,7 @@ Features
 Install
 =======
 
-Requires Python 3.5 or higher. Requires Django 2.2 or higher.
+Requires Python 3.6 or higher. Requires Django 2.2 or higher.
 
 Set up a Django project with the following:
 
@@ -291,12 +291,9 @@ minimum.
 =========================================================== ======= ================
 Name                                                        Version License
 =========================================================== ======= ================
-`six <https://github.com/benjaminp/six/>`_                  1.12.0  MIT
 `sqlparse <https://github.com/andialbrecht/sqlparse/>`_     0.3.0   BSD
-`unicodecsv <https://github.com/jdunck/python-unicodecsv>`_ 0.14.1  BSD
 =========================================================== ======= ================
 
-- six is used for py2-3 compatibility
 - sqlparse is used for SQL formatting
 
 *Python - Optional Dependencies*
