@@ -25,19 +25,19 @@ else:
 def execute_query(query_id, email_address):
     q = Query.objects.get(pk=query_id)
     send_mail('[SQL Explorer] Your query is running...',
-              '%s is running and should be in your inbox soon!' % q.title,
+              f'{q.title} is running and should be in your inbox soon!',
               app_settings.FROM_EMAIL,
               [email_address])
 
     exporter = get_exporter_class('csv')(q)
     random_part = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(20))
     try:
-        url = s3_upload('%s.csv' % random_part, exporter.get_file_output())
-        subj = '[SQL Explorer] Report "%s" is ready' % q.title
-        msg = 'Download results:\n\r%s' % url
+        url = s3_upload(f'{random_part}.csv', exporter.get_file_output())
+        subj = f'[SQL Explorer] Report "{q.title}" is ready'
+        msg = f'Download results:\n\r{url}'
     except DatabaseError as e:
-        subj = '[SQL Explorer] Error running report %s' % q.title
-        msg = 'Error: %s\nPlease contact an administrator' %  e
+        subj = f'[SQL Explorer] Error running report {q.title}'
+        msg = f'Error: {e}\nPlease contact an administrator'
         logger.warning(f'{subj}: {e}')
     send_mail(subj, msg, app_settings.FROM_EMAIL, [email_address])
 
@@ -45,7 +45,7 @@ def execute_query(query_id, email_address):
 @task
 def snapshot_query(query_id):
     try:
-        logger.info("Starting snapshot for query %s..." % query_id)
+        logger.info(f"Starting snapshot for query {query_id}...")
         q = Query.objects.get(pk=query_id)
         exporter = get_exporter_class('csv')(q)
         k = 'query-{}/snap-{}.csv'.format(q.id, date.today().strftime('%Y%m%d-%H:%M:%S'))
@@ -61,7 +61,7 @@ def snapshot_query(query_id):
 def snapshot_queries():
     logger.info("Starting query snapshots...")
     qs = Query.objects.filter(snapshot=True).values_list('id', flat=True)
-    logger.info("Found %s queries to snapshot. Creating snapshot tasks..." % len(qs))
+    logger.info(f"Found {len(qs)} queries to snapshot. Creating snapshot tasks...")
     for qid in qs:
         snapshot_query.delay(qid)
     logger.info("Done creating tasks.")

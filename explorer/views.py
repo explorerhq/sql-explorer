@@ -129,7 +129,7 @@ class DownloadFromSqlView(PermissionRequiredMixin, View):
         connection = request.POST.get('connection', '')
         query = Query(sql=sql, connection=connection, title='')
         ql = query.log(request.user)
-        query.title = 'Playground - %s' % ql.id
+        query.title = f'Playground - {ql.id}'
         return _export(request, query)
 
 
@@ -334,13 +334,13 @@ class PlayQueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
         fullscreen = url_get_fullscreen(request)
         template = 'fullscreen' if fullscreen else 'play'
         form = QueryForm(request.POST if len(request.POST) else None, instance=query)
-        return self.render_template('explorer/%s.html' % template, query_viewmodel(request.user,
-                                                                                   query,
-                                                                                   title="Playground",
-                                                                                   run_query=run_query,
-                                                                                   error=error,
-                                                                                   rows=rows,
-                                                                                   form=form))
+        return self.render_template(f'explorer/{template}.html', query_viewmodel(request.user,
+                                                                                 query,
+                                                                                 title="Playground",
+                                                                                 run_query=run_query,
+                                                                                 error=error,
+                                                                                 rows=rows,
+                                                                                 form=form))
 
 
 class QueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
@@ -355,7 +355,7 @@ class QueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
         vm = query_viewmodel(request.user, query, form=form, run_query=show, rows=rows)
         fullscreen = url_get_fullscreen(request)
         template = 'fullscreen' if fullscreen else 'query'
-        return self.render_template('explorer/%s.html' % template, vm)
+        return self.render_template(f'explorer/{template}.html', vm)
 
     def post(self, request, query_id):
         if not app_settings.EXPLORER_PERMISSION_CHANGE(request.user):

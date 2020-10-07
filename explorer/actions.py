@@ -24,7 +24,7 @@ def generate_report_action(description="Generate CSV file from SQL query",):
 def _package(queries):
     ret = {}
     is_one = len(queries) == 1
-    name_root = lambda n: "attachment; filename=%s" % n
+    name_root = lambda n: f"attachment; filename={n}"
     ret["content_type"] = (is_one and 'text/csv') or 'application/zip'
     ret["filename"] = (is_one and name_root('%s.csv' % queries[0].title.replace(',', ''))) or name_root("Report_%s.zip" % date.today())
     ret["data"] = (is_one and CSVExporter(queries[0]).get_output()) or _build_zip(queries)
@@ -36,7 +36,7 @@ def _build_zip(queries):
     temp = tempfile.TemporaryFile()
     zip_file = ZipFile(temp, 'w')
     for r in queries:
-        zip_file.writestr('%s.csv' % r.title, CSVExporter(r).get_output() or "Error!")
+        zip_file.writestr(f'{r.title}.csv', CSVExporter(r).get_output() or "Error!")
     zip_file.close()
     ret = FileWrapper(temp)
     temp.seek(0)

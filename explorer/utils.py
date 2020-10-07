@@ -148,7 +148,7 @@ def get_valid_connection(alias=None):
 
     if alias not in connections:
         raise InvalidExplorerConnectionException(
-            'Attempted to access connection %s, but that is not a registered Explorer connection.' % alias
+            f'Attempted to access connection {alias}, but that is not a registered Explorer connection.'
         )
     return connections[alias]
 

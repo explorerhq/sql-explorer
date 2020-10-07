@@ -35,7 +35,7 @@ def _include_table(t):
 
 
 def connection_schema_cache_key(connection_alias):
-    return '_explorer_cache_key_%s' % connection_alias
+    return f'_explorer_cache_key_{connection_alias}'
 
 
 def schema_info(connection_alias):

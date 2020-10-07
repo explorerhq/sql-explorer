@@ -18,7 +18,7 @@ class SimpleQueryFactory(factory.DjangoModelFactory):
     class Meta:
         model = models.Query
 
-    title = factory.Sequence(lambda n: 'My simple query %s' % n)
+    title = factory.Sequence(lambda n: f'My simple query {n}')
     sql = "SELECT 1+1 AS TWO"  # same result in postgres and sqlite
     description = "Doin' math"
     connection = "default"
