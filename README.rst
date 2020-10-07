@@ -219,7 +219,7 @@ Features
 Install
 =======
 
-Requires Python 3.5 or higher. Requires Django 2.2 or higher.
+Requires Python 3.6 or higher. Requires Django 2.2 or higher.
 
 Set up a Django project with the following:
 
