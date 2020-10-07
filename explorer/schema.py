@@ -73,14 +73,18 @@ def build_schema_info(connection_alias):
             if not _include_table(table_name):
                 continue
             td = []
-            table_description = connection.introspection.get_table_description(cursor, table_name)
-            for row in table_description:
-                column_name = row[0]
-                try:
-                    field_type = connection.introspection.get_field_type(row[1], row)
-                except KeyError as e:
-                    field_type = 'Unknown'
-                td.append((column_name, field_type))
+            try:
+                table_description = connection.introspection.get_table_description(cursor, table_name)
+                for row in table_description:
+                    column_name = row[0]
+                    try:
+                        field_type = connection.introspection.get_field_type(row[1], row)
+                    except KeyError as e:
+                        field_type = 'Unknown'
+                    td.append((column_name, field_type))
+            except Exception as e:
+                # td.append(('Permission denied', 'Unknown'))
+                continue
             ret.append((table_name, td))
     return ret
 
