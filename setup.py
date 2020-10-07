@@ -44,10 +44,9 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Topic :: Utilities',
-        'Framework :: Django :: 1.10',
-        'Framework :: Django :: 1.11',
-        'Framework :: Django :: 2.0',
-        'Framework :: Django :: 2.1',
+        'Framework :: Django :: 2.2',
+        'Framework :: Django :: 3',
+        'Framework :: Django :: 3.1',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
@@ -57,7 +56,7 @@ setup(
     python_requires='>=3.6',
     install_requires=[
         'Django>=2.2.14',
-        'sqlparse>=0.1.18',
+        'sqlparse>=0.4.0',
     ],
     extras_require={
         "xls": [
