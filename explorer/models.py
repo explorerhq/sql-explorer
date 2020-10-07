@@ -2,12 +2,8 @@ import logging
 from time import time
 
 from django.db import models, DatabaseError, transaction
-try:
-    from django.urls import reverse
-except ImportError:
-    from django.core.urlresolvers import reverse
-
 from django.conf import settings
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
 from explorer import app_settings
@@ -100,12 +96,7 @@ class Query(models.Model):
 
     def log(self, user=None):
         if user:
-            # In Django<1.10, is_anonymous was a method.
-            try:
-                is_anonymous = user.is_anonymous()
-            except TypeError:
-                is_anonymous = user.is_anonymous
-            if is_anonymous:
+            if user.is_anonymous:
                 user = None
         ql = QueryLog(sql=self.final_sql(), query_id=self.id, run_by_user=user, connection=self.connection)
         ql.save()

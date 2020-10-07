@@ -1,19 +1,13 @@
 import re
 from collections import Counter
 
-try:
-    from django.urls import reverse_lazy
-except ImportError:
-    from django.core.urlresolvers import reverse_lazy
-
-import django
 from django.db import DatabaseError
-from django.db.models import Count
 from django.forms.models import model_to_dict
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.http import require_POST
 from django.utils.decorators import method_decorator
+from django.urls import reverse_lazy
 from django.views.generic import ListView
 from django.views.generic.base import View
 from django.views.generic.edit import CreateView, DeleteView
@@ -33,7 +27,6 @@ from explorer.utils import (
     url_get_query_id,
     url_get_log_id,
     url_get_params,
-    safe_login_prompt,
     fmt_sql,
     allowed_query_pks,
     url_get_show,

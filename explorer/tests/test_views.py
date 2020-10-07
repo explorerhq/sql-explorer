@@ -1,13 +1,8 @@
 import json
 import time
 
-import django
 from django.test import TestCase
-try:
-    from django.urls import reverse
-except ImportError:
-    from django.core.urlresolvers import reverse
-
+from django.urls import reverse
 from django.contrib.auth.models import User
 from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
 from django.forms.models import model_to_dict
