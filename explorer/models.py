@@ -11,6 +11,7 @@ except ImportError:
     from django.core.urlresolvers import reverse
 
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 
 from explorer import app_settings
 from explorer.utils import (
@@ -36,9 +37,10 @@ class Query(models.Model):
     created_by_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     last_run_date = models.DateTimeField(auto_now=True)
-    snapshot = models.BooleanField(default=False, help_text="Include in snapshot task (if enabled)")
+    snapshot = models.BooleanField(default=False, help_text=_("Include in snapshot task (if enabled)"))
     connection = models.CharField(blank=True, max_length=128, default='',
-                                  help_text="Name of DB connection (as specified in settings) to use for this query. Will use EXPLORER_DEFAULT_CONNECTION if left blank")
+                                  help_text=_("Name of DB connection (as specified in settings) to use for this query."
+                                              "Will use EXPLORER_DEFAULT_CONNECTION if left blank"))
 
     def __init__(self, *args, **kwargs):
         self.params = kwargs.get('params')
@@ -47,7 +49,8 @@ class Query(models.Model):
 
     class Meta:
         ordering = ['title']
-        verbose_name_plural = 'Queries'
+        verbose_name = _('Query')
+        verbose_name_plural = _('Queries')
 
     def __str__(self):
         return six.text_type(self.title)

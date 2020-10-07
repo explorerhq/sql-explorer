@@ -1,4 +1,4 @@
-#encoding=utf8
+#encoding=utf-8
 import sys, unittest
 from django.test import TestCase
 from django.core.serializers.json import DjangoJSONEncoder

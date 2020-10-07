@@ -1,12 +1,11 @@
-
 {% extends "explorer/base.html" %}
-{% load static %}
+{% load static i18n %}
 
 {% block sql_explorer_navlinks %}
     {% if can_change %}
-      <li><a href="{% url "query_create" %}">New Query</a></li>
-      <li><a href="{% url "explorer_playground" %}">Playground</a></li>
-      <li><a href="{% url "explorer_logs" %}">Logs</a></li>
+    <li><a href="{% url "query_create" %}">{% trans "New Query" %}</a></li>
+    <li><a href="{% url "explorer_playground" %}">{% trans "Playground" %}</a></li>
+    <li><a href="{% url "explorer_logs" %}">{% trans "Logs" %}</a></li>
     {% endif %}
 {% endblock %}
 
@@ -38,26 +37,26 @@
     <div id="queries">
       <div class="row">
         <div class="col-md-6">
-          <h3>All Queries</h3>
+            <h3>{% trans "All Queries" %}</h3>
         </div>
         <div class="col-md-6 text-right">
-          <input class="search list-search" placeholder="Search" style="">
+            <input class="search list-search" placeholder="{% trans "Search" %}" style="">
         </div>
       </div>
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Query</th>
-                <th>Created</th>
+                <th>{% trans "Query" %}</th>
+                <th>{% trans "Created" %}</th>
                 {% if tasks_enabled %}
-                  <th>Email</th>
+                <th>{% trans "Email" %}</th>
                 {% endif %}
-                <th>CSV</th>
+                <th>{% trans "CSV" %}</th>
                 {% if can_change %}
-                    <th>Play</th>
-                    <th>Delete</th>
+                <th>{% trans "Play" %}</th>
+                <th>{% trans "Delete" %}</th>
                 {% endif %}
-                <th>Run Count</th>
+                <th>{% trans "Run Count" %}</th>
             </tr>
         </thead>
         <tbody class="list">

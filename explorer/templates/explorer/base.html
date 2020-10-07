@@ -1,5 +1,4 @@
-
-{% load static %}
+{% load static i18n %}
 <!DOCTYPE html>
 <html>
 
@@ -7,7 +6,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SQL Explorer{% if query %} - {{ query.title }}{% elif title %} - {{ title }}{% endif %}</title>
+    <title>{% trans "SQL Explorer" %}{% if query %} - {{ query.title }}{% elif title %} - {{ title }}{% endif %}</title>
 
     <link href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.36.0/codemirror.min.css" rel="stylesheet" />
     <link href="//cdnjs.cloudflare.com/ajax/libs/pivottable/2.20.0/pivot.min.css" rel="stylesheet" />
@@ -31,7 +30,7 @@
             <div class="navbar navbar-default navbar-static-top" role="navigation">
               <div class="container">
                 <div class="navbar-header">
-                  <a class="navbar-brand" href="{% url "explorer_index" %}">SQL Explorer</a>
+                    <a class="navbar-brand" href="{% url "explorer_index" %}">{% trans "SQL Explorer" %}</a>
                 </div>
                 <div class="navbar-collapse collapse">
                   <ul class="nav navbar-nav">
