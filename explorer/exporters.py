@@ -44,10 +44,10 @@ class BaseExporter:
 
     def get_filename(self):
         # build list of valid chars, build filename from title and replace spaces
-        valid_chars = '-_.() {}{}'.format(string.ascii_letters, string.digits)
+        valid_chars = f'-_.() {string.ascii_letters}{string.digits}'
         filename = ''.join(c for c in self.query.title if c in valid_chars)
         filename = filename.replace(' ', '_')
-        return '{}{}'.format(filename, self.file_extension)
+        return f'{filename}{self.file_extension}'
 
 
 class CSVExporter(BaseExporter):

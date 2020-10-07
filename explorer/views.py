@@ -101,7 +101,7 @@ def _export(request, query, download=True):
     try:
         output = exporter.get_output(delim=delim)
     except DatabaseError as e:
-        msg = "Error executing query {}: {}".format(query.title, e)
+        msg = f"Error executing query {query.title}: {e}"
         return HttpResponse(msg, status=500)
     response = HttpResponse(output, content_type=exporter.content_type)
     if download:

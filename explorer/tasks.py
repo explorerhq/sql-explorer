@@ -38,7 +38,7 @@ def execute_query(query_id, email_address):
     except DatabaseError as e:
         subj = '[SQL Explorer] Error running report %s' % q.title
         msg = 'Error: %s\nPlease contact an administrator' %  e
-        logger.warning('{}: {}'.format(subj, e))
+        logger.warning(f'{subj}: {e}')
     send_mail(subj, msg, app_settings.FROM_EMAIL, [email_address])
 
 
@@ -49,11 +49,11 @@ def snapshot_query(query_id):
         q = Query.objects.get(pk=query_id)
         exporter = get_exporter_class('csv')(q)
         k = 'query-{}/snap-{}.csv'.format(q.id, date.today().strftime('%Y%m%d-%H:%M:%S'))
-        logger.info("Uploading snapshot for query {} as {}...".format(query_id, k))
+        logger.info(f"Uploading snapshot for query {query_id} as {k}...")
         url = s3_upload(k, exporter.get_file_output())
-        logger.info("Done uploading snapshot for query {}. URL: {}".format(query_id, url))
+        logger.info(f"Done uploading snapshot for query {query_id}. URL: {url}")
     except Exception as e:
-        logger.warning("Failed to snapshot query {} ({}). Retrying...".format(query_id, e))
+        logger.warning(f"Failed to snapshot query {query_id} ({e}). Retrying...")
         snapshot_query.retry()
 
 
@@ -70,7 +70,7 @@ def snapshot_queries():
 @task
 def truncate_querylogs(days):
     qs = QueryLog.objects.filter(run_at__lt=datetime.now() - timedelta(days=days))
-    logger.info('Deleting {} QueryLog objects older than {} days.'.format(qs.count, days))
+    logger.info(f'Deleting {qs.count} QueryLog objects older than {days} days.')
     qs.delete()
     logger.info('Done deleting QueryLog objects.')
 

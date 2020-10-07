@@ -22,7 +22,7 @@ def _format_field(field):
 
 
 def param(name):
-    return "{}{}{}".format(EXPLORER_PARAM_TOKEN, name, EXPLORER_PARAM_TOKEN)
+    return f"{EXPLORER_PARAM_TOKEN}{name}{EXPLORER_PARAM_TOKEN}"
 
 
 def swap_params(sql, params):
@@ -86,7 +86,7 @@ def get_params_from_request(request):
 
 def get_params_for_url(query):
     if query.params:
-        return '|'.join(['{}:{}'.format(p, v) for p, v in query.params.items()])
+        return '|'.join([f'{p}:{v}' for p, v in query.params.items()])
 
 
 def url_get_rows(request):

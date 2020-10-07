@@ -22,7 +22,7 @@ if sys.argv[-1] == 'build':
 
 if sys.argv[-1] == 'tag':
     print("Tagging the version on github:")
-    os.system("git tag -a {} -m 'version {}'".format(__version__, __version__))
+    os.system(f"git tag -a {__version__} -m 'version {__version__}'")
     os.system("git push --tags")
     sys.exit()
 
