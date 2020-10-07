@@ -1,2 +1,3 @@
 recursive-include explorer *
+recursive-exclude * *.pyc __pycache__ .DS_Store
 include README.rst

@@ -1,16 +1,14 @@
-from __future__ import unicode_literals
-
 import logging
 from time import time
-import six
 
-from django.db import models, DatabaseError
+from django.db import models, DatabaseError, transaction
 try:
     from django.urls import reverse
 except ImportError:
     from django.core.urlresolvers import reverse
 
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 
 from explorer import app_settings
 from explorer.utils import (
@@ -28,29 +26,30 @@ MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist: %s"
 
 logger = logging.getLogger(__name__)
 
-@six.python_2_unicode_compatible
 class Query(models.Model):
     title = models.CharField(max_length=255)
     sql = models.TextField()
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField(default='', blank=True)
     created_by_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     last_run_date = models.DateTimeField(auto_now=True)
-    snapshot = models.BooleanField(default=False, help_text="Include in snapshot task (if enabled)")
-    connection = models.CharField(blank=True, null=True, max_length=128,
-                                  help_text="Name of DB connection (as specified in settings) to use for this query. Will use EXPLORER_DEFAULT_CONNECTION if left blank")
+    snapshot = models.BooleanField(default=False, help_text=_("Include in snapshot task (if enabled)"))
+    connection = models.CharField(blank=True, max_length=128, default='',
+                                  help_text=_("Name of DB connection (as specified in settings) to use for this query."
+                                              "Will use EXPLORER_DEFAULT_CONNECTION if left blank"))
 
     def __init__(self, *args, **kwargs):
         self.params = kwargs.get('params')
         kwargs.pop('params', None)
-        super(Query, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     class Meta:
         ordering = ['title']
-        verbose_name_plural = 'Queries'
+        verbose_name = _('Query')
+        verbose_name_plural = _('Queries')
 
     def __str__(self):
-        return six.text_type(self.title)
+        return str(self.title)
 
     def get_run_count(self):
         return self.querylog_set.count()
@@ -120,13 +119,13 @@ class Query(models.Model):
     def snapshots(self):
         if app_settings.ENABLE_TASKS:
             b = get_s3_bucket()
-            keys = b.list(prefix='query-%s/snap-' % self.id)
+            keys = b.list(prefix=f'query-{self.id}/snap-')
             keys_s = sorted(keys, key=lambda k: k.last_modified)
             return [SnapShot(k.generate_url(expires_in=0, query_auth=False),
                              k.last_modified) for k in keys_s]
 
 
-class SnapShot(object):
+class SnapShot:
 
     def __init__(self, url, last_modified):
         self.url = url
@@ -135,12 +134,12 @@ class SnapShot(object):
 
 class QueryLog(models.Model):
 
-    sql = models.TextField(null=True, blank=True)
+    sql = models.TextField(default='', blank=True)
     query = models.ForeignKey(Query, null=True, blank=True, on_delete=models.SET_NULL)
     run_by_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE)
     run_at = models.DateTimeField(auto_now_add=True)
     duration = models.FloatField(blank=True, null=True)  # milliseconds
-    connection = models.CharField(blank=True, null=True, max_length=128)
+    connection = models.CharField(blank=True, max_length=128, default='')
 
     @property
     def is_playground(self):
@@ -150,7 +149,7 @@ class QueryLog(models.Model):
         ordering = ['-run_at']
 
 
-class QueryResult(object):
+class QueryResult:
 
     def __init__(self, sql, connection):
 
@@ -188,7 +187,7 @@ class QueryResult(object):
             return [ix for ix, c in enumerate(self._description) if hasattr(c, 'type_code') and c.type_code in self.connection.Database.NUMBER.values]
         elif self.data:
             d = self.data[0]
-            return [ix for ix, _ in enumerate(self._description) if not isinstance(d[ix], six.string_types) and six.text_type(d[ix]).isnumeric()]
+            return [ix for ix, _ in enumerate(self._description) if not isinstance(d[ix], str) and str(d[ix]).isnumeric()]
         return []
 
     def _get_transforms(self):
@@ -222,7 +221,8 @@ class QueryResult(object):
         start_time = time()
 
         try:
-            cursor.execute(self.sql)
+            with transaction.atomic(self.connection.alias):
+                cursor.execute(self.sql)
         except DatabaseError as e:
             cursor.close()
             raise e
@@ -230,8 +230,7 @@ class QueryResult(object):
         return cursor, ((time() - start_time) * 1000)
 
 
-@six.python_2_unicode_compatible
-class ColumnHeader(object):
+class ColumnHeader:
 
     def __init__(self, title):
         self.title = title.strip()
@@ -244,8 +243,7 @@ class ColumnHeader(object):
         return self.title
 
 
-@six.python_2_unicode_compatible
-class ColumnStat(object):
+class ColumnStat:
 
     def __init__(self, label, statfn, precision=2, handles_null=False):
         self.label = label
@@ -260,8 +258,7 @@ class ColumnStat(object):
         return self.label
 
 
-@six.python_2_unicode_compatible
-class ColumnSummary(object):
+class ColumnSummary:
 
     def __init__(self, header, col):
         self._header = header

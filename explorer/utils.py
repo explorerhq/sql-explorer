@@ -2,14 +2,8 @@ import functools
 import re
 
 from django.contrib.auth.forms import AuthenticationForm
-
-try:
-    from django.contrib.auth.views import login
-except ImportError:
-    pass
-
+from django.contrib.auth.views import LoginView
 from django.contrib.auth import REDIRECT_FIELD_NAME
-from six import text_type
 import sqlparse
 
 from explorer import app_settings
@@ -28,19 +22,19 @@ def _format_field(field):
 
 
 def param(name):
-    return "%s%s%s" % (EXPLORER_PARAM_TOKEN, name, EXPLORER_PARAM_TOKEN)
+    return f"{EXPLORER_PARAM_TOKEN}{name}{EXPLORER_PARAM_TOKEN}"
 
 
 def swap_params(sql, params):
     p = params.items() if params else {}
     for k, v in p:
-        regex = re.compile("\$\$%s(?:\:([^\$]+))?\$\$" % str(k).lower(), re.I)
-        sql = regex.sub(text_type(v), sql)
+        regex = re.compile(r"\$\$%s(?:\:([^\$]+))?\$\$" % str(k).lower(), re.I)
+        sql = regex.sub(str(v), sql)
     return sql
 
 
 def extract_params(text):
-    regex = re.compile("\$\$([a-z0-9_]+)(?:\:([^\$]+))?\$\$")
+    regex = re.compile(r"\$\$([a-z0-9_]+)(?:\:([^\$]+))?\$\$")
     params = re.findall(regex, text.lower())
     return {p[0]: p[1] if len(p) > 1 else '' for p in params}
 
@@ -55,7 +49,7 @@ def safe_login_prompt(request):
             REDIRECT_FIELD_NAME: request.get_full_path(),
         },
     }
-    return login(request, **defaults)
+    return LoginView.as_view(**defaults)(request)
 
 
 def shared_dict_update(target, source):
@@ -92,7 +86,7 @@ def get_params_from_request(request):
 
 def get_params_for_url(query):
     if query.params:
-        return '|'.join(['%s:%s' % (p, v) for p, v in query.params.items()])
+        return '|'.join([f'{p}:{v}' for p, v in query.params.items()])
 
 
 def url_get_rows(request):
@@ -154,7 +148,7 @@ def get_valid_connection(alias=None):
 
     if alias not in connections:
         raise InvalidExplorerConnectionException(
-            'Attempted to access connection %s, but that is not a registered Explorer connection.' % alias
+            f'Attempted to access connection {alias}, but that is not a registered Explorer connection.'
         )
     return connections[alias]
 

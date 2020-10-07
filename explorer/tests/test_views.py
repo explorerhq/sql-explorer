@@ -17,7 +17,7 @@ from explorer.tests.factories import SimpleQueryFactory, QueryLogFactory
 from explorer.models import Query, QueryLog, MSG_FAILED_BLACKLIST
 from explorer.utils import user_can_see_query
 from explorer.app_settings import EXPLORER_TOKEN
-from mock import Mock, patch
+from unittest.mock import Mock, patch
 from django.core.cache import cache
 
 
@@ -81,6 +81,7 @@ class TestQueryCreateView(TestCase):
 
 
 class TestQueryDetailView(TestCase):
+    databases = ['default', 'alt']
 
     def setUp(self):
         self.user = User.objects.create_superuser('admin', 'admin@admin.com', 'pwd')
@@ -175,24 +176,15 @@ class TestQueryDetailView(TestCase):
     def test_user_query_views(self):
         request = Mock()
 
-        if django.VERSION < (1, 10):
-            request.user.is_anonymous = Mock(return_value=True)
-        else:
-            request.user.is_anonymous = True
+        request.user.is_anonymous = True
         kwargs = {}
         self.assertFalse(user_can_see_query(request, **kwargs))
 
-        if django.VERSION < (1, 10):
-            request.user.is_anonymous = Mock(return_value=True)
-        else:
-            request.user.is_anonymous = True
+        request.user.is_anonymous = True
         self.assertFalse(user_can_see_query(request, **kwargs))
 
         kwargs = {'query_id': 123}
-        if django.VERSION < (1, 10):
-            request.user.is_anonymous = Mock(return_value=False)
-        else:
-            request.user.is_anonymous = False
+        request.user.is_anonymous = False
         self.assertFalse(user_can_see_query(request, **kwargs))
 
         request.user.id = 99
@@ -272,7 +264,7 @@ class TestDownloadView(TestCase):
 
     def test_params_in_download(self):
         q = SimpleQueryFactory(sql="select '$$foo$$';")
-        url = '%s?params=%s' % (reverse("download_query", kwargs={'query_id': q.id}), 'foo:123')
+        url = '{}?params={}'.format(reverse("download_query", kwargs={'query_id': q.id}), 'foo:123')
         resp = self.client.get(url)
         self.assertContains(resp, "'123'")
 
@@ -330,7 +322,7 @@ class TestQueryPlayground(TestCase):
 
     def test_playground_renders_with_query_sql(self):
         query = SimpleQueryFactory(sql="select 1;")
-        resp = self.client.get('%s?query_id=%s' % (reverse("explorer_playground"), query.id))
+        resp = self.client.get('{}?query_id={}'.format(reverse("explorer_playground"), query.id))
         self.assertTemplateUsed(resp, 'explorer/play.html')
         self.assertContains(resp, 'select 1;')
 
@@ -351,7 +343,7 @@ class TestQueryPlayground(TestCase):
 
     def test_query_with_no_resultset_doesnt_throw_error(self):
         query = SimpleQueryFactory(sql="")
-        resp = self.client.get('%s?query_id=%s' % (reverse("explorer_playground"), query.id))
+        resp = self.client.get('{}?query_id={}'.format(reverse("explorer_playground"), query.id))
         self.assertTemplateUsed(resp, 'explorer/play.html')
 
     def test_admin_required(self):
@@ -361,7 +353,7 @@ class TestQueryPlayground(TestCase):
 
     def test_loads_query_from_log(self):
         querylog = QueryLogFactory()
-        resp = self.client.get('%s?querylog_id=%s' % (reverse("explorer_playground"), querylog.id))
+        resp = self.client.get('{}?querylog_id={}'.format(reverse("explorer_playground"), querylog.id))
         self.assertContains(resp, "FOUR")
 
     def test_fails_blacklist(self):
@@ -371,7 +363,7 @@ class TestQueryPlayground(TestCase):
 
     def test_fullscreen(self):
         query = SimpleQueryFactory(sql="")
-        resp = self.client.get('%s?query_id=%s&fullscreen=1' % (reverse("explorer_playground"), query.id))
+        resp = self.client.get('{}?query_id={}&fullscreen=1'.format(reverse("explorer_playground"), query.id))
         self.assertTemplateUsed(resp, 'explorer/fullscreen.html')
 
 
@@ -401,6 +393,7 @@ class TestCSVFromSQL(TestCase):
 
 
 class TestSQLDownloadViews(TestCase):
+    databases = ['default', 'alt']
 
     def setUp(self):
         self.user = User.objects.create_superuser('admin', 'admin@admin.com', 'pwd')
@@ -530,7 +523,7 @@ class TestParamsInViews(TestCase):
     def test_saving_non_executing_query_with__wrong_url_params_works(self):
         q = SimpleQueryFactory(sql="select $$swap$$;")
         data = model_to_dict(q)
-        url = '%s?params=%s' % (reverse("query_detail", kwargs={'query_id': q.id}), 'foo:123')
+        url = '{}?params={}'.format(reverse("query_detail", kwargs={'query_id': q.id}), 'foo:123')
         resp = self.client.post(url, data)
         self.assertContains(resp, 'saved')
 
@@ -545,20 +538,21 @@ class TestCreatedBy(TestCase):
         self.user = User.objects.create_superuser('admin', 'admin@admin.com', 'pwd')
         self.user2 = User.objects.create_superuser('admin2', 'admin2@admin.com', 'pwd')
         self.client.login(username='admin', password='pwd')
-        self.query = SimpleQueryFactory.build()
+        self.query = SimpleQueryFactory.build(created_by_user=self.user)
         self.data = model_to_dict(self.query)
-        self.data["created_by_user"] = 2
+        del self.data['id']
+        self.data["created_by_user_id"] = self.user2.id
 
     def test_query_update_doesnt_change_created_user(self):
         self.query.save()
         self.client.post(reverse("query_detail", kwargs={'query_id': self.query.id}), self.data)
         q = Query.objects.get(id=self.query.id)
-        self.assertEqual(q.created_by_user_id, 1)
+        self.assertEqual(q.created_by_user_id, self.user.id)
 
     def test_new_query_gets_created_by_logged_in_user(self):
         self.client.post(reverse("query_create"), self.data)
         q = Query.objects.first()
-        self.assertEqual(q.created_by_user_id, 1)
+        self.assertEqual(q.created_by_user_id, self.user.id)
 
 
 class TestQueryLog(TestCase):

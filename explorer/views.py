@@ -1,5 +1,4 @@
 import re
-import six
 from collections import Counter
 
 try:
@@ -21,9 +20,7 @@ from django.views.generic.edit import CreateView, DeleteView
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 from django.core.exceptions import ImproperlyConfigured
 from django.contrib.auth import REDIRECT_FIELD_NAME
-
-if django.VERSION >= (1, 11):
-    from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView
 
 from explorer import app_settings
 from explorer.connections import connections
@@ -47,14 +44,14 @@ from explorer.schema import schema_info
 from explorer import permissions
 
 
-class ExplorerContextMixin(object):
+class ExplorerContextMixin:
 
     def gen_ctx(self):
         return {'can_view': app_settings.EXPLORER_PERMISSION_VIEW(self.request.user),
                 'can_change': app_settings.EXPLORER_PERMISSION_CHANGE(self.request.user)}
 
     def get_context_data(self, **kwargs):
-        ctx = super(ExplorerContextMixin, self).get_context_data(**kwargs)
+        ctx = super().get_context_data(**kwargs)
         ctx.update(self.gen_ctx())
         return ctx
 
@@ -63,7 +60,7 @@ class ExplorerContextMixin(object):
         return render(self.request, template, ctx)
 
 
-class PermissionRequiredMixin(object):
+class PermissionRequiredMixin:
 
     permission_required = None
 
@@ -82,20 +79,17 @@ class PermissionRequiredMixin(object):
         return handler(request, *args, **kwargs)
 
     def handle_no_permission(self, request):
-        if django.VERSION >= (1, 11):
-            return SafeLoginView.as_view(
-                extra_context={'title': 'Log in', REDIRECT_FIELD_NAME: request.get_full_path()})(request)
-        return safe_login_prompt(request)
+        return SafeLoginView.as_view(
+            extra_context={'title': 'Log in', REDIRECT_FIELD_NAME: request.get_full_path()})(request)
 
     def dispatch(self, request, *args, **kwargs):
         if not self.has_permission(request, *args, **kwargs):
             return self.handle_no_permission(request)
-        return super(PermissionRequiredMixin, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
 
-if django.VERSION > (1, 11):
-    class SafeLoginView(LoginView):
-        template_name = 'admin/login.html'
+class SafeLoginView(LoginView):
+    template_name = 'admin/login.html'
 
 
 def _export(request, query, download=True):
@@ -107,7 +101,7 @@ def _export(request, query, download=True):
     try:
         output = exporter.get_output(delim=delim)
     except DatabaseError as e:
-        msg = "Error executing query %s: %s" % (query.title, e)
+        msg = f"Error executing query {query.title}: {e}"
         return HttpResponse(msg, status=500)
     response = HttpResponse(output, content_type=exporter.content_type)
     if download:
@@ -132,10 +126,10 @@ class DownloadFromSqlView(PermissionRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         sql = request.POST.get('sql')
-        connection = request.POST.get('connection')
+        connection = request.POST.get('connection', '')
         query = Query(sql=sql, connection=connection, title='')
         ql = query.log(request.user)
-        query.title = 'Playground - %s' % ql.id
+        query.title = f'Playground - {ql.id}'
         return _export(request, query)
 
 
@@ -166,20 +160,18 @@ class SchemaView(PermissionRequiredMixin, View):
 
     @method_decorator(xframe_options_sameorigin)
     def dispatch(self, *args, **kwargs):
-        return super(SchemaView, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        connection = kwargs.get('connection')
+        connection = kwargs.get('connection', '')
         if connection not in connections:
             raise Http404
         schema = schema_info(connection)
         if schema:
-            return render(None,
-                          'explorer/schema.html',
+            return render(request, 'explorer/schema.html',
                           {'schema': schema_info(connection)})
         else:
-            return render(None,
-                          'explorer/schema_building.html')
+            return render(request, 'explorer/schema_building.html')
 
 
 @require_POST
@@ -208,7 +200,7 @@ class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
         return ret
 
     def get_context_data(self, **kwargs):
-        context = super(ListQueryView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['object_list'] = self._build_queries_and_headers()
         context['recent_queries'] = self.recently_viewed()
         context['tasks_enabled'] = app_settings.ENABLE_TASKS
@@ -216,10 +208,13 @@ class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
 
     def get_queryset(self):
         if app_settings.EXPLORER_PERMISSION_VIEW(self.request.user):
-            qs = Query.objects.prefetch_related('created_by_user').all()
+            qs = (Query.objects
+                  .prefetch_related('created_by_user', 'querylog_set').all())
         else:
-            qs = Query.objects.prefetch_related('created_by_user').filter(pk__in=allowed_query_pks(self.request.user.id))
-        return qs.annotate(run_count=Count('querylog'))
+            qs = (Query.objects
+                  .prefetch_related('created_by_user', 'querylog_set')
+                  .filter(pk__in=allowed_query_pks(self.request.user.id)))
+        return qs
 
     def _build_queries_and_headers(self):
         """
@@ -241,7 +236,7 @@ class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
 
         dict_list = []
         rendered_headers = []
-        pattern = re.compile('[\W_]+')
+        pattern = re.compile(r'[\W_]+')
 
         headers = Counter([q.title.split(' - ')[0] for q in self.object_list])
 
@@ -262,8 +257,8 @@ class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
                                'collapse_target': collapse_target,
                                'created_at': q.created_at,
                                'is_header': False,
-                               'run_count': q.run_count,
-                               'created_by_user': six.text_type(q.created_by_user) if q.created_by_user else None})
+                               'run_count': q.querylog_set.count(),
+                               'created_by_user': str(q.created_by_user) if q.created_by_user else None})
             dict_list.append(model_dict)
         return dict_list
 
@@ -291,7 +286,7 @@ class CreateQueryView(PermissionRequiredMixin, ExplorerContextMixin, CreateView)
 
     def form_valid(self, form):
         form.instance.created_by_user = self.request.user
-        return super(CreateQueryView, self).form_valid(form)
+        return super().form_valid(form)
 
     form_class = QueryForm
     template_name = 'explorer/query.html'
@@ -315,7 +310,8 @@ class PlayQueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
 
         if url_get_log_id(request):
             log = get_object_or_404(QueryLog, pk=url_get_log_id(request))
-            query = Query(sql=log.sql, title="Playground", connection=log.connection)
+            c = log.connection or ''
+            query = Query(sql=log.sql, title="Playground", connection=c)
             return self.render_with_sql(request, query)
 
         return self.render()
@@ -323,7 +319,8 @@ class PlayQueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
     def post(self, request):
         sql = request.POST.get('sql')
         show = url_get_show(request)
-        query = Query(sql=sql, title="Playground", connection=request.POST.get('connection'))
+        c = request.POST.get('connection', '')
+        query = Query(sql=sql, title="Playground", connection=c)
         passes_blacklist, failing_words = query.passes_blacklist()
         error = MSG_FAILED_BLACKLIST % ', '.join(failing_words) if not passes_blacklist else None
         run_query = not bool(error) if show else False
@@ -337,13 +334,13 @@ class PlayQueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
         fullscreen = url_get_fullscreen(request)
         template = 'fullscreen' if fullscreen else 'play'
         form = QueryForm(request.POST if len(request.POST) else None, instance=query)
-        return self.render_template('explorer/%s.html' % template, query_viewmodel(request.user,
-                                                                                   query,
-                                                                                   title="Playground",
-                                                                                   run_query=run_query,
-                                                                                   error=error,
-                                                                                   rows=rows,
-                                                                                   form=form))
+        return self.render_template(f'explorer/{template}.html', query_viewmodel(request.user,
+                                                                                 query,
+                                                                                 title="Playground",
+                                                                                 run_query=run_query,
+                                                                                 error=error,
+                                                                                 rows=rows,
+                                                                                 form=form))
 
 
 class QueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
@@ -358,7 +355,7 @@ class QueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
         vm = query_viewmodel(request.user, query, form=form, run_query=show, rows=rows)
         fullscreen = url_get_fullscreen(request)
         template = 'fullscreen' if fullscreen else 'query'
-        return self.render_template('explorer/%s.html' % template, vm)
+        return self.render_template(f'explorer/{template}.html', vm)
 
     def post(self, request, query_id):
         if not app_settings.EXPLORER_PERMISSION_CHANGE(request.user):

@@ -1,3 +1,28 @@
+2.0.0
+=====
+
+UNRELEASED
+
+- Major Changes
+  - #403: Dropping support for EOL Python 2.7 and 3.5
+
+- Minor Changes
+  - #334: Django 2.1 support
+  - #337: Fix Oracle query failure caused by `TextField` in a group by clause
+  - #345: Added (some) Chinese translation
+  - #366: Changes to Travis django versions
+  - #372: Run queries as atomic requests
+  - #382: Django 2.2 support
+  - #383: Typo in the README
+  - #385: Removed deprecated `render_to_response` usage
+  - #386: Bump minimum django version to 2.2
+  - #387: Django 3 support
+  - #390: README formatting changes
+  - #393: Added option to install `XlsxWriter` as an extra package
+  - #397: Bump patch version of django 2.2
+  - Fix #341: PYC files excluded from build
+
+
 1.1.3
 =====
 

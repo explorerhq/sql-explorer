@@ -3,18 +3,13 @@ from django.core.serializers.json import DjangoJSONEncoder
 import json
 import uuid
 import string
-import sys
 from datetime import datetime
-PY3 = sys.version_info[0] == 3
-if PY3:
-    import csv
-else:
-    import unicodecsv as csv
+import csv
 
 from django.utils.module_loading import import_string
 from django.utils.text import slugify
 from explorer import app_settings
-from six import StringIO, BytesIO
+from io import StringIO, BytesIO
 
 
 def get_exporter_class(format):
@@ -22,7 +17,7 @@ def get_exporter_class(format):
     return import_string(class_str)
 
 
-class BaseExporter(object):
+class BaseExporter:
 
     name = ''
     content_type = ''
@@ -33,10 +28,7 @@ class BaseExporter(object):
 
     def get_output(self, **kwargs):
         value = self.get_file_output(**kwargs).getvalue()
-        if PY3:
-            return value
-        else:
-            return str(value)
+        return value
 
     def get_file_output(self, **kwargs):
         res = self.query.execute_query_only()
@@ -52,10 +44,10 @@ class BaseExporter(object):
 
     def get_filename(self):
         # build list of valid chars, build filename from title and replace spaces
-        valid_chars = '-_.() %s%s' % (string.ascii_letters, string.digits)
+        valid_chars = f'-_.() {string.ascii_letters}{string.digits}'
         filename = ''.join(c for c in self.query.title if c in valid_chars)
         filename = filename.replace(' ', '_')
-        return '{}{}'.format(filename, self.file_extension)
+        return f'{filename}{self.file_extension}'
 
 
 class CSVExporter(BaseExporter):
@@ -69,10 +61,7 @@ class CSVExporter(BaseExporter):
         delim = '\t' if delim == 'tab' else str(delim)
         delim = app_settings.CSV_DELIMETER if len(delim) > 1 else delim
         csv_data = StringIO()
-        if PY3:
-            writer = csv.writer(csv_data, delimiter=delim)
-        else:
-            writer = csv.writer(csv_data, delimiter=delim, encoding='utf-8')
+        writer = csv.writer(csv_data, delimiter=delim)
         writer.writerow(res.headers)
         for row in res.data:
             writer.writerow([s for s in row])

@@ -35,7 +35,7 @@ class QueryForm(ModelForm):
     connection = CharField(widget=Select, required=False)
 
     def __init__(self, *args, **kwargs):
-        super(QueryForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['connection'].widget.choices = self.connections
         if not self.instance.connection:
             self.initial['connection'] = EXPLORER_DEFAULT_CONNECTION
@@ -44,7 +44,7 @@ class QueryForm(ModelForm):
     def clean(self):
         if self.instance and self.data.get('created_by_user', None):
             self.cleaned_data['created_by_user'] = self.instance.created_by_user
-        return super(QueryForm, self).clean()
+        return super().clean()
 
     @property
     def created_by_user_email(self):

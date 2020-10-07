@@ -1,0 +1,184 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-10-21 13:58+0800\n"
+"PO-Revision-Date: 2018-10-21 13:58+0806\n"
+"Last-Translator: b'  <admin@xx.com>'\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Translated-Using: django-rosetta 0.9.0\n"
+
+#: apps.py:10 templates/explorer/base.html:9 templates/explorer/base.html:33
+msgid "SQL Explorer"
+msgstr "SQL浏览器"
+
+#: models.py:38
+msgid "Include in snapshot task (if enabled)"
+msgstr "包含在快照任务中（如果启用了的话）"
+
+#: models.py:40
+msgid ""
+"Name of DB connection (as specified in settings) to use for this query. Will"
+" use EXPLORER_DEFAULT_CONNECTION if left blank"
+msgstr "该查询需要使用的数据库连接名字（配置文件中设定的），默认使用 EXPLORER_DEFAULT_CONNECTION"
+
+#: models.py:49 templates/explorer/query_list.html:49
+msgid "Query"
+msgstr "查询语句"
+
+#: models.py:50
+msgid "Queries"
+msgstr "查询语句"
+
+#: templates/explorer/play.html:7 templates/explorer/query.html:7
+#: templates/explorer/query.html:17 templates/explorer/query_list.html:6
+#: templates/explorer/querylog_list.html:6
+msgid "New Query"
+msgstr "新增查询"
+
+#: templates/explorer/play.html:8 templates/explorer/play.html:16
+#: templates/explorer/query.html:8 templates/explorer/query_list.html:7
+#: templates/explorer/querylog_list.html:7
+msgid "Playground"
+msgstr "实验场"
+
+#: templates/explorer/play.html:9 templates/explorer/query.html:11
+#: templates/explorer/query_list.html:8
+#: templates/explorer/querylog_list.html:8
+msgid "Logs"
+msgstr "日志"
+
+#: templates/explorer/play.html:17
+msgid ""
+"The playground is for experimenting and writing ad-hoc queries. By default, "
+"nothing you do here will be saved."
+msgstr "试验场用于实验以及编写临时查询语句。默认情况下，这里所有操作都不会被保存。"
+
+#: templates/explorer/play.html:24 templates/explorer/query.html:47
+msgid "Connection"
+msgstr "连接"
+
+#: templates/explorer/play.html:39
+msgid "Playground SQL"
+msgstr "实验SQL"
+
+#: templates/explorer/play.html:55 templates/explorer/query.html:110
+msgid "Refresh"
+msgstr "刷新"
+
+#: templates/explorer/play.html:58 templates/explorer/play.html:68
+#: templates/explorer/query.html:98 templates/explorer/query.html:115
+msgid "Toggle Dropdown"
+msgstr "切换下拉框"
+
+#: templates/explorer/play.html:61
+msgid "Save As New Query"
+msgstr "保存为新的查询语句"
+
+#: templates/explorer/play.html:65 templates/explorer/query.html:112
+msgid "Download"
+msgstr "下载"
+
+#: templates/explorer/play.html:75 templates/explorer/query.html:106
+msgid "Show Schema"
+msgstr "显示表结构"
+
+#: templates/explorer/play.html:76 templates/explorer/query.html:107
+msgid "Hide Schema"
+msgstr "隐藏表结构"
+
+#: templates/explorer/play.html:77 templates/explorer/query.html:108
+msgid "Format"
+msgstr "格式"
+
+#: templates/explorer/play.html:80
+msgid "Playground Query"
+msgstr "实验查询语句"
+
+#: templates/explorer/preview_pane.html:7
+msgid "Preview"
+msgstr "预览"
+
+#: templates/explorer/preview_pane.html:8
+msgid "Snapshots"
+msgstr "快照"
+
+#: templates/explorer/preview_pane.html:9
+msgid "Pivot"
+msgstr ""
+
+#: templates/explorer/query.html:10
+msgid "Query Detail"
+msgstr "查询细节"
+
+#: templates/explorer/query.html:20
+msgid "History"
+msgstr "历史"
+
+#: templates/explorer/query.html:62
+msgid "Description"
+msgstr "描述"
+
+#: templates/explorer/query.html:95
+msgid "Save & Run"
+msgstr "保存并运行"
+
+#: templates/explorer/query.html:103
+msgid "Save Only"
+msgstr "保存"
+
+#: templates/explorer/query_list.html:40
+msgid "All Queries"
+msgstr "所有查询语句"
+
+#: templates/explorer/query_list.html:43
+msgid "Search"
+msgstr "搜索"
+
+#: templates/explorer/query_list.html:50
+msgid "Created"
+msgstr "创建时间"
+
+#: templates/explorer/query_list.html:52
+msgid "Email"
+msgstr "邮箱"
+
+#: templates/explorer/query_list.html:54
+msgid "CSV"
+msgstr "CSV"
+
+#: templates/explorer/query_list.html:56
+msgid "Play"
+msgstr "执行"
+
+#: templates/explorer/query_list.html:57
+msgid "Delete"
+msgstr "删除"
+
+#: templates/explorer/query_list.html:59
+msgid "Run Count"
+msgstr "运行次数"
+
+#: templates/explorer/querylog_list.html:13
+#, python-format
+msgid "Recent Query Logs - Page %(page_obj.number)s"
+msgstr "最近的查询日志 - %(page_obj.number)s页"
+
+#: templates/explorer/schema.html:14
+msgid "Collapse All"
+msgstr "全部收起"
+
+#: templates/explorer/schema.html:17
+msgid "Expand All"
+msgstr "全部展开"
