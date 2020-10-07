@@ -1,4 +1,5 @@
-{% extends "explorer/base.html" %}
+{% extends "explorer/base.html" %}
+{% load i18n %}
 
 
 {% block sql_explorer_content_takeover %}
@@ -10,10 +11,10 @@
         </p>
         <div class="row">
             <div class="col-xs-6 text-center">
-                <a class="btn btn-link" id="collapse_all">Collapse All</a>
+                <a class="btn btn-link" id="collapse_all">{% trans "Collapse All" %}</a>
             </div>
             <div class="col-xs-6 text-center">
-                <a class="btn btn-link" id="expand_all">Expand All</a>
+                <a class="btn btn-link" id="expand_all">{% trans "Expand All" %}</a>
             </div>
         </div>
         <ul class="list">
