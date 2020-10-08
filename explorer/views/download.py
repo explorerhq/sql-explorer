@@ -25,5 +25,5 @@ class DownloadFromSqlView(PermissionRequiredMixin, View):
         connection = request.POST.get('connection', '')
         query = Query(sql=sql, connection=connection, title='')
         ql = query.log(request.user)
-        query.title = f'Playground - {ql.id}'
+        query.title = f'Playground-{ql.id}'
         return _export(request, query)
