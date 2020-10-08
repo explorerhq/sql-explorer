@@ -78,12 +78,23 @@ EXPLORER_RECENT_QUERY_COUNT = getattr(
 )
 EXPLORER_ASYNC_SCHEMA = getattr(settings, 'EXPLORER_ASYNC_SCHEMA', False)
 
-EXPLORER_DATA_EXPORTERS = getattr(settings, 'EXPLORER_DATA_EXPORTERS', [
+DEFAULT_EXPORTERS = [
     ('csv', 'explorer.exporters.CSVExporter'),
-    ('excel', 'explorer.exporters.ExcelExporter'),
     ('json', 'explorer.exporters.JSONExporter'),
+]
+try:
+    import xlsxwriter
 
-])
+    DEFAULT_EXPORTERS.insert(
+        1,
+        ('excel', 'explorer.exporters.ExcelExporter'),
+    )
+except ImportError:
+    pass
+
+EXPLORER_DATA_EXPORTERS = getattr(
+    settings, 'EXPLORER_DATA_EXPORTERS', DEFAULT_EXPORTERS
+)
 CSV_DELIMETER = getattr(settings, "EXPLORER_CSV_DELIMETER", ",")
 
 # API access
