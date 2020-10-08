@@ -1,9 +1,14 @@
-from django.test import TestCase
-from django.db import connections
-from explorer.tests.factories import SimpleQueryFactory
-from explorer.models import QueryLog, Query, QueryResult, ColumnSummary, ColumnHeader
+# -*- coding: utf-8 -*-
 from unittest.mock import patch, Mock
+
+from django.db import connections
+from django.test import TestCase
+
 from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
+from explorer.models import (
+    QueryLog, Query, QueryResult, ColumnSummary, ColumnHeader
+)
+from explorer.tests.factories import SimpleQueryFactory
 
 
 class TestQueryModel(TestCase):

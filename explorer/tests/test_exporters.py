@@ -1,13 +1,16 @@
-from django.test import TestCase
-from django.core.serializers.json import DjangoJSONEncoder
-from django.utils import timezone
-from django.db import connections
-from explorer.exporters import CSVExporter, JSONExporter, ExcelExporter
-from explorer.tests.factories import SimpleQueryFactory
-from explorer.models import QueryResult
-from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
+# -*- coding: utf-8 -*-
 import json
 from datetime import date, datetime
+
+from django.core.serializers.json import DjangoJSONEncoder
+from django.db import connections
+from django.test import TestCase
+from django.utils import timezone
+
+from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
+from explorer.exporters import CSVExporter, JSONExporter, ExcelExporter
+from explorer.models import QueryResult
+from explorer.tests.factories import SimpleQueryFactory
 
 
 class TestCsv(TestCase):

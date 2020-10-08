@@ -1,10 +1,16 @@
+# -*- coding: utf-8 -*-
+from unittest.mock import Mock
+
 from django.test import TestCase
+
+from explorer import app_settings
 from explorer.actions import generate_report_action
 from explorer.tests.factories import SimpleQueryFactory
-from explorer import app_settings
-from explorer.utils import passes_blacklist, param, swap_params, extract_params,\
-    shared_dict_update, EXPLORER_PARAM_TOKEN, get_params_from_request, get_params_for_url
-from unittest.mock import Mock
+from explorer.utils import (
+    passes_blacklist, param, swap_params, extract_params,
+    shared_dict_update, EXPLORER_PARAM_TOKEN, get_params_from_request,
+    get_params_for_url
+)
 
 
 class TestSqlBlacklist(TestCase):
@@ -31,7 +37,8 @@ class TestSqlBlacklist(TestCase):
         self.assertEqual(result.content.decode('utf-8'), '0')
 
     def test_queries_deleting_stuff_are_not_ok(self):
-        sql = "'distraction'; deLeTe from table; SELECT 1+1 AS TWO; drop view foo;"
+        sql = "'distraction'; deLeTe from table; " \
+              "SELECT 1+1 AS TWO; drop view foo;"
         passes, words = passes_blacklist(sql)
         self.assertFalse(passes)
         self.assertTrue(len(words), 2)
@@ -107,7 +114,8 @@ class TestParams(TestCase):
 
     def test_get_params_for_request(self):
         q = SimpleQueryFactory(params={'a': 1, 'b': 2})
-        # For some reason the order of the params is non-deterministic, causing the following to periodically fail:
+        # For some reason the order of the params is non-deterministic,
+        # causing the following to periodically fail:
         #     self.assertEqual(get_params_for_url(q), 'a:1|b:2')
         # So instead we go for the following, convoluted, asserts:
         res = get_params_for_url(q)

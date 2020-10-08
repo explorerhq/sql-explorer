@@ -1,8 +1,9 @@
+# -*- coding: utf-8 -*-
 from django.conf import settings
 from factory import Sequence, SubFactory
 from factory.django import DjangoModelFactory
 
-from explorer import models
+from explorer.models import Query, QueryLog
 
 
 class UserFactory(DjangoModelFactory):
@@ -17,7 +18,7 @@ class UserFactory(DjangoModelFactory):
 class SimpleQueryFactory(DjangoModelFactory):
 
     class Meta:
-        model = models.Query
+        model = Query
 
     title = Sequence(lambda n: f'My simple query {n}')
     sql = "SELECT 1+1 AS TWO"  # same result in postgres and sqlite
@@ -29,6 +30,6 @@ class SimpleQueryFactory(DjangoModelFactory):
 class QueryLogFactory(DjangoModelFactory):
 
     class Meta:
-        model = models.QueryLog
+        model = QueryLog
 
     sql = "SELECT 2+2 AS FOUR"
