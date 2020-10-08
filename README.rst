@@ -1,5 +1,17 @@
-.. image:: https://travis-ci.org/groveco/django-sql-explorer.png?branch=master
+.. image:: https://travis-ci.org/groveco/django-sql-explorer.svg?branch=master
    :target: https://travis-ci.org/groveco/django-sql-explorer
+
+.. image:: http://img.shields.io/pypi/v/django-sql-explorer.svg?style=flat-square
+    :target: https://pypi.python.org/pypi/django-sql-explorer/
+    :alt: Latest Version
+
+.. image:: http://img.shields.io/pypi/dm/django-sql-explorer.svg?style=flat-square
+    :target: https://pypi.python.org/pypi/django-sql-explorer/
+    :alt: Downloads
+
+.. image:: http://img.shields.io/pypi/l/django-sql-explorer.svg?style=flat-square
+    :target: https://pypi.python.org/pypi/django-sql-explorer/
+    :alt: License
 
 SQL Explorer
 ===================
