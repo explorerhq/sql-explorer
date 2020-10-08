@@ -118,12 +118,7 @@ def allowed_query_pks(user_id):
 
 
 def user_can_see_query(request, **kwargs):
-    # In Django<1.10, is_anonymous was a method.
-    try:
-        is_anonymous = request.user.is_anonymous()
-    except TypeError:
-        is_anonymous = request.user.is_anonymous
-    if not is_anonymous and 'query_id' in kwargs:
+    if not request.user.is_anonymous and 'query_id' in kwargs:
         return int(kwargs['query_id']) in allowed_query_pks(request.user.id)
     return False
 
