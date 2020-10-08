@@ -1,6 +1,5 @@
 from django.core.cache import cache
-from explorer.utils import get_valid_connection
-from explorer.tasks import build_schema_cache_async
+
 from explorer.app_settings import (
     EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES,
     EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES,
@@ -9,6 +8,8 @@ from explorer.app_settings import (
     EXPLORER_ASYNC_SCHEMA,
     EXPLORER_CONNECTIONS
 )
+from explorer.tasks import build_schema_cache_async
+from explorer.utils import get_valid_connection
 
 
 # These wrappers make it easy to mock and test
@@ -51,9 +52,11 @@ def schema_info(connection_alias):
 
 def build_schema_info(connection_alias):
     """
-        Construct schema information via engine-specific queries of the tables in the DB.
+        Construct schema information via engine-specific queries of the
+        tables in the DB.
 
-        :return: Schema information of the following form, sorted by db_table_name.
+        :return: Schema information of the following form,
+                 sorted by db_table_name.
             [
                 ("db_table_name",
                     [
@@ -67,17 +70,23 @@ def build_schema_info(connection_alias):
     connection = get_valid_connection(connection_alias)
     ret = []
     with connection.cursor() as cursor:
-        tables_to_introspect = connection.introspection.table_names(cursor, include_views=_include_views())
+        tables_to_introspect = connection.introspection.table_names(
+            cursor, include_views=_include_views()
+        )
 
         for table_name in tables_to_introspect:
             if not _include_table(table_name):
                 continue
             td = []
-            table_description = connection.introspection.get_table_description(cursor, table_name)
+            table_description = connection.introspection.get_table_description(
+                cursor, table_name
+            )
             for row in table_description:
                 column_name = row[0]
                 try:
-                    field_type = connection.introspection.get_field_type(row[1], row)
+                    field_type = connection.introspection.get_field_type(
+                        row[1], row
+                    )
                 except KeyError:
                     field_type = 'Unknown'
                 td.append((column_name, field_type))

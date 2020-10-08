@@ -1,26 +1,29 @@
 import re
 from collections import Counter
 
+from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.contrib.auth.views import LoginView
+from django.core.exceptions import ImproperlyConfigured
 from django.db import DatabaseError
 from django.forms.models import model_to_dict
-from django.http import HttpResponse, JsonResponse, HttpResponseRedirect, Http404
+from django.http import (
+    HttpResponse, JsonResponse, HttpResponseRedirect, Http404
+)
 from django.shortcuts import get_object_or_404, render
-from django.views.decorators.http import require_POST
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
+from django.views.decorators.http import require_POST
+from django.views.decorators.clickjacking import xframe_options_sameorigin
 from django.views.generic import ListView
 from django.views.generic.base import View
 from django.views.generic.edit import CreateView, DeleteView
-from django.views.decorators.clickjacking import xframe_options_sameorigin
-from django.core.exceptions import ImproperlyConfigured
-from django.contrib.auth import REDIRECT_FIELD_NAME
-from django.contrib.auth.views import LoginView
 
-from explorer import app_settings
+from explorer import app_settings, permissions
 from explorer.connections import connections
 from explorer.exporters import get_exporter_class
 from explorer.forms import QueryForm
 from explorer.models import Query, QueryLog, MSG_FAILED_BLACKLIST
+from explorer.schema import schema_info
 from explorer.tasks import execute_query
 from explorer.utils import (
     url_get_rows,
@@ -33,15 +36,94 @@ from explorer.utils import (
     url_get_fullscreen
 )
 
-from explorer.schema import schema_info
-from explorer import permissions
 
+# Helper functions
+def query_viewmodel(user, query, title=None, form=None, message=None,
+                    run_query=True, error=None,
+                    rows=app_settings.EXPLORER_DEFAULT_ROWS):
+    """
+
+    :return: Returns the context required for a view
+    :rtype: dict
+    """
+    res = None
+    ql = None
+    if run_query:
+        try:
+            res, ql = query.execute_with_logging(user)
+        except DatabaseError as e:
+            error = str(e)
+    has_valid_results = not error and res and run_query
+    ret = {
+        'tasks_enabled': app_settings.ENABLE_TASKS,
+        'params': query.available_params(),
+        'title': title,
+        'shared': query.shared,
+        'query': query,
+        'form': form,
+        'message': message,
+        'error': error,
+        'rows': rows,
+        'data': res.data[:rows] if has_valid_results else None,
+        'headers': res.headers if has_valid_results else None,
+        'total_rows': len(res.data) if has_valid_results else None,
+        'duration': res.duration if has_valid_results else None,
+        'has_stats':
+            len([h for h in res.headers if h.summary])
+            if has_valid_results else False,
+        'snapshots': query.snapshots if query.snapshot else [],
+        'ql_id': ql.id if ql else None,
+        'unsafe_rendering': app_settings.UNSAFE_RENDERING,
+    }
+    return ret
+
+
+def _export(request, query, download=True):
+    format = request.GET.get('format', 'csv')
+    exporter_class = get_exporter_class(format)
+    query.params = url_get_params(request)
+    delim = request.GET.get('delim')
+    exporter = exporter_class(query)
+    try:
+        output = exporter.get_output(delim=delim)
+    except DatabaseError as e:
+        msg = f"Error executing query {query.title}: {e}"
+        return HttpResponse(
+            msg, status=500
+        )
+
+    response = HttpResponse(
+        output,
+        content_type=exporter.content_type
+    )
+    if download:
+        response['Content-Disposition'] = \
+            f'attachment; filename="{exporter.get_filename()}"'
+    return response
+
+
+# Function based view
+
+@require_POST
+def format_sql(request):
+    sql = request.POST.get('sql', '')
+    formatted = fmt_sql(sql)
+    return JsonResponse({"formatted": formatted})
+
+
+# Class based views
 
 class ExplorerContextMixin:
 
     def gen_ctx(self):
-        return {'can_view': app_settings.EXPLORER_PERMISSION_VIEW(self.request.user),
-                'can_change': app_settings.EXPLORER_PERMISSION_CHANGE(self.request.user)}
+        return {
+            'can_view': app_settings.EXPLORER_PERMISSION_VIEW(
+                self.request.user
+            ),
+            'can_change': app_settings.EXPLORER_PERMISSION_CHANGE(
+                self.request.user
+            )
+        }
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -60,8 +142,11 @@ class PermissionRequiredMixin:
     def get_permission_required(self):
         if self.permission_required is None:
             raise ImproperlyConfigured(
-                '{0} is missing the permission_required attribute. Define {0}.permission_required, or override '
-                '{0}.get_permission_required().'.format(self.__class__.__name__)
+                '{0} is missing the permission_required attribute. '
+                'Define {0}.permission_required, or override '
+                '{0}.get_permission_required().'.format(
+                    self.__class__.__name__
+                )
             )
         return self.permission_required
 
@@ -73,7 +158,11 @@ class PermissionRequiredMixin:
 
     def handle_no_permission(self, request):
         return SafeLoginView.as_view(
-            extra_context={'title': 'Log in', REDIRECT_FIELD_NAME: request.get_full_path()})(request)
+            extra_context={
+                'title': 'Log in',
+                REDIRECT_FIELD_NAME: request.get_full_path()
+            }
+        )(request)
 
     def dispatch(self, request, *args, **kwargs):
         if not self.has_permission(request, *args, **kwargs):
@@ -83,25 +172,6 @@ class PermissionRequiredMixin:
 
 class SafeLoginView(LoginView):
     template_name = 'admin/login.html'
-
-
-def _export(request, query, download=True):
-    format = request.GET.get('format', 'csv')
-    exporter_class = get_exporter_class(format)
-    query.params = url_get_params(request)
-    delim = request.GET.get('delim')
-    exporter = exporter_class(query)
-    try:
-        output = exporter.get_output(delim=delim)
-    except DatabaseError as e:
-        msg = f"Error executing query {query.title}: {e}"
-        return HttpResponse(msg, status=500)
-    response = HttpResponse(output, content_type=exporter.content_type)
-    if download:
-        response['Content-Disposition'] = 'attachment; filename="%s"' % (
-            exporter.get_filename()
-        )
-    return response
 
 
 class DownloadQueryView(PermissionRequiredMixin, View):
@@ -144,11 +214,14 @@ class EmailCsvQueryView(PermissionRequiredMixin, View):
             email = request.POST.get('email', None)
             if email:
                 execute_query.delay(query_id, email)
-                return JsonResponse({'message': 'message was sent successfully'})
+                return JsonResponse(
+                    {'message': 'message was sent successfully'}
+                )
         return JsonResponse({}, status=403)
 
 
 class SchemaView(PermissionRequiredMixin, View):
+
     permission_required = 'change_permission'
 
     @method_decorator(xframe_options_sameorigin)
@@ -161,26 +234,27 @@ class SchemaView(PermissionRequiredMixin, View):
             raise Http404
         schema = schema_info(connection)
         if schema:
-            return render(request, 'explorer/schema.html',
-                          {'schema': schema_info(connection)})
+            return render(
+                request,
+                'explorer/schema.html',
+                {'schema': schema_info(connection)}
+            )
         else:
             return render(request, 'explorer/schema_building.html')
-
-
-@require_POST
-def format_sql(request):
-    sql = request.POST.get('sql', '')
-    formatted = fmt_sql(sql)
-    return JsonResponse({"formatted": formatted})
 
 
 class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
 
     permission_required = 'view_permission_list'
+    model = Query
 
     def recently_viewed(self):
-        qll = QueryLog.objects.filter(run_by_user=self.request.user, query_id__isnull=False).order_by(
-            '-run_at').select_related('query')
+        qll = QueryLog.objects.filter(
+            run_by_user=self.request.user, query_id__isnull=False
+        ).order_by(
+            '-run_at'
+        ).select_related('query')
+
         ret = []
         tracker = []
         for ql in qll:
@@ -201,30 +275,44 @@ class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
 
     def get_queryset(self):
         if app_settings.EXPLORER_PERMISSION_VIEW(self.request.user):
-            qs = (Query.objects
-                  .prefetch_related('created_by_user', 'querylog_set').all())
+            qs = (
+                Query.objects.prefetch_related(
+                    'created_by_user', 'querylog_set'
+                ).all()
+            )
         else:
-            qs = (Query.objects
-                  .prefetch_related('created_by_user', 'querylog_set')
-                  .filter(pk__in=allowed_query_pks(self.request.user.id)))
+            qs = (
+                Query.objects.prefetch_related(
+                    'created_by_user', 'querylog_set'
+                ).filter(pk__in=allowed_query_pks(self.request.user.id))
+            )
         return qs
 
     def _build_queries_and_headers(self):
         """
-        Build a list of query information and headers (pseudo-folders) for consumption by the template.
+        Build a list of query information and headers (pseudo-folders) for
+        consumption by the template.
 
-        Strategy: Look for queries with titles of the form "something - else" (eg. with a ' - ' in the middle)
-                  and split on the ' - ', treating the left side as a "header" (or folder). Interleave the
-                  headers into the ListView's object_list as appropriate. Ignore headers that only have one
-                  child. The front end uses bootstrap's JS Collapse plugin, which necessitates generating CSS
-                  classes to map the header onto the child rows, hence the collapse_target variable.
+        Strategy: Look for queries with titles of the form "something - else"
+                  (eg. with a ' - ' in the middle) and split on the ' - ',
+                  treating the left side as a "header" (or folder).
+                  Interleave the headers into the ListView's object_list as
+                  appropriate. Ignore headers that only have one child.
+                  The front end uses bootstrap's JS Collapse plugin, which
+                  necessitates generating CSS classes to map the header onto
+                  the child rows, hence the collapse_target variable.
 
-                  To make the return object homogeneous, convert the object_list models into dictionaries for
-                  interleaving with the header "objects". This necessitates special handling of 'created_at'
-                  and 'created_by_user' because model_to_dict doesn't include non-editable fields (created_at)
-                  and will give the int representation of the user instead of the string representation.
+                  To make the return object homogeneous, convert the
+                  object_list models into dictionaries for interleaving with
+                  the header "objects". This necessitates special handling of
+                  'created_at' and 'created_by_user' because model_to_dict
+                  doesn't include non-editable fields (created_at) and will
+                  give the int representation of the user instead of the
+                  string representation.
 
-        :return: A list of model dictionaries representing all the query objects, interleaved with header dictionaries.
+        :return: A list of model dictionaries representing all the query
+                 objects, interleaved with header dictionaries.
+        :rtype: list
         """
 
         dict_list = []
@@ -239,27 +327,33 @@ class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
             collapse_target = pattern.sub('', header)
 
             if headers[header] > 1 and header not in rendered_headers:
-                dict_list.append({'title': header,
-                                  'is_header': True,
-                                  'is_in_category': False,
-                                  'collapse_target': collapse_target,
-                                  'count': headers[header]})
+                dict_list.append({
+                    'title': header,
+                    'is_header': True,
+                    'is_in_category': False,
+                    'collapse_target': collapse_target,
+                    'count': headers[header]
+                })
                 rendered_headers.append(header)
 
-            model_dict.update({'is_in_category': headers[header] > 1,
-                               'collapse_target': collapse_target,
-                               'created_at': q.created_at,
-                               'is_header': False,
-                               'run_count': q.querylog_set.count(),
-                               'created_by_user': str(q.created_by_user) if q.created_by_user else None})
+            model_dict.update({
+                'is_in_category': headers[header] > 1,
+                'collapse_target': collapse_target,
+                'created_at': q.created_at,
+                'is_header': False,
+                'run_count': q.querylog_set.count(),
+                'created_by_user':
+                    str(q.created_by_user) if q.created_by_user else None
+            })
             dict_list.append(model_dict)
         return dict_list
-
-    model = Query
 
 
 class ListQueryLogView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
 
+    context_object_name = "recent_logs"
+    model = QueryLog
+    paginate_by = 20
     permission_required = 'view_permission'
 
     def get_queryset(self):
@@ -268,24 +362,21 @@ class ListQueryLogView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
             kwargs['query_id'] = url_get_query_id(self.request)
         return QueryLog.objects.filter(**kwargs).all()
 
-    context_object_name = "recent_logs"
-    model = QueryLog
-    paginate_by = 20
 
-
-class CreateQueryView(PermissionRequiredMixin, ExplorerContextMixin, CreateView):
+class CreateQueryView(PermissionRequiredMixin, ExplorerContextMixin,
+                      CreateView):
 
     permission_required = 'change_permission'
+    form_class = QueryForm
+    template_name = 'explorer/query.html'
 
     def form_valid(self, form):
         form.instance.created_by_user = self.request.user
         return super().form_valid(form)
 
-    form_class = QueryForm
-    template_name = 'explorer/query.html'
 
-
-class DeleteQueryView(PermissionRequiredMixin, ExplorerContextMixin, DeleteView):
+class DeleteQueryView(PermissionRequiredMixin, ExplorerContextMixin,
+                      DeleteView):
 
     permission_required = 'change_permission'
     model = Query
@@ -310,30 +401,55 @@ class PlayQueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
         return self.render()
 
     def post(self, request):
-        sql = request.POST.get('sql')
-        show = url_get_show(request)
         c = request.POST.get('connection', '')
+        show = url_get_show(request)
+        sql = request.POST.get('sql')
+
         query = Query(sql=sql, title="Playground", connection=c)
+
         passes_blacklist, failing_words = query.passes_blacklist()
-        error = MSG_FAILED_BLACKLIST % ', '.join(failing_words) if not passes_blacklist else None
+
+        error = MSG_FAILED_BLACKLIST % ', '.join(
+            failing_words
+        ) if not passes_blacklist else None
+
         run_query = not bool(error) if show else False
-        return self.render_with_sql(request, query, run_query=run_query, error=error)
+        return self.render_with_sql(
+            request,
+            query,
+            run_query=run_query,
+            error=error
+        )
 
     def render(self):
-        return self.render_template('explorer/play.html', {'title': 'Playground', 'form': QueryForm()})
+        return self.render_template(
+            'explorer/play.html',
+            {
+                'title': 'Playground',
+                'form': QueryForm()
+            }
+        )
 
     def render_with_sql(self, request, query, run_query=True, error=None):
         rows = url_get_rows(request)
         fullscreen = url_get_fullscreen(request)
         template = 'fullscreen' if fullscreen else 'play'
-        form = QueryForm(request.POST if len(request.POST) else None, instance=query)
-        return self.render_template(f'explorer/{template}.html', query_viewmodel(request.user,
-                                                                                 query,
-                                                                                 title="Playground",
-                                                                                 run_query=run_query,
-                                                                                 error=error,
-                                                                                 rows=rows,
-                                                                                 form=form))
+        form = QueryForm(
+            request.POST if len(request.POST) else None,
+            instance=query
+        )
+        return self.render_template(
+            f'explorer/{template}.html',
+            query_viewmodel(
+                request.user,
+                query,
+                title="Playground",
+                run_query=run_query,
+                error=error,
+                rows=rows,
+                form=form
+            )
+        )
 
 
 class QueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
@@ -345,10 +461,18 @@ class QueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
         query.save()  # updates the modified date
         show = url_get_show(request)
         rows = url_get_rows(request)
-        vm = query_viewmodel(request.user, query, form=form, run_query=show, rows=rows)
+        vm = query_viewmodel(
+            request.user,
+            query,
+            form=form,
+            run_query=show,
+            rows=rows
+        )
         fullscreen = url_get_fullscreen(request)
         template = 'fullscreen' if fullscreen else 'query'
-        return self.render_template(f'explorer/{template}.html', vm)
+        return self.render_template(
+            f'explorer/{template}.html', vm
+        )
 
     def post(self, request, query_id):
         if not app_settings.EXPLORER_PERMISSION_CHANGE(request.user):
@@ -358,48 +482,22 @@ class QueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
         show = url_get_show(request)
         query, form = QueryView.get_instance_and_form(request, query_id)
         success = form.is_valid() and form.save()
-        vm = query_viewmodel(request.user,
-                             query,
-                             form=form,
-                             run_query=show,
-                             rows=url_get_rows(request),
-                             message="Query saved." if success else None)
+        vm = query_viewmodel(
+            request.user,
+            query,
+            form=form,
+            run_query=show,
+            rows=url_get_rows(request),
+            message="Query saved." if success else None
+        )
         return self.render_template('explorer/query.html', vm)
 
     @staticmethod
     def get_instance_and_form(request, query_id):
         query = get_object_or_404(Query, pk=query_id)
         query.params = url_get_params(request)
-        form = QueryForm(request.POST if len(request.POST) else None, instance=query)
+        form = QueryForm(
+            request.POST if len(request.POST) else None,
+            instance=query
+        )
         return query, form
-
-
-def query_viewmodel(user, query, title=None, form=None, message=None, run_query=True, error=None, rows=app_settings.EXPLORER_DEFAULT_ROWS):
-    res = None
-    ql = None
-    if run_query:
-        try:
-            res, ql = query.execute_with_logging(user)
-        except DatabaseError as e:
-            error = str(e)
-    has_valid_results = not error and res and run_query
-    ret = {
-        'tasks_enabled': app_settings.ENABLE_TASKS,
-        'params': query.available_params(),
-        'title': title,
-        'shared': query.shared,
-        'query': query,
-        'form': form,
-        'message': message,
-        'error': error,
-        'rows': rows,
-        'data': res.data[:rows] if has_valid_results else None,
-        'headers': res.headers if has_valid_results else None,
-        'total_rows': len(res.data) if has_valid_results else None,
-        'duration': res.duration if has_valid_results else None,
-        'has_stats': len([h for h in res.headers if h.summary]) if has_valid_results else False,
-        'snapshots': query.snapshots if query.snapshot else [],
-        'ql_id': ql.id if ql else None,
-        'unsafe_rendering': app_settings.UNSAFE_RENDERING,
-    }
-    return ret
