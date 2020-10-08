@@ -1,19 +1,15 @@
 language: python
 python:
-  - 2.7
-  - 3.4
-  - 3.5
+  - 3.6
+  - 3.7
+  - 3.8
 install:
+  - pip install ${DJANGO}
   - pip install -r requirements.txt
   - pip install -r optional-requirements.txt
-  - pip install Django==${DJANGO}
 
 script:  python manage.py test
 env:
-  - DJANGO=1.7.11
-  - DJANGO=1.8.13
-  - DJANGO=1.9.6
-matrix:
-  exclude:
-    - python: 3.5
-      env: DJANGO=1.7.11
+  - DJANGO="Django==2.2.*"
+  - DJANGO="Django==3.0.*"
+  - DJANGO="Django==3.1.*"

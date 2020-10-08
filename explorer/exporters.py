@@ -1,26 +1,23 @@
 from django.db import DatabaseError
 from django.core.serializers.json import DjangoJSONEncoder
 import json
+import uuid
 import string
-import sys
 from datetime import datetime
-PY3 = sys.version_info[0] == 3
-if PY3:
-    import csv
-else:
-    import unicodecsv as csv
+import csv
 
 from django.utils.module_loading import import_string
-from . import app_settings
-from six import StringIO, BytesIO
+from django.utils.text import slugify
+from explorer import app_settings
+from io import StringIO, BytesIO
 
 
 def get_exporter_class(format):
-    class_str = getattr(app_settings, 'EXPLORER_DATA_EXPORTERS')[format]
+    class_str = dict(getattr(app_settings, 'EXPLORER_DATA_EXPORTERS'))[format]
     return import_string(class_str)
 
 
-class BaseExporter(object):
+class BaseExporter:
 
     name = ''
     content_type = ''
@@ -30,14 +27,12 @@ class BaseExporter(object):
         self.query = query
 
     def get_output(self, **kwargs):
-        return str(self.get_file_output(**kwargs).getvalue())
+        value = self.get_file_output(**kwargs).getvalue()
+        return value
 
     def get_file_output(self, **kwargs):
-        try:
-            res = self.query.execute_query_only()
-            return self._get_output(res, **kwargs)
-        except DatabaseError as e:
-            return StringIO(str(e))
+        res = self.query.execute_query_only()
+        return self._get_output(res, **kwargs)
 
     def _get_output(self, res, **kwargs):
         """
@@ -49,10 +44,10 @@ class BaseExporter(object):
 
     def get_filename(self):
         # build list of valid chars, build filename from title and replace spaces
-        valid_chars = '-_.() %s%s' % (string.ascii_letters, string.digits)
+        valid_chars = f'-_.() {string.ascii_letters}{string.digits}'
         filename = ''.join(c for c in self.query.title if c in valid_chars)
         filename = filename.replace(' ', '_')
-        return '{}{}'.format(filename, self.file_extension)
+        return f'{filename}{self.file_extension}'
 
 
 class CSVExporter(BaseExporter):
@@ -66,10 +61,7 @@ class CSVExporter(BaseExporter):
         delim = '\t' if delim == 'tab' else str(delim)
         delim = app_settings.CSV_DELIMETER if len(delim) > 1 else delim
         csv_data = StringIO()
-        if PY3:
-            writer = csv.writer(csv_data, delimiter=delim)
-        else:
-            writer = csv.writer(csv_data, delimiter=delim, encoding='utf-8')
+        writer = csv.writer(csv_data, delimiter=delim)
         writer.writerow(res.headers)
         for row in res.data:
             writer.writerow([s for s in row])
@@ -103,13 +95,9 @@ class ExcelExporter(BaseExporter):
         import xlsxwriter
         output = BytesIO()
 
-        wb = xlsxwriter.Workbook(output)
+        wb = xlsxwriter.Workbook(output, {'in_memory': True})
 
-        # XLSX writer wont allow sheet names > 31 characters
-        # https://github.com/jmcnamara/XlsxWriter/blob/master/xlsxwriter/test/workbook/test_check_sheetname.py
-        title = self.query.title[:31]
-
-        ws = wb.add_worksheet(name=title)
+        ws = wb.add_worksheet(name=self._format_title())
 
         # Write headers
         row = 0
@@ -124,9 +112,14 @@ class ExcelExporter(BaseExporter):
         col = 0
         for data_row in res.data:
             for data in data_row:
-                # xlsxwriter can't handle timezone-aware datetimes, so we help out here and just cast it to a string
-                if isinstance(data, datetime):
+                # xlsxwriter can't handle timezone-aware datetimes or
+                # UUIDs, so we help out here and just cast it to a
+                # string
+                if isinstance(data, datetime) or isinstance(data, uuid.UUID):
                     data = str(data)
+                # JSON and Array fields
+                if isinstance(data, dict) or isinstance(data, list):
+                    data = json.dumps(data)
                 ws.write(row, col, data)
                 col += 1
             row += 1
@@ -134,3 +127,9 @@ class ExcelExporter(BaseExporter):
 
         wb.close()
         return output
+
+    def _format_title(self):
+        # XLSX writer wont allow sheet names > 31 characters or that contain invalid characters
+        # https://github.com/jmcnamara/XlsxWriter/blob/master/xlsxwriter/test/workbook/test_check_sheetname.py
+        title = slugify(self.query.title)
+        return title[:31]

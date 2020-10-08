@@ -1,16 +1,14 @@
 import functools
 import re
-from django.db import connections, connection
 
-from six import text_type
-
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.views import LoginView
+from django.contrib.auth import REDIRECT_FIELD_NAME
 import sqlparse
 
-from . import app_settings
+from explorer import app_settings
 
 EXPLORER_PARAM_TOKEN = "$$"
-
-# SQL Specific Things
 
 
 def passes_blacklist(sql):
@@ -19,78 +17,26 @@ def passes_blacklist(sql):
     return not any(fails), fails
 
 
-def get_connection():
-    return connections[app_settings.EXPLORER_CONNECTION_NAME] if app_settings.EXPLORER_CONNECTION_NAME else connection
-
-
-def schema_info():
-    """
-    Construct schema information via introspection of the django models in the database.
-
-    :return: Schema information of the following form, sorted by db_table_name.
-        [
-            ("package.name -> ModelClass", "db_table_name",
-                [
-                    ("db_column_name", "DjangoFieldType"),
-                    (...),
-                ]
-            )
-        ]
-
-    """
-
-    from django.apps import apps
-
-    ret = []
-
-    for label, app in apps.app_configs.items():
-        if app.name not in app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS:
-            for model_name, model in apps.get_app_config(label).models.items():
-                friendly_model = "%s -> %s" % (app.name, model._meta.object_name)
-                ret.append((
-                              friendly_model,
-                              model._meta.db_table,
-                              [_format_field(f) for f in model._meta.fields]
-                          ))
-
-                # Do the same thing for many_to_many fields. These don't show up in the field list of the model
-                # because they are stored as separate "through" relations and have their own tables
-                ret += [(
-                           friendly_model,
-                           m2m.rel.through._meta.db_table,
-                           [_format_field(f) for f in m2m.rel.through._meta.fields]
-                        ) for m2m in model._meta.many_to_many]
-
-    return sorted(ret, key=lambda t: t[1])
-
-
 def _format_field(field):
     return field.get_attname_column()[1], field.get_internal_type()
 
 
 def param(name):
-    return "%s%s%s" % (EXPLORER_PARAM_TOKEN, name, EXPLORER_PARAM_TOKEN)
+    return f"{EXPLORER_PARAM_TOKEN}{name}{EXPLORER_PARAM_TOKEN}"
 
 
 def swap_params(sql, params):
     p = params.items() if params else {}
     for k, v in p:
-        regex = re.compile("\$\$%s(?:\:([^\$]+))?\$\$" % str(k).lower(), re.I)
-        sql = regex.sub(text_type(v), sql)
+        regex = re.compile(r"\$\$%s(?:\:([^\$]+))?\$\$" % str(k).lower(), re.I)
+        sql = regex.sub(str(v), sql)
     return sql
 
 
 def extract_params(text):
-    regex = re.compile("\$\$([a-z0-9_]+)(?:\:([^\$]+))?\$\$")
+    regex = re.compile(r"\$\$([a-z0-9_]+)(?:\:([^\$]+))?\$\$")
     params = re.findall(regex, text.lower())
-    # We support Python 2.6 so can't use a dict comprehension
-    return dict(zip([p[0] for p in params], [p[1] if len(p) > 1 else '' for p in params]))
-
-
-# Helpers
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.views import login
-from django.contrib.auth import REDIRECT_FIELD_NAME
+    return {p[0]: p[1] if len(p) > 1 else '' for p in params}
 
 
 def safe_login_prompt(request):
@@ -103,7 +49,7 @@ def safe_login_prompt(request):
             REDIRECT_FIELD_NAME: request.get_full_path(),
         },
     }
-    return login(request, **defaults)
+    return LoginView.as_view(**defaults)(request)
 
 
 def shared_dict_update(target, source):
@@ -140,7 +86,7 @@ def get_params_from_request(request):
 
 def get_params_for_url(query):
     if query.params:
-        return '|'.join(['%s:%s' % (p, v) for p, v in query.params.items()])
+        return '|'.join([f'{p}:{v}' for p, v in query.params.items()])
 
 
 def url_get_rows(request):
@@ -159,6 +105,10 @@ def url_get_show(request):
     return bool(get_int_from_request(request, 'show', 1))
 
 
+def url_get_fullscreen(request):
+    return bool(get_int_from_request(request, 'fullscreen', 0))
+
+
 def url_get_params(request):
     return get_params_from_request(request)
 
@@ -167,8 +117,8 @@ def allowed_query_pks(user_id):
     return app_settings.EXPLORER_GET_USER_QUERY_VIEWS().get(user_id, [])
 
 
-def user_can_see_query(request, kwargs):
-    if not request.user.is_anonymous() and 'query_id' in kwargs:
+def user_can_see_query(request, **kwargs):
+    if not request.user.is_anonymous and 'query_id' in kwargs:
         return int(kwargs['query_id']) in allowed_query_pks(request.user.id)
     return False
 
@@ -181,8 +131,38 @@ def noop_decorator(f):
     return f
 
 
-def get_s3_connection():
-    import tinys3
-    return tinys3.Connection(app_settings.S3_ACCESS_KEY,
-                             app_settings.S3_SECRET_KEY,
-                             default_bucket=app_settings.S3_BUCKET)
+class InvalidExplorerConnectionException(Exception):
+    pass
+
+
+def get_valid_connection(alias=None):
+    from explorer.connections import connections
+
+    if not alias:
+        return connections[app_settings.EXPLORER_DEFAULT_CONNECTION]
+
+    if alias not in connections:
+        raise InvalidExplorerConnectionException(
+            f'Attempted to access connection {alias}, but that is not a registered Explorer connection.'
+        )
+    return connections[alias]
+
+
+def get_s3_bucket():
+    from boto.s3.connection import S3Connection
+
+    conn = S3Connection(app_settings.S3_ACCESS_KEY,
+                        app_settings.S3_SECRET_KEY)
+    return conn.get_bucket(app_settings.S3_BUCKET)
+
+
+def s3_upload(key, data):
+    from boto.s3.key import Key
+    bucket = get_s3_bucket()
+    k = Key(bucket)
+    k.key = key
+    k.set_contents_from_file(data, rewind=True)
+    k.set_acl('public-read')
+    k.set_metadata('Content-Type', 'text/csv')
+    return k.generate_url(expires_in=0, query_auth=False)
+

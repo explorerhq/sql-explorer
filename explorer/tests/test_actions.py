@@ -28,7 +28,7 @@ class TestSqlQueryActions(TestCase):
         got_csv = z.read(z.namelist()[0])
 
         self.assertEqual(len(z.namelist()), 2)
-        self.assertEqual(z.namelist()[0], '%s.csv' % q.title)
+        self.assertEqual(z.namelist()[0], f'{q.title}.csv')
         self.assertEqual(got_csv.lower().decode('utf-8'), expected_csv)
 
     # if commas are not removed from the filename, then Chrome throws "duplicate headers received from server"

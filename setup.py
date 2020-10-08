@@ -1,5 +1,8 @@
 import os
+import sys
+
 from setuptools import setup
+
 from explorer import __version__
 
 # Utility function to read the README file.
@@ -11,16 +14,29 @@ from explorer import __version__
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
+
+if sys.argv[-1] == 'build':
+    os.system('python setup.py sdist bdist_wheel')
+    sys.exit()
+
+
+if sys.argv[-1] == 'tag':
+    print("Tagging the version on github:")
+    os.system(f"git tag -a {__version__} -m 'version {__version__}'")
+    os.system("git push --tags")
+    sys.exit()
+
+
 setup(
-    name = "django-sql-explorer",
-    version = __version__,
-    author = "Chris Clark",
-    author_email = "chris@untrod.com",
-    description = ("A pluggable app that allows users (admins) to execute SQL,"
-                   " view, and export the results. Inspired by Stack Exchange Data Explorer."),
-    license = "MIT",
-    keywords = "django sql explorer reports reporting csv database query",
-    url = "https://github.com/epantry/django-sql-explorer",
+    name="django-sql-explorer",
+    version=__version__,
+    author="Chris Clark",
+    author_email="chris@untrod.com",
+    description=("A pluggable app that allows users (admins) to execute SQL,"
+                 " view, and export the results."),
+    license="MIT",
+    keywords="django sql explorer reports reporting csv database query",
+    url="https://github.com/groveco/django-sql-explorer",
     packages=['explorer'],
     long_description=read('README.rst'),
     classifiers=[
@@ -28,20 +44,27 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Topic :: Utilities',
-        'Framework :: Django :: 1.7',
-        'Framework :: Django :: 1.8',
-        'Framework :: Django :: 1.9',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
+        'Framework :: Django :: 2',
+        'Framework :: Django :: 2.2',
+        'Framework :: Django :: 3',
+        'Framework :: Django :: 3.0',
+        'Framework :: Django :: 3.1',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3 :: Only',
     ],
+    python_requires='>=3.6',
     install_requires=[
-        'Django>=1.7.0',
-        'sqlparse>=0.1.11',
-        'unicodecsv>=0.13.0',
-        'six>=1.10.0',
+        'Django>=2.2.14',
+        'sqlparse>=0.4.0',
     ],
+    extras_require={
+        "xls": [
+            'xlsxwriter>=1.2.1'
+        ]
+    },
     include_package_data=True,
-    zip_safe = False,
+    zip_safe=False,
 )
