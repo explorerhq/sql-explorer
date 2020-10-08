@@ -57,8 +57,9 @@ Features
       access to running SQL in production. So if that makes you
       nervous (**and it should**) - you've been warned. Explorer makes an
       effort to not allow terrible things to happen, but be careful!
-      It's recommended you use the ``EXPLORER_CONNECTION_NAME`` setting to
-      connect SQL Explorer to a read-only database role.
+      It's recommended you setup read-only roles for each of your database 
+      connections and only use these particular connections for your queries through the  
+      ``EXPLORER_CONNECTIONS `` setting.
     - Explorer supports two different permission checks for users of
       the tool. Users passing the ``EXPLORER_PERMISSION_CHANGE`` test can
       create, edit, delete, and execute queries. Users who do not pass
@@ -252,13 +253,17 @@ Add the following to your urls.py (all Explorer URLs are restricted
 via the ``EXPLORER_PERMISSION_VIEW`` and ``EXPLORER_PERMISSION_CHANGE``
 settings. See Settings section below for further documentation.):
 
-``url(r'^explorer/', include('explorer.urls')),``
+.. code-block:: python
 
-Run migrate to create the tables:
+    from django.urls import path
 
-``python manage.py migrate``
+    urlpatterns = [
+        ...
+        path('explorer/', include('explorer.urls')),
+        ...
+    ]
 
-Lastly, configure your settings to something like:
+Configure your settings to something like:
 
 .. code-block:: python
 
@@ -268,12 +273,24 @@ Lastly, configure your settings to something like:
 The first setting lists the connections you want to allow Explorer to
 use. The keys of the connections dictionary are friendly names to show
 Explorer users, and the values are the actual database aliases used in
-settings.DATABASES. It is highly recommended to set
+``settings.DATABASES``. It is highly recommended to setup read-only roles
+in your database, add them in your project's ``DATABASES`` setting and 
+use these read-only cconnections in the ``EXPLORER_CONNECTIONS``.
 
-You can now browse to https://yoursite/explorer/ and get exploring! It
-is highly recommended that you also configure Explorer to use a
-read-only database connection via the ``EXPLORER_CONNECTION_NAME``
-setting.
+If you want to quickly use django-sql-explorer with the existing default
+connection **and know what you are doing** (or you are on development), you
+can use the following settings:
+
+.. code-block:: python
+
+    EXPLORER_CONNECTIONS = { 'Default': 'default' }
+    EXPLORER_DEFAULT_CONNECTION = 'default'
+
+Finally, run migrate to create the tables:
+
+``python manage.py migrate``
+
+You can now browse to https://yoursite/explorer/ and get exploring! 
 
 There are a handful of features (snapshots, emailing queries) that
 rely on Celery and the dependencies in optional-requirements.txt. If
@@ -373,8 +390,8 @@ EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES  If not None, show schema only for tables
 EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES  Don't show schema for tables starting with these prefixes, in the schema helper.                                ('django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions', 'django.contrib.admin')
 EXPLORER_SCHEMA_INCLUDE_VIEWS           Include database views                                                                                          False
 EXPLORER_ASYNC_SCHEMA                   Generate DB schema asynchronously. Requires Celery and EXPLORER_TASKS_ENABLED                                   False
-EXPLORER_CONNECTION_NAME                The name of the Django database connection to use. Ideally set this to a connection with read only permissions  None  # Must be set for the app to work, as this is required
-EXPLORER_CONNECTIONS                    A dictionary of { 'Friendly Name': 'django_db_alias'}. All                                                      {}  # At a minimum, should be set to something like { 'Default': 'readonly' } or similar. See connections.py for more documentation.
+EXPLORER_DEFAULT_CONNECTION             The name of the Django database connection to use. Ideally set this to a connection with read only permissions  None  # Must be set for the app to work, as this is required
+EXPLORER_CONNECTIONS                    A dictionary of { 'Friendly Name': 'django_db_alias'}.                                                          {}  # At a minimum, should be set to something like { 'Default': 'readonly' } or similar. See connections.py for more documentation.
 EXPLORER_PERMISSION_VIEW                Callback to check if the user is allowed to view and execute stored queries                                     lambda u: u.is_staff
 EXPLORER_PERMISSION_CHANGE              Callback to check if the user is allowed to add/change/delete queries                                           lambda u: u.is_staff
 EXPLORER_TRANSFORMS                     List of tuples like [('alias', 'Template for {0}')]. See features section of this doc for more info.            []
