@@ -1,31 +1,32 @@
-import factory
 from django.conf import settings
+from factory import Sequence, SubFactory
+from factory.django import DjangoModelFactory
 
 from explorer import models
 
 
-class UserFactory(factory.DjangoModelFactory):
+class UserFactory(DjangoModelFactory):
 
     class Meta:
         model = settings.AUTH_USER_MODEL
 
-    username = factory.Sequence(lambda n: 'User %03d' % n)
+    username = Sequence(lambda n: 'User %03d' % n)
     is_staff = True
 
 
-class SimpleQueryFactory(factory.DjangoModelFactory):
+class SimpleQueryFactory(DjangoModelFactory):
 
     class Meta:
         model = models.Query
 
-    title = factory.Sequence(lambda n: f'My simple query {n}')
+    title = Sequence(lambda n: f'My simple query {n}')
     sql = "SELECT 1+1 AS TWO"  # same result in postgres and sqlite
     description = "Doin' math"
     connection = "default"
-    created_by_user = factory.SubFactory(UserFactory)
+    created_by_user = SubFactory(UserFactory)
 
 
-class QueryLogFactory(factory.DjangoModelFactory):
+class QueryLogFactory(DjangoModelFactory):
 
     class Meta:
         model = models.QueryLog

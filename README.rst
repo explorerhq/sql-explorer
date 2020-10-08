@@ -350,7 +350,7 @@ then:
 
 ``coverage report``
 
-...99%! Huzzah!
+...97%! Huzzah!
 
 Running Locally
 ===============
