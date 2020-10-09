@@ -71,7 +71,7 @@ Features
       effort to not allow terrible things to happen, but be careful!
       It's recommended you setup read-only roles for each of your database 
       connections and only use these particular connections for your queries through the  
-      ``EXPLORER_CONNECTIONS `` setting.
+      ``EXPLORER_CONNECTIONS`` setting.
     - Explorer supports two different permission checks for users of
       the tool. Users passing the ``EXPLORER_PERMISSION_CHANGE`` test can
       create, edit, delete, and execute queries. Users who do not pass
@@ -320,7 +320,7 @@ minimum.
 =========================================================== ======= ================
 Name                                                        Version License
 =========================================================== ======= ================
-`sqlparse <https://github.com/andialbrecht/sqlparse/>`_     0.3.0   BSD
+`sqlparse <https://github.com/andialbrecht/sqlparse/>`_     0.4.0   BSD
 =========================================================== ======= ================
 
 - sqlparse is used for SQL formatting
