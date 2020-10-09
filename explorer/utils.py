@@ -4,7 +4,7 @@ import re
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import REDIRECT_FIELD_NAME
-import sqlparse
+from sqlparse import format as sql_format
 
 from explorer import app_settings
 
@@ -12,8 +12,15 @@ EXPLORER_PARAM_TOKEN = "$$"
 
 
 def passes_blacklist(sql):
-    clean = functools.reduce(lambda sql, term: sql.upper().replace(term, ""), [t.upper() for t in app_settings.EXPLORER_SQL_WHITELIST], sql)
-    fails = [bl_word for bl_word in app_settings.EXPLORER_SQL_BLACKLIST if bl_word in clean.upper()]
+    clean = functools.reduce(
+        lambda sql, term: sql.upper().replace(term, ""),
+        [t.upper() for t in app_settings.EXPLORER_SQL_WHITELIST],
+        sql
+    )
+    fails = [
+        bl_word for bl_word in app_settings.EXPLORER_SQL_BLACKLIST
+        if bl_word in clean.upper()
+    ]
     return not any(fails), fails
 
 
@@ -90,7 +97,9 @@ def get_params_for_url(query):
 
 
 def url_get_rows(request):
-    return get_int_from_request(request, 'rows', app_settings.EXPLORER_DEFAULT_ROWS)
+    return get_int_from_request(
+        request, 'rows', app_settings.EXPLORER_DEFAULT_ROWS
+    )
 
 
 def url_get_query_id(request):
@@ -124,7 +133,7 @@ def user_can_see_query(request, **kwargs):
 
 
 def fmt_sql(sql):
-    return sqlparse.format(sql, reindent=True, keyword_case='upper')
+    return sql_format(sql, reindent=True, keyword_case='upper')
 
 
 def noop_decorator(f):
@@ -143,7 +152,8 @@ def get_valid_connection(alias=None):
 
     if alias not in connections:
         raise InvalidExplorerConnectionException(
-            f'Attempted to access connection {alias}, but that is not a registered Explorer connection.'
+            f'Attempted to access connection {alias}, '
+            f'but that is not a registered Explorer connection.'
         )
     return connections[alias]
 

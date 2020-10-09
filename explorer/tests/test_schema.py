@@ -1,9 +1,12 @@
-from django.test import TestCase
+# -*- coding: utf-8 -*-
+from unittest.mock import patch
+
 from django.core.cache import cache
 from django.db import connection
+from django.test import TestCase
+
 from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
 from explorer import schema
-from unittest.mock import patch
 
 
 class TestSchemaInfo(TestCase):
@@ -13,7 +16,8 @@ class TestSchemaInfo(TestCase):
 
     @patch('explorer.schema._get_includes')
     @patch('explorer.schema._get_excludes')
-    def test_schema_info_returns_valid_data(self, mocked_excludes, mocked_includes):
+    def test_schema_info_returns_valid_data(self, mocked_excludes,
+                                            mocked_includes):
         mocked_includes.return_value = None
         mocked_excludes.return_value = []
         res = schema.schema_info(CONN)
@@ -42,7 +46,8 @@ class TestSchemaInfo(TestCase):
 
     @patch('explorer.schema._get_includes')
     @patch('explorer.schema._get_excludes')
-    def test_app_inclusion_list_excluded(self, mocked_excludes, mocked_includes):
+    def test_app_inclusion_list_excluded(self, mocked_excludes,
+                                         mocked_includes):
         # Inclusion list "wins"
         mocked_includes.return_value = ('explorer_',)
         mocked_excludes.return_value = ('explorer_',)
@@ -77,5 +82,8 @@ class TestSchemaInfo(TestCase):
 
 def setup_sample_database_view():
     with connection.cursor() as cursor:
-        cursor.execute("CREATE VIEW IF NOT EXISTS v_explorer_query AS SELECT title, sql from explorer_query")
+        cursor.execute(
+            "CREATE VIEW IF NOT EXISTS v_explorer_query AS SELECT title, "
+            "sql from explorer_query"
+        )
     return 'v_explorer_query'

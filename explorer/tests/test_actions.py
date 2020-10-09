@@ -1,8 +1,11 @@
+# -*- coding: utf-8 -*-
 import io
+from zipfile import ZipFile
+
 from django.test import TestCase
+
 from explorer.actions import generate_report_action
 from explorer.tests.factories import SimpleQueryFactory
-from zipfile import ZipFile
 
 
 class TestSqlQueryActions(TestCase):
@@ -31,7 +34,8 @@ class TestSqlQueryActions(TestCase):
         self.assertEqual(z.namelist()[0], f'{q.title}.csv')
         self.assertEqual(got_csv.lower().decode('utf-8'), expected_csv)
 
-    # if commas are not removed from the filename, then Chrome throws "duplicate headers received from server"
+    # if commas are not removed from the filename, then Chrome throws
+    # "duplicate headers received from server"
     def test_packaging_removes_commas_from_file_name(self):
 
         expected = 'attachment; filename=query for x y.csv'

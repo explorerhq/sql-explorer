@@ -30,7 +30,11 @@ def execute_query(query_id, email_address):
               [email_address])
 
     exporter = get_exporter_class('csv')(q)
-    random_part = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(20))
+    random_part = ''.join(
+        random.choice(
+            string.ascii_uppercase + string.digits
+        ) for _ in range(20)
+    )
     try:
         url = s3_upload(f'{random_part}.csv', exporter.get_file_output())
         subj = f'[SQL Explorer] Report "{q.title}" is ready'
@@ -48,12 +52,19 @@ def snapshot_query(query_id):
         logger.info(f"Starting snapshot for query {query_id}...")
         q = Query.objects.get(pk=query_id)
         exporter = get_exporter_class('csv')(q)
-        k = 'query-{}/snap-{}.csv'.format(q.id, date.today().strftime('%Y%m%d-%H:%M:%S'))
+        k = 'query-{}/snap-{}.csv'.format(
+            q.id,
+            date.today().strftime('%Y%m%d-%H:%M:%S')
+        )
         logger.info(f"Uploading snapshot for query {query_id} as {k}...")
         url = s3_upload(k, exporter.get_file_output())
-        logger.info(f"Done uploading snapshot for query {query_id}. URL: {url}")
+        logger.info(
+            f"Done uploading snapshot for query {query_id}. URL: {url}"
+        )
     except Exception as e:
-        logger.warning(f"Failed to snapshot query {query_id} ({e}). Retrying...")
+        logger.warning(
+            f"Failed to snapshot query {query_id} ({e}). Retrying..."
+        )
         snapshot_query.retry()
 
 
@@ -61,7 +72,9 @@ def snapshot_query(query_id):
 def snapshot_queries():
     logger.info("Starting query snapshots...")
     qs = Query.objects.filter(snapshot=True).values_list('id', flat=True)
-    logger.info(f"Found {len(qs)} queries to snapshot. Creating snapshot tasks...")
+    logger.info(
+        f"Found {len(qs)} queries to snapshot. Creating snapshot tasks..."
+    )
     for qid in qs:
         snapshot_query.delay(qid)
     logger.info("Done creating tasks.")
@@ -69,8 +82,12 @@ def snapshot_queries():
 
 @task
 def truncate_querylogs(days):
-    qs = QueryLog.objects.filter(run_at__lt=datetime.now() - timedelta(days=days))
-    logger.info(f'Deleting {qs.count} QueryLog objects older than {days} days.')
+    qs = QueryLog.objects.filter(
+        run_at__lt=datetime.now() - timedelta(days=days)
+    )
+    logger.info(
+        f'Deleting {qs.count} QueryLog objects older than {days} days.'
+    )
     qs.delete()
     logger.info('Done deleting QueryLog objects.')
 

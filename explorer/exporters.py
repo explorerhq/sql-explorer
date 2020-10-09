@@ -1,15 +1,15 @@
-from django.db import DatabaseError
-from django.core.serializers.json import DjangoJSONEncoder
-import json
-import uuid
-import string
-from datetime import datetime
 import csv
+import json
+import string
+import uuid
+from datetime import datetime
+from io import StringIO, BytesIO
 
+from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.module_loading import import_string
 from django.utils.text import slugify
+
 from explorer import app_settings
-from io import StringIO, BytesIO
 
 
 def get_exporter_class(format):
@@ -43,7 +43,7 @@ class BaseExporter:
         raise NotImplementedError
 
     def get_filename(self):
-        # build list of valid chars, build filename from title and replace spaces
+        # build list of valid chars, build filename from title & replace spaces
         valid_chars = f'-_.() {string.ascii_letters}{string.digits}'
         filename = ''.join(c for c in self.query.title if c in valid_chars)
         filename = filename.replace(' ', '_')
@@ -78,7 +78,10 @@ class JSONExporter(BaseExporter):
         data = []
         for row in res.data:
             data.append(
-                dict(zip([str(h) if h is not None else '' for h in res.headers], row))
+                dict(zip(
+                    [str(h) if h is not None else '' for h in res.headers],
+                    row
+                ))
             )
 
         json_data = json.dumps(data, cls=DjangoJSONEncoder)
@@ -129,7 +132,9 @@ class ExcelExporter(BaseExporter):
         return output
 
     def _format_title(self):
-        # XLSX writer wont allow sheet names > 31 characters or that contain invalid characters
-        # https://github.com/jmcnamara/XlsxWriter/blob/master/xlsxwriter/test/workbook/test_check_sheetname.py
+        # XLSX writer wont allow sheet names > 31 characters or that
+        # contain invalid characters
+        # https://github.com/jmcnamara/XlsxWriter/blob/master/xlsxwriter/
+        # test/workbook/test_check_sheetname.py
         title = slugify(self.query.title)
         return title[:31]
