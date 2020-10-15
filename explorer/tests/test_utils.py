@@ -49,6 +49,10 @@ class TestSqlBlacklist(TestCase):
         sql = "SELECT 1+1 AS TWO; drop ViEw foo;"
         self.assertFalse(passes_blacklist(sql)[0])
 
+    def test_queries_containing_drop_in_word_is_ok(self):
+        sql = "SELECT * FROM student droptable WHERE name LIKE 'Robert%'"
+        self.assertTrue(passes_blacklist(sql)[0])
+
     def test_sql_whitelist_ok(self):
         app_settings.EXPLORER_SQL_WHITELIST = ['dropper']
         sql = "SELECT 1+1 AS TWO; dropper ViEw foo;"

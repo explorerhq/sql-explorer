@@ -13,14 +13,28 @@ EXPLORER_PARAM_TOKEN = "$$"
 
 def passes_blacklist(sql):
     clean = functools.reduce(
-        lambda sql, term: sql.upper().replace(term, ""),
+        lambda s, term: s.upper().replace(term, ''),
         [t.upper() for t in app_settings.EXPLORER_SQL_WHITELIST],
         sql
     )
-    fails = [
-        bl_word for bl_word in app_settings.EXPLORER_SQL_BLACKLIST
-        if bl_word in clean.upper()
+
+    regex_blacklist = [
+        (
+            bl_word,
+            re.compile(
+                r'(^|\W){}($|\W)'.format(bl_word),
+                flags=re.IGNORECASE
+            )
+        )
+        for bl_word in app_settings.EXPLORER_SQL_BLACKLIST
     ]
+
+    fails = [
+        bl_word
+        for bl_word, bl_regex in regex_blacklist
+        if bl_regex.findall(clean)
+    ]
+
     return not any(fails), fails
 
 
