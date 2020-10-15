@@ -1,0 +1,257 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dependencies &#8212; Django SQL Explorer 2.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Settings" href="settings.html" />
+    <link rel="prev" title="Install" href="install.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="dependencies">
+<h1>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h1>
+<p>An effort has been made to keep the number of dependencies to a
+minimum.</p>
+<p><em>Python</em></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 72%" />
+<col style="width: 9%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Version</p></th>
+<th class="head"><p>License</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/andialbrecht/sqlparse/">sqlparse</a></p></td>
+<td><p>0.4.0</p></td>
+<td><p>BSD</p></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><p>sqlparse is used for SQL formatting</p></li>
+</ul>
+<p><em>Python - Optional Dependencies</em></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 75%" />
+<col style="width: 8%" />
+<col style="width: 18%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Version</p></th>
+<th class="head"><p>License</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference external" href="http://www.celeryproject.org/">celery</a></p></td>
+<td><p>3.1</p></td>
+<td><p>BSD</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="http://www.celeryproject.org/">django-celery</a></p></td>
+<td><p>3.1</p></td>
+<td><p>BSD</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/rbarrois/factory_boy">Factory Boy</a></p></td>
+<td><p>2.12.0</p></td>
+<td><p>MIT</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="http://xlsxwriter.readthedocs.io/">xlsxwriter</a></p></td>
+<td><p>1.2.1</p></td>
+<td><p>BSD</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/boto/boto">boto</a></p></td>
+<td><p>2.46</p></td>
+<td><p>MIT</p></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><p>Factory Boy is required for tests</p></li>
+<li><p>celery is required for the ‘email’ feature, and for snapshots</p></li>
+<li><p>boto is required for snapshots</p></li>
+<li><p>xlsxwriter is required for Excel export (csv still works fine without it)</p></li>
+</ul>
+<p><em>JavaScript</em></p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 71%" />
+<col style="width: 10%" />
+<col style="width: 19%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Version</p></th>
+<th class="head"><p>License</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference external" href="http://getbootstrap.com/">Twitter Boostrap</a></p></td>
+<td><p>3.3.6</p></td>
+<td><p>MIT</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="http://jquery.com/">jQuery</a></p></td>
+<td><p>2.1.4</p></td>
+<td><p>MIT</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/carhartl/jquery-cookie">jQuery Cookie</a></p></td>
+<td><p>1.4.1</p></td>
+<td><p>MIT</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://jqueryui.com">jQuery UI</a></p></td>
+<td><p>1.11.4</p></td>
+<td><p>MIT</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="http://underscorejs.org/">Underscore</a></p></td>
+<td><p>1.7.0</p></td>
+<td><p>MIT</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="http://codemirror.net/">Codemirror</a></p></td>
+<td><p>5.15.2</p></td>
+<td><p>MIT</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="http://mkoryak.github.io/floatThead/">floatThead</a></p></td>
+<td><p>1.4.0</p></td>
+<td><p>MIT</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="http://listjs.com">list.js</a></p></td>
+<td><p>1.2.0</p></td>
+<td><p>MIT</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="http://nicolas.kruchten.com/pivottable/">pivottable.js</a></p></td>
+<td><p>2.0.2</p></td>
+<td><p>MIT</p></td>
+</tr>
+</tbody>
+</table>
+<ul class="simple">
+<li><p>All all served from CDNJS except for jQuery UI, which uses a custom
+build, served locally.</p></li>
+</ul>
+<p>pivottable.js relies on jQuery UI but only for the <code class="docutils literal notranslate"><span class="pre">Sortable</span></code> method.</p>
+</div>
+<div class="section" id="tests">
+<h1>Tests<a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h1>
+<p>Factory Boy is needed if you’d like to run the tests, which can you do
+easily:</p>
+<p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">manage.py</span> <span class="pre">test</span></code></p>
+<p>and with coverage:</p>
+<p><code class="docutils literal notranslate"><span class="pre">coverage</span> <span class="pre">run</span> <span class="pre">--source='.'</span> <span class="pre">manage.py</span> <span class="pre">test</span></code></p>
+<p>then:</p>
+<p><code class="docutils literal notranslate"><span class="pre">coverage</span> <span class="pre">report</span></code></p>
+<p>…97%! Huzzah!</p>
+</div>
+<div class="section" id="running-locally">
+<h1>Running Locally<a class="headerlink" href="#running-locally" title="Permalink to this headline">¶</a></h1>
+<p>There is also a test_project that you can use to kick the tires. Just
+create a new virtualenv, cd into <code class="docutils literal notranslate"><span class="pre">test_project</span></code> and run <code class="docutils literal notranslate"><span class="pre">start.sh</span></code> (or
+walk through the steps yourself) to get a test instance of the app up
+and running.</p>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Django SQL Explorer</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#tests">Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#running-locally">Running Locally</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="releaseprocess.html">Release Process</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="install.html" title="previous chapter">Install</a></li>
+      <li>Next: <a href="settings.html" title="next chapter">Settings</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Grove Co.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/dependencies.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

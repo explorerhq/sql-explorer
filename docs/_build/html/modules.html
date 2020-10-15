@@ -1,0 +1,182 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>django-sql-explorer &#8212; Django SQL Explorer 2.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="django-sql-explorer">
+<h1>django-sql-explorer<a class="headerlink" href="#django-sql-explorer" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="conf.html">conf module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="explorer.html">explorer package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="explorer.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="explorer.migrations.html">explorer.migrations package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="explorer.migrations.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="explorer.migrations.html#explorer-migrations-0001-initial-module">explorer.migrations.0001_initial module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="explorer.migrations.html#explorer-migrations-0002-auto-20150501-1515-module">explorer.migrations.0002_auto_20150501_1515 module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="explorer.migrations.html#explorer-migrations-0003-query-snapshot-module">explorer.migrations.0003_query_snapshot module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="explorer.migrations.html#explorer-migrations-0004-querylog-duration-module">explorer.migrations.0004_querylog_duration module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="explorer.migrations.html#explorer-migrations-0005-auto-20160105-2052-module">explorer.migrations.0005_auto_20160105_2052 module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="explorer.migrations.html#explorer-migrations-0006-query-connection-module">explorer.migrations.0006_query_connection module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="explorer.migrations.html#explorer-migrations-0007-querylog-connection-module">explorer.migrations.0007_querylog_connection module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="explorer.migrations.html#explorer-migrations-0008-auto-20190308-1642-module">explorer.migrations.0008_auto_20190308_1642 module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="explorer.migrations.html#explorer-migrations-0009-auto-20201006-0852-module">explorer.migrations.0009_auto_20201006_0852 module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="explorer.migrations.html#module-contents">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="explorer.templatetags.html">explorer.templatetags package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="explorer.templatetags.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="explorer.templatetags.html#explorer-templatetags-explorer-tags-module">explorer.templatetags.explorer_tags module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="explorer.templatetags.html#module-contents">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="explorer.tests.html">explorer.tests package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="explorer.tests.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="explorer.tests.html#explorer-tests-factories-module">explorer.tests.factories module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="explorer.tests.html#explorer-tests-test-actions-module">explorer.tests.test_actions module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="explorer.tests.html#explorer-tests-test-apps-module">explorer.tests.test_apps module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="explorer.tests.html#explorer-tests-test-exporters-module">explorer.tests.test_exporters module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="explorer.tests.html#explorer-tests-test-forms-module">explorer.tests.test_forms module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="explorer.tests.html#explorer-tests-test-models-module">explorer.tests.test_models module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="explorer.tests.html#explorer-tests-test-schema-module">explorer.tests.test_schema module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="explorer.tests.html#explorer-tests-test-tasks-module">explorer.tests.test_tasks module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="explorer.tests.html#explorer-tests-test-utils-module">explorer.tests.test_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="explorer.tests.html#explorer-tests-test-views-module">explorer.tests.test_views module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="explorer.tests.html#explorer-tests-urls-module">explorer.tests.urls module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="explorer.tests.html#module-contents">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="explorer.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="explorer.html#explorer-actions-module">explorer.actions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="explorer.html#explorer-admin-module">explorer.admin module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="explorer.html#explorer-app-settings-module">explorer.app_settings module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="explorer.html#explorer-apps-module">explorer.apps module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="explorer.html#explorer-connections-module">explorer.connections module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="explorer.html#explorer-exporters-module">explorer.exporters module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="explorer.html#explorer-forms-module">explorer.forms module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="explorer.html#explorer-models-module">explorer.models module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="explorer.html#explorer-permissions-module">explorer.permissions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="explorer.html#explorer-schema-module">explorer.schema module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="explorer.html#explorer-tasks-module">explorer.tasks module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="explorer.html#explorer-urls-module">explorer.urls module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="explorer.html#explorer-utils-module">explorer.utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="explorer.html#explorer-views-module">explorer.views module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="explorer.html#module-contents">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="manage.html">manage module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">setup module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="test_project.html">test_project package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="test_project.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="test_project.html#test-project-settings-module">test_project.settings module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="test_project.html#module-contents">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Django SQL Explorer</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="features.html">Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dependencies.html">Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dependencies.html#tests">Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dependencies.html#running-locally">Running Locally</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="releaseprocess.html">Release Process</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Grove Co.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/modules.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

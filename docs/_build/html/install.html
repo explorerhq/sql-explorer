@@ -1,0 +1,171 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Install &#8212; Django SQL Explorer 2.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Dependencies" href="dependencies.html" />
+    <link rel="prev" title="Features" href="features.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="install">
+<h1>Install<a class="headerlink" href="#install" title="Permalink to this headline">¶</a></h1>
+<p>Requires Python 3.6 or higher. Requires Django 2.2 or higher.</p>
+<p>Set up a Django project with the following:</p>
+<div class="highlight-shell-session notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install django
+<span class="gp">$</span> django-admin startproject project
+</pre></div>
+</div>
+<p>More information in the <a class="reference external" href="https://docs.djangoproject.com/en/3.1/intro/tutorial01/">django tutorial</a>.</p>
+<p>Install with pip from pypi:</p>
+<p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">django-sql-explorer</span></code></p>
+<p>If you would also like to support downloading Excel files install with the dependency using:</p>
+<p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">django-sql-explorer[xls]</span></code></p>
+<p>Add to your <code class="docutils literal notranslate"><span class="pre">INSTALLED_APPS</span></code>, located in the <code class="docutils literal notranslate"><span class="pre">settings.py</span></code> file in your project folder:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="o">...</span><span class="p">,</span>
+    <span class="s1">&#39;explorer&#39;</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Add the following to your urls.py (all Explorer URLs are restricted
+via the <code class="docutils literal notranslate"><span class="pre">EXPLORER_PERMISSION_VIEW</span></code> and <code class="docutils literal notranslate"><span class="pre">EXPLORER_PERMISSION_CHANGE</span></code>
+settings. See Settings section below for further documentation.):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.urls</span> <span class="kn">import</span> <span class="n">path</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="o">...</span>
+    <span class="n">path</span><span class="p">(</span><span class="s1">&#39;explorer/&#39;</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="s1">&#39;explorer.urls&#39;</span><span class="p">)),</span>
+    <span class="o">...</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>Configure your settings to something like:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">EXPLORER_CONNECTIONS</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;Default&#39;</span><span class="p">:</span> <span class="s1">&#39;readonly&#39;</span> <span class="p">}</span>
+<span class="n">EXPLORER_DEFAULT_CONNECTION</span> <span class="o">=</span> <span class="s1">&#39;readonly&#39;</span>
+</pre></div>
+</div>
+<p>The first setting lists the connections you want to allow Explorer to
+use. The keys of the connections dictionary are friendly names to show
+Explorer users, and the values are the actual database aliases used in
+<code class="docutils literal notranslate"><span class="pre">settings.DATABASES</span></code>. It is highly recommended to setup read-only roles
+in your database, add them in your project’s <code class="docutils literal notranslate"><span class="pre">DATABASES</span></code> setting and
+use these read-only cconnections in the <code class="docutils literal notranslate"><span class="pre">EXPLORER_CONNECTIONS</span></code>.</p>
+<p>If you want to quickly use django-sql-explorer with the existing default
+connection <strong>and know what you are doing</strong> (or you are on development), you
+can use the following settings:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">EXPLORER_CONNECTIONS</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;Default&#39;</span><span class="p">:</span> <span class="s1">&#39;default&#39;</span> <span class="p">}</span>
+<span class="n">EXPLORER_DEFAULT_CONNECTION</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span>
+</pre></div>
+</div>
+<p>Finally, run migrate to create the tables:</p>
+<p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">manage.py</span> <span class="pre">migrate</span></code></p>
+<p>You can now browse to <a class="reference external" href="https://yoursite/explorer/">https://yoursite/explorer/</a> and get exploring!</p>
+<p>There are a handful of features (snapshots, emailing queries) that
+rely on Celery and the dependencies in optional-requirements.txt. If
+you have Celery installed, set <code class="docutils literal notranslate"><span class="pre">EXPLORER_TASKS_ENABLED=True</span></code> in your
+settings.py to enable these features.</p>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Django SQL Explorer</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="features.html">Features</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dependencies.html">Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dependencies.html#tests">Tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dependencies.html#running-locally">Running Locally</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="releaseprocess.html">Release Process</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="features.html" title="previous chapter">Features</a></li>
+      <li>Next: <a href="dependencies.html" title="next chapter">Dependencies</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Grove Co.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/install.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
