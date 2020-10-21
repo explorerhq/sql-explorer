@@ -358,8 +358,7 @@ Name                                                         Version  License
 `pivottable.js <http://nicolas.kruchten.com/pivottable/>`_   2.0.2    MIT
 ============================================================ ======== ================
 
-- All all served from CDNJS except for jQuery UI, which uses a custom
-  build, served locally.
+- All are served locally, with jQuery UI being a custom build.
 
 pivottable.js relies on jQuery UI but only for the ``Sortable`` method.
 
