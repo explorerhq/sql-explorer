@@ -1,8 +1,8 @@
 import logging
 from time import time
 
-from django.db import models, DatabaseError, transaction
 from django.conf import settings
+from django.db import models, DatabaseError, transaction
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
@@ -22,17 +22,33 @@ MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist: %s"
 
 logger = logging.getLogger(__name__)
 
+
 class Query(models.Model):
     title = models.CharField(max_length=255)
     sql = models.TextField()
     description = models.TextField(default='', blank=True)
-    created_by_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE)
+    created_by_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     last_run_date = models.DateTimeField(auto_now=True)
-    snapshot = models.BooleanField(default=False, help_text=_("Include in snapshot task (if enabled)"))
-    connection = models.CharField(blank=True, max_length=128, default='',
-                                  help_text=_("Name of DB connection (as specified in settings) to use for this query."
-                                              "Will use EXPLORER_DEFAULT_CONNECTION if left blank"))
+    snapshot = models.BooleanField(
+        default=False,
+        help_text=_("Include in snapshot task (if enabled)")
+    )
+    connection = models.CharField(
+        blank=True,
+        max_length=128,
+        default='',
+        help_text=_(
+            "Name of DB connection (as specified in settings) to use for "
+            "this query."
+            "Will use EXPLORER_DEFAULT_CONNECTION if left blank"
+        )
+    )
 
     def __init__(self, *args, **kwargs):
         self.params = kwargs.get('params')
@@ -51,7 +67,9 @@ class Query(models.Model):
         return self.querylog_set.count()
 
     def avg_duration(self):
-        return self.querylog_set.aggregate(models.Avg('duration'))['duration__avg']
+        return self.querylog_set.aggregate(
+            models.Avg('duration')
+        )['duration__avg']
 
     def passes_blacklist(self):
         return passes_blacklist(self.final_sql())
@@ -60,7 +78,9 @@ class Query(models.Model):
         return swap_params(self.sql, self.available_params())
 
     def execute_query_only(self):
-        return QueryResult(self.final_sql(), get_valid_connection(self.connection))
+        return QueryResult(
+            self.final_sql(), get_valid_connection(self.connection)
+        )
 
     def execute_with_logging(self, executing_user):
         ql = self.log(executing_user)
@@ -76,12 +96,12 @@ class Query(models.Model):
 
     def available_params(self):
         """
-            Merge parameter values into a dictionary of available parameters
+        Merge parameter values into a dictionary of available parameters
 
-        :param param_values: A dictionary of Query param values.
-        :return: A merged dictionary of parameter names and values. Values of non-existent parameters are removed.
+        :return: A merged dictionary of parameter names and values.
+                 Values of non-existent parameters are removed.
+        :rtype: dict
         """
-
         p = extract_params(self.sql)
         if self.params:
             shared_dict_update(p, self.params)
@@ -98,13 +118,20 @@ class Query(models.Model):
         if user:
             if user.is_anonymous:
                 user = None
-        ql = QueryLog(sql=self.final_sql(), query_id=self.id, run_by_user=user, connection=self.connection)
+        ql = QueryLog(
+            sql=self.final_sql(),
+            query_id=self.id,
+            run_by_user=user,
+            connection=self.connection
+        )
         ql.save()
         return ql
 
     @property
     def shared(self):
-        return self.id in set(sum(app_settings.EXPLORER_GET_USER_QUERY_VIEWS().values(), []))
+        return self.id in set(
+            sum(app_settings.EXPLORER_GET_USER_QUERY_VIEWS().values(), [])
+        )
 
     @property
     def snapshots(self):
@@ -112,8 +139,12 @@ class Query(models.Model):
             b = get_s3_bucket()
             keys = b.list(prefix=f'query-{self.id}/snap-')
             keys_s = sorted(keys, key=lambda k: k.last_modified)
-            return [SnapShot(k.generate_url(expires_in=0, query_auth=False),
-                             k.last_modified) for k in keys_s]
+            return [
+                SnapShot(
+                    k.generate_url(expires_in=0, query_auth=False),
+                    k.last_modified
+                ) for k in keys_s
+            ]
 
 
 class SnapShot:
@@ -126,8 +157,18 @@ class SnapShot:
 class QueryLog(models.Model):
 
     sql = models.TextField(default='', blank=True)
-    query = models.ForeignKey(Query, null=True, blank=True, on_delete=models.SET_NULL)
-    run_by_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE)
+    query = models.ForeignKey(
+        Query,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
+    run_by_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE
+    )
     run_at = models.DateTimeField(auto_now_add=True)
     duration = models.FloatField(blank=True, null=True)  # milliseconds
     connection = models.CharField(blank=True, max_length=128, default='')
@@ -243,7 +284,9 @@ class ColumnStat:
         self.handles_null = handles_null
 
     def __call__(self, coldata):
-        self.value = round(float(self.statfn(coldata)), self.precision) if coldata else 0
+        self.value = round(
+            float(self.statfn(coldata)), self.precision
+        ) if coldata else 0
 
     def __str__(self):
         return self.label

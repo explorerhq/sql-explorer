@@ -1,10 +1,12 @@
 2.0.0
 =====
 
-UNRELEASED
+2020-10-09
 
 - Major Changes
   - #403: Dropping support for EOL Python 2.7 and 3.5
+  - #404: Add support for Django 3.1 and drop support for (EOL) <2.2
+  - #408: Refactored the application, updating the URLs to use path and the views into a module
 
 - Minor Changes
   - #334: Django 2.1 support
@@ -20,6 +22,7 @@ UNRELEASED
   - #390: README formatting changes
   - #393: Added option to install `XlsxWriter` as an extra package
   - #397: Bump patch version of django 2.2
+  - #406: Show some love to the README
   - Fix #341: PYC files excluded from build
 
 

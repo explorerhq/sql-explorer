@@ -1,6 +1,6 @@
 from django.apps import AppConfig
-from django.db import connections as djcs
 from django.core.exceptions import ImproperlyConfigured
+from django.db import connections as djcs
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -30,11 +30,14 @@ def _validate_connections():
     # Validate connections
     if _get_default() not in _get_explorer_connections().values():
         raise ImproperlyConfigured(
-            f'EXPLORER_DEFAULT_CONNECTION is {_get_default()}, but that alias is not present in the values of EXPLORER_CONNECTIONS'
+            f'EXPLORER_DEFAULT_CONNECTION is {_get_default()}, '
+            f'but that alias is not present in the values of '
+            f'EXPLORER_CONNECTIONS'
         )
 
     for name, conn_name in _get_explorer_connections().items():
         if conn_name not in djcs:
             raise ImproperlyConfigured(
-                f'EXPLORER_CONNECTIONS contains ({name}, {conn_name}), but {conn_name} is not a valid Django DB connection.'
+                f'EXPLORER_CONNECTIONS contains ({name}, {conn_name}), '
+                f'but {conn_name} is not a valid Django DB connection.'
             )

@@ -1,8 +1,12 @@
-from django.db import DatabaseError
-from django.forms import ModelForm, Field, ValidationError, BooleanField, CharField
+
+from django.forms import (
+    BooleanField, CharField, Field, ModelForm, ValidationError
+)
 from django.forms.widgets import CheckboxInput, Select
 
-from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION, EXPLORER_CONNECTIONS
+from explorer.app_settings import (
+    EXPLORER_DEFAULT_CONNECTION, EXPLORER_CONNECTIONS
+)
 from explorer.models import Query, MSG_FAILED_BLACKLIST
 
 
@@ -14,12 +18,12 @@ class SqlField(Field):
 
         :param value: The SQL for this Query model.
         """
-
         query = Query(sql=value)
 
         passes_blacklist, failing_words = query.passes_blacklist()
 
-        error = MSG_FAILED_BLACKLIST % ', '.join(failing_words) if not passes_blacklist else None
+        error = MSG_FAILED_BLACKLIST % ', '.join(
+            failing_words) if not passes_blacklist else None
 
         if error:
             raise ValidationError(
@@ -43,12 +47,14 @@ class QueryForm(ModelForm):
 
     def clean(self):
         if self.instance and self.data.get('created_by_user', None):
-            self.cleaned_data['created_by_user'] = self.instance.created_by_user
+            self.cleaned_data['created_by_user'] = \
+                self.instance.created_by_user
         return super().clean()
 
     @property
     def created_by_user_email(self):
-        return self.instance.created_by_user.email if self.instance.created_by_user else '--'
+        return self.instance.created_by_user.email if \
+            self.instance.created_by_user else '--'
 
     @property
     def created_at_time(self):

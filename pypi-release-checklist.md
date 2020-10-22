@@ -11,7 +11,7 @@ git commit -m "Release 1.0.0"
 
 - [x] Build & test the source distribution:
 ```
-python setup.py sdist
+python setup.py build
 mktmpenv
 z explorer
 cd dist
@@ -35,7 +35,7 @@ deactivate
 
 - [x] Release on PyPI:
 ```
-python setup.py sdist upload
+python setup.py release
 ```
 
 - [x] Test that it pip installs:
@@ -47,10 +47,10 @@ deactivate
 
 - [x] Tag the last git commit with the version number:
 ```
-git tag -a 0.1.1
+python setup.py tag
 ```
 
   Put the same message as in HISTORY.rst.
 - [x] Push: `git push`
 - [x] Push tags: `git push --tags`
-- [x] Check the PyPI listing page (https://pypi.python.org/pypi/django-sql-explorer) to make sure that the README, release notes, and roadmap display properly.
+- [x] Check the PyPI listing page (https://pypi.python.org/pypi/django-sql-explorer) to make sure that the README, release notes display properly.

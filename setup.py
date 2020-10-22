@@ -28,9 +28,12 @@ if sys.argv[-1] == 'build':
     print(f"Built release {release} (version {version})")
     sys.exit()
 
+if sys.argv[-1] == 'release':
+    os.system('twine upload --skip-existing dist/*')
+    sys.exit()
 
 if sys.argv[-1] == 'tag':
-    print("Tagging the version on github:")
+    print("Tagging the version:")
     os.system(f"git tag -a {version} -m 'version {version}'")
     os.system("git push --tags")
     sys.exit()
@@ -53,9 +56,7 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Topic :: Utilities',
-        'Framework :: Django :: 2',
         'Framework :: Django :: 2.2',
-        'Framework :: Django :: 3',
         'Framework :: Django :: 3.0',
         'Framework :: Django :: 3.1',
         'Programming Language :: Python :: 3',
