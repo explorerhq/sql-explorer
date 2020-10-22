@@ -2,13 +2,21 @@ import os
 import sys
 
 from setuptools import setup
+try:
+    from sphinx.setup_command import BuildDoc
+except ImportError:
+    BuildDoc = None
 
-from explorer import __version__
+from explorer import get_version
 
 # Utility function to read the README file.
 # Used for the long_description.  It's nice, because now 1) we have a top level
 # README file and 2) it's easier to type in the README file than to put a raw
 # string in below ...
+
+name = "django-sql-explorer"
+version = get_version(True)
+release = get_version()
 
 
 def read(fname):
@@ -17,19 +25,20 @@ def read(fname):
 
 if sys.argv[-1] == 'build':
     os.system('python setup.py sdist bdist_wheel')
+    print(f"Built release {release} (version {version})")
     sys.exit()
 
 
 if sys.argv[-1] == 'tag':
     print("Tagging the version on github:")
-    os.system(f"git tag -a {__version__} -m 'version {__version__}'")
+    os.system(f"git tag -a {version} -m 'version {version}'")
     os.system("git push --tags")
     sys.exit()
 
 
 setup(
-    name="django-sql-explorer",
-    version=__version__,
+    name=name,
+    version=version,
     author="Chris Clark",
     author_email="chris@untrod.com",
     description=("A pluggable app that allows users (admins) to execute SQL,"
@@ -64,6 +73,18 @@ setup(
         "xls": [
             'xlsxwriter>=1.2.1'
         ]
+    },
+    cmdclass={
+        'build_sphinx': BuildDoc,
+    },
+    command_options={
+        'build_sphinx': {
+            'project': ('setup.py', name),
+            'version': ('setup.py', version),
+            'release': ('setup.py', release),
+            'source_dir': ('setup.py', 'docs'),
+            'build_dir': ('setup.py', './docs/_build')
+        }
     },
     include_package_data=True,
     zip_safe=False,

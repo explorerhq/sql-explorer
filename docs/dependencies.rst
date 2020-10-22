@@ -53,7 +53,7 @@ Name                                                         Version  License
 pivottable.js relies on jQuery UI but only for the ``Sortable`` method.
 
 Tests
-=====
+-----
 
 Factory Boy is needed if you'd like to run the tests, which can you do
 easily:
@@ -71,7 +71,7 @@ then:
 ...97%! Huzzah!
 
 Running Locally
-===============
+---------------
 
 There is also a test_project that you can use to kick the tires. Just
 create a new virtualenv, cd into ``test_project`` and run ``start.sh`` (or

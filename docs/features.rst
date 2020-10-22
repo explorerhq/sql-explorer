@@ -1,7 +1,8 @@
 Features
 ========
 
-- **Security**
+Security
+--------
     - Let's not kid ourselves - this tool is all about giving people
       access to running SQL in production. So if that makes you
       nervous (**and it should**) - you've been warned. Explorer makes an
@@ -21,14 +22,18 @@ Features
       bulletproof and it's recommended that you instead configure a
       read-only database role, but when not possible the blacklist
       provides reasonable protection.
-- **Easy to get started**
+
+Easy to get started
+-------------------
     - Built on Django's ORM, so works with Postgresql, Mysql, and
       Sqlite. And, between you and me, it works fine on RedShift as
       well.
     - Small number of dependencies.
     - Just want to get in and write some ad-hoc queries? Go nuts with
       the Playground area.
-- **Snapshots**
+
+Snapshots
+---------
     - Tick the 'snapshot' box on a query, and Explorer will upload a
       .csv snapshot of the query results to S3. Configure the snapshot
       frequency via a celery cron task, e.g. for daily at 1am:
@@ -46,11 +51,15 @@ Features
     - The checkbox for opting a query into a snapshot is ALL THE WAY
       on the bottom of the query view (underneath the results table).
     - You must also have the setting ``EXPLORER_TASKS_ENABLED`` enabled.
-- **Email query results**
+
+Email query results
+-------------------
     - Click the email icon in the query listing view, enter an email
       address, and the query results (zipped .csv) will be sent to you
       asynchronously. Very handy for long-running queries.
-- **Parameterized Queries**
+
+Parameterized Queries
+---------------------
     - Use $$foo$$ in your queries and Explorer will build a UI to fill
       out parameters. When viewing a query like ``SELECT * FROM table
       WHERE id=$$id$$``, Explorer will generate UI for the ``id``
@@ -59,7 +68,9 @@ Features
       parameterized queries with colleagues
     - Use ``$$paramName:defaultValue$$`` to provide default values for the
       parameters.
-- **Schema Helper**
+
+Schema Helper
+-------------
     - ``/explorer/schema/<connection-alias>`` renders a list of your table
       and column names + types that you can refer to while writing
       queries. Apps can be excluded from this list so users aren't
@@ -77,7 +88,9 @@ Features
       enable this, make sure Celery is installed and configured, and
       set ``EXPLORER_ENABLE_TASKS`` and ``EXPLORER_ASYNC_SCHEMA`` to
       ``True``.
-- **Template Columns**
+
+Template Columns
+----------------
     - Let's say you have a query like 'select id, email from user' and
       you'd like to quickly drill through to the profile page for each
       user in the result. You can create a "template" column to do
@@ -93,12 +106,16 @@ Features
     - Note you *must* set ``EXPLORER_UNSAFE_RENDERING`` to ``True`` if you
       want to see rendered HTML (vs string literals) in the output.
       And be aware of the implications of enabling that setting.
-- **Pivot Table**
+
+Pivot Table
+-----------
     - Go to the Pivot tab on query results to use the in-browser pivot
       functionality (provided by Pivottable JS).
     - Hit the link icon on the top right to get a URL to recreate the
       exact pivot setup to share with colleagues.
-- **Query Logs**
+
+Query Logs
+----------
     - Explorer will save a snapshot of every query you execute so you
       can recover lost ad-hoc queries, and see what you've been
       querying.
@@ -120,7 +137,9 @@ Features
            'schedule': crontab(hour=1, minute=0),
            'kwargs': {'days': 30}
        }
-- **Multiple Connections**
+
+Multiple Connections
+--------------------
     - Have data in more than one database? No problemo. Just set up
       multiple Django database connections, register them with
       Explorer, and you can write, save, and view queries against all
@@ -129,7 +148,9 @@ Features
       to contain any Django schema, or be related to Django in any
       way. See connections.py for more documentation on
       multi-connection setup.
-- **Power tips**
+
+Power tips
+----------
     - On the query listing page, focus gets set to a search box so you
       can just navigate to /explorer and start typing the name of your
       query to find it.
