@@ -4,7 +4,8 @@ Dependencies
 An effort has been made to keep the number of dependencies to a
 minimum.
 
-*Python*
+Python
+------
 
 =========================================================== ======= ================
 Name                                                        Version License
@@ -14,24 +15,24 @@ Name                                                        Version License
 
 - sqlparse is used for SQL formatting
 
-*Python - Optional Dependencies*
+**Python - Optional Dependencies**
 
-==================================================================== ======= ================
-Name                                                                 Version License
-==================================================================== ======= ================
-`celery <http://www.celeryproject.org/>`_                            3.1     BSD
-`django-celery <http://www.celeryproject.org/>`_                     3.1     BSD
-`Factory Boy <https://github.com/rbarrois/factory_boy>`_             2.12.0  MIT
-`xlsxwriter <http://xlsxwriter.readthedocs.io/>`_                    1.2.1   BSD
-`boto <https://github.com/boto/boto>`_                               2.46    MIT
-==================================================================== ======= ================
+====================================================================  ===========  =============
+Name                                                                    Version      License
+====================================================================  ===========  =============
+`celery <http://www.celeryproject.org/>`_                              >=3.1,<4      BSD
+`django-celery <http://www.celeryproject.org/>`_                       >=3.3.1       BSD
+`Factory Boy <https://github.com/rbarrois/factory_boy>`_               >=3.1.0       MIT
+`xlsxwriter <http://xlsxwriter.readthedocs.io/>`_                      >=1.3.6       BSD
+`boto <https://github.com/boto/boto>`_                                 >=2.49        MIT
+====================================================================  ===========  =============
 
 - Factory Boy is required for tests
 - celery is required for the 'email' feature, and for snapshots
 - boto is required for snapshots
 - xlsxwriter is required for Excel export (csv still works fine without it)
 
-*JavaScript*
+JavaScript
 
 ============================================================ ======== ================
 Name                                                         Version  License
@@ -47,8 +48,7 @@ Name                                                         Version  License
 `pivottable.js <http://nicolas.kruchten.com/pivottable/>`_   2.0.2    MIT
 ============================================================ ======== ================
 
-- All all served from CDNJS except for jQuery UI, which uses a custom
-  build, served locally.
+- All are served locally, with jQuery UI being a custom build.
 
 pivottable.js relies on jQuery UI but only for the ``Sortable`` method.
 
