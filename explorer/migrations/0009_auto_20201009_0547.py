@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='query',
             name='description',
-            field=models.TextField(blank=True, default=''),
+            field=models.TextField(blank=True, null=True),
         ),
         migrations.AlterField(
             model_name='querylog',
@@ -32,6 +32,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='querylog',
             name='sql',
-            field=models.TextField(blank=True, default=''),
+            field=models.TextField(blank=True, null=True),
         ),
     ]

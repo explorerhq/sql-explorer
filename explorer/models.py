@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 class Query(models.Model):
     title = models.CharField(max_length=255)
     sql = models.TextField()
-    description = models.TextField(default='', blank=True)
+    description = models.TextField(null=True, blank=True)
     created_by_user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         null=True,
@@ -156,7 +156,7 @@ class SnapShot:
 
 class QueryLog(models.Model):
 
-    sql = models.TextField(default='', blank=True)
+    sql = models.TextField(null=True, blank=True)
     query = models.ForeignKey(
         Query,
         null=True,
