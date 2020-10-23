@@ -46,7 +46,7 @@ class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
         return context
 
     def get_queryset(self):
-        if app_settings.EXPLORER_PERMISSION_VIEW(self.request.user):
+        if app_settings.EXPLORER_PERMISSION_VIEW(self.request):
             qs = (
                 Query.objects.prefetch_related(
                     'created_by_user', 'querylog_set'

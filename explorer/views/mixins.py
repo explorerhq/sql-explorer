@@ -9,10 +9,10 @@ class ExplorerContextMixin:
     def gen_ctx(self):
         return {
             'can_view': app_settings.EXPLORER_PERMISSION_VIEW(
-                self.request.user
+                self.request
             ),
             'can_change': app_settings.EXPLORER_PERMISSION_CHANGE(
-                self.request.user
+                self.request
             )
         }
 

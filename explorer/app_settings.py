@@ -68,10 +68,10 @@ EXPLORER_SCHEMA_INCLUDE_VIEWS = getattr(
 
 EXPLORER_TRANSFORMS = getattr(settings, 'EXPLORER_TRANSFORMS', [])
 EXPLORER_PERMISSION_VIEW = getattr(
-    settings, 'EXPLORER_PERMISSION_VIEW', lambda u: u.is_staff
+    settings, 'EXPLORER_PERMISSION_VIEW', lambda r: r.user.is_staff
 )
 EXPLORER_PERMISSION_CHANGE = getattr(
-    settings, 'EXPLORER_PERMISSION_CHANGE', lambda u: u.is_staff
+    settings, 'EXPLORER_PERMISSION_CHANGE', lambda r: r.user.is_staff
 )
 EXPLORER_RECENT_QUERY_COUNT = getattr(
     settings, 'EXPLORER_RECENT_QUERY_COUNT', 10
