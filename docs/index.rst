@@ -14,6 +14,7 @@ Welcome to Django SQL Explorer's documentation!
    :caption: Contents:
 
    features.rst
+   history.rst
    install.rst
    dependencies.rst
    settings.rst
