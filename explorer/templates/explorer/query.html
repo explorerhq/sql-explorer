@@ -3,11 +3,11 @@
 
 {% block sql_explorer_navlinks %}
     {% if can_change %}
-    <li{% if not query %} class="active" {% endif %}><a href="{% url "query_create" %}">{% trans "New Query" %}</a></li>
-    <li><a href="{% url "explorer_playground" %}">{% trans "Playground" %}</a></li>
+    <li{% if not query %} class="active" {% endif %}><a href="{% url 'query_create' %}">{% trans "New Query" %}</a></li>
+    <li><a href="{% url 'explorer_playground' %}">{% trans "Playground" %}</a></li>
     {% endif %}
     {% if query %}<li class="active"><a href="">{% trans "Query Detail" %}</a></li>{% endif %}
-    <li><a href="{% url "explorer_logs" %}">{% trans "Logs" %}</a></li>
+    <li><a href="{% url 'explorer_logs' %}">{% trans "Logs" %}</a></li>
 {% endblock %}
 
 {% block sql_explorer_content %}
@@ -16,7 +16,7 @@
         <h2>{% if query %}{{ query.title }}{% if shared %}<small>&nbsp;&nbsp;shared</small>{% endif %}{% else %}{% trans "New Query" %}{% endif %}</h2>
         {% if query %}
             <div class="text-right">
-                <a href="{% url "explorer_logs" %}?query_id={{ query.id }}"><h2 class="small">{% trans "History" %}</h2></a>
+                <a href="{% url 'explorer_logs' %}?query_id={{ query.id }}"><h2 class="small">{% trans "History" %}</h2></a>
             </div>
         {% endif %}
         {% if message %}
@@ -24,9 +24,9 @@
         {% endif %}
         <div>
             {% if query %}
-                <form role="form" class="form-horizontal" action="{% url "query_detail" query.id %}" method="post" id="editor">{% csrf_token %}
+                <form role="form" class="form-horizontal" action="{% url 'query_detail' query.id %}" method="post" id="editor">{% csrf_token %}
             {% else %}
-                <form role="form" class="form-horizontal" action="{% url "query_create" %}" method="post" id="editor">{% csrf_token %}
+                <form role="form" class="form-horizontal" action="{% url 'query_create' %}" method="post" id="editor">{% csrf_token %}
             {% endif %}
                 {% if error %}
                     <div class="alert alert-danger">{{ error|escape }}</div>
@@ -91,7 +91,7 @@
                     <div class="text-center">
                         {% if can_change %}
                             <div class="btn-group">
-                              <input type="submit" value="{% trans "Save & Run" %}" class="btn btn-default" id="save_button" />
+                              <input type="submit" value="{% trans 'Save & Run' %}" class="btn btn-default" id="save_button" />
                               <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="caret"></span>
                                 <span class="sr-only">{% trans "Toggle Dropdown" %}</span>
@@ -99,14 +99,14 @@
                               <ul class="dropdown-menu">
                                 {% export_buttons query %}
                                 <li role="separator" class="divider"></li>
-                                <li><input type="submit" value="{% trans "Save Only" %}" class="btn btn-link" id="save_only"/></li>
+                                <li><input type="submit" value="{% trans 'Save Only' %}" class="btn btn-link" id="save_only"/></li>
                               </ul>
                             </div>
                             <button type="button" class="btn btn-default" id="show_schema_button">{% trans "Show Schema" %}</button>
                             <button type="button" class="btn btn-default" id="hide_schema_button" style="display: none;">{% trans "Hide Schema" %}</button>
                             <button type="button" class="btn btn-default" id="format_button">{% trans "Format" %}</button>
                         {% else %}
-                            <input type="submit" value="{% trans "Refresh" %}" class="btn btn-default" id="refresh_button" />
+                            <input type="submit" value="{% trans 'Refresh' %}" class="btn btn-default" id="refresh_button" />
                             <div class="btn-group">
                               <label class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{% trans "Download" %}</label>
                               <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
