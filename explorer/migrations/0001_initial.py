@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('title', models.CharField(max_length=255)),
                 ('sql', models.TextField()),
-                ('description', models.TextField(null=True, blank=True)),
+                ('description', models.TextField(blank=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('last_run_date', models.DateTimeField(auto_now=True)),
                 ('created_by_user', models.ForeignKey(blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)),
