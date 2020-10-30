@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='querylog',
             name='sql',
-            field=models.TextField(null=True, blank=True),
+            field=models.TextField(blank=True),
         ),
     ]
