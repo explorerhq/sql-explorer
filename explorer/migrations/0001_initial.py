@@ -15,8 +15,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('title', models.CharField(max_length=255)),
-                ('sql', models.TextField()),
-                ('description', models.TextField(null=True, blank=True)),
+                ('sql', models.TextField(blank=True)),
+                ('description', models.TextField(blank=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('last_run_date', models.DateTimeField(auto_now=True)),
                 ('created_by_user', models.ForeignKey(blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)),
@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
             name='QueryLog',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('sql', models.TextField()),
+                ('sql', models.TextField(blank=True)),
                 ('is_playground', models.BooleanField(default=False)),
                 ('run_at', models.DateTimeField(auto_now_add=True)),
                 ('query', models.ForeignKey(on_delete=django.db.models.deletion.SET_NULL, blank=True, to='explorer.Query', null=True)),

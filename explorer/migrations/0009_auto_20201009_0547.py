@@ -20,18 +20,8 @@ class Migration(migrations.Migration):
             field=models.CharField(blank=True, default='', help_text='Name of DB connection (as specified in settings) to use for this query.Will use EXPLORER_DEFAULT_CONNECTION if left blank', max_length=128),
         ),
         migrations.AlterField(
-            model_name='query',
-            name='description',
-            field=models.TextField(blank=True, default=''),
-        ),
-        migrations.AlterField(
             model_name='querylog',
             name='connection',
             field=models.CharField(blank=True, default='', max_length=128),
-        ),
-        migrations.AlterField(
-            model_name='querylog',
-            name='sql',
-            field=models.TextField(blank=True, default=''),
         ),
     ]
