@@ -108,7 +108,7 @@ class QueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
         )
 
     def post(self, request, query_id):
-        if not app_settings.EXPLORER_PERMISSION_CHANGE(request.user):
+        if not app_settings.EXPLORER_PERMISSION_CHANGE(request):
             return HttpResponseRedirect(
                 reverse_lazy('query_detail', kwargs={'query_id': query_id})
             )
