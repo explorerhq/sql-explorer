@@ -1,5 +1,10 @@
+.. image:: https://readthedocs.org/projects/django-sql-explorer/badge/?version=latest
+   :target: https://django-sql-explorer.readthedocs.io/en/latest/?badge=latest
+   :alt: Documentation Status
+
 .. image:: https://travis-ci.org/groveco/django-sql-explorer.svg?branch=master
    :target: https://travis-ci.org/groveco/django-sql-explorer
+   :alt: Build Status
 
 .. image:: http://img.shields.io/pypi/v/django-sql-explorer.svg?style=flat-square
     :target: https://pypi.python.org/pypi/django-sql-explorer/
@@ -14,7 +19,7 @@
     :alt: License
 
 SQL Explorer
-===================
+============
 
 SQL Explorer aims to make the flow of data between people fast,
 simple, and confusion-free. It is a Django-based application that you
