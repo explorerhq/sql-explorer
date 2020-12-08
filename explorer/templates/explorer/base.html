@@ -21,6 +21,7 @@
     <script src="{% static 'explorer/js/explorer.js' %}"></script>
     <script type="text/javascript">
         queryId = "{% firstof query.id 'new' %}";
+        csrfCookieName = "{% firstof csrf_cookie_name 'csrftoken' %}"
     </script>
 </head>
 

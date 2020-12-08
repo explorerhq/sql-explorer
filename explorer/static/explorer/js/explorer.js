@@ -1,4 +1,4 @@
-var csrf_token = $.cookie("csrftoken");
+var csrf_token = $.cookie(csrfCookieName);
 $.ajaxSetup({
     beforeSend: function(xhr) {
         xhr.setRequestHeader("X-CSRFToken", csrf_token);
