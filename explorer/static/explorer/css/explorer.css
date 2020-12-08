@@ -169,3 +169,7 @@ a#fullscreen {
 .sql {
     width: 33%;
 }
+
+.hide-sql {
+    display: none;
+}
