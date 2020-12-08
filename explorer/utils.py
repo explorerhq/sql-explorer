@@ -2,15 +2,9 @@ import functools
 import re
 
 from django.contrib.auth.forms import AuthenticationForm
-
-try:
-    from django.contrib.auth.views import login
-except ImportError:
-    pass
-
+from django.contrib.auth.views import LoginView
 from django.contrib.auth import REDIRECT_FIELD_NAME
-from six import text_type
-import sqlparse
+from sqlparse import format as sql_format
 
 from explorer import app_settings
 
@@ -18,8 +12,29 @@ EXPLORER_PARAM_TOKEN = "$$"
 
 
 def passes_blacklist(sql):
-    clean = functools.reduce(lambda sql, term: sql.upper().replace(term, ""), [t.upper() for t in app_settings.EXPLORER_SQL_WHITELIST], sql)
-    fails = [bl_word for bl_word in app_settings.EXPLORER_SQL_BLACKLIST if bl_word in clean.upper()]
+    clean = functools.reduce(
+        lambda s, term: s.upper().replace(term, ''),
+        [t.upper() for t in app_settings.EXPLORER_SQL_WHITELIST],
+        sql
+    )
+
+    regex_blacklist = [
+        (
+            bl_word,
+            re.compile(
+                r'(^|\W){}($|\W)'.format(bl_word),
+                flags=re.IGNORECASE
+            )
+        )
+        for bl_word in app_settings.EXPLORER_SQL_BLACKLIST
+    ]
+
+    fails = [
+        bl_word
+        for bl_word, bl_regex in regex_blacklist
+        if bl_regex.findall(clean)
+    ]
+
     return not any(fails), fails
 
 
@@ -28,19 +43,19 @@ def _format_field(field):
 
 
 def param(name):
-    return "%s%s%s" % (EXPLORER_PARAM_TOKEN, name, EXPLORER_PARAM_TOKEN)
+    return f"{EXPLORER_PARAM_TOKEN}{name}{EXPLORER_PARAM_TOKEN}"
 
 
 def swap_params(sql, params):
     p = params.items() if params else {}
     for k, v in p:
-        regex = re.compile("\$\$%s(?:\:([^\$]+))?\$\$" % str(k).lower(), re.I)
-        sql = regex.sub(text_type(v), sql)
+        regex = re.compile(r"\$\$%s(?:\:([^\$]+))?\$\$" % str(k).lower(), re.I)
+        sql = regex.sub(str(v), sql)
     return sql
 
 
 def extract_params(text):
-    regex = re.compile("\$\$([a-z0-9_]+)(?:\:([^\$]+))?\$\$")
+    regex = re.compile(r"\$\$([a-z0-9_]+)(?:\:([^\$]+))?\$\$")
     params = re.findall(regex, text.lower())
     return {p[0]: p[1] if len(p) > 1 else '' for p in params}
 
@@ -55,7 +70,7 @@ def safe_login_prompt(request):
             REDIRECT_FIELD_NAME: request.get_full_path(),
         },
     }
-    return login(request, **defaults)
+    return LoginView.as_view(**defaults)(request)
 
 
 def shared_dict_update(target, source):
@@ -92,11 +107,13 @@ def get_params_from_request(request):
 
 def get_params_for_url(query):
     if query.params:
-        return '|'.join(['%s:%s' % (p, v) for p, v in query.params.items()])
+        return '|'.join([f'{p}:{v}' for p, v in query.params.items()])
 
 
 def url_get_rows(request):
-    return get_int_from_request(request, 'rows', app_settings.EXPLORER_DEFAULT_ROWS)
+    return get_int_from_request(
+        request, 'rows', app_settings.EXPLORER_DEFAULT_ROWS
+    )
 
 
 def url_get_query_id(request):
@@ -124,18 +141,13 @@ def allowed_query_pks(user_id):
 
 
 def user_can_see_query(request, **kwargs):
-    # In Django<1.10, is_anonymous was a method.
-    try:
-        is_anonymous = request.user.is_anonymous()
-    except TypeError:
-        is_anonymous = request.user.is_anonymous
-    if not is_anonymous and 'query_id' in kwargs:
+    if not request.user.is_anonymous and 'query_id' in kwargs:
         return int(kwargs['query_id']) in allowed_query_pks(request.user.id)
     return False
 
 
 def fmt_sql(sql):
-    return sqlparse.format(sql, reindent=True, keyword_case='upper')
+    return sql_format(sql, reindent=True, keyword_case='upper')
 
 
 def noop_decorator(f):
@@ -154,7 +166,8 @@ def get_valid_connection(alias=None):
 
     if alias not in connections:
         raise InvalidExplorerConnectionException(
-            'Attempted to access connection %s, but that is not a registered Explorer connection.' % alias
+            f'Attempted to access connection {alias}, '
+            f'but that is not a registered Explorer connection.'
         )
     return connections[alias]
 

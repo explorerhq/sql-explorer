@@ -1,5 +1,5 @@
+{% load i18n static %}
 
-{% load staticfiles %}
 <!DOCTYPE html>
 <html>
 
@@ -7,16 +7,18 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SQL Explorer{% if query %} - {{ query.title }}{% elif title %} - {{ title }}{% endif %}</title>
+    <title>{% trans "SQL Explorer" %}{% if query %} - {{ query.title }}{% elif title %} - {{ title }}{% endif %}</title>
 
-    <link href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.36.0/codemirror.min.css" rel="stylesheet" />
-    <link href="//cdnjs.cloudflare.com/ajax/libs/pivottable/2.20.0/pivot.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="{% static 'explorer/bootstrap.min.css' %}" />
-    <link rel="stylesheet" href="{% static 'explorer/explorer.css' %}" />
+    <link rel="stylesheet" href="{% static 'explorer/css/codemirror.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'explorer/css/pivot.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'explorer/css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'explorer/css/explorer.css' %}" />
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <script src="{% static 'explorer/js/jquery.min.js' %}"></script>
+    <script src="{% static 'explorer/js/jquery.cookie.min.js' %}"></script>
 
+    <script src="{% static 'explorer/js/jquery-ui.min.js' %}"></script>
+    <script src="{% static 'explorer/js/explorer.js' %}"></script>
     <script type="text/javascript">
       queryId = "{% firstof query.id 'new' %}";
       csrfCookieName = "{% firstof csrf_cookie_name 'csrftoken' %}";
@@ -33,7 +35,7 @@
             <div class="navbar navbar-default navbar-static-top" role="navigation">
               <div class="container">
                 <div class="navbar-header">
-                  <a class="navbar-brand" href="{% url "explorer_index" %}">SQL Explorer</a>
+                    <a class="navbar-brand" href="{% url 'explorer_index' %}">{% trans "SQL Explorer" %}</a>
                 </div>
                 <div class="navbar-collapse collapse">
                   <ul class="nav navbar-nav">
@@ -62,14 +64,14 @@
             </div>
         </div>
     {% endblock %}
-    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/list.js/1.5.0/list.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.36.0/codemirror.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.36.0/mode/sql/sql.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.36.0/addon/comment/comment.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/floatthead/2.1.1/jquery.floatThead.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/pivottable/2.20.0/pivot.min.js"></script>
+    <script src="{% static 'explorer/js/underscore-min.js' %}"></script>
+    <script src="{% static 'explorer/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'explorer/js/list.min.js' %}"></script>
+    <script src="{% static 'explorer/js/codemirror.min.js' %}"></script>
+    <script src="{% static 'explorer/js/sql.min.js' %}"></script>
+    <script src="{% static 'explorer/js/comment.min.js' %}"></script>
+    <script src="{% static 'explorer/js/jquery.floatThead.min.js' %}"></script>
+    <script src="{% static 'explorer/js/pivot.min.js' %}"></script>
     {% block sql_explorer_scripts %}{% endblock %}
 </body>
 

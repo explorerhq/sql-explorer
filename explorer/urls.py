@@ -1,4 +1,5 @@
-from django.conf.urls import url
+from django.urls import path, re_path
+
 from explorer.views import (
     QueryView,
     CreateQueryView,
@@ -15,16 +16,32 @@ from explorer.views import (
 )
 
 urlpatterns = [
-    url(r'(?P<query_id>\d+)/$', QueryView.as_view(), name='query_detail'),
-    url(r'(?P<query_id>\d+)/download$', DownloadQueryView.as_view(), name='download_query'),
-    url(r'(?P<query_id>\d+)/stream$', StreamQueryView.as_view(), name='stream_query'),
-    url(r'download$', DownloadFromSqlView.as_view(), name='download_sql'),
-    url(r'(?P<query_id>\d+)/email_csv$', EmailCsvQueryView.as_view(), name='email_csv_query'),
-    url(r'(?P<pk>\d+)/delete$', DeleteQueryView.as_view(), name='query_delete'),
-    url(r'new/$', CreateQueryView.as_view(), name='query_create'),
-    url(r'play/$', PlayQueryView.as_view(), name='explorer_playground'),
-    url(r'schema/(?P<connection>.+)$', SchemaView.as_view(), name='explorer_schema'),
-    url(r'logs/$', ListQueryLogView.as_view(), name='explorer_logs'),
-    url(r'format/$', format_sql, name='format_sql'),
-    url(r'^$', ListQueryView.as_view(), name='explorer_index'),
+    path(
+        '<int:query_id>/', QueryView.as_view(), name='query_detail'
+    ),
+    path(
+        '<int:query_id>/download', DownloadQueryView.as_view(),
+        name='download_query'
+    ),
+    path(
+        '<int:query_id>/stream', StreamQueryView.as_view(),
+        name='stream_query'
+    ),
+    path('download', DownloadFromSqlView.as_view(), name='download_sql'),
+    path(
+        '<int:query_id>/email_csv', EmailCsvQueryView.as_view(),
+        name='email_csv_query'
+    ),
+    path(
+        '<int:pk>/delete', DeleteQueryView.as_view(), name='query_delete'
+    ),
+    path('new/', CreateQueryView.as_view(), name='query_create'),
+    path('play/', PlayQueryView.as_view(), name='explorer_playground'),
+    re_path(
+        r'schema/(?P<connection>.+)$', SchemaView.as_view(),
+        name='explorer_schema'
+    ),
+    path('logs/', ListQueryLogView.as_view(), name='explorer_logs'),
+    path('format/', format_sql, name='format_sql'),
+    path('', ListQueryView.as_view(), name='explorer_index'),
 ]

@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.db import models, migrations
 
 
@@ -18,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='querylog',
             name='sql',
-            field=models.TextField(null=True, blank=True),
+            field=models.TextField(blank=True),
         ),
     ]

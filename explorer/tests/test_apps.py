@@ -1,7 +1,10 @@
-from explorer.apps import _validate_connections
-from django.test import TestCase
+# -*- coding: utf-8 -*-
+from unittest.mock import patch
+
 from django.core.exceptions import ImproperlyConfigured
-from mock import patch
+from django.test import TestCase
+
+from explorer.apps import _validate_connections
 
 
 class TestApps(TestCase):

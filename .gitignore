@@ -13,3 +13,7 @@
 *.orig
 tmp
 venv/
+.venv/
+
+# Sphinx documentation
+docs/_build/

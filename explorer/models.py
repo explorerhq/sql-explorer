@@ -1,16 +1,10 @@
-from __future__ import unicode_literals
-
 import logging
 from time import time
-import six
-
-from django.db import models, DatabaseError
-try:
-    from django.urls import reverse
-except ImportError:
-    from django.core.urlresolvers import reverse
 
 from django.conf import settings
+from django.db import models, DatabaseError, transaction
+from django.urls import reverse
+from django.utils.translation import ugettext_lazy as _
 
 from explorer import app_settings
 from explorer.utils import (
@@ -28,35 +22,54 @@ MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist: %s"
 
 logger = logging.getLogger(__name__)
 
-@six.python_2_unicode_compatible
+
 class Query(models.Model):
     title = models.CharField(max_length=255)
-    sql = models.TextField()
-    description = models.TextField(null=True, blank=True)
-    created_by_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE)
+    sql = models.TextField(blank=True)
+    description = models.TextField(blank=True)
+    created_by_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     last_run_date = models.DateTimeField(auto_now=True)
-    snapshot = models.BooleanField(default=False, help_text="Include in snapshot task (if enabled)")
-    connection = models.CharField(blank=True, null=True, max_length=128,
-                                  help_text="Name of DB connection (as specified in settings) to use for this query. Will use EXPLORER_DEFAULT_CONNECTION if left blank")
+    snapshot = models.BooleanField(
+        default=False,
+        help_text=_("Include in snapshot task (if enabled)")
+    )
+    connection = models.CharField(
+        blank=True,
+        max_length=128,
+        default='',
+        help_text=_(
+            "Name of DB connection (as specified in settings) to use for "
+            "this query."
+            "Will use EXPLORER_DEFAULT_CONNECTION if left blank"
+        )
+    )
 
     def __init__(self, *args, **kwargs):
         self.params = kwargs.get('params')
         kwargs.pop('params', None)
-        super(Query, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     class Meta:
         ordering = ['title']
-        verbose_name_plural = 'Queries'
+        verbose_name = _('Query')
+        verbose_name_plural = _('Queries')
 
     def __str__(self):
-        return six.text_type(self.title)
+        return str(self.title)
 
     def get_run_count(self):
         return self.querylog_set.count()
 
     def avg_duration(self):
-        return self.querylog_set.aggregate(models.Avg('duration'))['duration__avg']
+        return self.querylog_set.aggregate(
+            models.Avg('duration')
+        )['duration__avg']
 
     def passes_blacklist(self):
         return passes_blacklist(self.final_sql())
@@ -65,7 +78,9 @@ class Query(models.Model):
         return swap_params(self.sql, self.available_params())
 
     def execute_query_only(self):
-        return QueryResult(self.final_sql(), get_valid_connection(self.connection))
+        return QueryResult(
+            self.final_sql(), get_valid_connection(self.connection)
+        )
 
     def execute_with_logging(self, executing_user):
         ql = self.log(executing_user)
@@ -81,12 +96,12 @@ class Query(models.Model):
 
     def available_params(self):
         """
-            Merge parameter values into a dictionary of available parameters
+        Merge parameter values into a dictionary of available parameters
 
-        :param param_values: A dictionary of Query param values.
-        :return: A merged dictionary of parameter names and values. Values of non-existent parameters are removed.
+        :return: A merged dictionary of parameter names and values.
+                 Values of non-existent parameters are removed.
+        :rtype: dict
         """
-
         p = extract_params(self.sql)
         if self.params:
             shared_dict_update(p, self.params)
@@ -101,32 +116,38 @@ class Query(models.Model):
 
     def log(self, user=None):
         if user:
-            # In Django<1.10, is_anonymous was a method.
-            try:
-                is_anonymous = user.is_anonymous()
-            except TypeError:
-                is_anonymous = user.is_anonymous
-            if is_anonymous:
+            if user.is_anonymous:
                 user = None
-        ql = QueryLog(sql=self.final_sql(), query_id=self.id, run_by_user=user, connection=self.connection)
+        ql = QueryLog(
+            sql=self.final_sql(),
+            query_id=self.id,
+            run_by_user=user,
+            connection=self.connection
+        )
         ql.save()
         return ql
 
     @property
     def shared(self):
-        return self.id in set(sum(app_settings.EXPLORER_GET_USER_QUERY_VIEWS().values(), []))
+        return self.id in set(
+            sum(app_settings.EXPLORER_GET_USER_QUERY_VIEWS().values(), [])
+        )
 
     @property
     def snapshots(self):
         if app_settings.ENABLE_TASKS:
             b = get_s3_bucket()
-            keys = b.list(prefix='query-%s/snap-' % self.id)
+            keys = b.list(prefix=f'query-{self.id}/snap-')
             keys_s = sorted(keys, key=lambda k: k.last_modified)
-            return [SnapShot(k.generate_url(expires_in=0, query_auth=False),
-                             k.last_modified) for k in keys_s]
+            return [
+                SnapShot(
+                    k.generate_url(expires_in=0, query_auth=False),
+                    k.last_modified
+                ) for k in keys_s
+            ]
 
 
-class SnapShot(object):
+class SnapShot:
 
     def __init__(self, url, last_modified):
         self.url = url
@@ -135,12 +156,22 @@ class SnapShot(object):
 
 class QueryLog(models.Model):
 
-    sql = models.TextField(null=True, blank=True)
-    query = models.ForeignKey(Query, null=True, blank=True, on_delete=models.SET_NULL)
-    run_by_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE)
+    sql = models.TextField(blank=True)
+    query = models.ForeignKey(
+        Query,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
+    run_by_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE
+    )
     run_at = models.DateTimeField(auto_now_add=True)
     duration = models.FloatField(blank=True, null=True)  # milliseconds
-    connection = models.CharField(blank=True, null=True, max_length=128)
+    connection = models.CharField(blank=True, max_length=128, default='')
 
     @property
     def is_playground(self):
@@ -150,7 +181,7 @@ class QueryLog(models.Model):
         ordering = ['-run_at']
 
 
-class QueryResult(object):
+class QueryResult:
 
     def __init__(self, sql, connection):
 
@@ -188,7 +219,7 @@ class QueryResult(object):
             return [ix for ix, c in enumerate(self._description) if hasattr(c, 'type_code') and c.type_code in self.connection.Database.NUMBER.values]
         elif self.data:
             d = self.data[0]
-            return [ix for ix, _ in enumerate(self._description) if not isinstance(d[ix], six.string_types) and six.text_type(d[ix]).isnumeric()]
+            return [ix for ix, _ in enumerate(self._description) if not isinstance(d[ix], str) and str(d[ix]).isnumeric()]
         return []
 
     def _get_transforms(self):
@@ -222,7 +253,8 @@ class QueryResult(object):
         start_time = time()
 
         try:
-            cursor.execute(self.sql)
+            with transaction.atomic(self.connection.alias):
+                cursor.execute(self.sql)
         except DatabaseError as e:
             cursor.close()
             raise e
@@ -230,8 +262,7 @@ class QueryResult(object):
         return cursor, ((time() - start_time) * 1000)
 
 
-@six.python_2_unicode_compatible
-class ColumnHeader(object):
+class ColumnHeader:
 
     def __init__(self, title):
         self.title = title.strip()
@@ -244,8 +275,7 @@ class ColumnHeader(object):
         return self.title
 
 
-@six.python_2_unicode_compatible
-class ColumnStat(object):
+class ColumnStat:
 
     def __init__(self, label, statfn, precision=2, handles_null=False):
         self.label = label
@@ -254,14 +284,15 @@ class ColumnStat(object):
         self.handles_null = handles_null
 
     def __call__(self, coldata):
-        self.value = round(float(self.statfn(coldata)), self.precision) if coldata else 0
+        self.value = round(
+            float(self.statfn(coldata)), self.precision
+        ) if coldata else 0
 
     def __str__(self):
         return self.label
 
 
-@six.python_2_unicode_compatible
-class ColumnSummary(object):
+class ColumnSummary:
 
     def __init__(self, header, col):
         self._header = header
