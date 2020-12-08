@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render
+from django.conf import settings
 
 from explorer import app_settings
 
@@ -13,7 +14,8 @@ class ExplorerContextMixin:
             ),
             'can_change': app_settings.EXPLORER_PERMISSION_CHANGE(
                 self.request
-            )
+            ),
+            'csrf_cookie_name': settings.CSRF_COOKIE_NAME,
         }
 
     def get_context_data(self, **kwargs):

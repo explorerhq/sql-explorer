@@ -20,12 +20,9 @@
     <script src="{% static 'explorer/js/jquery-ui.min.js' %}"></script>
     <script src="{% static 'explorer/js/explorer.js' %}"></script>
     <script type="text/javascript">
-      queryId = "{% firstof query.id 'new' %}";
-      csrfCookieName = "{% firstof csrf_cookie_name 'csrftoken' %}";
+        queryId = "{% firstof query.id 'new' %}";
+        csrfCookieName = "{% firstof csrf_cookie_name 'csrftoken' %}"
     </script>
-
-    <script src="{% static 'explorer/jquery-ui.min.js' %}"></script>
-    <script src="{% static 'explorer/explorer.js' %}"></script>
 </head>
 
 <body>
