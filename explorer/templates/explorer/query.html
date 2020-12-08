@@ -67,7 +67,7 @@
                 {% if form.sql.errors %}{% for error in form.sql.errors %}
                     <div class="alert alert-danger">{{ error|escape }}</div>
                 {% endfor %}{% endif %}
-                <div class="panel panel-default sql-panel {% if query %}toggle-sql{% endif %}">
+                <div class="panel panel-default sql-panel">
                     <div class="panel-heading">
                       <div class="row">
                         <div class="col-md-6">
@@ -75,7 +75,8 @@
                         </div>
                         <div class="col-md-6 text-right">
                           {% if query %}
-                            <small><a href="#" title="Open in playground" id="playground_button"><i class="glyphicon glyphicon-new-window"></i></a></small>
+                              <small><a href="#" title="Open in playground" id="playground_button"><i class="glyphicon glyphicon-new-window"></i></a></small>
+                              <small><i id="sql_toggle" class="glyphicon glyphicon-resize-full"></i></small>
                           {% endif %}
                         </div>
                       </div>
@@ -102,12 +103,9 @@
                                 <li><input type="submit" value="{% trans 'Save Only' %}" class="btn btn-link" id="save_only"/></li>
                               </ul>
                             </div>
-                            <button type="button" class="btn btn-default {% if query %}toggle-sql{% endif %}" id="format_button">{% trans "Format" %}</button>
-                            <button type="button" class="btn btn-default {% if query %}toggle-sql{% endif %}" id="show_schema_button">{% trans "Show Schema" %}</button>
+                            <button type="button" class="btn btn-default" id="format_button">{% trans "Format" %}</button>
+                            <button type="button" class="btn btn-default" id="show_schema_button">{% trans "Show Schema" %}</button>
                             <button type="button" class="btn btn-default" id="hide_schema_button" style="display: none;">{% trans "Hide Schema" %}</button>
-                            {% if query %}
-                                <button type="button" class="btn btn-info js-sql-toggle" id="sql_button">{% trans "Toggle SQL" %}</button>
-                            {% endif %}
                         {% else %}
                             <input type="submit" value="{% trans 'Refresh' %}" class="btn btn-default" id="refresh_button" />
                             <div class="btn-group">
@@ -153,10 +151,17 @@
         $(function() {
             var e = new ExplorerEditor(queryId);
 
-            $('.js-sql-toggle').on('click', function () {
-                $('.toggle-sql').slideToggle('slow');
+            $('#sql_toggle').on('click', function () {
+                $('.panel-content').slideToggle('slow');
+
+                if ($(this).hasClass('glyphicon-resize-full')) {
+                    $(this).addClass('glyphicon-resize-small').removeClass('glyphicon-resize-full');
+                } else {
+                    $(this).addClass('glyphicon-resize-full').removeClass('glyphicon-resize-small');
+                }
+
             })
-            $('.toggle-sql').hide();
+            $('.panel-content').hide();
         });
     </script>
 {% endblock %}

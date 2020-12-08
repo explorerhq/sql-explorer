@@ -170,6 +170,7 @@ a#fullscreen {
     width: 33%;
 }
 
-.hide-sql {
-    display: none;
+#sql_toggle {
+    padding-left: 1rem;
+    color: #18bc9c;
 }
