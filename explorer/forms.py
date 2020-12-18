@@ -1,6 +1,5 @@
-
 from django.forms import (
-    BooleanField, CharField, Field, ModelForm, ValidationError
+    BooleanField, CharField, ModelForm, ValidationError
 )
 from django.forms.widgets import CheckboxInput, Select
 
@@ -10,7 +9,7 @@ from explorer.app_settings import (
 from explorer.models import Query, MSG_FAILED_BLACKLIST
 
 
-class SqlField(Field):
+class SqlField(CharField):
 
     def validate(self, value):
         """
@@ -18,6 +17,7 @@ class SqlField(Field):
 
         :param value: The SQL for this Query model.
         """
+        super().validate(value)
         query = Query(sql=value)
 
         passes_blacklist, failing_words = query.passes_blacklist()
