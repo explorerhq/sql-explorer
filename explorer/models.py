@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 class Query(models.Model):
     title = models.CharField(max_length=255)
-    sql = models.TextField(blank=True)
+    sql = models.TextField(blank=False, null=False)
     description = models.TextField(blank=True)
     created_by_user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
