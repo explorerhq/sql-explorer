@@ -36,7 +36,7 @@ class PlayQueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
     def post(self, request):
         c = request.POST.get('connection', '')
         show = url_get_show(request)
-        sql = request.POST.get('sql')
+        sql = request.POST.get('sql', '')
 
         query = Query(sql=sql, title="Playground", connection=c)
 

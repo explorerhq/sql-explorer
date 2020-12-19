@@ -21,7 +21,7 @@ class DownloadFromSqlView(PermissionRequiredMixin, View):
     permission_required = 'view_permission'
 
     def post(self, request, *args, **kwargs):
-        sql = request.POST.get('sql')
+        sql = request.POST.get('sql', '')
         connection = request.POST.get('connection', '')
         query = Query(sql=sql, connection=connection, title='')
         ql = query.log(request.user)
