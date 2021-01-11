@@ -64,3 +64,7 @@ Sql Explorer is MIT licensed, and pull requests are welcome.
 **Snapshot query results to S3 & download as csv**
 
 .. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/2019_snapshots.png
+
+Celery v5
+=================
+Making Celery work
