@@ -169,3 +169,8 @@ a#fullscreen {
 .sql {
     width: 33%;
 }
+
+#sql_toggle {
+    padding-left: 1rem;
+    color: #18bc9c;
+}

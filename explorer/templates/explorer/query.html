@@ -75,7 +75,8 @@
                         </div>
                         <div class="col-md-6 text-right">
                           {% if query %}
-                            <small><a href="#" title="Open in playground" id="playground_button"><i class="glyphicon glyphicon-new-window"></i></a></small>
+                              <small><a href="#" title="Open in playground" id="playground_button"><i class="glyphicon glyphicon-new-window"></i></a></small>
+                              <small><i id="sql_toggle" class="glyphicon glyphicon-resize-full"></i></small>
                           {% endif %}
                         </div>
                       </div>
@@ -91,8 +92,8 @@
                     <div class="text-center">
                         {% if can_change %}
                             <div class="btn-group">
-                              <input type="submit" value="{% trans 'Save & Run' %}" class="btn btn-default" id="save_button" />
-                              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              <input type="submit" value="{% trans 'Save & Run' %}" class="btn btn-primary" id="save_button" />
+                              <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="caret"></span>
                                 <span class="sr-only">{% trans "Toggle Dropdown" %}</span>
                               </button>
@@ -102,9 +103,9 @@
                                 <li><input type="submit" value="{% trans 'Save Only' %}" class="btn btn-link" id="save_only"/></li>
                               </ul>
                             </div>
+                            <button type="button" class="btn btn-default" id="format_button">{% trans "Format" %}</button>
                             <button type="button" class="btn btn-default" id="show_schema_button">{% trans "Show Schema" %}</button>
                             <button type="button" class="btn btn-default" id="hide_schema_button" style="display: none;">{% trans "Hide Schema" %}</button>
-                            <button type="button" class="btn btn-default" id="format_button">{% trans "Format" %}</button>
                         {% else %}
                             <input type="submit" value="{% trans 'Refresh' %}" class="btn btn-default" id="refresh_button" />
                             <div class="btn-group">
@@ -149,6 +150,18 @@
     <script>
         $(function() {
             var e = new ExplorerEditor(queryId);
+
+            $('#sql_toggle').on('click', function () {
+                $('.panel-content').slideToggle('slow');
+
+                if ($(this).hasClass('glyphicon-resize-full')) {
+                    $(this).addClass('glyphicon-resize-small').removeClass('glyphicon-resize-full');
+                } else {
+                    $(this).addClass('glyphicon-resize-full').removeClass('glyphicon-resize-small');
+                }
+
+            })
+            $('.panel-content').hide();
         });
     </script>
 {% endblock %}
