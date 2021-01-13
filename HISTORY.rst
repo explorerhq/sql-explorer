@@ -5,19 +5,24 @@ Change Log
 This document records all notable changes to `django-sql-explorer <https://github.com/groveco/django-sql-explorer>`_.
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
-`2.1.0`_ (unreleased)
+`2.1.0`_ (2021-01-13)
 ---------------------
 
 * **BREAKING CHANGE**: ``request`` object now passed to ``EXPLORER_PERMISSION_CHANGE`` and ``EXPLORER_PERMISSION_VIEW`` (`#417`_ to fix `#396`_)
 
 Major Changes
 
-* `#413`_: Static assets now served directly from the application, not CDN
+* `#413`_: Static assets now served directly from the application, not CDN. (`#418`_ also)
 * `#414`_: Better blacklist checking - Fix `#371`_ and `#412`_
+* `#415`_: Fix for MySQL following change for Oracle in `#337`_
 
 Minor Changes
 
+* `#370`_: Get the CSRF cookie name from django instead of a hardcoded value
 * `#410`_ and `#416`_: Sphinx docs
+* `#420`_: Formatting change in templates
+* `#424`_: Collapsable SQL panel
+* `#425`_: Ensure a `Query` object contains SQL
 
 
 `2.0.0`_ (2020-10-09)
@@ -310,6 +315,7 @@ Initial Release
 .. _#363: https://github.com/groveco/django-sql-explorer/pull/363
 .. _#366: https://github.com/groveco/django-sql-explorer/pull/366
 .. _#368: https://github.com/groveco/django-sql-explorer/pull/368
+.. _#370: https://github.com/groveco/django-sql-explorer/pull/370
 .. _#372: https://github.com/groveco/django-sql-explorer/pull/372
 .. _#382: https://github.com/groveco/django-sql-explorer/pull/382
 .. _#383: https://github.com/groveco/django-sql-explorer/pull/383
@@ -326,7 +332,12 @@ Initial Release
 .. _#413: https://github.com/groveco/django-sql-explorer/pull/413
 .. _#414: https://github.com/groveco/django-sql-explorer/pull/414
 .. _#416: https://github.com/groveco/django-sql-explorer/pull/416
+.. _#415: https://github.com/groveco/django-sql-explorer/pull/415
 .. _#417: https://github.com/groveco/django-sql-explorer/pull/417
+.. _#418: https://github.com/groveco/django-sql-explorer/pull/418
+.. _#420: https://github.com/groveco/django-sql-explorer/pull/420
+.. _#424: https://github.com/groveco/django-sql-explorer/pull/424
+.. _#425: https://github.com/groveco/django-sql-explorer/pull/425
 
 .. _#269: https://github.com/groveco/django-sql-explorer/issues/269
 .. _#288: https://github.com/groveco/django-sql-explorer/issues/288
