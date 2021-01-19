@@ -161,7 +161,9 @@
                 }
 
             })
-            $('.panel-content').hide();
+            {% if query %}
+                $('.panel-content').hide();
+            {% endif %}
         });
     </script>
 {% endblock %}
