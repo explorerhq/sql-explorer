@@ -74,7 +74,7 @@ class PlayQueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
         return self.render_template(
             f'explorer/{template}.html',
             query_viewmodel(
-                request.user,
+                request,
                 query,
                 title="Playground",
                 run_query=run_query,
@@ -95,7 +95,7 @@ class QueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
         show = url_get_show(request)
         rows = url_get_rows(request)
         vm = query_viewmodel(
-            request.user,
+            request,
             query,
             form=form,
             run_query=show,
@@ -116,7 +116,7 @@ class QueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
         query, form = QueryView.get_instance_and_form(request, query_id)
         success = form.is_valid() and form.save()
         vm = query_viewmodel(
-            request.user,
+            request,
             query,
             form=form,
             run_query=show,
