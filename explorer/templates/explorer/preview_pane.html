@@ -29,13 +29,10 @@
                                   </span>
                                   <span>
                                     <small>
-                                    {%  if query.id %}
-                                      <a id="fullscreen" href="./?fullscreen=1&rows={{ rows }}" target="_blank" title="Fullscreen results">
-                                    {% elif ql_id %}
-                                      <a id="fullscreen" href="./?querylog_id={{ ql_id }}&fullscreen=1&rows={{ rows }}" target="_blank" title="Fullscreen results">
-                                    {% endif %}
+                                      <a id="fullscreen" href="./?{{ fullscreen_params }}" target="_blank" title="Fullscreen results">
                                         <i class="glyphicon glyphicon-resize-full"></i>
-                                      </a></small>
+                                      </a>
+                                    </small>
                                   </span>
                                 </div>
                               </div>
