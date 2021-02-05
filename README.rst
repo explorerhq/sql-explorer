@@ -47,6 +47,8 @@ The original idea came from Stack Exchange's `Data Explorer
 credit to similar projects like `Redash <http://redash.io/>`_ and
 `Blazer <https://github.com/ankane/blazer>`_.
 
+You can read the full documentation `here <https://django-sql-explorer.readthedocs.io/en/latest/>`_
+
 Sql Explorer is MIT licensed, and pull requests are welcome.
 
 **A view of a query**
