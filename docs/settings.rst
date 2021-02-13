@@ -13,8 +13,8 @@ EXPLORER_SCHEMA_INCLUDE_VIEWS           Include database views                  
 EXPLORER_ASYNC_SCHEMA                   Generate DB schema asynchronously. Requires Celery and EXPLORER_TASKS_ENABLED                                   False
 EXPLORER_DEFAULT_CONNECTION             The name of the Django database connection to use. Ideally set this to a connection with read only permissions  None  # Must be set for the app to work, as this is required
 EXPLORER_CONNECTIONS                    A dictionary of { 'Friendly Name': 'django_db_alias'}.                                                          {}  # At a minimum, should be set to something like { 'Default': 'readonly' } or similar. See connections.py for more documentation.
-EXPLORER_PERMISSION_VIEW                Callback to check if the user is allowed to view and execute stored queries                                     lambda u: u.is_staff
-EXPLORER_PERMISSION_CHANGE              Callback to check if the user is allowed to add/change/delete queries                                           lambda u: u.is_staff
+EXPLORER_PERMISSION_VIEW                Callback to check if the user is allowed to view and execute stored queries                                     lambda r: r.user.is_staff
+EXPLORER_PERMISSION_CHANGE              Callback to check if the user is allowed to add/change/delete queries                                           lambda r: r.user.is_staff
 EXPLORER_TRANSFORMS                     List of tuples like [('alias', 'Template for {0}')]. See features section of this doc for more info.            []
 EXPLORER_RECENT_QUERY_COUNT             The number of recent queries to show at the top of the query listing.                                           10
 EXPLORER_GET_USER_QUERY_VIEWS           A dict granting view permissions on specific queries of the form {userId:[queryId, ...], ...}                   {}
