@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from .auth import PermissionRequiredMixin, SafeLoginView
+from .auth import PermissionRequiredMixin
 from .create import CreateQueryView
 from .delete import DeleteQueryView
 from .download import DownloadQueryView, DownloadFromSqlView
@@ -23,7 +23,6 @@ __all__ = [
     'PermissionRequiredMixin',
     'PlayQueryView',
     'QueryView',
-    'SafeLoginView',
     'StreamQueryView',
     'SchemaView',
     'format_sql'
