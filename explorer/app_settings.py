@@ -83,7 +83,7 @@ DEFAULT_EXPORTERS = [
     ('json', 'explorer.exporters.JSONExporter'),
 ]
 try:
-    import xlsxwriter
+    import xlsxwriter  # noqa
 
     DEFAULT_EXPORTERS.insert(
         1,
@@ -102,10 +102,10 @@ EXPLORER_TOKEN = getattr(settings, 'EXPLORER_TOKEN', 'CHANGEME')
 
 # These are callable to aid testability by dodging the settings cache.
 # There is surely a better pattern for this, but this'll hold for now.
-EXPLORER_GET_USER_QUERY_VIEWS = lambda: getattr(
+EXPLORER_GET_USER_QUERY_VIEWS = lambda: getattr(  # noqa
     settings, 'EXPLORER_USER_QUERY_VIEWS', {}
 )
-EXPLORER_TOKEN_AUTH_ENABLED = lambda: getattr(
+EXPLORER_TOKEN_AUTH_ENABLED = lambda: getattr(  # noqa
     settings, 'EXPLORER_TOKEN_AUTH_ENABLED', False
 )
 

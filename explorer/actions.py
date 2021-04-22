@@ -31,7 +31,7 @@ def generate_report_action(description="Generate CSV file from SQL query",):
 def _package(queries):
     ret = {}
     is_one = len(queries) == 1
-    name_root = lambda n: f"attachment; filename={n}"
+    name_root = lambda n: f"attachment; filename={n}"  # noqa
     ret["content_type"] = (is_one and 'text/csv') or 'application/zip'
 
     ret["filename"] = (
