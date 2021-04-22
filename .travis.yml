@@ -3,13 +3,15 @@ python:
   - 3.6
   - 3.7
   - 3.8
+  - 3.9
 install:
   - pip install ${DJANGO}
-  - pip install -r requirements.txt
-  - pip install -r optional-requirements.txt
+  - pip install -r requirements/base.txt
+  - pip install -r requirements/optional.txt
 
 script:  python manage.py test
 env:
   - DJANGO="Django==2.2.*"
   - DJANGO="Django==3.0.*"
   - DJANGO="Django==3.1.*"
+  - DJANGO="Django==3.2.*"
