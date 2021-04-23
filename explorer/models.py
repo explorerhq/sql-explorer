@@ -212,19 +212,30 @@ class QueryResult:
         return [str(h) for h in self.headers]
 
     def _get_headers(self):
-        return [ColumnHeader(d[0]) for d in self._description] if self._description else [ColumnHeader('--')]
+        return [
+            ColumnHeader(d[0]) for d in self._description
+        ] if self._description else [ColumnHeader('--')]
 
     def _get_numerics(self):
         if hasattr(self.connection.Database, "NUMBER"):
-            return [ix for ix, c in enumerate(self._description) if hasattr(c, 'type_code') and c.type_code in self.connection.Database.NUMBER.values]
+            return [
+                ix for ix, c in enumerate(self._description)
+                if hasattr(c, 'type_code') and c.type_code in self.connection.Database.NUMBER.values
+            ]
         elif self.data:
             d = self.data[0]
-            return [ix for ix, _ in enumerate(self._description) if not isinstance(d[ix], str) and str(d[ix]).isnumeric()]
+            return [
+                ix for ix, _ in enumerate(self._description)
+                if not isinstance(d[ix], str) and str(d[ix]).isnumeric()
+            ]
         return []
 
     def _get_transforms(self):
         transforms = dict(app_settings.EXPLORER_TRANSFORMS)
-        return [(ix, transforms[str(h)]) for ix, h in enumerate(self.headers) if str(h) in transforms.keys()]
+        return [
+            (ix, transforms[str(h)])
+            for ix, h in enumerate(self.headers) if str(h) in transforms.keys()
+        ]
 
     def column(self, ix):
         return [r[ix] for r in self.data]

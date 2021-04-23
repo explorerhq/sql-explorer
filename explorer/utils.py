@@ -189,4 +189,3 @@ def s3_upload(key, data):
     k.set_acl('public-read')
     k.set_metadata('Content-Type', 'text/csv')
     return k.generate_url(expires_in=0, query_auth=False)
-

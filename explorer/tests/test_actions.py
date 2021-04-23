@@ -26,7 +26,7 @@ class TestSqlQueryActions(TestCase):
         q2 = SimpleQueryFactory()
         fn = generate_report_action()
 
-        res = fn(None, None, [q,q2])
+        res = fn(None, None, [q, q2])
         z = ZipFile(io.BytesIO(res.content))
         got_csv = z.read(z.namelist()[0])
 
