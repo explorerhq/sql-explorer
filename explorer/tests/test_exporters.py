@@ -25,13 +25,25 @@ class TestCsv(TestCase):
         res._data = [[1, None], ["Jenét", '1']]
 
         res = CSVExporter(query=None)._get_output(res).getvalue()
-        self.assertEqual(res, 'a,\r\n1,\r\nJenét,1\r\n')
+        self.assertEqual(
+            res.encode('utf-8').decode('utf-8-sig'),
+            'a,\r\n1,\r\nJenét,1\r\n'
+        )
 
     def test_custom_delimiter(self):
         q = SimpleQueryFactory(sql='select 1, 2')
         exporter = CSVExporter(query=q)
         res = exporter.get_output(delim='|')
-        self.assertEqual(res, '1|2\r\n1|2\r\n')
+        self.assertEqual(
+            res.encode('utf-8').decode('utf-8-sig'),
+            '1|2\r\n1|2\r\n'
+        )
+
+    def test_writing_bom(self):
+        q = SimpleQueryFactory(sql='select 1, 2')
+        exporter = CSVExporter(query=q)
+        res = exporter.get_output()
+        self.assertEqual(res, '\ufeff1,2\r\n1,2\r\n')
 
 
 class TestJson(TestCase):

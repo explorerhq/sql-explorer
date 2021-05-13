@@ -11,12 +11,12 @@ from explorer.tests.factories import SimpleQueryFactory
 class TestSqlQueryActions(TestCase):
 
     def test_single_query_is_csv_file(self):
-        expected_csv = b'two\r\n2\r\n'
+        expected_csv = 'two\r\n2\r\n'
 
         r = SimpleQueryFactory()
         fn = generate_report_action()
         result = fn(None, None, [r, ])
-        self.assertEqual(result.content.lower(), expected_csv)
+        self.assertEqual(result.content.lower().decode('utf-8-sig'), expected_csv)
 
     def test_multiple_queries_are_zip_file(self):
 
@@ -32,7 +32,7 @@ class TestSqlQueryActions(TestCase):
 
         self.assertEqual(len(z.namelist()), 2)
         self.assertEqual(z.namelist()[0], f'{q.title}.csv')
-        self.assertEqual(got_csv.lower().decode('utf-8'), expected_csv)
+        self.assertEqual(got_csv.lower().decode('utf-8-sig'), expected_csv)
 
     # if commas are not removed from the filename, then Chrome throws
     # "duplicate headers received from server"
