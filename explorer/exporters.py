@@ -1,3 +1,4 @@
+import codecs
 import csv
 import json
 import string
@@ -61,6 +62,7 @@ class CSVExporter(BaseExporter):
         delim = '\t' if delim == 'tab' else str(delim)
         delim = app_settings.CSV_DELIMETER if len(delim) > 1 else delim
         csv_data = StringIO()
+        csv_data.write(codecs.BOM_UTF8.decode('utf-8'))
         writer = csv.writer(csv_data, delimiter=delim)
         writer.writerow(res.headers)
         for row in res.data:
