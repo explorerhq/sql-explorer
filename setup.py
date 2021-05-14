@@ -49,6 +49,11 @@ setup(
     license="MIT",
     keywords="django sql explorer reports reporting csv database query",
     url="https://github.com/groveco/django-sql-explorer",
+    project_urls={
+      'Changes': 'https://django-sql-explorer.readthedocs.io/en/latest/history.html',
+      'Documentation': 'https://django-sql-explorer.readthedocs.io/en/latest/',
+      'Issues': 'https://github.com/groveco/django-sql-explorer/issues'
+    },
     packages=['explorer'],
     long_description=read('README.rst'),
     classifiers=[
@@ -59,6 +64,7 @@ setup(
         'Framework :: Django :: 2.2',
         'Framework :: Django :: 3.0',
         'Framework :: Django :: 3.1',
+        'Framework :: Django :: 3.2',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
