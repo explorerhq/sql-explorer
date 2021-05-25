@@ -53,6 +53,21 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # a list of builtin themes.
 #
 html_theme = 'alabaster'
+html_sidebars = {
+    "**": [
+        "about.html",
+        "searchbox.html",
+        "navigation.html",
+        "relations.html",
+    ]
+}
+html_theme_options = {
+    "description": "SQL Explorer aims to make the flow of data between people fast, "
+                   "simple, and confusion-free.",
+    "github_user": "groveco",
+    "github_repo": "django-sql-explorer",
+    "fixed_sidebar": True
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
