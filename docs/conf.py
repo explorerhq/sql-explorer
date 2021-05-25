@@ -10,17 +10,24 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+import datetime
 import os
 import sys
+
+import explorer
+
 sys.path.insert(0, os.path.abspath('../'))
 sys.path.insert(0, os.path.abspath('.'))
 
 # -- Project information -----------------------------------------------------
-
+current_year = datetime.datetime.now().year
 project = 'Django SQL Explorer'
-copyright = '2020, Grove Co'
+copyright = f'2016-{current_year}, Chris Clark'
 author = 'Grove Co'
 
+version = explorer.get_version(True)
+# The full version, including alpha/beta/rc tags.
+release = explorer.__version__
 
 # -- General configuration ---------------------------------------------------
 

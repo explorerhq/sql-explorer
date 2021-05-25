@@ -5,6 +5,9 @@ Change Log
 This document records all notable changes to `django-sql-explorer <https://github.com/groveco/django-sql-explorer>`_.
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+`unreleased`_ changes
+---------------------
+
 `2.1.3`_ (2021-05-14)
 ---------------------
 * `#442`_: ``GET`` params passed to the fullscreen view (Fix `#433`_)
@@ -316,8 +319,10 @@ Initial Release
 .. _1.1.3: https://github.com/groveco/django-sql-explorer/compare/1.1.2...1.1.3
 .. _2.0.0: https://github.com/groveco/django-sql-explorer/compare/1.1.3...2.0
 .. _2.1.0: https://github.com/groveco/django-sql-explorer/compare/2.0...2.1.0
-.. _2.1.1: https://github.com/groveco/django-sql-explorer/compare/2.1.1...2.1.2
-.. _2.1.2: https://github.com/groveco/django-sql-explorer/compare/2.1.2...master
+.. _2.1.1: https://github.com/groveco/django-sql-explorer/compare/2.1.0...2.1.1
+.. _2.1.2: https://github.com/groveco/django-sql-explorer/compare/2.1.1...2.1.2
+.. _2.1.3: https://github.com/groveco/django-sql-explorer/compare/2.1.2...2.1.3
+.. _unreleased: https://github.com/groveco/django-sql-explorer/compare/2.1.3...master
 
 .. _#254: https://github.com/groveco/django-sql-explorer/pull/254
 .. _#334: https://github.com/groveco/django-sql-explorer/pull/334
