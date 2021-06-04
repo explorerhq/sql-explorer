@@ -20,6 +20,7 @@ EXPLORER_RECENT_QUERY_COUNT             The number of recent queries to show at 
 EXPLORER_GET_USER_QUERY_VIEWS           A dict granting view permissions on specific queries of the form {userId:[queryId, ...], ...}                   {}
 EXPLORER_TOKEN_AUTH_ENABLED             Bool indicating whether token-authenticated requests should be enabled. See "Power Tips", above.                False
 EXPLORER_TOKEN                          Access token for query results.                                                                                 "CHANGEME"
+EXPLORER_NO_PERMISSION_VIEW             Path to a view to use when the user does not have permission to view a page                                     'explorer.views.auth.safe_login_view_wrapper'  # By default, a basic login view is provided.
 EXPLORER_TASKS_ENABLED                  Turn on if you want to use the snapshot_queries celery task, or email report functionality in tasks.py          False
 EXPLORER_S3_ACCESS_KEY                  S3 Access Key for snapshot upload                                                                               None
 EXPLORER_S3_SECRET_KEY                  S3 Secret Key for snapshot upload                                                                               None

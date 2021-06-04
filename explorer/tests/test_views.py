@@ -8,6 +8,7 @@ from django.db import connections
 from django.test import TestCase
 from django.urls import reverse
 from django.forms.models import model_to_dict
+from django.shortcuts import redirect
 
 from explorer.app_settings import (
     EXPLORER_DEFAULT_CONNECTION as CONN,
@@ -81,6 +82,10 @@ class TestQueryCreateView(TestCase):
         resp = self.client.get(reverse("query_create"))
         self.assertTemplateUsed(resp, 'explorer/query.html')
         self.assertContains(resp, "New Query")
+
+
+def custom_view(request):
+    return redirect('/custom/login')
 
 
 class TestQueryDetailView(TestCase):
@@ -171,6 +176,18 @@ class TestQueryDetailView(TestCase):
             reverse("query_detail", kwargs={'query_id': query.id})
         )
         self.assertTemplateUsed(resp, 'admin/login.html')
+
+    def test_admin_required_with_explorer_no_permission_setting(self):
+        self.client.logout()
+        query = SimpleQueryFactory()
+        with self.settings(EXPLORER_NO_PERMISSION_VIEW='explorer.tests.test_views.custom_view'):
+            resp = self.client.get(
+                reverse("query_detail", kwargs={'query_id': query.id})
+            )
+            self.assertRedirects(
+                resp, f'/custom/login',
+                target_status_code=404
+            )
 
     def test_individual_view_permission(self):
         self.client.logout()
@@ -426,6 +443,16 @@ class TestQueryPlayground(TestCase):
         self.client.logout()
         resp = self.client.get(reverse("explorer_playground"))
         self.assertTemplateUsed(resp, 'admin/login.html')
+
+    def test_admin_required_with_no_permission_view_setting(self):
+        self.client.logout()
+        with self.settings(EXPLORER_NO_PERMISSION_VIEW='explorer.tests.test_views.custom_view'):
+            resp = self.client.get(reverse("explorer_playground"))
+            self.assertRedirects(
+                resp,
+                f'/custom/login',
+                target_status_code=404
+            )
 
     def test_loads_query_from_log(self):
         querylog = QueryLogFactory()
