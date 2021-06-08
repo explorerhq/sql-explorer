@@ -2,282 +2,276 @@
 Settings
 ********
 
-``EXPLORER_SQL_BLACKLIST``
-**************************
-          
-Disallowed words in SQL queries to prevent destructive actions. 
+Here are all of the available settings with their default values.
 
-**Default Value:**
+
+SQL Blacklist
+*************
+
+Disallowed words in SQL queries to prevent destructive actions.
 
 .. code-block:: python
 
-   ('ALTER', 'RENAME ', 'DROP', 'TRUNCATE', 'INSERT INTO', 'UPDATE', 'REPLACE', 'DELETE', 'ALTER', 'CREATE TABLE', 'SCHEMA', 'GRANT', 'OWNER TO')
+   EXPLORER_SQL_BLACKLIST = (
+       'ALTER',
+       'CREATE TABLE',
+       'DELETE',
+       'DROP',
+       'GRANT',
+       'INSERT INTO',
+       'OWNER TO'
+       'RENAME ',
+       'REPLACE',
+       'SCHEMA',
+       'TRUNCATE',
+       'UPDATE',
+   )
 
 
-
-``EXPLORER_SQL_WHITELIST``
-**************************
+SQL Whitelist
+*************
              
 These phrases are allowed, even though part of the phrase appears in the blacklist.
 
-**Default Value:**
-
 .. code-block:: python
 
- ('CREATED', 'UPDATED', 'DELETED','REGEXP_REPLACE')
+   EXPLORER_SQL_WHITELIST = (
+       'CREATED',
+       'UPDATED',
+       'DELETED',
+       'REGEXP_REPLACE'
+   )
 
 
-
-``EXPLORER_DEFAULT_ROWS``
-*************************
+Default rows
+************
                    
 The number of rows to show by default in the preview pane.
 
-**Default Value:**
+.. code-block:: python
 
-.. code-block:: python                                                 
- 
- 1000
+   EXPLORER_DEFAULT_ROWS = 1000
 
-``EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES`` 
-****************************************** 
 
-If not None, show schema only for tables starting with these prefixes. "Wins" if in conflict with EXCLUDE       
+Include table prefixes
+**********************
 
-**Default Value:**
+If not ``None``, show schema only for tables starting with these prefixes. "Wins" if in conflict with ``EXCLUDE``
 
 .. code-block:: python
 
- None  # shows all tables
+   EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES = None  # shows all tables
 
-``EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES``  
-******************************************
+
+Exclude table prefixes
+**********************
 
 Don't show schema for tables starting with these prefixes, in the schema helper.
 
-**Default Value:**
-
 .. code-block:: python
                                 
- ('django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions', 'django.contrib.admin')
+   EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES = (
+       'django.contrib.auth',
+       'django.contrib.contenttypes',
+       'django.contrib.sessions',
+       'django.contrib.admin'
+   )
 
 
-``EXPLORER_SCHEMA_INCLUDE_VIEWS``
-*********************************
+Include views
+*************
            
-Include database views                                                                                          
-
-**Default Value:**
+Include database views
 
 .. code-block:: python
 
- False
+   EXPLORER_SCHEMA_INCLUDE_VIEWS = False
 
 
-``EXPLORER_ASYNC_SCHEMA``
-*************************                   
-Generate DB schema asynchronously. Requires Celery and EXPLORER_TASKS_ENABLED
+ASYNC schema
+************
+Generate DB schema asynchronously. Requires Celery and ``EXPLORER_TASKS_ENABLED``
 
-**Default Value:**
-                                   
-False
+.. code-block:: python
+
+   EXPLORER_ASYNC_SCHEMA = False
 
 
-``EXPLORER_DEFAULT_CONNECTION``
-*******************************
+Default connection
+******************
              
 The name of the Django database connection to use. Ideally set this to a connection with read only permissions
 
-**Default Value:**
-
 .. code-block:: python
-  
- None  # Must be set for the app to work, as this is required
+
+   EXPLORER_DEFAULT_CONNECTION = None  # Must be set for the app to work, as this is required
 
 
-``EXPLORER_CONNECTIONS``
-************************
+Database connections
+********************
                     
-A dictionary of { 'Friendly Name': 'django_db_alias'}.
-
-**Default Value:**
+A dictionary of ``{'Friendly Name': 'django_db_alias'}``.
 
 .. code-block:: python
                                                           
- {}  # At a minimum, should be set to something like { 'Default': 'readonly' } or similar. See connections.py for more documentation.
+   EXPLORER_CONNECTIONS = {}  # At a minimum, should be set to something like { 'Default': 'readonly' } or similar. See connections.py for more documentation.
 
 
-``EXPLORER_PERMISSION_VIEW`` 
-****************************               
+Permission view
+****************
 Callback to check if the user is allowed to view and execute stored queries
-
-**Default Value:**
 
 .. code-block:: python
                                      
- lambda r: r.user.is_staff
+   EXPLORER_PERMISSION_VIEW = lambda r: r.user.is_staff
 
 
-``EXPLORER_PERMISSION_CHANGE``
-******************************   
+Permission change
+*****************
            
 Callback to check if the user is allowed to add/change/delete queries
 
-**Default Value:**
-
 .. code-block:: python
                                            
- lambda r: r.user.is_staff
+   EXPLORER_PERMISSION_CHANGE = lambda r: r.user.is_staff
 
-``EXPLORER_TRANSFORMS``
-***********************
+
+Transforms
+**********
                      
-List of tuples like [('alias', 'Template for {0}')]. See features section of this doc for more info.
-
-**Default Value:**            
+List of tuples, see :ref:`Template Columns` more info.
 
 .. code-block:: python
 
- []
+   EXPLORER_TRANSFORMS = []
 
 
-
-``EXPLORER_RECENT_QUERY_COUNT``
-*******************************
+Recent query count
+******************
              
 The number of recent queries to show at the top of the query listing.
-
-**Default Value:**    
                                        
 .. code-block:: python
 
- 10
+   EXPLORER_RECENT_QUERY_COUNT = 10
 
 
-``EXPLORER_GET_USER_QUERY_VIEWS``
-*********************************
+User query views
+****************
            
-A dict granting view permissions on specific queries of the form {userId:[queryId, ...], ...}
+A dict granting view permissions on specific queries of the form
 
-**Default Value:**
+.. code-block:: python
 
-.. code-block:: python                   
-
- {}
-
-
-``EXPLORER_TOKEN_AUTH_ENABLED`` 
-******************************* 
-           
-Bool indicating whether token-authenticated requests should be enabled. See "Power Tips", above.
+   EXPLORER_GET_USER_QUERY_VIEWS = {userId:[queryId, ...], ...}
 
 **Default Value:**
 
 .. code-block:: python
-                
- False
+
+   EXPLORER_GET_USER_QUERY_VIEWS = {}
 
 
-``EXPLORER_TOKEN`` 
-******************
+Token Authentication
+********************
+           
+Bool indicating whether token-authenticated requests should be enabled. See :ref:`Power Tips`.
+
+.. code-block:: python
+
+   EXPLORER_TOKEN_AUTH_ENABLED = False
+
+
+Token
+*****
                          
 Access token for query results.                                                                                 
 
-**Default Value:**
-
 .. code-block:: python
 
- "CHANGEME"
+   EXPLORER_TOKEN = "CHANGEME"
 
 
-``EXPLORER_TASKS_ENABLED`` 
-**************************
+Celery tasks
+************
                  
-Turn on if you want to use the snapshot_queries celery task, or email report functionality in tasks.py
-
-**Default Value:**
+Turn on if you want to use the ``snapshot_queries`` celery task, or email report functionality in ``tasks.py``
 
 .. code-block:: python
-          
- False
 
-``EXPLORER_S3_ACCESS_KEY``
-**************************
+   EXPLORER_TASKS_ENABLED = False
+
+
+S3 access key
+*************
                   
 S3 Access Key for snapshot upload
 
-**Default Value:**
-
 .. code-block:: python
-                                                                               
- None
+
+   EXPLORER_S3_ACCESS_KEY = None
 
 
-``EXPLORER_S3_SECRET_KEY`` 
-************************** 
+S3 secret key
+*************
                 
-S3 Secret Key for snapshot upload 
-
-**Default Value:**
+S3 Secret Key for snapshot upload
 
 .. code-block:: python
-                                                                              
- None
+
+   EXPLORER_S3_SECRET_KEY = None
 
 
-``EXPLORER_S3_BUCKET`` 
-********************** 
+S3 bucket
+*********
                     
-S3 Bucket for snapshot upload                                                                                  
-
-**Default Value:**
+S3 Bucket for snapshot upload
 
 .. code-block:: python
 
- None
+   EXPLORER_S3_BUCKET = None
 
 
-EXPLORER_FROM_EMAIL
-*******************       
+From email
+**********
               
 The default 'from' address when using async report email functionality                                          
 
-**Default Value:**
+.. code-block:: python
+
+   EXPLORER_FROM_EMAIL = "django-sql-explorer@example.com"
+
+
+Data exporters
+**************
+
+The export buttons to use. Default includes Excel, so xlsxwriter from ``requirements/optional.txt`` is needed
 
 .. code-block:: python
 
- "django-sql-explorer@example.com"
+   EXPLORER_DATA_EXPORTERS = [
+       ('csv', 'explorer.exporters.CSVExporter'),
+       ('excel', 'explorer.exporters.ExcelExporter'),
+       ('json', 'explorer.exporters.JSONExporter')
+   ]
 
 
-``EXPLORER_DATA_EXPORTERS``                 
-***************************
-
-The export buttons to use. Default includes Excel, so xlsxwriter from optional-requirements.txt is needed
-
-**Default Value:**
-
-.. code-block:: python
-       
- [('csv', 'explorer.exporters.CSVExporter'), ('excel', 'explorer.exporters.ExcelExporter'), ('json', 'explorer.exporters.JSONExporter')]
-
-``EXPLORER_UNSAFE_RENDERING``  
+Unsafe rendering
 *****************************     
         
-Disable auto escaping for rendering values from the database. Be wary of XSS attacks if querying unknown data...  
-
-**Default Value:**
+Disable auto escaping for rendering values from the database. Be wary of XSS attacks if querying unknown data.
 
 .. code-block:: python
 
- False
+   EXPLORER_UNSAFE_RENDERING = False
 
- ``EXPLORER_NO_PERMISSION_VIEW``
- *******************************
 
-Path to a view. It will be executed when the user does not have permission to view a page. By default, a basic login view is provided.
+No permission view
+******************
 
-**Default Value:**
+Path to a view used when the user does not have permission. By default, a basic login view is provided
+but a dotted path to a python view can be used
 
 .. code-block:: python
 
-'explorer.views.auth.safe_login_view_wrapper'
+   EXPLORER_NO_PERMISSION_VIEW = 'explorer.views.auth.safe_login_view_wrapper'

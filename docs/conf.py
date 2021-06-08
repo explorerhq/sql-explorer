@@ -66,8 +66,8 @@ html_theme_options = {
                    "simple, and confusion-free.",
     "github_user": "groveco",
     "github_repo": "django-sql-explorer",
-    "fixed_sidebar": True
 }
+pygments_style = 'sphinx'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

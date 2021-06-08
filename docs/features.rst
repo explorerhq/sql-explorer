@@ -89,21 +89,27 @@ Schema Helper
   set ``EXPLORER_ENABLE_TASKS`` and ``EXPLORER_ASYNC_SCHEMA`` to
   ``True``.
 
+.. _Template Columns:
+
 Template Columns
 ----------------
-- Let's say you have a query like 'select id, email from user' and
+- Let's say you have a query like ``SELECT id, email FROM user`` and
   you'd like to quickly drill through to the profile page for each
-  user in the result. You can create a "template" column to do
+  user in the result. You can create a ``template`` column to do
   just that.
 - Just set up a template column in your settings file:
 
-``EXPLORER_TRANSFORMS = [('user', '<a href="https://yoursite.com/profile/{0}/">{0}</a>')]``
+.. code-block:: python
+
+   EXPLORER_TRANSFORMS = [
+       ('user', '<a href="https://yoursite.com/profile/{0}/">{0}</a>')
+   ]
 
 - And change your query to ``SELECT id AS "user", email FROM
-  user``. Explorer will match the "user" column alias to the
+  user``. Explorer will match the ``user`` column alias to the
   transform and merge each cell in that column into the template
-  string. Cool!
-- Note you *must* set ``EXPLORER_UNSAFE_RENDERING`` to ``True`` if you
+  string. `Cool!`
+- Note you **must** set ``EXPLORER_UNSAFE_RENDERING`` to ``True`` if you
   want to see rendered HTML (vs string literals) in the output.
   And be aware of the implications of enabling that setting.
 
@@ -149,10 +155,12 @@ Multiple Connections
   way. See connections.py for more documentation on
   multi-connection setup.
 
+.. _Power tips:
+
 Power tips
 ----------
 - On the query listing page, focus gets set to a search box so you
-  can just navigate to /explorer and start typing the name of your
+  can just navigate to ``/explorer`` and start typing the name of your
   query to find it.
 - Quick search also works after hitting "Show Schema" on a query
   view.
@@ -180,8 +188,12 @@ Power tips
   ``EXPLORER_TOKEN=<SOME TOKEN>`` and you have an instant data
   API. Just:
 
-  ``curl --header "X-API-TOKEN: <TOKEN>" https://www.your-site.com/explorer/<QUERY_ID>/stream?format=csv``
+.. code-block:: console
 
-  You can also pass the token with a query parameter like this:
+   curl --header "X-API-TOKEN: <TOKEN>" https://www.your-site.com/explorer/<QUERY_ID>/stream?format=csv
 
-  ``curl https://www.your-site.com/explorer/<QUERY_ID>/stream?format=csv&token=<TOKEN>``
+You can also pass the token with a query parameter like this:
+
+.. code-block:: console
+
+   curl https://www.your-site.com/explorer/<QUERY_ID>/stream?format=csv&token=<TOKEN>

@@ -1,7 +1,8 @@
 Install
 =======
 
-Requires Python 3.6 or higher. Requires Django 2.2 or higher.
+* Requires Python 3.6 or higher.
+* Requires Django 2.2 or higher.
 
 Set up a Django project with the following:
 
@@ -14,15 +15,20 @@ More information in the `django tutorial <https://docs.djangoproject.com/en/3.1/
 
 Install with pip from pypi:
 
-``pip install django-sql-explorer``
+.. code-block:: shell-session
+
+   $ pip install django-sql-explorer
 
 If you would also like to support downloading Excel files install with the dependency using:
 
-``pip install django-sql-explorer[xls]``
+.. code-block:: shell-session
+
+   $ pip install django-sql-explorer[xls]
 
 Add to your ``INSTALLED_APPS``, located in the ``settings.py`` file in your project folder:
 
 .. code-block:: python
+   :emphasize-lines: 3
 
     INSTALLED_APPS = (
         ...,
@@ -35,6 +41,7 @@ via the ``EXPLORER_PERMISSION_VIEW`` and ``EXPLORER_PERMISSION_CHANGE``
 settings. See Settings section below for further documentation.):
 
 .. code-block:: python
+   :emphasize-lines: 5
 
     from django.urls import path
 
