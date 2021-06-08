@@ -270,3 +270,14 @@ Disable auto escaping for rendering values from the database. Be wary of XSS att
 .. code-block:: python
 
  False
+
+ ``EXPLORER_NO_PERMISSION_VIEW``
+ *******************************
+
+Path to a view. It will be executed when the user does not have permission to view a page. By default, a basic login view is provided.
+
+**Default Value:**
+
+.. code-block:: python
+
+'explorer.views.auth.safe_login_view_wrapper'

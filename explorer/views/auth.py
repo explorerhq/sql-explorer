@@ -3,7 +3,7 @@ from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.views import LoginView
 from django.core.exceptions import ImproperlyConfigured
 
-from explorer import permissions
+from explorer import permissions, app_settings
 
 
 class PermissionRequiredMixin:
@@ -12,12 +12,7 @@ class PermissionRequiredMixin:
 
     @staticmethod
     def handle_no_permission(request):
-        return SafeLoginView.as_view(
-            extra_context={
-                'title': 'Log in',
-                REDIRECT_FIELD_NAME: request.get_full_path()
-            }
-        )(request)
+        return app_settings.EXPLORER_NO_PERMISSION_VIEW()(request)
 
     def get_permission_required(self):
         if self.permission_required is None:
@@ -46,3 +41,12 @@ class PermissionRequiredMixin:
 
 class SafeLoginView(LoginView):
     template_name = 'admin/login.html'
+
+
+def safe_login_view_wrapper(request):
+    return SafeLoginView.as_view(
+        extra_context={
+            'title': 'Log in',
+            REDIRECT_FIELD_NAME: request.get_full_path()
+        }
+    )(request)
