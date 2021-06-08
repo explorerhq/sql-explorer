@@ -1,1 +1,2 @@
+django-sql-explorer>=2.0
 Sphinx>4
