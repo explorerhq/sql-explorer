@@ -1,2 +1,5 @@
 django-sql-explorer>=2.0
+furo
 Sphinx>4
+sphinx-copybutton
+sphinxext-opengraph

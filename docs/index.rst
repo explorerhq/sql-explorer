@@ -14,16 +14,7 @@ Django SQL Explorer
    :caption: Contents:
 
    features.rst
-   history.rst
    install.rst
-   dependencies.rst
    settings.rst
-
-
-******************
-Indices and tables
-******************
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   dependencies.rst
+   history.rst
