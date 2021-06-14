@@ -8,6 +8,12 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 `unreleased`_ changes
 ---------------------
 
+`2.2.0`_ (2021-06-14)
+---------------------
+* Updated docs theme to `furo`_
+* `#445`_: Added ``EXPLORER_NO_PERMISSION_VIEW`` setting to allow override of the "no permission" view (Fix `#440`_)
+* `#444`_: Updated structure of the settings docs (Fix `#443`_)
+
 `2.1.3`_ (2021-05-14)
 ---------------------
 * `#442`_: ``GET`` params passed to the fullscreen view (Fix `#433`_)
@@ -322,7 +328,8 @@ Initial Release
 .. _2.1.1: https://github.com/groveco/django-sql-explorer/compare/2.1.0...2.1.1
 .. _2.1.2: https://github.com/groveco/django-sql-explorer/compare/2.1.1...2.1.2
 .. _2.1.3: https://github.com/groveco/django-sql-explorer/compare/2.1.2...2.1.3
-.. _unreleased: https://github.com/groveco/django-sql-explorer/compare/2.1.3...master
+.. _2.2.0: https://github.com/groveco/django-sql-explorer/compare/2.1.3...2.2.0
+.. _unreleased: https://github.com/groveco/django-sql-explorer/compare/2.2.0...master
 
 .. _#254: https://github.com/groveco/django-sql-explorer/pull/254
 .. _#334: https://github.com/groveco/django-sql-explorer/pull/334
@@ -360,6 +367,8 @@ Initial Release
 .. _#425: https://github.com/groveco/django-sql-explorer/pull/425
 .. _#441: https://github.com/groveco/django-sql-explorer/pull/441
 .. _#442: https://github.com/groveco/django-sql-explorer/pull/442
+.. _#444: https://github.com/groveco/django-sql-explorer/pull/444
+.. _#445: https://github.com/groveco/django-sql-explorer/pull/445
 
 .. _#269: https://github.com/groveco/django-sql-explorer/issues/269
 .. _#288: https://github.com/groveco/django-sql-explorer/issues/288
@@ -370,3 +379,7 @@ Initial Release
 .. _#430: https://github.com/groveco/django-sql-explorer/issues/430
 .. _#431: https://github.com/groveco/django-sql-explorer/issues/431
 .. _#433: https://github.com/groveco/django-sql-explorer/issues/433
+.. _#440: https://github.com/groveco/django-sql-explorer/issues/440
+.. _#443: https://github.com/groveco/django-sql-explorer/issues/443
+
+.. _furo: https://github.com/pradyunsg/furo
