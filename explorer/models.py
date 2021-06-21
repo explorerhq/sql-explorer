@@ -4,7 +4,7 @@ from time import time
 from django.conf import settings
 from django.db import models, DatabaseError, transaction
 from django.urls import reverse
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from explorer import app_settings
 from explorer.utils import (
