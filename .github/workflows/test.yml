@@ -34,5 +34,5 @@ jobs:
 
       - name: Run tests
         run: |
-          coverage run --source='.' manage.py test the-app-you-want-to-test
+          coverage run --source=explorer manage.py test
           coverage report
