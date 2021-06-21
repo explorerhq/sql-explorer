@@ -33,4 +33,6 @@ jobs:
           python setup.py install
 
       - name: Run tests
-        run: python manage.py test
+        run: |
+          coverage run --source='.' manage.py test the-app-you-want-to-test
+          coverage report
