@@ -35,6 +35,8 @@ jobs:
         run: |
           coverage run --source=explorer manage.py test
           coverage report
+        env:
+          EXPLORER_TASKS_ENABLED: False
 
   test-optional-setup:
     runs-on: ${{ matrix.os }}

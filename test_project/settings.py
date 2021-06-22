@@ -1,6 +1,8 @@
 import django
 import os
 
+from .utils.sanitize import sanitize
+
 SECRET_KEY = 'shhh'
 DEBUG = True
 STATIC_URL = '/static/'
@@ -102,5 +104,5 @@ EXPLORER_TRANSFORMS = (
 )
 
 EXPLORER_USER_QUERY_VIEWS = {}
-EXPLORER_TASKS_ENABLED = True
+EXPLORER_TASKS_ENABLED = sanitize(os.environ.get('EXPLORER_TASKS_ENABLED', True), bool)
 EXPLORER_S3_BUCKET = 'thisismybucket.therearemanylikeit.butthisoneismine'
