@@ -47,6 +47,11 @@ class TestQueryModel(TestCase):
         log = QueryLog.objects.first()
         self.assertTrue(log.is_playground)
 
+    def test_playground_query_str(self):
+        title = "Playground"
+        query = Query(sql='select 1;', title=title)
+        self.assertEqual(str(query), title)
+
     def test_shared(self):
         q = SimpleQueryFactory()
         q2 = SimpleQueryFactory()
@@ -187,3 +192,7 @@ class TestColumnSummary(TestCase):
     def test_empty_data(self):
         res = ColumnSummary('foo', [])
         self.assertEqual(res.stats, {'Min': 0, 'Max': 0, 'Avg': 0, 'Sum': 0,  'NUL': 0})
+
+    def test_stat_str(self):
+        res = ColumnSummary('foo', [1, 2, 3])
+        self.assertEqual(str(res._stats[0]), 'Sum')

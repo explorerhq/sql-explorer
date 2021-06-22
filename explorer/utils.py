@@ -150,7 +150,7 @@ def fmt_sql(sql):
     return sql_format(sql, reindent=True, keyword_case='upper')
 
 
-def noop_decorator(f):
+def noop_decorator(f):  # pragma: no cover
     return f
 
 
@@ -172,7 +172,7 @@ def get_valid_connection(alias=None):
     return connections[alias]
 
 
-def get_s3_bucket():
+def get_s3_bucket():  # pragma: no cover
     from boto.s3.connection import S3Connection
 
     conn = S3Connection(app_settings.S3_ACCESS_KEY,
@@ -180,7 +180,7 @@ def get_s3_bucket():
     return conn.get_bucket(app_settings.S3_BUCKET)
 
 
-def s3_upload(key, data):
+def s3_upload(key, data):  # pragma: no cover
     from boto.s3.key import Key
     bucket = get_s3_bucket()
     k = Key(bucket)

@@ -1,2 +1,2 @@
 [run]
-omit = *migrations*, setup.py, .venv/*
+omit = *migrations*, setup.py, .venv/*, explorer/tests/*

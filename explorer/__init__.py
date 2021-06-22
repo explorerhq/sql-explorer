@@ -7,7 +7,7 @@ __version_info__ = {
 }
 
 
-def get_version(short=False):
+def get_version(short=False):  # pragma: no cover
     assert __version_info__['releaselevel'] in ('alpha', 'beta', 'final')
     vers = ["%(major)i.%(minor)i" % __version_info__, ]
     if __version_info__['micro']:

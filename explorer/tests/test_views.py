@@ -5,7 +5,7 @@ from unittest.mock import Mock, patch
 from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.db import connections
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.forms.models import model_to_dict
 from django.shortcuts import redirect
@@ -60,6 +60,39 @@ class TestQueryListView(TestCase):
             q.log()
         resp = self.client.get(reverse("explorer_index"))
         self.assertContains(resp, '<td>4</td>')
+
+    def test_index_querylogs(self):
+        q = SimpleQueryFactory(title='foo - bar1')
+        querylog = QueryLogFactory(run_by_user=self.user, query=q)
+        resp = self.client.get(reverse("explorer_index"))
+        self.assertContains(resp, '<h3>Your 1 Most Recently Run</h3>')
+
+    def test_index_too_many_querylogs(self):
+        q = SimpleQueryFactory(title='foo - bar1')
+        q2 = SimpleQueryFactory(title='foo - bar2')
+        q3 = SimpleQueryFactory(title='foo - bar3')
+        q4 = SimpleQueryFactory(title='foo - bar4')
+        q5 = SimpleQueryFactory(title='foo - bar5')
+        q6 = SimpleQueryFactory(title='foo - bar6')
+        q7 = SimpleQueryFactory(title='foo - bar7')
+        q8 = SimpleQueryFactory(title='foo - bar8')
+        q9 = SimpleQueryFactory(title='foo - bar9')
+        q10 = SimpleQueryFactory(title='foo - bar10')
+        q11 = SimpleQueryFactory(title='foo - bar11')
+        querylog = QueryLogFactory(run_by_user=self.user, query=q)
+        querylog2 = QueryLogFactory(run_by_user=self.user, query=q2)
+        querylog3 = QueryLogFactory(run_by_user=self.user, query=q3)
+        querylog4 = QueryLogFactory(run_by_user=self.user, query=q4)
+        querylog5 = QueryLogFactory(run_by_user=self.user, query=q5)
+        querylog6 = QueryLogFactory(run_by_user=self.user, query=q6)
+        querylog7 = QueryLogFactory(run_by_user=self.user, query=q7)
+        querylog8 = QueryLogFactory(run_by_user=self.user, query=q8)
+        querylog9 = QueryLogFactory(run_by_user=self.user, query=q9)
+        querylog10 = QueryLogFactory(run_by_user=self.user, query=q10)
+        querylog11 = QueryLogFactory(run_by_user=self.user, query=q11)
+
+        resp = self.client.get(reverse("explorer_index"))
+        self.assertContains(resp, '<h3>Your 10 Most Recently Run</h3>')
 
 
 class TestQueryCreateView(TestCase):
@@ -790,3 +823,13 @@ class TestEmailQuery(TestCase):
             **{'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'}
         )
         self.assertEqual(mocked_execute.delay.call_count, 1)
+
+    @patch('explorer.views.email.execute_query')
+    def test_email_forbidden(self, mocked_execute):
+        query = SimpleQueryFactory()
+        url = reverse("email_csv_query", kwargs={'query_id': query.id})
+        response = self.client.post(
+            url,
+            data={'email': 'foo@bar.com'},
+        )
+        self.assertEqual(response.status_code, 403)
