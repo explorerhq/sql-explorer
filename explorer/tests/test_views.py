@@ -1,5 +1,6 @@
 import json
 import time
+import unittest
 from unittest.mock import Mock, patch
 
 from django.contrib.auth.models import User
@@ -17,6 +18,12 @@ from explorer.app_settings import (
 from explorer.models import Query, QueryLog, MSG_FAILED_BLACKLIST
 from explorer.tests.factories import SimpleQueryFactory, QueryLogFactory
 from explorer.utils import user_can_see_query
+
+try:
+    import celery
+    celery_skip = False
+except ImportError:
+    celery_skip = True
 
 
 class TestQueryListView(TestCase):
@@ -655,6 +662,7 @@ class TestSchemaView(TestCase):
         )
         self.assertTemplateUsed(resp, 'admin/login.html')
 
+    @unittest.skipIf(celery_skip, "Skipping test_builds_async because celery isn't installed")
     @patch('explorer.schema.do_async')
     def test_builds_async(self, mocked_async_check):
         mocked_async_check.return_value = True

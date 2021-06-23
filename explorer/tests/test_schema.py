@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import unittest
 from unittest.mock import patch
 
 from django.core.cache import cache
@@ -7,6 +8,12 @@ from django.test import TestCase
 
 from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
 from explorer import schema
+
+try:
+    import celery
+    celery_skip = False
+except ImportError:
+    celery_skip = True
 
 
 class TestSchemaInfo(TestCase):
@@ -71,6 +78,7 @@ class TestSchemaInfo(TestCase):
         tables = [x[0] for x in res]
         self.assertNotIn(database_view, tables)
 
+    @unittest.skipIf(celery_skip, "Skip test_builds_async because celery isn't installed")
     @patch('explorer.schema.do_async')
     def test_builds_async(self, mocked_async_check):
         mocked_async_check.return_value = True
