@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import unittest
 from datetime import datetime, timedelta
 from io import StringIO
 from unittest.mock import patch
@@ -13,6 +14,11 @@ from explorer.tasks import (
     build_schema_cache_async
 )
 from explorer.tests.factories import SimpleQueryFactory
+
+try:
+    import celery
+except ImportError:
+    raise unittest.SkipTest("celery not installed, skipping tasks tests")
 
 
 class TestTasks(TestCase):
