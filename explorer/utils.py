@@ -98,7 +98,7 @@ def get_params_from_request(request):
         d = {}
         tuples = val.split('|')
         for t in tuples:
-            res = t.split(':')
+            res = t.split(':', 1)
             d[res[0]] = res[1]
         return d
     except Exception:
