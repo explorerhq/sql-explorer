@@ -16,7 +16,7 @@
                               <div class="row">
                                 <div class="col-md-6">
                                   {% if data %}<a title="Show row numbers" id="counter-toggle" href="#">#</a>&nbsp;{% endif %}
-                                  <span class="panel-title">{% blocktrans %}Execution time: {{ duration|floatformat:2 }} ms{% endblocktrans %}</span>
+                                  <span class="panel-title">{% blocktrans with duration=duration|floatformat:2 %}Execution time: {{ duration }} ms{% endblocktrans %}</span>
                                 </div>
                                 <div class="col-md-6 text-right">
                                   <span class="row-control">
