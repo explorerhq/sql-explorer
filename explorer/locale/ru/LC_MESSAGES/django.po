@@ -22,7 +22,7 @@ msgstr ""
 #: explorer/apps.py:10 explorer/templates/explorer/base.html:10
 #: explorer/templates/explorer/base.html:35
 msgid "SQL Explorer"
-msgstr ""
+msgstr "SQL Навигатор"
 
 #: explorer/models.py:40
 msgid "Include in snapshot task (if enabled)"
@@ -203,3 +203,7 @@ msgstr "Свернуть все"
 #: explorer/templates/explorer/schema.html:17
 msgid "Expand All"
 msgstr "Развернуть все"
+
+
+msgid "Last Run"
+msgstr "Последний запуск"

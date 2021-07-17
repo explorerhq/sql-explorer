@@ -133,13 +133,13 @@
 <div class="row">
   <div class="col-md-6">
     {% if query and can_change and tasks_enabled %}
-      {{ form.snapshot }} Snapshot
+      {{ form.snapshot }} {% blocktrans %}Snapshot{% endblocktrans %}
     {% endif %}
   </div>
   <div class="col-md-6 text-right">
     <small>
       {% if query.avg_duration %}
-        Avg. execution: {{ query.avg_duration|floatformat:2 }}ms. Query created by {{ form.created_by_user_email }} on {{ form.created_at_time }}.
+      {% blocktrans %}Avg. execution:{% endblocktrans %} {{ query.avg_duration|floatformat:2 }}ms. {% blocktrans %}Query created by{% endblocktrans %} {{ form.created_by_user_email }} {% blocktrans %}on{% endblocktrans %} {{ form.created_at_time }}.
       {% endif %}
     </small>
   </div>

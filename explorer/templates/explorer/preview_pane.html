@@ -21,11 +21,11 @@
                                 <div class="col-md-6 text-right">
                                   <span class="row-control">
                                       {% if rows > total_rows %}
-                                          Showing <input class="rows-input" type="text" name="rows" id="rows" value="{{ total_rows }}" />
+                                          {% trans Showing %}<input class="rows-input" type="text" name="rows" id="rows" value="{{ total_rows }}" />
                                       {% else %}
-                                          First <input class="rows-input" type="text" name="rows" id="rows" value="{{ rows }}" />
+                                          {% trans First %}<input class="rows-input" type="text" name="rows" id="rows" value="{{ rows }}" />
                                       {% endif %}
-                                      of {{ total_rows }} total rows.
+                                      {% blocktrans %}of {{ total_rows }} total rows.{% endblocktrans %}
                                   </span>
                                   <span>
                                     <small>
@@ -78,7 +78,7 @@
                                             </tr>
                                             {% endfor %}
                                         {% else %}
-                                            <tr class="text-center"><td colspan="{{ headers|length }}">Empty Resultset</td></tr>
+                                            <tr class="text-center"><td colspan="{{ headers|length }}">{% blocktrans %}Empty Resultset{% endblocktrans %}</td></tr>
                                         {% endif %}
                                     </tbody>
                                 </table>
@@ -109,7 +109,7 @@
                           <div class="panel-heading">
                             <div class="row">
                               <div class="col-md-6">
-                                <span class="panel-title">Pivot</span>
+                                <span class="panel-title">{% blocktrans %}Pivot{% endblocktrans %}</span>
                               </div>
                               <div class="col-md-6 text-right">
                                 <small><a id="pivot-bookmark" data-baseurl="{% url 'explorer_playground' %}?querylog_id={{ ql_id }}" href="#"><i class="glyphicon glyphicon-link"></i></a></small>
