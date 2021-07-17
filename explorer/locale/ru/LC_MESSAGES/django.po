@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-17 08:09-0500\n"
+"POT-Creation-Date: 2021-07-17 11:05-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,23 +19,28 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
 "%100>=11 && n%100<=14)? 2 : 3);\n"
+
 #: explorer/apps.py:10 explorer/templates/explorer/base.html:10
 #: explorer/templates/explorer/base.html:35
+#: explorer/templates/explorer/fullscreen.html:8
 msgid "SQL Explorer"
 msgstr "SQL Навигатор"
 
 #: explorer/models.py:40
 msgid "Include in snapshot task (if enabled)"
-msgstr ""
+msgstr "Включить в задачу снятия снепшота (если разрешено)"
 
 #: explorer/models.py:47
 msgid ""
 "Name of DB connection (as specified in settings) to use for this query.Will "
 "use EXPLORER_DEFAULT_CONNECTION if left blank"
-msgstr "Название соединения БД (как указано в настройках), чтобы использовать для этого запроса."
-       "Если не использовать, будет использоваться соединение по умолчанию"
+msgstr ""
+"Название соединения БД (как указано в настройках), чтобы использовать для "
+"этого запроса.Если не использовать, будет использоваться соединение по "
+"умолчанию"
 
 #: explorer/models.py:60 explorer/templates/explorer/query_list.html:49
+#: explorer/templates/explorer/querylog_list.html:33
 msgid "Query"
 msgstr "Запрос"
 
@@ -43,6 +48,7 @@ msgstr "Запрос"
 msgid "Queries"
 msgstr "Запросы"
 
+#: explorer/templates/explorer/fullscreen.html:16
 #: explorer/templates/explorer/play.html:7
 #: explorer/templates/explorer/query.html:6
 #: explorer/templates/explorer/query.html:16
@@ -51,11 +57,18 @@ msgstr "Запросы"
 msgid "New Query"
 msgstr "Новый запрос"
 
+#: explorer/templates/explorer/fullscreen.html:39
+#: explorer/templates/explorer/preview_pane.html:81
+msgid "Empty Resultset"
+msgstr "Результат запроса пуст"
+
 #: explorer/templates/explorer/play.html:8
 #: explorer/templates/explorer/play.html:16
 #: explorer/templates/explorer/query.html:7
 #: explorer/templates/explorer/query_list.html:7
 #: explorer/templates/explorer/querylog_list.html:7
+#: explorer/templates/explorer/querylog_list.html:23
+#: explorer/templates/explorer/querylog_list.html:33
 msgid "Playground"
 msgstr "Полигон"
 
@@ -70,8 +83,9 @@ msgstr "Журналы"
 msgid ""
 "The playground is for experimenting and writing ad-hoc queries. By default, "
 "nothing you do here will be saved."
-msgstr "Полигон предназначен для экспериментов и написания специальных запросов."
-       "По умолчанию тут ничего не будет сохраняться"
+msgstr ""
+"Полигон предназначен для экспериментов и написания специальных запросов. По "
+"умолчанию тут ничего не будет сохраняться"
 
 #: explorer/templates/explorer/play.html:24
 #: explorer/templates/explorer/query.html:46
@@ -131,6 +145,7 @@ msgid "Snapshots"
 msgstr "Варианты"
 
 #: explorer/templates/explorer/preview_pane.html:10
+#: explorer/templates/explorer/preview_pane.html:112
 msgid "Pivot"
 msgstr "Сводная таблица"
 
@@ -139,6 +154,11 @@ msgstr "Сводная таблица"
 msgid "Execution time: %(duration)s ms"
 msgstr "Время выполнения: %(duration)s мс"
 
+#: explorer/templates/explorer/preview_pane.html:28
+#, python-format
+msgid "of %(total_rows)s total rows."
+msgstr "из %(total_rows)s выбранных записей."
+
 #: explorer/templates/explorer/query.html:9
 msgid "Query Detail"
 msgstr "Подробности запроса"
@@ -146,6 +166,10 @@ msgstr "Подробности запроса"
 #: explorer/templates/explorer/query.html:19
 msgid "History"
 msgstr "История"
+
+#: explorer/templates/explorer/query.html:39
+msgid "Title"
+msgstr "Название"
 
 #: explorer/templates/explorer/query.html:61
 msgid "Description"
@@ -159,11 +183,41 @@ msgstr "Сохранить и запустить"
 msgid "Save Only"
 msgstr "Сохранить"
 
+#: explorer/templates/explorer/query.html:136
+msgid "Snapshot"
+msgstr "Вариант"
+
+#: explorer/templates/explorer/query.html:142
+msgid "Avg. execution:"
+msgstr "Среднее время запроса"
+
+#: explorer/templates/explorer/query.html:142
+msgid "Query created by"
+msgstr "Запрос создан"
+
+#: explorer/templates/explorer/query.html:142
+msgid "on"
+msgstr "в"
+
+#: explorer/templates/explorer/query_confirm_delete.html:6
+msgid "Are you sure you want to delete"
+msgstr "Вы уверены в удалении"
+
+#: explorer/templates/explorer/query_list.html:14
+#, python-format
+msgid " Your %(qlen)s Most Recently Run "
+msgstr " Ваши последние запуски запросов, их %(qlen)s"
+
+: explorer/templates/explorer/query_list.html:19
+msgid "Last Run"
+msgstr "Последний запуск"
+
 #: explorer/templates/explorer/query_list.html:40
 msgid "All Queries"
 msgstr "Все запросы"
 
 #: explorer/templates/explorer/query_list.html:43
+#: explorer/templates/explorer/schema.html:10
 msgid "Search"
 msgstr "Поиск"
 
@@ -191,10 +245,48 @@ msgstr "Удалить"
 msgid "Run Count"
 msgstr "Число запусков"
 
+#: explorer/templates/explorer/query_list.html:79
+#, python-format
+msgid "by %(cuser)s"
+msgstr " пользователем «%(cuser)s»"
+
 #: explorer/templates/explorer/querylog_list.html:13
 #, python-format
-msgid "Recent Query Logs - Page %(page_obj.number)s"
-msgstr "Журнал последних запросов — страница %(page_obj.number)s "
+msgid "Recent Query Logs - Page %(pagenum)s"
+msgstr "Журнал последних запросов — страница %(pagenum)s "
+
+#: explorer/templates/explorer/querylog_list.html:18
+msgid "Run At"
+msgstr "Время запуска"
+
+#: explorer/templates/explorer/querylog_list.html:19
+msgid "Run By"
+msgstr "Запущено пользователем"
+
+#: explorer/templates/explorer/querylog_list.html:20
+msgid "Duration"
+msgstr "Длительность"
+
+#: explorer/templates/explorer/querylog_list.html:21
+msgid "SQL"
+msgstr "SQL"
+
+#: explorer/templates/explorer/querylog_list.html:22
+msgid "Query ID"
+msgstr "ID запроса"
+
+#: explorer/templates/explorer/querylog_list.html:34
+msgid "Open"
+msgstr "Открыть"
+
+#: explorer/templates/explorer/querylog_list.html:47
+#, python-format
+msgid "Page %(pnum)s of %(anum)s."
+msgstr "Страница %(pnum)s из %(anum)s."
+
+#: explorer/templates/explorer/schema.html:7
+msgid "Schema"
+msgstr "Схема"
 
 #: explorer/templates/explorer/schema.html:14
 msgid "Collapse All"
@@ -204,6 +296,14 @@ msgstr "Свернуть все"
 msgid "Expand All"
 msgstr "Развернуть все"
 
+#: explorer/templates/explorer/schema_building.html:7
+msgid "Schema is building..."
+msgstr "Строится схема…"
 
-msgid "Last Run"
-msgstr "Последний запуск"
+#: explorer/templates/explorer/schema_building.html:8
+msgid "Please wait a minute, and refresh."
+msgstr "Подождите минутку и обновите."
+
+#: explorer/views/query.py:125
+msgid "Query saved."
+msgstr "Запрос сохранен."
