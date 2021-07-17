@@ -208,7 +208,7 @@ msgstr "Вы уверены в удалении"
 msgid " Your %(qlen)s Most Recently Run "
 msgstr " Ваши последние запуски запросов, их %(qlen)s"
 
-: explorer/templates/explorer/query_list.html:19
+#: explorer/templates/explorer/query_list.html:19
 msgid "Last Run"
 msgstr "Последний запуск"
 
