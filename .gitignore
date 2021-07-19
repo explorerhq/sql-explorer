@@ -19,4 +19,4 @@ venv/
 docs/_build/
 
 # Generated localization files
-*.po 
+*.mo 
