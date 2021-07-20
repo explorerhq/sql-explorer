@@ -18,5 +18,3 @@ venv/
 # Sphinx documentation
 docs/_build/
 
-# Generated localization files
-*.mo 
