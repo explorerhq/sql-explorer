@@ -1,6 +1,6 @@
-import django
 import os
 import djcelery
+
 SECRET_KEY = 'shhh'
 DEBUG = True
 STATIC_URL = '/static/'

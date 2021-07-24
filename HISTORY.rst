@@ -8,6 +8,11 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 `unreleased`_ changes
 ---------------------
 
+`2.3.0`_ (2021-07-24)
+---------------------
+* `#450`_: Added Russian translations.
+* `#449`_: Translates expression for duration
+
 `2.2.0`_ (2021-06-14)
 ---------------------
 * Updated docs theme to `furo`_
@@ -329,7 +334,8 @@ Initial Release
 .. _2.1.2: https://github.com/groveco/django-sql-explorer/compare/2.1.1...2.1.2
 .. _2.1.3: https://github.com/groveco/django-sql-explorer/compare/2.1.2...2.1.3
 .. _2.2.0: https://github.com/groveco/django-sql-explorer/compare/2.1.3...2.2.0
-.. _unreleased: https://github.com/groveco/django-sql-explorer/compare/2.2.0...master
+.. _2.3.0: https://github.com/groveco/django-sql-explorer/compare/2.2.0...2.3.0
+.. _unreleased: https://github.com/groveco/django-sql-explorer/compare/2.3.0...master
 
 .. _#254: https://github.com/groveco/django-sql-explorer/pull/254
 .. _#334: https://github.com/groveco/django-sql-explorer/pull/334
@@ -369,6 +375,8 @@ Initial Release
 .. _#442: https://github.com/groveco/django-sql-explorer/pull/442
 .. _#444: https://github.com/groveco/django-sql-explorer/pull/444
 .. _#445: https://github.com/groveco/django-sql-explorer/pull/445
+.. _#449: https://github.com/groveco/django-sql-explorer/pull/449
+.. _#450: https://github.com/groveco/django-sql-explorer/pull/450
 
 .. _#269: https://github.com/groveco/django-sql-explorer/issues/269
 .. _#288: https://github.com/groveco/django-sql-explorer/issues/288

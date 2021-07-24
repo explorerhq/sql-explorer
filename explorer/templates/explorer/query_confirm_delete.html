@@ -1,9 +1,12 @@
 {% extends "explorer/base.html" %}
+{% load i18n %}
 
 {% block sql_explorer_content %}
     <form method="post">{% csrf_token %}
         <div class="alert alert-info">
-            {% blocktrans with title=object.title %}Are you sure you want to delete "{{ title }}" ?{% endblocktrans %}
+            {% blocktrans trimmed with title=object.title %}
+                Are you sure you want to delete "{{ title }}"?
+            {% endblocktrans %}
         </div>
         <div>
             <input type="submit" value="Delete Query" class="btn btn-default" />

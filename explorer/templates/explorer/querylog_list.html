@@ -3,9 +3,9 @@
 
 {% block sql_explorer_navlinks %}
     {% if can_change %}
-      <li><a href="{% url "query_create" %}">{% trans "New Query" %}</a></li>
-      <li><a href="{% url "explorer_playground" %}">{% trans "Playground" %}</a></li>
-      <li class="active"><a href="">{% trans "Logs" %}</a></li>
+        <li><a href="{% url "query_create" %}">{% trans "New Query" %}</a></li>
+        <li><a href="{% url "explorer_playground" %}">{% trans "Playground" %}</a></li>
+        <li class="active"><a href="">{% trans "Logs" %}</a></li>
     {% endif %}
 {% endblock %}
 
@@ -15,24 +15,40 @@
         <table class="table table-striped query-list">
             <thead>
                 <tr>
-                    <th>{% blocktrans %}Run At{% endblocktrans %}</th>
-                    <th>{% blocktrans %}Run By{% endblocktrans %}</th>
-                    <th>{% blocktrans %}Duration{% endblocktrans %}</th>
-                    <th class="sql">{% blocktrans %}SQL{% endblocktrans %}</th>
-                    <th>{% blocktrans %}Query ID{% endblocktrans %}</th>
-                    <th>{% blocktrans %}Playground{% endblocktrans %}</th>
+                    <th>{% trans "Run At" %}</th>
+                    <th>{% trans "Run By" %}</th>
+                    <th>{% trans "Duration" %}</th>
+                    <th class="sql">SQL</th>
+                    <th>{% trans "Query ID" %}</th>
+                    <th>{% trans "Playground" %}</th>
                 </tr>
             </thead>
             <tbody>
                 {% for object in recent_logs %}
-                <tr>
-                    <td>{{ object.run_at|date:"SHORT_DATETIME_FORMAT" }}</td>
-                    <td>{{ object.run_by_user.email }}</td>
-                    <td>{{ object.duration|floatformat:2 }}ms</td>
-                    <td class="log-sql">{{ object.sql }}</td>
-                    <td> {% if object.query_id %}<a href="{% url "query_detail" object.query_id %}">{% blocktrans %}Query{% endblocktrans %} {{ object.query_id }}</a>{% elif object.is_playground %}{% blocktrans %}Playground{% endblocktrans %}{% else %}--{% endif %}</td>
-                    <td><a href="{% url "explorer_playground" %}?querylog_id={{ object.id }}">{% blocktrans %}Open{% endblocktrans %}</a></td>
-                </tr>
+                    <tr>
+                        <td>{{ object.run_at|date:"SHORT_DATETIME_FORMAT" }}</td>
+                        <td>{{ object.run_by_user.email }}</td>
+                        <td>{{ object.duration|floatformat:2 }}ms</td>
+                        <td class="log-sql">{{ object.sql }}</td>
+                        <td>
+                            {% if object.query_id %}
+                                <a href="{% url "query_detail" object.query_id %}">
+                                    {% blocktrans trimmed with query_id=object.query_id %}
+                                        Query {{ query_id }}
+                                    {% endblocktrans %}
+                                </a>
+                            {% elif object.is_playground %}
+                                {% trans "Playground" %}
+                            {% else %}
+                                --
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url "explorer_playground" %}?querylog_id={{ object.id }}">
+                                {% trans "Open" %}
+                            </a>
+                        </td>
+                    </tr>
                 {% endfor %}
             </tbody>
         </table>
@@ -44,7 +60,9 @@
                     <a href="?page={{ page_obj.previous_page_number }}"><<</a>
                 {% endif %}
                 <span class="page-current">
-                    {% blocktrans with pnum=page_obj.number anum=page_obj.paginator.num_pages %}Page {{ pnum }} of {{ anum }}.{% endblocktrans %}
+                    {% blocktrans trimmed with pnum=page_obj.number anum=page_obj.paginator.num_pages %}
+                        Page {{ pnum }} of {{ anum }}.
+                    {% endblocktrans %}
                 </span>
                 {% if page_obj.has_next %}
                     <a href="?page={{ page_obj.next_page_number }}">>></a>

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-24 10:26-0500\n"
+"POT-Creation-Date: 2021-07-24 16:19-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,8 +20,8 @@ msgstr ""
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
 "%100>=11 && n%100<=14)? 2 : 3);\n"
 
-#: explorer/apps.py:10 explorer/templates/explorer/base.html:10
-#: explorer/templates/explorer/base.html:35
+#: explorer/apps.py:10 explorer/templates/explorer/base.html:9
+#: explorer/templates/explorer/base.html:34
 #: explorer/templates/explorer/fullscreen.html:8
 msgid "SQL Explorer"
 msgstr "SQL Навигатор"
@@ -39,8 +39,8 @@ msgstr ""
 "этого запроса.Если не использовать, будет использоваться соединение по "
 "умолчанию"
 
-#: explorer/models.py:60 explorer/templates/explorer/query_list.html:49
-#: explorer/templates/explorer/querylog_list.html:33
+#: explorer/models.py:60 explorer/templates/explorer/query_list.html:22
+#: explorer/templates/explorer/query_list.html:57
 msgid "Query"
 msgstr "Запрос"
 
@@ -48,32 +48,32 @@ msgstr "Запрос"
 msgid "Queries"
 msgstr "Запросы"
 
-#: explorer/templates/explorer/fullscreen.html:16
-#: explorer/templates/explorer/play.html:7
-#: explorer/templates/explorer/query.html:6
-#: explorer/templates/explorer/query.html:16
+#: explorer/templates/explorer/fullscreen.html:20
+#: explorer/templates/explorer/play.html:6
+#: explorer/templates/explorer/query.html:7
+#: explorer/templates/explorer/query.html:26
 #: explorer/templates/explorer/query_list.html:6
 #: explorer/templates/explorer/querylog_list.html:6
 msgid "New Query"
 msgstr "Новый запрос"
 
-#: explorer/templates/explorer/fullscreen.html:39
-#: explorer/templates/explorer/preview_pane.html:81
+#: explorer/templates/explorer/fullscreen.html:46
+#: explorer/templates/explorer/preview_pane.html:106
 msgid "Empty Resultset"
 msgstr "Результат запроса пуст"
 
-#: explorer/templates/explorer/play.html:8
-#: explorer/templates/explorer/play.html:16
-#: explorer/templates/explorer/query.html:7
+#: explorer/templates/explorer/play.html:7
+#: explorer/templates/explorer/play.html:15
+#: explorer/templates/explorer/query.html:9
 #: explorer/templates/explorer/query_list.html:7
 #: explorer/templates/explorer/querylog_list.html:7
 #: explorer/templates/explorer/querylog_list.html:23
-#: explorer/templates/explorer/querylog_list.html:33
+#: explorer/templates/explorer/querylog_list.html:41
 msgid "Playground"
 msgstr "Полигон"
 
-#: explorer/templates/explorer/play.html:9
-#: explorer/templates/explorer/query.html:10
+#: explorer/templates/explorer/play.html:8
+#: explorer/templates/explorer/query.html:14
 #: explorer/templates/explorer/query_list.html:8
 #: explorer/templates/explorer/querylog_list.html:8
 msgid "Logs"
@@ -87,107 +87,115 @@ msgstr ""
 "Полигон предназначен для экспериментов и написания специальных запросов. По "
 "умолчанию тут ничего не будет сохраняться"
 
-#: explorer/templates/explorer/play.html:24
-#: explorer/templates/explorer/query.html:46
+#: explorer/templates/explorer/play.html:27
+#: explorer/templates/explorer/query.html:61
 msgid "Connection"
 msgstr "Соединение"
 
-#: explorer/templates/explorer/play.html:39
+#: explorer/templates/explorer/play.html:42
 msgid "Playground SQL"
 msgstr "Экспериментальный SQL"
 
-#: explorer/templates/explorer/play.html:55
-#: explorer/templates/explorer/query.html:110
+#: explorer/templates/explorer/play.html:62
+#: explorer/templates/explorer/query.html:147
 msgid "Refresh"
 msgstr "Обновить"
 
-#: explorer/templates/explorer/play.html:58
-#: explorer/templates/explorer/play.html:68
-#: explorer/templates/explorer/query.html:98
-#: explorer/templates/explorer/query.html:115
+#: explorer/templates/explorer/play.html:65
+#: explorer/templates/explorer/play.html:77
+#: explorer/templates/explorer/query.html:127
+#: explorer/templates/explorer/query.html:154
 msgid "Toggle Dropdown"
 msgstr "Включить выпадающий список"
 
-#: explorer/templates/explorer/play.html:61
+#: explorer/templates/explorer/play.html:68
 msgid "Save As New Query"
 msgstr "Сохранить как новый запрос"
 
-#: explorer/templates/explorer/play.html:65
-#: explorer/templates/explorer/query.html:112
+#: explorer/templates/explorer/play.html:73
+#: explorer/templates/explorer/query.html:150
 msgid "Download"
 msgstr "Скачать"
 
-#: explorer/templates/explorer/play.html:75
-#: explorer/templates/explorer/query.html:107
+#: explorer/templates/explorer/play.html:85
+#: explorer/templates/explorer/query.html:141
 msgid "Show Schema"
 msgstr "Показать схему базы"
 
-#: explorer/templates/explorer/play.html:76
-#: explorer/templates/explorer/query.html:108
+#: explorer/templates/explorer/play.html:88
+#: explorer/templates/explorer/query.html:144
 msgid "Hide Schema"
 msgstr "Скрыть схему"
 
-#: explorer/templates/explorer/play.html:77
-#: explorer/templates/explorer/query.html:106
+#: explorer/templates/explorer/play.html:91
+#: explorer/templates/explorer/query.html:138
 msgid "Format"
 msgstr "Отформатировать запрос"
 
-#: explorer/templates/explorer/play.html:80
+#: explorer/templates/explorer/play.html:95
 msgid "Playground Query"
 msgstr "Экспериментальный запрос"
 
-#: explorer/templates/explorer/preview_pane.html:8
+#: explorer/templates/explorer/preview_pane.html:10
 msgid "Preview"
 msgstr "Предпросмотр"
 
-#: explorer/templates/explorer/preview_pane.html:9
+#: explorer/templates/explorer/preview_pane.html:16
 msgid "Snapshots"
 msgstr "Варианты"
 
-#: explorer/templates/explorer/preview_pane.html:10
-#: explorer/templates/explorer/preview_pane.html:112
+#: explorer/templates/explorer/preview_pane.html:23
+#: explorer/templates/explorer/preview_pane.html:139
 msgid "Pivot"
 msgstr "Сводная таблица"
 
-#: explorer/templates/explorer/preview_pane.html:19
+#: explorer/templates/explorer/preview_pane.html:38
 #, python-format
 msgid "Execution time: %(duration)s ms"
 msgstr "Время выполнения: %(duration)s мс"
 
-#: explorer/templates/explorer/preview_pane.html:28
+#: explorer/templates/explorer/preview_pane.html:46
+msgid "Showing"
+msgstr "Отображение"
+
+#: explorer/templates/explorer/preview_pane.html:48
+msgid "First"
+msgstr "Первый"
+
+#: explorer/templates/explorer/preview_pane.html:50
 #, python-format
 msgid "of %(total_rows)s total rows."
 msgstr "из %(total_rows)s выбранных записей."
 
-#: explorer/templates/explorer/query.html:9
+#: explorer/templates/explorer/query.html:12
 msgid "Query Detail"
 msgstr "Подробности запроса"
 
-#: explorer/templates/explorer/query.html:19
+#: explorer/templates/explorer/query.html:33
 msgid "History"
 msgstr "История"
 
-#: explorer/templates/explorer/query.html:39
+#: explorer/templates/explorer/query.html:54
 msgid "Title"
 msgstr "Название"
 
-#: explorer/templates/explorer/query.html:61
+#: explorer/templates/explorer/query.html:77
 msgid "Description"
 msgstr "Описание"
 
-#: explorer/templates/explorer/query.html:95
+#: explorer/templates/explorer/query.html:124
 msgid "Save & Run"
 msgstr "Сохранить и запустить"
 
-#: explorer/templates/explorer/query.html:103
+#: explorer/templates/explorer/query.html:133
 msgid "Save Only"
 msgstr "Сохранить"
 
-#: explorer/templates/explorer/query.html:136
+#: explorer/templates/explorer/query.html:176
 msgid "Snapshot"
 msgstr "Вариант"
 
-#: explorer/templates/explorer/query.html:142
+#: explorer/templates/explorer/query.html:182
 #, python-format
 msgid ""
 "Avg. execution: %(avg_duration|floatformat:2)sms. Query created by "
@@ -196,54 +204,54 @@ msgstr ""
 "Среднее время выполнения: %(avg_duration|floatformat:2)s мс. Запрос в "
 "%(created)s. от «%(user_email)s»"
 
-#: explorer/templates/explorer/query_confirm_delete.html:6
+#: explorer/templates/explorer/query_confirm_delete.html:7
 #, python-format
-msgid "Are you sure you want to delete \"%(title)s\" ?"
+msgid "Are you sure you want to delete \"%(title)s\"?"
 msgstr "Вы уверены в удалении «%(title)s»?"
 
-#: explorer/templates/explorer/query_list.html:14
+#: explorer/templates/explorer/query_list.html:15
 #, python-format
-msgid " Your %(qlen)s Most Recently Run "
-msgstr " Ваши последние запуски запросов, их %(qlen)s"
+msgid "Your %(qlen)s Most Recently Run"
+msgstr "Ваши последние запуски запросов, их %(qlen)s"
 
-#: explorer/templates/explorer/query_list.html:19
+#: explorer/templates/explorer/query_list.html:23
 msgid "Last Run"
 msgstr "Последний запуск"
 
-#: explorer/templates/explorer/query_list.html:40
+#: explorer/templates/explorer/query_list.html:48
 msgid "All Queries"
 msgstr "Все запросы"
 
-#: explorer/templates/explorer/query_list.html:43
+#: explorer/templates/explorer/query_list.html:51
 #: explorer/templates/explorer/schema.html:10
 msgid "Search"
 msgstr "Поиск"
 
-#: explorer/templates/explorer/query_list.html:50
+#: explorer/templates/explorer/query_list.html:58
 msgid "Created"
 msgstr "Создан"
 
-#: explorer/templates/explorer/query_list.html:52
+#: explorer/templates/explorer/query_list.html:60
 msgid "Email"
 msgstr "Емейл"
 
-#: explorer/templates/explorer/query_list.html:54
+#: explorer/templates/explorer/query_list.html:62
 msgid "CSV"
 msgstr "CSV"
 
-#: explorer/templates/explorer/query_list.html:56
+#: explorer/templates/explorer/query_list.html:64
 msgid "Play"
 msgstr "Запустить"
 
-#: explorer/templates/explorer/query_list.html:57
+#: explorer/templates/explorer/query_list.html:65
 msgid "Delete"
 msgstr "Удалить"
 
-#: explorer/templates/explorer/query_list.html:59
+#: explorer/templates/explorer/query_list.html:67
 msgid "Run Count"
 msgstr "Число запусков"
 
-#: explorer/templates/explorer/query_list.html:79
+#: explorer/templates/explorer/query_list.html:87
 #, python-format
 msgid "by %(cuser)s"
 msgstr " пользователем «%(cuser)s»"
@@ -265,19 +273,20 @@ msgstr "Запущено пользователем"
 msgid "Duration"
 msgstr "Длительность"
 
-#: explorer/templates/explorer/querylog_list.html:21
-msgid "SQL"
-msgstr "SQL"
-
 #: explorer/templates/explorer/querylog_list.html:22
 msgid "Query ID"
 msgstr "ID запроса"
 
-#: explorer/templates/explorer/querylog_list.html:34
+#: explorer/templates/explorer/querylog_list.html:36
+#, python-format
+msgid "Query %(query_id)s"
+msgstr "пользователем «%(query_id)s»"
+
+#: explorer/templates/explorer/querylog_list.html:48
 msgid "Open"
 msgstr "Открыть"
 
-#: explorer/templates/explorer/querylog_list.html:47
+#: explorer/templates/explorer/querylog_list.html:63
 #, python-format
 msgid "Page %(pnum)s of %(anum)s."
 msgstr "Страница %(pnum)s из %(anum)s."
@@ -286,25 +295,28 @@ msgstr "Страница %(pnum)s из %(anum)s."
 msgid "Schema"
 msgstr "Схема"
 
-#: explorer/templates/explorer/schema.html:14
+#: explorer/templates/explorer/schema.html:15
 msgid "Collapse All"
 msgstr "Свернуть все"
 
-#: explorer/templates/explorer/schema.html:17
+#: explorer/templates/explorer/schema.html:20
 msgid "Expand All"
 msgstr "Развернуть все"
 
-#: explorer/templates/explorer/schema_building.html:7
+#: explorer/templates/explorer/schema_building.html:6
 msgid "Schema is building..."
 msgstr "Строится схема…"
 
-#: explorer/templates/explorer/schema_building.html:8
+#: explorer/templates/explorer/schema_building.html:7
 msgid "Please wait a minute, and refresh."
 msgstr "Подождите минутку и обновите."
 
 #: explorer/views/query.py:125
 msgid "Query saved."
 msgstr "Запрос сохранен."
+
+#~ msgid "SQL"
+#~ msgstr "SQL"
 
 #~ msgid "Avg. execution:"
 #~ msgstr "Среднее время запроса"

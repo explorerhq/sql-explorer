@@ -4,17 +4,21 @@
 
 {% block sql_explorer_content_takeover %}
 <div class="schema-wrapper">
-    <h4 class="text-center">{% blocktrans %}Schema{% endblocktrans %}</h4>
+    <h4 class="text-center">{% trans "Schema" %}</h4>
     <div id="tables">
         <p class="text-center">
-          <input class="search" placeholder="{% blocktrans %}Search{% endblocktrans %}" />
+          <input class="search" placeholder="{% trans "Search" %}" />
         </p>
         <div class="row">
             <div class="col-xs-6 text-center">
-                <a class="btn btn-link" id="collapse_all">{% trans "Collapse All" %}</a>
+                <a class="btn btn-link" id="collapse_all">
+                    {% trans "Collapse All" %}
+                </a>
             </div>
             <div class="col-xs-6 text-center">
-                <a class="btn btn-link" id="expand_all">{% trans "Expand All" %}</a>
+                <a class="btn btn-link" id="expand_all">
+                    {% trans "Expand All" %}
+                </a>
             </div>
         </div>
         <ul class="list">
@@ -30,11 +34,11 @@
                                 </thead>
                                 <tbody>
                                     {% for c in m.1 %}
-                                    <tr>
-                                        <td width="50%"><code>{{ c.0 }}</code></td>
-                                        <!-- This will show the type of the column as well -->
-                                        <td width="50%" class="text-muted"><small>{{ c.1 }}</small></td>
-                                    </tr>
+                                        <tr>
+                                            <td width="50%"><code>{{ c.0 }}</code></td>
+                                            <!-- This will show the type of the column as well -->
+                                            <td width="50%" class="text-muted"><small>{{ c.1 }}</small></td>
+                                        </tr>
                                     {% endfor %}
                                 </tbody>
                             </table>

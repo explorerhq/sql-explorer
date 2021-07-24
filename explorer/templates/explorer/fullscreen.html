@@ -1,4 +1,4 @@
-{% load static i18n %}
+{% load i18n static %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,36 +9,43 @@
 
     <link rel="stylesheet" href="{% static 'explorer/css/bootstrap.min.css' %}" />
     <link rel="stylesheet" href="{% static 'explorer/css/explorer.css' %}" />
-
 </head>
 
 <body>
-  <h2>{% if query %}{{ query.title }}{% if shared %}<small>&nbsp;&nbsp;shared</small>{% endif %}{% else %}{% trans "New Query" %}{% endif %}</h2>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        {% for h in headers %}
-          <th>{{ h }}</th>
-        {% endfor %}
-      </tr>
-    </thead>
-    <tbody class="list">
-      {% if data %}
-        {% for row in data %}
-          <tr class="data-row">
-            {% for i in row %}
-              {% if unsafe_rendering %}
-                <td>{% autoescape off %}{{ i }}{% endautoescape %}</td>
-              {% else %}
-                <td>{{ i }}</td>
-              {% endif %}
-            {% endfor %}
-          </tr>
-        {% endfor %}
+{% spaceless %}
+  <h2>
+      {% if query %}
+          {{ query.title }}{% if shared %}<small>&nbsp;&nbsp;shared</small>{% endif %}
       {% else %}
-        <tr class="text-center"><td colspan="{{ headers|length }}">{% trans "Empty Resultset" %}</td></tr>
+          {% trans "New Query" %}
       {% endif %}
-    </tbody>
+  </h2>
+{% endspaceless %}
+  <table class="table table-striped">
+      <thead>
+          <tr>
+              {% for h in headers %}
+                  <th>{{ h }}</th>
+              {% endfor %}
+          </tr>
+      </thead>
+      <tbody class="list">
+          {% if data %}
+              {% for row in data %}
+                  <tr class="data-row">
+                      {% for i in row %}
+                          {% if unsafe_rendering %}
+                              <td>{% autoescape off %}{{ i }}{% endautoescape %}</td>
+                          {% else %}
+                              <td>{{ i }}</td>
+                          {% endif %}
+                      {% endfor %}
+                  </tr>
+              {% endfor %}
+          {% else %}
+              <tr class="text-center"><td colspan="{{ headers|length }}">{% trans "Empty Resultset" %}</td></tr>
+          {% endif %}
+      </tbody>
   </table>
 </body>
 </html>
