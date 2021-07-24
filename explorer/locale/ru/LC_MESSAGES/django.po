@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-17 11:05-0500\n"
+"POT-Creation-Date: 2021-07-24 09:04-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -188,16 +188,13 @@ msgid "Snapshot"
 msgstr "Вариант"
 
 #: explorer/templates/explorer/query.html:142
-msgid "Avg. execution:"
-msgstr "Среднее время запроса"
-
-#: explorer/templates/explorer/query.html:142
-msgid "Query created by"
-msgstr "Запрос создан"
-
-#: explorer/templates/explorer/query.html:142
-msgid "on"
-msgstr "в"
+#, python-format
+msgid ""
+"Avg. execution: %(avg_duration|floatformat:2)sms. Query created by "
+"%(user_email)s on %(created)s."
+msgstr ""
+"Среднее время выполнения: %(avg_duration|floatformat:2)s мс. Запрос в "
+"%(created)s. от «%(user_email)s»"
 
 #: explorer/templates/explorer/query_confirm_delete.html:6
 msgid "Are you sure you want to delete"
@@ -307,3 +304,12 @@ msgstr "Подождите минутку и обновите."
 #: explorer/views/query.py:125
 msgid "Query saved."
 msgstr "Запрос сохранен."
+
+#~ msgid "Avg. execution:"
+#~ msgstr "Среднее время запроса"
+
+#~ msgid "Query created by"
+#~ msgstr "Запрос создан"
+
+#~ msgid "on"
+#~ msgstr "в"
