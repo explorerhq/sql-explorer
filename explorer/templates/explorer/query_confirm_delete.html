@@ -3,7 +3,7 @@
 {% block sql_explorer_content %}
     <form method="post">{% csrf_token %}
         <div class="alert alert-info">
-            Are you sure you want to delete "{{ object.title }}" ?
+            {% blocktrans with title=object.title %}Are you sure you want to delete "{{ title }}" ?{% endblocktrans %}
         </div>
         <div>
             <input type="submit" value="Delete Query" class="btn btn-default" />

@@ -1,11 +1,11 @@
-{% load static %}
+{% load static i18n %}
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SQL Explorer{% if query %} - {{ query.title }}{% elif title %} - {{ title }}{% endif %}</title>
+    <title>{% trans "SQL Explorer" %}{% if query %} - {{ query.title }}{% elif title %} - {{ title }}{% endif %}</title>
 
     <link rel="stylesheet" href="{% static 'explorer/css/bootstrap.min.css' %}" />
     <link rel="stylesheet" href="{% static 'explorer/css/explorer.css' %}" />
@@ -13,7 +13,7 @@
 </head>
 
 <body>
-  <h2>{% if query %}{{ query.title }}{% if shared %}<small>&nbsp;&nbsp;shared</small>{% endif %}{% else %}New Query{% endif %}</h2>
+  <h2>{% if query %}{{ query.title }}{% if shared %}<small>&nbsp;&nbsp;shared</small>{% endif %}{% else %}{% trans "New Query" %}{% endif %}</h2>
   <table class="table table-striped">
     <thead>
       <tr>
@@ -36,7 +36,7 @@
           </tr>
         {% endfor %}
       {% else %}
-        <tr class="text-center"><td colspan="{{ headers|length }}">Empty Resultset</td></tr>
+        <tr class="text-center"><td colspan="{{ headers|length }}">{% trans "Empty Resultset" %}</td></tr>
       {% endif %}
     </tbody>
   </table>

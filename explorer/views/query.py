@@ -15,6 +15,7 @@ from explorer.views.auth import PermissionRequiredMixin
 from explorer.views.mixins import ExplorerContextMixin
 from explorer.views.utils import query_viewmodel
 
+from django.utils.translation import gettext_lazy as _ 
 
 class PlayQueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
 
@@ -121,7 +122,7 @@ class QueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
             form=form,
             run_query=show,
             rows=url_get_rows(request),
-            message="Query saved." if success else None
+            message=_("Query saved.") if success else None
         )
         return self.render_template('explorer/query.html', vm)
 
