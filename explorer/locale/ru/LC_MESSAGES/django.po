@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-24 09:04-0500\n"
+"POT-Creation-Date: 2021-07-24 10:26-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -197,8 +197,9 @@ msgstr ""
 "%(created)s. от «%(user_email)s»"
 
 #: explorer/templates/explorer/query_confirm_delete.html:6
-msgid "Are you sure you want to delete"
-msgstr "Вы уверены в удалении"
+#, python-format
+msgid "Are you sure you want to delete \"%(title)s\" ?"
+msgstr "Вы уверены в удалении «%(title)s»?"
 
 #: explorer/templates/explorer/query_list.html:14
 #, python-format
