@@ -1,12 +1,11 @@
 {% extends "explorer/base.html" %}
-
 {% load explorer_tags i18n %}
 
 {% block sql_explorer_navlinks %}
     {% if can_change %}
-      <li><a href="{% url 'query_create' %}">{% trans "New Query" %}</a></li>
-      <li class="active"><a href="">{% trans "Playground" %}</a></li>
-      <li><a href="{% url 'explorer_logs' %}">{% trans "Logs" %}</a></li>
+        <li><a href="{% url 'query_create' %}">{% trans "New Query" %}</a></li>
+        <li class="active"><a href="">{% trans "Playground" %}</a></li>
+        <li><a href="{% url 'explorer_logs' %}">{% trans "Logs" %}</a></li>
     {% endif %}
 {% endblock %}
 
@@ -14,36 +13,44 @@
 <div class="row">
     <div id="query_area" class="col-md-12">
         <h2>{% trans "Playground" %}</h2>
-        <p>{% trans "The playground is for experimenting and writing ad-hoc queries. By default, nothing you do here will be saved." %}</p>
+        <p>
+            {% blocktrans trimmed %}
+                The playground is for experimenting and writing ad-hoc queries. By default, nothing you do here will be saved.
+            {% endblocktrans %}
+        </p>
         <form role="form" action="{% url 'explorer_playground' %}" method="post" id="editor" class="playground-form form-horizontal">{% csrf_token %}
             {% if error %}
                 <div class="alert alert-danger">{{ error|escape }}</div>
             {% endif %}
             {% if form.connections|length > 1 %}
-              <div class="form-group">
-                <label for="id_connection" class="col-sm-2 control-label">{% trans "Connection" %}</label>
-                <div class="col-sm-10">
-                  {{ form.connection }}
+                <div class="form-group">
+                    <label for="id_connection" class="col-sm-2 control-label">{% trans "Connection" %}</label>
+                    <div class="col-sm-10">
+                        {{ form.connection }}
+                    </div>
                 </div>
-              </div>
             {% else %}
-              {# still need to submit the connection, just hide the UI element #}
-              <div class="hidden">
-                {{ form.connection }}
-              </div>
+                {# still need to submit the connection, just hide the UI element #}
+                <div class="hidden">
+                    {{ form.connection }}
+                </div>
             {% endif %}
             <div class="panel panel-default sql-panel">
                 <div class="panel-heading">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <span class="panel-title">{% trans "Playground SQL" %}</span>
-                    </div>
-                    {% if ql_id %}
-                        <div class="col-md-6 text-right">
-                          <small><a href="{% url 'explorer_playground' %}?querylog_id={{ ql_id }}"><i class="glyphicon glyphicon-link"></i></a></small>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <span class="panel-title">{% trans "Playground SQL" %}</span>
                         </div>
-                    {% endif %}
-                  </div>
+                        {% if ql_id %}
+                            <div class="col-md-6 text-right">
+                                <small>
+                                    <a href="{% url 'explorer_playground' %}?querylog_id={{ ql_id }}">
+                                        <i class="glyphicon glyphicon-link"></i>
+                                    </a>
+                                </small>
+                            </div>
+                        {% endif %}
+                    </div>
                 </div>
                 <div class="panel-content">
                     <textarea class="form-control" cols="40" id="id_sql" name="sql" rows="20">{{ query.sql }}</textarea>
@@ -51,30 +58,38 @@
             </div>
             <div class="form-group">
                 <div class="text-center">
-                  <div class="btn-group">
-                    <input type="submit" value="{% trans 'Refresh' %}" id="refresh_play_button" class="btn btn-default"/>
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      <span class="caret"></span>
-                      <span class="sr-only">{% trans "Toggle Dropdown" %}</span>
-                    </button>
-                    <ul class="dropdown-menu">
-                      <li><input type="submit" value="{% trans 'Save As New Query' %}" id="create_button" class="btn btn-link"/></li>
-                    </ul>
-                  </div>
-                  <div class="btn-group">
-                    <label class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{% trans "Download" %}</label>
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      <span class="caret"></span>
-                      <span class="sr-only">{% trans "Toggle Dropdown" %}</span>
-                    </button>
-                    <ul class="dropdown-menu">
-                      {% export_buttons query %}
-                    </ul>
-                  </div>
+                    <div class="btn-group">
+                        <input type="submit" value="{% trans 'Refresh' %}" id="refresh_play_button" class="btn btn-default"/>
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="caret"></span>
+                            <span class="sr-only">{% trans "Toggle Dropdown" %}</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><input type="submit" value="{% trans 'Save As New Query' %}" id="create_button" class="btn btn-link"/></li>
+                        </ul>
+                    </div>
+                    <div class="btn-group">
+                        <label class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {% trans "Download" %}
+                        </label>
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="caret"></span>
+                            <span class="sr-only">{% trans "Toggle Dropdown" %}</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            {% export_buttons query %}
+                        </ul>
+                    </div>
 
-                  <button type="button" class="btn btn-default" id="show_schema_button">{% trans "Show Schema" %}</button>
-                  <button type="button" class="btn btn-default" id="hide_schema_button" style="display: none;">{% trans "Hide Schema" %}</button>
-                  <button type="button" class="btn btn-default" id="format_button">{% trans "Format" %}</button>
+                    <button type="button" class="btn btn-default" id="show_schema_button">
+                        {% trans "Show Schema" %}
+                    </button>
+                    <button type="button" class="btn btn-default" id="hide_schema_button" style="display: none;">
+                        {% trans "Hide Schema" %}
+                    </button>
+                    <button type="button" class="btn btn-default" id="format_button">
+                        {% trans "Format" %}
+                    </button>
                 </div>
             </div>
             <input type="hidden" value="{% trans 'Playground Query' %}" name="title" />

@@ -5,37 +5,59 @@
         <div class="col-md-12">
             <div role="tabpanel">
                 <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation" class="active"><a href="#previewpane" aria-controls="previewpane" role="tab" data-toggle="tab" id="preview-tab-label">{% trans "Preview" %}</a></li>
-                    {% if query.id and query.snapshot %}<li role="presentation"><a href="#snapshots" aria-controls="snapshots" role="tab" data-toggle="tab">{% trans "Snapshots" %}</a></li>{% endif %}
-                    {% if data %}<li role="presentation"><a href="#pivot" aria-controls="pivot" role="tab" data-toggle="tab" id="pivot-tab-label">{% trans "Pivot" %}</a></li>{% endif %}
+                    <li role="presentation" class="active">
+                        <a id="preview-tab-label" href="#previewpane" aria-controls="previewpane" role="tab" data-toggle="tab">
+                            {% trans "Preview" %}
+                        </a>
+                    </li>
+                    {% if query.id and query.snapshot %}
+                        <li role="presentation">
+                            <a href="#snapshots" aria-controls="snapshots" role="tab" data-toggle="tab">
+                                {% trans "Snapshots" %}
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% if data %}
+                        <li role="presentation">
+                            <a id="pivot-tab-label" href="#pivot" aria-controls="pivot" role="tab" data-toggle="tab">
+                                {% trans "Pivot" %}
+                            </a>
+                        </li>
+                    {% endif %}
                 </ul>
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active" id="previewpane">
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                              <div class="row">
-                                <div class="col-md-6">
-                                  {% if data %}<a title="Show row numbers" id="counter-toggle" href="#">#</a>&nbsp;{% endif %}
-                                  <span class="panel-title">{% blocktrans with duration=duration|floatformat:2 %}Execution time: {{ duration }} ms{% endblocktrans %}</span>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        {% if data %}
+                                            <a title="Show row numbers" id="counter-toggle" href="#">#</a>&nbsp
+                                        {% endif %}
+                                        <span class="panel-title">
+                                            {% blocktrans trimmed with duration=duration|floatformat:2 %}
+                                                Execution time: {{ duration }} ms
+                                            {% endblocktrans %}
+                                        </span>
+                                    </div>
+                                    <div class="col-md-6 text-right">
+                                        <span class="row-control">
+                                            {% if rows > total_rows %}
+                                                {% trans "Showing" %}&nbsp;<input class="rows-input" type="text" name="rows" id="rows" value="{{ total_rows }}" />
+                                            {% else %}
+                                                {% trans "First" %}&nbsp;<input class="rows-input" type="text" name="rows" id="rows" value="{{ rows }}" />
+                                            {% endif %}
+                                            {% blocktrans %}of {{ total_rows }} total rows.{% endblocktrans %}
+                                        </span>
+                                        <span>
+                                            <small>
+                                                <a id="fullscreen" href="./?{{ fullscreen_params }}" target="_blank" title="Fullscreen results">
+                                                    <i class="glyphicon glyphicon-resize-full"></i>
+                                                </a>
+                                            </small>
+                                        </span>
+                                    </div>
                                 </div>
-                                <div class="col-md-6 text-right">
-                                  <span class="row-control">
-                                      {% if rows > total_rows %}
-                                          {% trans Showing %}<input class="rows-input" type="text" name="rows" id="rows" value="{{ total_rows }}" />
-                                      {% else %}
-                                          {% trans First %}<input class="rows-input" type="text" name="rows" id="rows" value="{{ rows }}" />
-                                      {% endif %}
-                                      {% blocktrans %}of {{ total_rows }} total rows.{% endblocktrans %}
-                                  </span>
-                                  <span>
-                                    <small>
-                                      <a id="fullscreen" href="./?{{ fullscreen_params }}" target="_blank" title="Fullscreen results">
-                                        <i class="glyphicon glyphicon-resize-full"></i>
-                                      </a>
-                                    </small>
-                                  </span>
-                                </div>
-                              </div>
                             </div>
                             <div class="overflow-wrapper">
                                 <table class="table table-striped table-hover" id="preview">
@@ -47,38 +69,43 @@
                                             {% endfor %}
                                         </tr>
                                         <tr class="stats-th">
-                                          <th class="counter"></th>
-                                          {% for h in headers %}
-                                          <th>
-                                            {% if h.summary %}
-                                              <i class="stats-expand glyphicon glyphicon-education"></i>
-                                              <div class="stats-wrapper">
-                                                  {% for label, value in h.summary.stats.items %}
-                                                      <div class="stat-wrapper"><span class="stat-label">{{ label }}:&nbsp;</span><span class="stat-value">{{ value }}</span></div>
-                                                  {% endfor %}
-                                              </div>
-                                            {% endif %}
-                                          </th>
-                                          {% endfor %}
+                                            <th class="counter"></th>
+                                            {% for h in headers %}
+                                                <th>
+                                                    {% if h.summary %}
+                                                        <i class="stats-expand glyphicon glyphicon-education"></i>
+                                                        <div class="stats-wrapper">
+                                                            {% for label, value in h.summary.stats.items %}
+                                                                <div class="stat-wrapper"><span class="stat-label">{{ label }}:&nbsp;</span><span class="stat-value">{{ value }}</span></div>
+                                                            {% endfor %}
+                                                        </div>
+                                                    {% endif %}
+                                                </th>
+                                            {% endfor %}
                                         </tr>
-
                                     </thead>
                                     <tbody class="list">
                                         {% if data %}
                                             {% for row in data %}
-                                            <tr class="data-row">
-                                              <td class="counter">{{ forloop.counter0 }}</td>
-                                                {% for i in row %}
-                                                  {% if unsafe_rendering %}
-                                                    <td class="{{ forloop.counter0 }}">{% autoescape off %}{{ i }}{% endautoescape %}</td>
-                                                  {% else %}
-                                                    <td class="{{ forloop.counter0 }}">{{ i }}</td>
-                                                  {% endif %}
-                                                {% endfor %}
-                                            </tr>
+                                                <tr class="data-row">
+                                                    <td class="counter">{{ forloop.counter0 }}</td>
+                                                    {% for i in row %}
+                                                        {% if unsafe_rendering %}
+                                                            <td class="{{ forloop.counter0 }}">
+                                                                {% autoescape off %}{{ i }}{% endautoescape %}
+                                                            </td>
+                                                        {% else %}
+                                                            <td class="{{ forloop.counter0 }}">{{ i }}</td>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </tr>
                                             {% endfor %}
                                         {% else %}
-                                            <tr class="text-center"><td colspan="{{ headers|length }}">{% blocktrans %}Empty Resultset{% endblocktrans %}</td></tr>
+                                            <tr class="text-center">
+                                                <td colspan="{{ headers|length }}">
+                                                    {% trans "Empty Resultset" %}
+                                                </td>
+                                            </tr>
                                         {% endif %}
                                     </tbody>
                                 </table>
@@ -92,36 +119,40 @@
                                     <span class="panel-title">{{ snapshots|length }} Snapshots <small>(oldest first)</small></span>
                                 </div>
                                 <div class="overflow-wrapper">
-                                <p>
-                                    <ul>
-                                    {%  for s in snapshots %}
-                                        <li><a href='{{ s.url }}'>{{ s.last_modified }}</a></li>
-                                    {% endfor %}
-                                    </ul>
-                                </p>
+                                    <p>
+                                        <ul>
+                                        {%  for s in snapshots %}
+                                            <li><a href='{{ s.url }}'>{{ s.last_modified }}</a></li>
+                                        {% endfor %}
+                                        </ul>
+                                    </p>
                                 </div>
                             </div>
                         </div>
                     {% endif %}
                     {% if data %}
-                      <div role="tabpanel" class="tab-pane" id="pivot">
-                        <div class="panel panel-default">
-                          <div class="panel-heading">
-                            <div class="row">
-                              <div class="col-md-6">
-                                <span class="panel-title">{% blocktrans %}Pivot{% endblocktrans %}</span>
-                              </div>
-                              <div class="col-md-6 text-right">
-                                <small><a id="pivot-bookmark" data-baseurl="{% url 'explorer_playground' %}?querylog_id={{ ql_id }}" href="#"><i class="glyphicon glyphicon-link"></i></a></small>
-                              </div>
+                        <div role="tabpanel" class="tab-pane" id="pivot">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <span class="panel-title">{% trans "Pivot" %}</span>
+                                        </div>
+                                        <div class="col-md-6 text-right">
+                                            <small>
+                                                <a id="pivot-bookmark" data-baseurl="{% url 'explorer_playground' %}?querylog_id={{ ql_id }}" href="#">
+                                                    <i class="glyphicon glyphicon-link"></i>
+                                                </a>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="overflow-wrapper">
+                                    <div class="pivot-table"></div>
+                                </div>
                             </div>
-                          </div>
-                          <div class="overflow-wrapper">
-                            <div class="pivot-table"></div>
-                          </div>
                         </div>
-                      </div>
-                  {% endif %}
+                    {% endif %}
                 </div>
             </div>
         </div>

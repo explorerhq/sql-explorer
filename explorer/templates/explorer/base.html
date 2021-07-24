@@ -2,7 +2,6 @@
 
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -30,34 +29,34 @@
     <div id="wrap" class="wrap">
         {% block sql_explorer_navbar %}
             <div class="navbar navbar-default navbar-static-top" role="navigation">
-              <div class="container">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="{% url 'explorer_index' %}">{% trans "SQL Explorer" %}</a>
+                <div class="container">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="{% url 'explorer_index' %}">{% trans "SQL Explorer" %}</a>
+                    </div>
+                    <div class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav">
+                            {% block sql_explorer_navlinks %}{% endblock %}
+                        </ul>
+                    </div>
                 </div>
-                <div class="navbar-collapse collapse">
-                  <ul class="nav navbar-nav">
-                    {% block sql_explorer_navlinks %}{% endblock %}
-                  </ul>
-                </div>
-              </div>
             </div>
         {% endblock %}
         <div class="container">
-          <div class="starter-template">
-          {% block sql_explorer_content %}{% endblock %}
-          </div>
+            <div class="starter-template">
+                {% block sql_explorer_content %}{% endblock %}
+            </div>
         </div>
     </div>
   {% endblock %}
     {% block sql_explorer_footer %}
         <div class="container">
             <div class="row">
-              <div class="col-md-12 text-center">
+                <div class="col-md-12 text-center">
                     <p class="text-muted">
                         Powered by <a href="https://www.github.com/groveco/django-sql-explorer/">django-sql-explorer</a> from
                         <a href="https://www.grove.co">Grove Collaborative</a>. Rendered at {% now "SHORT_DATETIME_FORMAT" %}
                     </p>
-              </div>
+                </div>
             </div>
         </div>
     {% endblock %}
