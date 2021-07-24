@@ -66,3 +66,14 @@ Sql Explorer is MIT licensed, and pull requests are welcome.
 **Snapshot query results to S3 & download as csv**
 
 .. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/2019_snapshots.png
+
+
+Alternatives
+------------
+
+* `django-sql-dashboard`_: provides an authenticated interface for executing read-only SQL queries directly against your PostgreSQL database, bringing a useful subset of `Datasette`_ to Django.
+
+
+
+.. _django-sql-dashboard: https://github.com/simonw/django-sql-dashboard
+.. _Datasette : https://datasette.io/
