@@ -96,5 +96,5 @@ def build_schema_info(connection_alias):
 
 def build_async_schemas():
     if do_async():
-        for c in EXPLORER_CONNECTIONS:
+        for c in EXPLORER_CONNECTIONS.keys():
             schema_info(c)

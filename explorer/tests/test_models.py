@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from unittest.mock import patch, Mock
 
-from django.db import connections
 from django.test import TestCase
+from explorer.connections import connections
 
 from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
 from explorer.models import (

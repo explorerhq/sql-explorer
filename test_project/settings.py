@@ -39,7 +39,7 @@ EXPLORER_CONNECTIONS = {
     'SQLite': 'default',
     'Another': 'alt'
 }
-EXPLORER_DEFAULT_CONNECTION = 'default'
+EXPLORER_DEFAULT_CONNECTION = 'SQLite'
 
 ROOT_URLCONF = 'explorer.tests.urls'
 
