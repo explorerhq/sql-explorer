@@ -11,9 +11,8 @@ jobs:
         python-version: [ 3.6, 3.7, 3.8, 3.9, ]
         requirements-file: [
             django-2.2.txt,
-            django-3.0.txt,
-            django-3.1.txt,
-            django-3.2.txt
+            django-3.2.txt,
+            django-4.0.txt
         ]
         os: [
           ubuntu-20.04,
