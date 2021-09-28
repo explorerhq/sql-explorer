@@ -77,6 +77,10 @@ setup(
         'sqlparse>=0.4.0',
     ],
     extras_require={
+        "celery": [
+            'celery>=3.1,<4.0',
+            'django-celery-results>=2.2.0'
+        ],
         "xls": [
             'xlsxwriter>=1.2.1'
         ]

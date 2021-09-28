@@ -17,15 +17,15 @@ Name                                                        Version License
 
 **Python - Optional Dependencies**
 
-====================================================================  ===========  =============
-Name                                                                    Version      License
-====================================================================  ===========  =============
-`celery <http://www.celeryproject.org/>`_                              >=3.1,<4      BSD
-`django-celery <http://www.celeryproject.org/>`_                       >=3.3.1       BSD
-`Factory Boy <https://github.com/rbarrois/factory_boy>`_               >=3.1.0       MIT
-`xlsxwriter <http://xlsxwriter.readthedocs.io/>`_                      >=1.3.6       BSD
-`boto <https://github.com/boto/boto>`_                                 >=2.49        MIT
-====================================================================  ===========  =============
+=========================================================================  ===========  =============
+Name                                                                         Version      License
+=========================================================================  ===========  =============
+`celery <http://www.celeryproject.org/>`_                                   >=3.1,<4      BSD
+`django-celery-results <http://django-celery-results.readthedocs.io/>`_     >=2.2.0       BSD
+`Factory Boy <https://github.com/rbarrois/factory_boy>`_                    >=3.1.0       MIT
+`xlsxwriter <http://xlsxwriter.readthedocs.io/>`_                           >=1.3.6       BSD
+`boto <https://github.com/boto/boto>`_                                      >=2.49        MIT
+=========================================================================  ===========  =============
 
 - Factory Boy is required for tests
 - celery is required for the 'email' feature, and for snapshots

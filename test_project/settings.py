@@ -1,5 +1,4 @@
 import os
-import djcelery
 
 SECRET_KEY = 'shhh'
 DEBUG = True
@@ -30,6 +29,13 @@ DATABASES = {
         'TEST': {
             'NAME': 'tmp3'
         }
+    }
+}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'cache',
     }
 }
 
@@ -68,7 +74,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'explorer',
-    'djcelery'
+    'django_celery_results',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -85,7 +91,8 @@ MIDDLEWARE = [
 
 TEST_RUNNER = 'djcelery.contrib.test_runner.CeleryTestSuiteRunner'
 
-djcelery.setup_loader()
+CELERY_RESULT_BACKEND = 'django-cache'
+CELERY_CACHE_BACKEND = 'default'
 CELERY_ALWAYS_EAGER = True
 BROKER_BACKEND = 'memory'
 
