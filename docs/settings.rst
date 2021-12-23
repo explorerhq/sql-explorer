@@ -19,7 +19,7 @@ Disallowed words in SQL queries to prevent destructive actions.
        'DROP',
        'GRANT',
        'INSERT INTO',
-       'OWNER TO'
+       'OWNER TO',
        'RENAME ',
        'REPLACE',
        'SCHEMA',
