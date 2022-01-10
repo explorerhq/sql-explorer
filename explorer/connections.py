@@ -23,9 +23,9 @@ class ExplorerConnections:
             if item in djcs:
                 # Original connection handling did lookups by the django names not the explorer
                 # alias. To support stored uses of URLs accessing connections by the old name
-                # (such as schema), we support the django db connectin name as long as it is
+                # (such as schema), we support the django db connection name as long as it is
                 # mapped by some alias in EXPLORER_CONNECTIONS, so as to prevent access to
-                # Django DB connections never meant to be exposed by Explorer
+                # Django DB connections, never meant to be exposed by Explorer
                 if item not in EXPLORER_CONNECTIONS.values():
                     raise InvalidExplorerConnectionException(
                         f"Attempted to access connection {item} which is "
