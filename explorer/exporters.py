@@ -8,7 +8,7 @@ from io import StringIO, BytesIO
 
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.module_loading import import_string
-from django.utils.text import slugify
+from django.utils.text import get_valid_filename, slugify
 
 from explorer import app_settings
 
@@ -44,11 +44,7 @@ class BaseExporter:
         raise NotImplementedError
 
     def get_filename(self):
-        # build list of valid chars, build filename from title & replace spaces
-        valid_chars = f'-_.() {string.ascii_letters}{string.digits}'
-        filename = ''.join(c for c in self.query.title if c in valid_chars)
-        filename = filename.replace(' ', '_')
-        return f'{filename}{self.file_extension}'
+        return get_valid_filename(self.query.title or '') + self.file_extension
 
 
 class CSVExporter(BaseExporter):
