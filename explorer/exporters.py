@@ -44,7 +44,7 @@ class BaseExporter:
         raise NotImplementedError
 
     def get_filename(self):
-        return get_valid_filename(self.query.title or '')
+        return get_valid_filename(self.query.title or '') + self.file_extension
 
 
 class CSVExporter(BaseExporter):
