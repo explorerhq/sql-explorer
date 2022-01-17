@@ -1,5 +1,13 @@
 import os
-import djcelery
+
+
+class DisableMigrations(dict):
+    def __contains__(self, item):
+        return True
+
+    def __getitem__(self, item):
+        return None
+
 
 SECRET_KEY = 'shhh'
 DEBUG = True
@@ -68,7 +76,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'explorer',
-    'djcelery'
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -81,13 +88,10 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-TEST_RUNNER = 'djcelery.contrib.test_runner.CeleryTestSuiteRunner'
-
-djcelery.setup_loader()
 CELERY_ALWAYS_EAGER = True
-BROKER_BACKEND = 'memory'
 
 # Explorer-specific
 
@@ -99,3 +103,5 @@ EXPLORER_TRANSFORMS = (
 EXPLORER_USER_QUERY_VIEWS = {}
 EXPLORER_TASKS_ENABLED = True
 EXPLORER_S3_BUCKET = 'thisismybucket.therearemanylikeit.butthisoneismine'
+
+MIGRATION_MODULES = DisableMigrations()

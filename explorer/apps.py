@@ -6,6 +6,7 @@ from django.utils.translation import gettext_lazy as _
 
 class ExplorerAppConfig(AppConfig):
 
+    default_auto_field = 'django.db.models.AutoField'
     name = 'explorer'
     verbose_name = _('SQL Explorer')
 
@@ -16,18 +17,19 @@ class ExplorerAppConfig(AppConfig):
 
 
 def _get_default():
+    """ Get the default connection for explorer """
     from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION
     return EXPLORER_DEFAULT_CONNECTION
 
 
 def _get_explorer_connections():
+    """ Get the explorer connections """
     from explorer.app_settings import EXPLORER_CONNECTIONS
     return EXPLORER_CONNECTIONS
 
 
 def _validate_connections():
-
-    # Validate connections
+    """ Validate connections """
     if _get_default() not in _get_explorer_connections().values():
         raise ImproperlyConfigured(
             f'EXPLORER_DEFAULT_CONNECTION is {_get_default()}, '
