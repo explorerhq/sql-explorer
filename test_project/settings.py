@@ -9,6 +9,8 @@ class DisableMigrations(dict):
         return None
 
 
+env = os.environ.get
+
 SECRET_KEY = 'shhh'
 DEBUG = True
 STATIC_URL = '/static/'
@@ -91,7 +93,9 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CELERY_ALWAYS_EAGER = True
+ENABLE_TASKS = env('ENABLE_TASKS', False)
+EXPLORER_ASYNC_SCHEMA = env('EXPLORER_ASYNC_SCHEMA', False)
+task_always_eager = True
 
 # Explorer-specific
 
