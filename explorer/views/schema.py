@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from django.http import Http404
 from django.shortcuts import render
 from django.utils.decorators import method_decorator

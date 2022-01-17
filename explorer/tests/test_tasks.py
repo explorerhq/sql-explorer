@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from datetime import datetime, timedelta
 from io import StringIO
 from unittest.mock import patch
@@ -8,10 +7,7 @@ from django.test import TestCase
 
 from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
 from explorer.models import QueryLog
-from explorer.tasks import (
-    execute_query, snapshot_queries, truncate_querylogs,
-    build_schema_cache_async
-)
+from explorer.tasks import build_schema_cache_async, execute_query, snapshot_queries, truncate_querylogs
 from explorer.tests.factories import SimpleQueryFactory
 
 

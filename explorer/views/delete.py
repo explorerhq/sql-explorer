@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView
 

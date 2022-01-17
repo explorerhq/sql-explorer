@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import re
 from collections import Counter
 
@@ -7,10 +6,7 @@ from django.views.generic import ListView
 
 from explorer import app_settings
 from explorer.models import Query, QueryLog
-from explorer.utils import (
-    url_get_query_id,
-    allowed_query_pks
-)
+from explorer.utils import allowed_query_pks, url_get_query_id
 from explorer.views.auth import PermissionRequiredMixin
 from explorer.views.mixins import ExplorerContextMixin
 

@@ -1,9 +1,9 @@
 import functools
 import re
 
+from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView
-from django.contrib.auth import REDIRECT_FIELD_NAME
 from sqlparse import format as sql_format
 
 from explorer import app_settings
@@ -22,7 +22,7 @@ def passes_blacklist(sql):
         (
             bl_word,
             re.compile(
-                r'(^|\W){}($|\W)'.format(bl_word),
+                fr'(^|\W){bl_word}($|\W)',
                 flags=re.IGNORECASE
             )
         )

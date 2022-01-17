@@ -1,19 +1,8 @@
 from django.urls import path, re_path
 
-from explorer.views import (
-    QueryView,
-    CreateQueryView,
-    PlayQueryView,
-    DeleteQueryView,
-    ListQueryView,
-    ListQueryLogView,
-    DownloadFromSqlView,
-    DownloadQueryView,
-    StreamQueryView,
-    EmailCsvQueryView,
-    SchemaView,
-    format_sql,
-)
+from explorer.views import (CreateQueryView, DeleteQueryView, DownloadFromSqlView, DownloadQueryView, EmailCsvQueryView,
+                            ListQueryLogView, ListQueryView, PlayQueryView, QueryView, SchemaView, StreamQueryView,
+                            format_sql)
 
 urlpatterns = [
     path(

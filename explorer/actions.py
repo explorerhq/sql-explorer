@@ -1,8 +1,8 @@
+import tempfile
 from collections import defaultdict
 from datetime import date
-import tempfile
-from zipfile import ZipFile
 from wsgiref.util import FileWrapper
+from zipfile import ZipFile
 
 from django.http import HttpResponse
 

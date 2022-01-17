@@ -1,12 +1,11 @@
-# -*- coding: utf-8 -*-
 from unittest.mock import patch
 
 from django.core.cache import cache
 from django.db import connection
 from django.test import TestCase
 
-from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
 from explorer import schema
+from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
 
 
 class TestSchemaInfo(TestCase):

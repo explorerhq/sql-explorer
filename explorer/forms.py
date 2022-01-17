@@ -1,12 +1,8 @@
-from django.forms import (
-    BooleanField, CharField, ModelForm, ValidationError
-)
+from django.forms import BooleanField, CharField, ModelForm, ValidationError
 from django.forms.widgets import CheckboxInput, Select
 
-from explorer.app_settings import (
-    EXPLORER_DEFAULT_CONNECTION, EXPLORER_CONNECTIONS
-)
-from explorer.models import Query, MSG_FAILED_BLACKLIST
+from explorer.app_settings import EXPLORER_CONNECTIONS, EXPLORER_DEFAULT_CONNECTION
+from explorer.models import MSG_FAILED_BLACKLIST, Query
 
 
 class SqlField(CharField):

@@ -3,6 +3,7 @@ import sys
 from pathlib import Path
 
 from setuptools import setup
+
 try:
     from sphinx.setup_command import BuildDoc
 except ImportError:

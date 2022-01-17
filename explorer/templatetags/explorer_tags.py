@@ -3,7 +3,6 @@ from django.utils.module_loading import import_string
 
 from explorer import app_settings
 
-
 register = template.Library()
 
 

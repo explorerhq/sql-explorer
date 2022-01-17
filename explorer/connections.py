@@ -2,7 +2,6 @@ from django.db import connections as djcs
 
 from explorer.app_settings import EXPLORER_CONNECTIONS
 
-
 # We export valid SQL connections here so that consuming code never has to
 # deal with django.db.connections directly, and risk accessing a connection
 # that hasn't been registered to Explorer.

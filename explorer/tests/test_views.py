@@ -5,17 +5,15 @@ from unittest.mock import Mock, patch
 from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.db import connections
-from django.test import TestCase
-from django.urls import reverse
 from django.forms.models import model_to_dict
 from django.shortcuts import redirect
+from django.test import TestCase
+from django.urls import reverse
 
-from explorer.app_settings import (
-    EXPLORER_DEFAULT_CONNECTION as CONN,
-    EXPLORER_TOKEN
-)
-from explorer.models import Query, QueryLog, MSG_FAILED_BLACKLIST
-from explorer.tests.factories import SimpleQueryFactory, QueryLogFactory
+from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
+from explorer.app_settings import EXPLORER_TOKEN
+from explorer.models import MSG_FAILED_BLACKLIST, Query, QueryLog
+from explorer.tests.factories import QueryLogFactory, SimpleQueryFactory
 from explorer.utils import user_can_see_query
 
 
