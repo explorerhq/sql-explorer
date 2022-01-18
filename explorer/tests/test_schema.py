@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 from django.core.cache import cache
 from django.db import connection
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from explorer import schema
 from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
@@ -72,11 +72,13 @@ class TestSchemaInfo(TestCase):
 
     @patch('explorer.schema.do_async')
     def test_builds_async(self, mocked_async_check):
+        """This test forces async so celery needs to be enabled"""
         mocked_async_check.return_value = True
-        self.assertIsNone(schema.schema_info(CONN))
-        res = schema.schema_info(CONN)
-        tables = [x[0] for x in res]
-        self.assertIn('explorer_query', tables)
+        with override_settings(EXPLORER_TASKS_ENABLED=True, EXPLORER_ASYNC_SCHEMA=True):
+            self.assertIsNone(schema.schema_info(CONN))
+            res = schema.schema_info(CONN)
+            tables = [x[0] for x in res]
+            self.assertIn('explorer_query', tables)
 
 
 def setup_sample_database_view():

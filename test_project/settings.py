@@ -1,13 +1,6 @@
 import os
 
-
-class DisableMigrations(dict):
-    def __contains__(self, item):
-        return True
-
-    def __getitem__(self, item):
-        return None
-
+from celery import Celery
 
 env = os.environ.get
 
@@ -93,8 +86,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-task_always_eager = True
-
 # Explorer-specific
 
 EXPLORER_TRANSFORMS = (
@@ -103,8 +94,20 @@ EXPLORER_TRANSFORMS = (
 )
 
 EXPLORER_USER_QUERY_VIEWS = {}
-EXPLORER_TASKS_ENABLED = env('EXPLORER_TASKS_ENABLED', False)
-EXPLORER_ASYNC_SCHEMA = env('EXPLORER_ASYNC_SCHEMA', False)
+EXPLORER_TASKS_ENABLED = env('EXPLORER_TASKS_ENABLED', True)
+EXPLORER_ASYNC_SCHEMA = env('EXPLORER_ASYNC_SCHEMA', True)
 EXPLORER_S3_BUCKET = 'thisismybucket.therearemanylikeit.butthisoneismine'
 
-MIGRATION_MODULES = DisableMigrations()
+# ***** CELERY *****
+
+ENABLE_CELERY = env('ENABLE_CELERY', 'yes')
+CELERY_BROKER_TYPE = env('CELERY_BROKER_TYPE', 'redis')
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+
+CELERY_ACCEPT_CONTENT = ['pickle', 'json']
+CELERY_TASK_SERIALIZER = 'pickle'
+CELERY_ALWAYS_EAGER = not ENABLE_CELERY
+CELERY_TASK_ALWAYS_EAGER = CELERY_ALWAYS_EAGER
+CELERY_SEND_TASK_ERROR_EMAILS = True
+CELERY_TIMEZONE = 'UTC'
