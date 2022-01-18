@@ -12,6 +12,8 @@
 /htmlcov/
 *.orig
 tmp
+tmp2
+tmp-journal
 venv/
 .venv/
 

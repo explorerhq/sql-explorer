@@ -93,8 +93,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ENABLE_TASKS = env('ENABLE_TASKS', False)
-EXPLORER_ASYNC_SCHEMA = env('EXPLORER_ASYNC_SCHEMA', False)
 task_always_eager = True
 
 # Explorer-specific
@@ -105,7 +103,8 @@ EXPLORER_TRANSFORMS = (
 )
 
 EXPLORER_USER_QUERY_VIEWS = {}
-EXPLORER_TASKS_ENABLED = True
+EXPLORER_TASKS_ENABLED = env('EXPLORER_TASKS_ENABLED', False)
+EXPLORER_ASYNC_SCHEMA = env('EXPLORER_ASYNC_SCHEMA', False)
 EXPLORER_S3_BUCKET = 'thisismybucket.therearemanylikeit.butthisoneismine'
 
 MIGRATION_MODULES = DisableMigrations()
