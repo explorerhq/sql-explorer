@@ -8,6 +8,10 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 `unreleased`_ changes
 ---------------------
 
+`2.4.0`_ (2022-02-10)
+---------------------
+* `#470`_: Upgrade JS/CSS versions.
+
 `2.3.0`_ (2021-07-24)
 ---------------------
 * `#450`_: Added Russian translations.
@@ -377,6 +381,7 @@ Initial Release
 .. _#445: https://github.com/groveco/django-sql-explorer/pull/445
 .. _#449: https://github.com/groveco/django-sql-explorer/pull/449
 .. _#450: https://github.com/groveco/django-sql-explorer/pull/450
+.. _#470: https://github.com/groveco/django-sql-explorer/pull/470
 
 .. _#269: https://github.com/groveco/django-sql-explorer/issues/269
 .. _#288: https://github.com/groveco/django-sql-explorer/issues/288

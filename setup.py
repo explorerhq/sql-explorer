@@ -73,7 +73,7 @@ setup(
     ],
     python_requires='>=3.6',
     install_requires=[
-        'Django>=2.2.14',
+        'Django>=2.2.27',
         'sqlparse>=0.4.0',
     ],
     extras_require={
