@@ -37,12 +37,12 @@ JavaScript
 ============================================================ ======== ================
 Name                                                         Version  License
 ============================================================ ======== ================
-`Twitter Boostrap <http://getbootstrap.com/>`_               3.3.6    MIT
-`jQuery <http://jquery.com/>`_                               2.1.4    MIT
+`Twitter Boostrap <http://getbootstrap.com/>`_               3.4.1    MIT
+`jQuery <http://jquery.com/>`_                               3.6.0    MIT
 `jQuery Cookie <https://github.com/carhartl/jquery-cookie>`_ 1.4.1    MIT
-`jQuery UI <https://jqueryui.com>`_                          1.11.4   MIT
-`Underscore <http://underscorejs.org/>`_                     1.7.0    MIT
-`Codemirror <http://codemirror.net/>`_                       5.15.2   MIT
+`jQuery UI <https://jqueryui.com>`_                          1.13.1   MIT
+`Underscore <http://underscorejs.org/>`_                     1.13.2   MIT
+`Codemirror <http://codemirror.net/>`_                       5.65.1   MIT
 `floatThead <http://mkoryak.github.io/floatThead/>`_         1.4.0    MIT
 `list.js <http://listjs.com>`_                               1.2.0    MIT
 `pivottable.js <http://nicolas.kruchten.com/pivottable/>`_   2.0.2    MIT
