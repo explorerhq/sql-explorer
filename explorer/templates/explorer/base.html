@@ -10,12 +10,12 @@
 
     <link rel="stylesheet" href="{% static 'explorer/css/codemirror.min.css' %}" />
     <link rel="stylesheet" href="{% static 'explorer/css/pivot.min.css' %}" />
-    <link rel="stylesheet" href="{% static 'explorer/css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'explorer/bootstrap/css/bootstrap-reboot.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'explorer/bootstrap/css/bootstrap.min.css' %}" />
     <link rel="stylesheet" href="{% static 'explorer/css/explorer.css' %}" />
 
     <script src="{% static 'explorer/js/jquery.min.js' %}"></script>
     <script src="{% static 'explorer/js/jquery.cookie.min.js' %}"></script>
-
     <script src="{% static 'explorer/js/jquery-ui.min.js' %}"></script>
     <script type="text/javascript">
         queryId = "{% firstof query.id 'new' %}";
@@ -28,18 +28,20 @@
   {% block sql_explorer_content_takeover %}
     <div id="wrap" class="wrap">
         {% block sql_explorer_navbar %}
-            <div class="navbar navbar-default navbar-static-top" role="navigation">
+            <nav class="navbar navbar-dark bg-dark" role="navigation">
                 <div class="container">
-                    <div class="navbar-header">
-                        <a class="navbar-brand" href="{% url 'explorer_index' %}">{% trans "SQL Explorer" %}</a>
-                    </div>
-                    <div class="navbar-collapse collapse">
-                        <ul class="nav navbar-nav">
+                    <a class="navbar-brand" href="{% url 'explorer_index' %}">{% trans "SQL Explorer" %}</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                      <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                             {% block sql_explorer_navlinks %}{% endblock %}
                         </ul>
                     </div>
+
                 </div>
-            </div>
+            </nav>
         {% endblock %}
         <div class="container">
             <div class="starter-template">
@@ -61,7 +63,7 @@
         </div>
     {% endblock %}
     <script src="{% static 'explorer/js/underscore-min.js' %}"></script>
-    <script src="{% static 'explorer/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'explorer/bootstrap/js/bootstrap.min.js' %}"></script>
     <script src="{% static 'explorer/js/list.min.js' %}"></script>
     <script src="{% static 'explorer/js/codemirror.min.js' %}"></script>
     <script src="{% static 'explorer/js/sql.min.js' %}"></script>

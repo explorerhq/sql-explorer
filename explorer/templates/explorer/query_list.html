@@ -3,9 +3,9 @@
 
 {% block sql_explorer_navlinks %}
     {% if can_change %}
-        <li><a href="{% url 'query_create' %}">{% trans "New Query" %}</a></li>
-        <li><a href="{% url 'explorer_playground' %}">{% trans "Playground" %}</a></li>
-        <li><a href="{% url 'explorer_logs' %}">{% trans "Logs" %}</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'query_create' %}">{% trans "New Query" %}</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'explorer_playground' %}">{% trans "Playground" %}</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'explorer_logs' %}">{% trans "Logs" %}</a></li>
     {% endif %}
 {% endblock %}
 
