@@ -77,9 +77,10 @@
                         {% trans "Description"%}
                     </label>
                     <div class="col-sm-10">
-                        <textarea id="id_description" class="form-control" cols="40" name="description" {% if not can_change %}disabled{% endif %} rows="2">
-                            {{ form.description.value|default_if_none:"" }}
-                        </textarea>
+                        <textarea
+                            id="id_description" class="form-control" cols="40" name="description"
+                            {% if not can_change %}disabled{% endif %} rows="2"
+                        >{{ form.description.value|default_if_none:"" }}</textarea>
                     </div>
                 </div>
                 <input type="hidden" id="id_created_by_user" name="created_by_user" value="{{ form.created_by_user_email }}" />
@@ -109,9 +110,9 @@
                         </div>
                     </div>
                     <div class="panel-content">
-                        <textarea class="form-control" {% if not can_change %} disabled {% endif %} cols="40" id="id_sql" name="sql" rows="20">
-                            {{ form.sql.value|default_if_none:"" }}
-                        </textarea>
+                        <textarea
+                            class="form-control" {% if not can_change %} disabled {% endif %} cols="40" id="id_sql"
+                            name="sql" rows="20">{{ form.sql.value|default_if_none:"" }}</textarea>
                     </div>
                     {% if params %}
                         {% include 'explorer/params.html' %}
