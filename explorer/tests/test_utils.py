@@ -41,7 +41,7 @@ class TestSqlBlacklist(TestCase):
               "SELECT 1+1 AS TWO; drop view foo;"
         passes, words = passes_blacklist(sql)
         self.assertFalse(passes)
-        self.assertTrue(len(words), 2)
+        self.assertEqual(len(words), 2)
         self.assertEqual(words[0], 'DROP')
         self.assertEqual(words[1], 'DELETE')
 
