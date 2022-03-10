@@ -1,8 +1,11 @@
 import os
 
+from environs import Env
+
 from celery import Celery
 
-env = os.environ.get
+env = Env()
+env.read_env()  # read .env file, if it exists
 
 SECRET_KEY = 'shhh'
 DEBUG = True
@@ -94,13 +97,13 @@ EXPLORER_TRANSFORMS = (
 )
 
 EXPLORER_USER_QUERY_VIEWS = {}
-EXPLORER_TASKS_ENABLED = env('EXPLORER_TASKS_ENABLED', True)
-EXPLORER_ASYNC_SCHEMA = env('EXPLORER_ASYNC_SCHEMA', True)
+EXPLORER_TASKS_ENABLED = env.bool('EXPLORER_TASKS_ENABLED', True)
+EXPLORER_ASYNC_SCHEMA = env.bool('EXPLORER_ASYNC_SCHEMA', True)
 EXPLORER_S3_BUCKET = 'thisismybucket.therearemanylikeit.butthisoneismine'
 
 # ***** CELERY *****
 
-ENABLE_CELERY = env('ENABLE_CELERY', 'yes')
+ENABLE_CELERY = env.bool('ENABLE_CELERY', False)
 CELERY_BROKER_TYPE = env('CELERY_BROKER_TYPE', 'redis')
 
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
