@@ -8,6 +8,10 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 `unreleased`_ changes
 ---------------------
 
+`2.4.1`_ (2022-03-10)
+---------------------
+* `#471`_: Fix extra white space in description and SQL fields.
+
 `2.4.0`_ (2022-02-10)
 ---------------------
 * `#470`_: Upgrade JS/CSS versions.
@@ -382,6 +386,7 @@ Initial Release
 .. _#449: https://github.com/groveco/django-sql-explorer/pull/449
 .. _#450: https://github.com/groveco/django-sql-explorer/pull/450
 .. _#470: https://github.com/groveco/django-sql-explorer/pull/470
+.. _#471: https://github.com/groveco/django-sql-explorer/pull/471
 
 .. _#269: https://github.com/groveco/django-sql-explorer/issues/269
 .. _#288: https://github.com/groveco/django-sql-explorer/issues/288

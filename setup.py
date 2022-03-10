@@ -1,5 +1,6 @@
 import os
 import sys
+from pathlib import Path
 
 from setuptools import setup
 try:
@@ -38,6 +39,8 @@ if sys.argv[-1] == 'tag':
     os.system("git push --tags")
     sys.exit()
 
+this_directory = Path(__file__).parent
+long_description = (this_directory / "README.rst").read_text()
 
 setup(
     name=name,
@@ -55,7 +58,8 @@ setup(
       'Issues': 'https://github.com/groveco/django-sql-explorer/issues'
     },
     packages=['explorer'],
-    long_description=read('README.rst'),
+    long_description=long_description,
+    long_description_content_type='text/x-rst',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
