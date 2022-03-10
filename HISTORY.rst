@@ -343,7 +343,9 @@ Initial Release
 .. _2.1.3: https://github.com/groveco/django-sql-explorer/compare/2.1.2...2.1.3
 .. _2.2.0: https://github.com/groveco/django-sql-explorer/compare/2.1.3...2.2.0
 .. _2.3.0: https://github.com/groveco/django-sql-explorer/compare/2.2.0...2.3.0
-.. _unreleased: https://github.com/groveco/django-sql-explorer/compare/2.3.0...master
+.. _2.4.0: https://github.com/groveco/django-sql-explorer/compare/2.3.0...2.4.0
+.. _2.4.1: https://github.com/groveco/django-sql-explorer/compare/2.4.0...2.4.1
+.. _unreleased: https://github.com/groveco/django-sql-explorer/compare/4.1.0...master
 
 .. _#254: https://github.com/groveco/django-sql-explorer/pull/254
 .. _#334: https://github.com/groveco/django-sql-explorer/pull/334
