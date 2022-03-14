@@ -28,7 +28,8 @@ EXPLORER_SQL_BLACKLIST = getattr(
         'DELETE',
         'CREATE TABLE',
         'GRANT',
-        'OWNER TO'
+        'OWNER TO',
+        'SET'
     )
 )
 
