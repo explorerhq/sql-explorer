@@ -237,3 +237,10 @@ def get_s3_connection():
     return tinys3.Connection(app_settings.S3_ACCESS_KEY,
                              app_settings.S3_SECRET_KEY,
                              default_bucket=app_settings.S3_BUCKET)
+
+def compare_sql(old_sql, new_sql):
+    """
+    Compares whether two sql queries are the 
+    same after formatting them
+    """
+    return fmt_sql(old_sql) == fmt_sql(new_sql)
