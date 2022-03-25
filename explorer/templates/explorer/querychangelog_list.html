@@ -4,20 +4,20 @@
     {% if can_change %}
       <li><a href="{% url "query_create" %}">New Query</a></li>
       <li><a href="{% url "explorer_playground" %}">Playground</a></li>
-      <li class="active"><a href="">Logs</a></li>
-      <li><a href="{% url "explorer_change_logs" %}">Change Logs</a></li>
+      <li><a href="{% url "explorer_logs" %}">Logs</a></li>
+      <li class="active"><a href="{% url "explorer_change_logs" %}">Change Logs</a></li>
     {% endif %}
 {% endblock %}
 
 {% block sql_explorer_content %}
-    <h3>Recent Query Logs - Page {{ page_obj.number }}</h3>
+    <h3>Recent Changed Query Logs - Page {{ page_obj.number }}</h3>
     <table class="table table-striped query-list"">
         <thead>
             <tr>
                 <th>Run At</th>
                 <th>Run By</th>
-                <th>Duration</th>
-                <th width="33%">SQL</th>
+                <th width="33%">Old SQL</th>
+                <th width="33%">New SQL</th>
                 <th>Query ID</th>
                 <th>Playground</th>
             </tr>
@@ -27,10 +27,10 @@
             <tr>
                 <td>{{ object.run_at|date:"SHORT_DATETIME_FORMAT" }}</td>
                 <td>{{ object.run_by_user.email }}</td>
-                <td>{{ object.duration|floatformat:2 }}ms</td>
-                <td class="log-sql">{{ object.sql }}</td>
+                <td class="log-sql">{{ object.old_sql }}</td>
+                <td class="log-sql">{{ object.new_sql }}</td>
                 <td> {% if object.query_id %}<a href="{% url "query_detail" object.query_id %}">Query {{ object.query_id }}</a>{% elif object.is_playground %}Playground{% else %}--{% endif %}</td>
-                <td><a href="{% url "explorer_playground" %}?querylog_id={{ object.id }}">Open</a></td>
+                <td><a href="{% url "explorer_playground" %}?query_id={{ object.query_id }}">Open</a></td>
             </tr>
             {% endfor %}
         </tbody>
@@ -51,3 +51,4 @@
         </div>
     {% endif %}
 {% endblock %}
+
