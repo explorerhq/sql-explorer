@@ -23,7 +23,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for object in recent_logs %}
+            {% for object in recent_change_logs %}
             <tr>
                 <td>{{ object.run_at|date:"SHORT_DATETIME_FORMAT" }}</td>
                 <td>{{ object.run_by_user.email }}</td>

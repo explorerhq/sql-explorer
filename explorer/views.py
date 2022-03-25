@@ -230,7 +230,7 @@ class ListQueryChangeLogView(ExplorerContextMixin, ListView):
         return super(ListQueryChangeLogView, self).dispatch(*args, **kwargs)
 
     def get_queryset(self):
-        kwargs = {'old_sql__isnumm': False, 'new_sql__isnull': False}
+        kwargs = {'old_sql__isnull': False, 'new_sql__isnull': False}
         return QueryChangeLog.objects.filter(**kwargs).all()
 
     context_object_name = "recent_change_logs"
