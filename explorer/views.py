@@ -319,7 +319,6 @@ class QueryView(ExplorerContextMixin, View):
 
         query, form = QueryView.get_instance_and_form(request, query_id)
         old_sql = query.sql;
-        # success = form.is_valid() and form.save()
         form_isvalid = form.is_valid()
         if form_isvalid:
             new_sql = request.POST.get('sql')
