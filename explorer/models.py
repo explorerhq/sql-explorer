@@ -112,7 +112,7 @@ class QueryLog(models.Model):
         ordering = ['-run_at']
 
 
-class QueryLog(models.Model):
+class QueryChangeLog(models.Model):
 
     old_sql = models.TextField(null=True, blank=True)
     new_sql = models.TextField(null=True, blank=True)
