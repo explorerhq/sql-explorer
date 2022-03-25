@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.forms.models import model_to_dict
 from explorer.tests.factories import SimpleQueryFactory, QueryLogFactory
-from explorer.models import Query, QueryLog, MSG_FAILED_BLACKLIST
+from explorer.models import Query, QueryLog, QueryChangeLog, MSG_FAILED_BLACKLIST
 from explorer.views import user_can_see_query
 from explorer.app_settings import EXPLORER_TOKEN
 from mock import Mock, patch
