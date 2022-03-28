@@ -16,7 +16,7 @@ from django.db import DatabaseError
 from django.db.models import Count
 from django.forms import ValidationError
 
-from explorer.models import Query, QueryLog, MSG_FAILED_BLACKLIST
+from explorer.models import Query, QueryLog, QueryChangeLog, MSG_FAILED_BLACKLIST
 from explorer import app_settings
 from explorer.forms import QueryForm
 from explorer.utils import url_get_rows,\
@@ -30,7 +30,7 @@ from explorer.utils import url_get_rows,\
     user_can_see_query,\
     fmt_sql,\
     allowed_query_pks,\
-    url_get_show
+    url_get_show, compare_sql
 
 try:
     from collections import Counter
@@ -223,6 +223,22 @@ class ListQueryLogView(ExplorerContextMixin, ListView):
     paginate_by = 20
 
 
+class ListQueryChangeLogView(ExplorerContextMixin, ListView):
+
+    @method_decorator(view_permission)
+    def dispatch(self, *args, **kwargs):
+        return super(ListQueryChangeLogView, self).dispatch(*args, **kwargs)
+
+    def get_queryset(self):
+        kwargs = {'old_sql__isnull': False, 'new_sql__isnull': False}
+        return QueryChangeLog.objects.filter(**kwargs).all()
+
+    context_object_name = "recent_change_logs"
+    model = QueryChangeLog
+    paginate_by = 20
+    template_name = 'explorer/querychangelog_list.html'
+
+
 class CreateQueryView(ExplorerContextMixin, CreateView):
 
     @method_decorator(change_permission)
@@ -302,7 +318,19 @@ class QueryView(ExplorerContextMixin, View):
             )
 
         query, form = QueryView.get_instance_and_form(request, query_id)
-        success = form.is_valid() and form.save()
+        old_sql = query.sql;
+        form_isvalid = form.is_valid()
+        if form_isvalid:
+            new_sql = request.POST.get('sql')
+            if not compare_sql(old_sql, new_sql):
+                change_log = QueryChangeLog(
+                    old_sql=old_sql,
+                    new_sql=new_sql,
+                    query=query,
+                    run_by_user=request.user,
+                )
+                change_log.save()
+        success = form_isvalid and form.save()
         vm = query_viewmodel(request, query, form=form, message="Query saved." if success else None)
         return self.render_template('explorer/query.html', vm)
 

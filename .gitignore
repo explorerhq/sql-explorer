@@ -5,6 +5,7 @@
 /dist
 *.egg-info
 .DS_Store
+tmp
 /build
 *#
 *~

@@ -112,6 +112,22 @@ class QueryLog(models.Model):
         ordering = ['-run_at']
 
 
+class QueryChangeLog(models.Model):
+
+    old_sql = models.TextField(null=True, blank=True)
+    new_sql = models.TextField(null=True, blank=True)
+    query = models.ForeignKey(Query, null=True, blank=True, on_delete=models.SET_NULL)
+    run_by_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
+    run_at = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def is_playground(self):
+        return self.query_id is None
+
+    class Meta:
+        ordering = ['-run_at']
+
+
 class QueryResult(object):
 
     def __init__(self, sql):

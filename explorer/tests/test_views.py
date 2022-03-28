@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.forms.models import model_to_dict
 from explorer.tests.factories import SimpleQueryFactory, QueryLogFactory
-from explorer.models import Query, QueryLog, MSG_FAILED_BLACKLIST
+from explorer.models import Query, QueryLog, QueryChangeLog, MSG_FAILED_BLACKLIST
 from explorer.views import user_can_see_query
 from explorer.app_settings import EXPLORER_TOKEN
 from mock import Mock, patch
@@ -427,3 +427,32 @@ class TestQueryLog(TestCase):
 
         q = SimpleQueryFactory()
         self.assertFalse(QueryLog(sql='foo', query_id=q.id).is_playground)
+
+
+class TestQueryChangeLog(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_superuser('admin', 'admin@admin.com', 'pwd')
+        self.client.login(username='admin', password='pwd')
+    
+    def test_admin_required(self):
+        self.client.logout()
+        resp = self.client.get(reverse("explorer_change_logs"))
+        self.assertTemplateUsed(resp, 'admin/login.html')
+
+    def test_query_change_saves_to_change_log(self):
+        query = SimpleQueryFactory()
+        data = model_to_dict(query)
+        data['sql'] = 'select 12345;'
+        self.client.post(reverse("query_detail", kwargs={'query_id': query.id}), data)
+        data['sql'] = 'select 67890;'
+        self.client.post(reverse("query_detail", kwargs={'query_id': query.id}), data)
+        resp = self.client.get(reverse("explorer_change_logs"))
+        self.assertContains(resp, 'select 12345;')
+        self.assertContains(resp, 'select 67890;')
+
+    def test_is_playground(self):
+        self.assertTrue(QueryChangeLog(old_sql='foo', new_sql='bar').is_playground)
+
+        q = SimpleQueryFactory()
+        self.assertFalse(QueryChangeLog(old_sql='foo', new_sql='bar', query_id=q.id).is_playground)
