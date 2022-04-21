@@ -1,5 +1,3 @@
-
-
 import functools
 import sys
 PY3 = sys.version_info[0] == 3
@@ -15,6 +13,7 @@ from django.db import connections, connection, DatabaseError
 from django.http import HttpResponse
 from six.moves import cStringIO
 import sqlparse
+import datetime
 
 EXPLORER_PARAM_TOKEN = "$$"
 
@@ -238,9 +237,45 @@ def get_s3_connection():
                              app_settings.S3_SECRET_KEY,
                              default_bucket=app_settings.S3_BUCKET)
 
+
 def compare_sql(old_sql, new_sql):
     """
     Compares whether two sql queries are the 
     same after formatting them
     """
     return fmt_sql(old_sql) == fmt_sql(new_sql)
+
+
+def get_duration(td):
+    """
+    Show time intervals (timedelta) in hours, minutes and seconds
+    """
+    total_seconds = int(td.total_seconds())
+    hours = total_seconds // 3600
+    minutes = (total_seconds % 3600) // 60
+    seconds = total_seconds - (hours * 3600) - (minutes * 60)
+
+    if hours == 0:
+        return '{} minutes and {} seconds'.format(minutes, seconds)
+
+    return '{} hours, {} minutes and {} seconds'.format(hours, minutes, seconds)
+
+
+def check_replication_lag():
+    """
+    Check if a replication lag exists
+    :returns: True and the replication lag interval if it 
+              exceeds 3 minutes, else returns False and None
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT now() - pg_last_xact_replay_timestamp() AS replication_lag")
+    replication_lag = cursor.fetchone()[0]
+
+    threshold_value = datetime.timedelta(minutes=3)
+
+    if not replication_lag or replication_lag <= threshold_value:
+        return False, None
+
+    return True, get_duration(replication_lag)
