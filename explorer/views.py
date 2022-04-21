@@ -30,7 +30,9 @@ from explorer.utils import url_get_rows,\
     user_can_see_query,\
     fmt_sql,\
     allowed_query_pks,\
-    url_get_show, compare_sql
+    url_get_show,\
+    compare_sql,\
+    check_replication_lag
 
 try:
     from collections import Counter
@@ -346,9 +348,13 @@ def query_viewmodel(request, query, title=None, form=None, message=None, run_que
     rows = url_get_rows(request)
     res = None
     ql = None
+    lag_exists = False
+    replication_lag = None
     if run_query:
         try:
             res, ql = query.execute_with_logging(request.user)
+            lag_exists, replication_lag = check_replication_lag()
+            print "Running new query"
         except DatabaseError as e:
             error = str(e)
     has_valid_results = not error and res and run_query
@@ -370,5 +376,9 @@ def query_viewmodel(request, query, title=None, form=None, message=None, run_que
             'dataUrl': reverse_lazy('query_csv', kwargs={'query_id': query.id}) if query.id else '',
             'bucket': app_settings.S3_BUCKET,
             'snapshots': query.snapshots if query.snapshot else [],
-            'ql_id': ql.id if ql else None})
+            'ql_id': ql.id if ql else None,
+            'lag_exists': lag_exists,
+            'replication_lag': replication_lag,
+            }
+        )
     return ret

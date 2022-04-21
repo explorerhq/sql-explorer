@@ -1,5 +1,7 @@
 {% extends "explorer/base.html" %}
 
+{% load explorer_extras %}
+
 {% block sql_explorer_navlinks %}
     {% if can_change %}
       <li><a href="{% url "query_create" %}">New Query</a></li>
@@ -14,6 +16,9 @@
     <div id="query_area" class="col-md-12">
         <h2>Playground</h2>
         <p>The playground is for experimenting and writing ad-hoc queries. By default, nothing you do here will be saved.</p>
+        {% if lag_exists %}
+        <div class="alert alert-warning">Warning! Some queries might be outdated by approximately {{ replication_lag }}.</div>
+        {% endif %}
         <form role="form" action="{% url "explorer_playground" %}" method="post" id="editor" class="playground-form">{% csrf_token %}
             {% if error %}
                 <div class="alert alert-danger">{{ error|escape }}</div>
