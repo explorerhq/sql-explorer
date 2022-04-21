@@ -354,7 +354,6 @@ def query_viewmodel(request, query, title=None, form=None, message=None, run_que
         try:
             res, ql = query.execute_with_logging(request.user)
             lag_exists, replication_lag = check_replication_lag()
-            print "Running new query"
         except DatabaseError as e:
             error = str(e)
     has_valid_results = not error and res and run_query
