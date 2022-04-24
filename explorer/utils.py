@@ -12,6 +12,7 @@ from explorer import app_settings
 from django.db import connections, connection, DatabaseError
 from django.http import HttpResponse
 from six.moves import cStringIO
+from ago import human
 import sqlparse
 import datetime
 
@@ -246,21 +247,6 @@ def compare_sql(old_sql, new_sql):
     return fmt_sql(old_sql) == fmt_sql(new_sql)
 
 
-def get_duration(td):
-    """
-    Show time intervals (timedelta) in hours, minutes and seconds
-    """
-    total_seconds = int(td.total_seconds())
-    hours = total_seconds // 3600
-    minutes = (total_seconds % 3600) // 60
-    seconds = total_seconds - (hours * 3600) - (minutes * 60)
-
-    if hours == 0:
-        return '{} minutes and {} seconds'.format(minutes, seconds)
-
-    return '{} hours, {} minutes and {} seconds'.format(hours, minutes, seconds)
-
-
 def check_replication_lag():
     """
     Check if a replication lag exists
@@ -278,4 +264,4 @@ def check_replication_lag():
     if not replication_lag or replication_lag <= threshold_value:
         return False, None
 
-    return True, get_duration(replication_lag)
+    return True, human(replication_lag, 4)

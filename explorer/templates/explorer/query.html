@@ -19,7 +19,7 @@
             <div class="alert alert-info">{{ message }}</div>
         {% endif %}
         {% if lag_exists %}
-        <div class="alert alert-warning">Warning! Some queries might be outdated by approximately {{ replication_lag }} mins</div>
+          <div class="alert alert-warning">Warning! The queryset results might be outdated since some data were last updated around {{ replication_lag }}.</div>
         {% endif %}
         <div>
             {% if query %}
