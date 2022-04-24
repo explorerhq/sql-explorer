@@ -41,6 +41,7 @@ setup(
         'sqlparse>=0.1.11',
         'unicodecsv>=0.13.0',
         'six>=1.10.0',
+        'ago>=0.0.93',
     ],
     include_package_data=True,
     zip_safe = False,
