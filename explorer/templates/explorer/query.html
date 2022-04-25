@@ -18,6 +18,9 @@
         {% if message %}
             <div class="alert alert-info">{{ message }}</div>
         {% endif %}
+        {% if lag_exists %}
+          <div class="alert alert-warning">Warning! The query results might be outdated since some data was last updated around {{ replication_lag }}.</div>
+        {% endif %}
         <div>
             {% if query %}
                 <form role="form" class="form-horizontal" action="{% url "query_detail" query.id %}" method="post" id="editor">{% csrf_token %}

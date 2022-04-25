@@ -1,5 +1,3 @@
-
-
 import functools
 import sys
 PY3 = sys.version_info[0] == 3
@@ -14,9 +12,13 @@ from explorer import app_settings
 from django.db import connections, connection, DatabaseError
 from django.http import HttpResponse
 from six.moves import cStringIO
+from ago import human
 import sqlparse
+import datetime
 
 EXPLORER_PARAM_TOKEN = "$$"
+
+REPLICATION_LAG_THRESHOLD_VALUE_IN_MINUTES = 3
 
 # SQL Specific Things
 
@@ -238,9 +240,30 @@ def get_s3_connection():
                              app_settings.S3_SECRET_KEY,
                              default_bucket=app_settings.S3_BUCKET)
 
+
 def compare_sql(old_sql, new_sql):
     """
     Compares whether two sql queries are the 
     same after formatting them
     """
     return fmt_sql(old_sql) == fmt_sql(new_sql)
+
+
+def check_replication_lag():
+    """
+    Check if a replication lag exists
+    :returns: True and the replication lag interval if it 
+              exceeds 3 minutes, else returns False and None
+    """
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT now() - pg_last_xact_replay_timestamp() AS replication_lag")
+    replication_lag = cursor.fetchone()[0]
+
+    threshold_value = datetime.timedelta(minutes=REPLICATION_LAG_THRESHOLD_VALUE_IN_MINUTES)
+
+    if not replication_lag or replication_lag <= threshold_value:
+        return False, None
+
+    return True, human(replication_lag, 4)
