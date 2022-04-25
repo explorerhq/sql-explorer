@@ -18,6 +18,8 @@ import datetime
 
 EXPLORER_PARAM_TOKEN = "$$"
 
+REPLICATION_LAG_THRESHOLD_VALUE_IN_MINUTES = 3
+
 # SQL Specific Things
 
 
@@ -259,7 +261,7 @@ def check_replication_lag():
     cursor.execute("SELECT now() - pg_last_xact_replay_timestamp() AS replication_lag")
     replication_lag = cursor.fetchone()[0]
 
-    threshold_value = datetime.timedelta(minutes=3)
+    threshold_value = datetime.timedelta(minutes=REPLICATION_LAG_THRESHOLD_VALUE_IN_MINUTES)
 
     if not replication_lag or replication_lag <= threshold_value:
         return False, None
