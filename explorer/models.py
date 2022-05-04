@@ -1,4 +1,5 @@
 from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection, get_s3_connection
+from future.utils import python_2_unicode_compatible
 from django.db import models, DatabaseError
 from time import time
 from django.core.urlresolvers import reverse
@@ -12,7 +13,7 @@ MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist: %s"
 
 logger = logging.getLogger(__name__)
 
-
+@python_2_unicode_compatible
 class Query(models.Model):
     title = models.CharField(max_length=255)
     sql = models.TextField()
@@ -31,8 +32,8 @@ class Query(models.Model):
         ordering = ['title']
         verbose_name_plural = 'Queries'
 
-    def __unicode__(self):
-        return six.text_type(self.title)
+    def __str__(self):
+        return self.title
 
     def get_run_count(self):
         return self.querylog_set.count()
