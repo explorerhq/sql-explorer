@@ -29,6 +29,7 @@
             y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
         })(window, document, "clarity", "script", "c1c6rvg99w");
         clarity("set", "user_full_name", '{{ request.user.get_full_name }}')
+        clarity("set", "username", '{{ request.user.get_username }}')
         clarity("set", "email_id", '{{ request.user.email }}');
     </script>
 </head>
