@@ -31,7 +31,7 @@ if sys.argv[-1] == 'build':
     sys.exit()
 
 if sys.argv[-1] == 'release':
-    os.system('twine upload --skip-existing dist/*')
+    os.system('twine upload -r django-sql-explorer --skip-existing dist/*')
     sys.exit()
 
 if sys.argv[-1] == 'tag':
