@@ -11,7 +11,7 @@ from explorer.exporters import get_exporter_class
 from explorer.models import Query, QueryLog
 
 if app_settings.ENABLE_TASKS:
-    from celery import task
+    from celery import shared_task
     from celery.utils.log import get_task_logger
 
     from explorer.utils import s3_upload
@@ -19,11 +19,11 @@ if app_settings.ENABLE_TASKS:
 else:
     import logging
 
-    from explorer.utils import noop_decorator as task
+    from explorer.utils import noop_decorator as shared_task
     logger = logging.getLogger(__name__)
 
 
-@task
+@shared_task
 def execute_query(query_id, email_address):
     q = Query.objects.get(pk=query_id)
     send_mail('[SQL Explorer] Your query is running...',
@@ -48,7 +48,7 @@ def execute_query(query_id, email_address):
     send_mail(subj, msg, app_settings.FROM_EMAIL, [email_address])
 
 
-@task
+@shared_task
 def snapshot_query(query_id):
     try:
         logger.info(f"Starting snapshot for query {query_id}...")
@@ -70,7 +70,7 @@ def snapshot_query(query_id):
         snapshot_query.retry()
 
 
-@task
+@shared_task
 def snapshot_queries():
     logger.info("Starting query snapshots...")
     qs = Query.objects.filter(snapshot=True).values_list('id', flat=True)
@@ -82,7 +82,7 @@ def snapshot_queries():
     logger.info("Done creating tasks.")
 
 
-@task
+@shared_task
 def truncate_querylogs(days):
     qs = QueryLog.objects.filter(
         run_at__lt=datetime.now() - timedelta(days=days)
@@ -94,7 +94,7 @@ def truncate_querylogs(days):
     logger.info('Done deleting QueryLog objects.')
 
 
-@task
+@shared_task
 def build_schema_cache_async(connection_alias):
     from .schema import build_schema_info, connection_schema_cache_key
     ret = build_schema_info(connection_alias)
