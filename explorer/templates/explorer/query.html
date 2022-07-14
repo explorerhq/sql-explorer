@@ -12,6 +12,7 @@
         <li class="active"><a href="">{% trans "Query Detail" %}</a></li>
     {% endif %}
     <li><a href="{% url 'explorer_logs' %}">{% trans "Logs" %}</a></li>
+    {{ block.super }}
 {% endblock %}
 
 {% block sql_explorer_content %}
