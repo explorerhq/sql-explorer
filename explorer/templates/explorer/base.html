@@ -37,22 +37,20 @@
                     <div class="navbar-collapse collapse">
                         <ul class="nav navbar-nav">
                             {% block sql_explorer_navlinks %}
-                                {% with view_name=request.resolver_match.view_name %}
-                                    {% if can_change %}
-                                        <li{% if not query and view_name == 'query_create' %} class="active" {% endif %}>
-                                            <a href="{% url 'query_create' %}">{% trans "New Query" %}</a>
-                                        </li>
-                                        <li{% if not query and view_name == 'explorer_playground' %} class="active" {% endif %}>
-                                            <a href="{% url 'explorer_playground' %}">{% trans "Playground" %}</a>
-                                        </li>
-                                    {% endif %}
-                                    {% if query %}
-                                        <li class="active"><a href="">{% trans "Query Detail" %}</a></li>
-                                    {% endif %}
-                                    <li{% if not query and view_name == 'explorer_logs' %} class="active" {% endif %}>
-                                        <a href="{% url 'explorer_logs' %}">{% trans "Logs" %}</a>
+                                {% if can_change %}
+                                    <li{% if not query and view_name == 'query_create' %} class="active" {% endif %}>
+                                        <a href="{% url 'query_create' %}">{% trans "New Query" %}</a>
                                     </li>
-                                {% endwith %}
+                                    <li{% if not query and view_name == 'explorer_playground' %} class="active" {% endif %}>
+                                        <a href="{% url 'explorer_playground' %}">{% trans "Playground" %}</a>
+                                    </li>
+                                {% endif %}
+                                {% if query %}
+                                    <li class="active"><a href="">{% trans "Query Detail" %}</a></li>
+                                {% endif %}
+                                <li{% if not query and view_name == 'explorer_logs' %} class="active" {% endif %}>
+                                    <a href="{% url 'explorer_logs' %}">{% trans "Logs" %}</a>
+                                </li>
                             {% endblock %}
                         </ul>
                     </div>

@@ -16,6 +16,7 @@ class ExplorerContextMixin:
                 self.request
             ),
             'csrf_cookie_name': settings.CSRF_COOKIE_NAME,
+            'view_name': self.request.resolver_match.view_name,
         }
 
     def get_context_data(self, **kwargs):
