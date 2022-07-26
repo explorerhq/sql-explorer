@@ -2,6 +2,7 @@
 from django.db import DatabaseError
 
 from explorer import app_settings
+from explorer.chart import get_pie_chart
 
 
 def query_viewmodel(request, query, title=None, form=None, message=None,
@@ -55,6 +56,7 @@ def query_viewmodel(request, query, title=None, form=None, message=None,
         'snapshots': query.snapshots if query.snapshot else [],
         'ql_id': ql.id if ql else None,
         'unsafe_rendering': app_settings.UNSAFE_RENDERING,
-        'fullscreen_params': fullscreen_params.urlencode()
+        'fullscreen_params': fullscreen_params.urlencode(),
+        'pie_chart_svg': get_pie_chart(res) if has_valid_results else None
     }
     return ret
