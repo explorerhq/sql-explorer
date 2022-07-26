@@ -2,7 +2,7 @@
 from django.db import DatabaseError
 
 from explorer import app_settings
-from explorer.chart import get_pie_chart
+from explorer.chart import get_pie_chart, get_line_chart
 
 
 def query_viewmodel(request, query, title=None, form=None, message=None,
@@ -57,6 +57,7 @@ def query_viewmodel(request, query, title=None, form=None, message=None,
         'ql_id': ql.id if ql else None,
         'unsafe_rendering': app_settings.UNSAFE_RENDERING,
         'fullscreen_params': fullscreen_params.urlencode(),
-        'pie_chart_svg': get_pie_chart(res) if has_valid_results else None
+        'pie_chart_svg': get_pie_chart(res) if has_valid_results else None,
+        'line_chart_svg': get_line_chart(res) if has_valid_results else None
     }
     return ret

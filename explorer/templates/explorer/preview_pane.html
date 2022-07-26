@@ -28,6 +28,11 @@
                                 {% trans "Pie chart" %}
                             </a>
                         </li>
+                        <li role="presentation">
+                            <a id="line-chart-tab-label" href="#line-chart" aria-controls="line-chart" role="tab" data-toggle="tab">
+                                {% trans "Line chart" %}
+                            </a>
+                        </li>
 
                     {% endif %}
                 </ul>
@@ -168,32 +173,77 @@
                                     </div>
                                 </div>
                                 <div class="overflow-wrapper">
-                                     <div style="margin: 4em;">
-                                        {% if pie_chart_svg %}
+                                    {% if pie_chart_svg %}
+                                        <div style="margin: 2em;">
                                             {{ pie_chart_svg | safe }}
-                                        {% else %}
+                                        </div>
+                                    {% else %}
+                                        <div style="margin: 6em;">
                                             <p>{% blocktrans %}
-                                                To display query results as a pie chart,<br>
-                                                make sure that the first column is of type text<br>
-                                                and the second column is numeric.
+                                                This query result table is not formatted in a way
+                                                which could be displayed as a pie chart.
                                             {% endblocktrans %}</p>
                                             <p>{% blocktrans %}
-                                                Each row represents one sector of the pie:<br>
-                                                the first column will be used as a label<br>
+                                                Query results can be displayed as a pie chart as follows:
+                                                each row represents one sector of the pie;
+                                                the first column will be used as a label
                                                 while the second column is used to determine the size of the sector.
+                                                Thus the second column must be of a numeric type.
+                                                Rows which contain <code>NULL</code>s will be ignored.
                                             {% endblocktrans %}</p>
                                             <p>{% blocktrans %}
-                                                Use this sample query to get started:
+                                                Use this sample query to see it in action:
                                             {% endblocktrans %}</p>
-                                            <code>SELECT *<br>
-                                                FROM (VALUES
-                                                ('apple', 7),
-                                                ('orange', 8),
-                                                ('grape', 9),
-                                                ('peppermint', 1))<br>
-                                                AS fruit_salad_proportions;</code>
-                                        {% endif %}
-                                     </div>
+                                            <pre>
+SELECT *
+FROM (VALUES ('apple', 7),
+             ('orange', 8),
+             ('grape', 9),
+             ('peppermint', 1))
+    AS fruit_salad_proportions;</pre>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="line-chart">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <span class="panel-title">{% trans "Line chart" %}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="overflow-wrapper">
+                                    {% if line_chart_svg %}
+                                        <div style="margin: 2em;">
+                                            {{ line_chart_svg | safe }}
+                                        </div>
+                                    {% else %}
+                                        <div style="margin: 6em;">
+                                            <p>{% blocktrans %}
+                                                This query result table is not formatted in a way
+                                                which could be displayed as a line chart.
+                                            {% endblocktrans %}</p>
+                                            <p>{% blocktrans %}
+                                                Query results can be displayed as a line chart as follows:
+                                                the first column represents the values on the x-axis (e.g. dates).
+                                                All other numeric columns represent one line on the chart.
+                                                Other columns will be ignored.
+                                            {% endblocktrans %}</p>
+                                            <p>{% blocktrans %}
+                                                Use this sample query to see it in action:
+                                            {% endblocktrans %}</p>
+                                                <pre>
+SELECT *
+FROM (VALUES ('2019-01-01'::date, 500,550,530),
+             ('2020-01-01'::date, 530, 580, 570),
+             ('2021-01-01'::date, 580, 590, 670),
+             ('2022-01-01'::date, 700, 620, 780))
+    AS fruit_salad_proportions(date, generosity, joy, happiness);</pre>
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
