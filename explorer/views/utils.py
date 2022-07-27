@@ -57,7 +57,8 @@ def query_viewmodel(request, query, title=None, form=None, message=None,
         'ql_id': ql.id if ql else None,
         'unsafe_rendering': app_settings.UNSAFE_RENDERING,
         'fullscreen_params': fullscreen_params.urlencode(),
-        'pie_chart_svg': get_pie_chart(res) if has_valid_results else None,
-        'line_chart_svg': get_line_chart(res) if has_valid_results else None
+        'charts_enabled': app_settings.EXPLORER_CHARTS_ENABLED,
+        'pie_chart_svg': get_pie_chart(res) if app_settings.EXPLORER_CHARTS_ENABLED and has_valid_results else None,
+        'line_chart_svg': get_line_chart(res) if app_settings.EXPLORER_CHARTS_ENABLED and has_valid_results else None
     }
     return ret
