@@ -2,7 +2,7 @@
 from django.db import DatabaseError
 
 from explorer import app_settings
-from explorer.chart import get_pie_chart, get_line_chart
+from explorer.charts import get_pie_chart, get_line_chart
 
 
 def query_viewmodel(request, query, title=None, form=None, message=None,
