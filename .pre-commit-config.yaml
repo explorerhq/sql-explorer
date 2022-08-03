@@ -12,13 +12,13 @@ repos:
     rev: v2.37.3
     hooks:
       - id: pyupgrade
-        args: ["--py37-plus"]
+        args: ["--py38-plus"]
 
   - repo: https://github.com/adamchainz/django-upgrade
     rev: '1.7.0'
     hooks:
       - id: django-upgrade
-        args: [--target-version, "2.2"]
+        args: [--target-version, "3.2"]
 
   - repo: https://github.com/PyCQA/flake8
     rev: 5.0.2
