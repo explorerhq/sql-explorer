@@ -12,6 +12,7 @@ from sqlparse.tokens import Keyword
 
 from explorer import app_settings
 
+
 EXPLORER_PARAM_TOKEN = "$$"
 
 

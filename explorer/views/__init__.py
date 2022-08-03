@@ -1,12 +1,10 @@
-# -*- coding: utf-8 -*-
-
 from .auth import PermissionRequiredMixin, SafeLoginView
 from .create import CreateQueryView
 from .delete import DeleteQueryView
-from .download import DownloadQueryView, DownloadFromSqlView
+from .download import DownloadFromSqlView, DownloadQueryView
 from .email import EmailCsvQueryView
 from .format_sql import format_sql
-from .list import ListQueryView, ListQueryLogView
+from .list import ListQueryLogView, ListQueryView
 from .query import PlayQueryView, QueryView
 from .schema import SchemaView
 from .stream import StreamQueryView

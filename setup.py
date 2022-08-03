@@ -3,12 +3,15 @@ import sys
 from pathlib import Path
 
 from setuptools import setup
+
+
 try:
     from sphinx.setup_command import BuildDoc
 except ImportError:
     BuildDoc = None
 
 from explorer import get_version
+
 
 # Utility function to read the README file.
 # Used for the long_description.  It's nice, because now 1) we have a top level

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from django.db import DatabaseError
 
 from explorer import app_settings

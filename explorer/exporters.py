@@ -1,10 +1,9 @@
 import codecs
 import csv
 import json
-import string
 import uuid
 from datetime import datetime
-from io import StringIO, BytesIO
+from io import BytesIO, StringIO
 
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.module_loading import import_string

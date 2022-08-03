@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.views import LoginView
 from django.core.exceptions import ImproperlyConfigured
 
-from explorer import permissions, app_settings
+from explorer import app_settings, permissions
 
 
 class PermissionRequiredMixin:

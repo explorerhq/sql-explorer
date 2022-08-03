@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import json
 from datetime import date, datetime
 
@@ -8,7 +7,7 @@ from django.test import TestCase
 from django.utils import timezone
 
 from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
-from explorer.exporters import CSVExporter, JSONExporter, ExcelExporter
+from explorer.exporters import CSVExporter, ExcelExporter, JSONExporter
 from explorer.models import QueryResult
 from explorer.tests.factories import SimpleQueryFactory
 

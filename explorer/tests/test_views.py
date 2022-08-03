@@ -219,7 +219,7 @@ class TestQueryDetailView(TestCase):
                 reverse("query_detail", kwargs={'query_id': query.id})
             )
             self.assertRedirects(
-                resp, f'/custom/login',
+                resp, '/custom/login',
                 target_status_code=404
             )
 
@@ -484,7 +484,7 @@ class TestQueryPlayground(TestCase):
             resp = self.client.get(reverse("explorer_playground"))
             self.assertRedirects(
                 resp,
-                f'/custom/login',
+                '/custom/login',
                 target_status_code=404
             )
 

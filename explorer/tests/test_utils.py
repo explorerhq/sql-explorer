@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from unittest.mock import Mock
 
 from django.test import TestCase
@@ -6,9 +5,8 @@ from django.test import TestCase
 from explorer import app_settings
 from explorer.tests.factories import SimpleQueryFactory
 from explorer.utils import (
-    passes_blacklist, param, swap_params, extract_params,
-    shared_dict_update, EXPLORER_PARAM_TOKEN, get_params_from_request,
-    get_params_for_url
+    EXPLORER_PARAM_TOKEN, extract_params, get_params_for_url, get_params_from_request, param, passes_blacklist,
+    shared_dict_update, swap_params,
 )
 
 
@@ -262,8 +260,9 @@ class TestParams(TestCase):
 class TestConnections(TestCase):
 
     def test_only_registered_connections_are_in_connections(self):
-        from explorer.connections import connections
-        from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION
         from django.db import connections as djcs
+
+        from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION
+        from explorer.connections import connections
         self.assertTrue(EXPLORER_DEFAULT_CONNECTION in connections)
         self.assertNotEqual(len(connections), len([c for c in djcs]))
