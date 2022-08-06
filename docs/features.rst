@@ -125,7 +125,7 @@ Displaying query results as charts
 
 If the results table adheres to a certain format, the results can be displayed as a pie chart or a line chart.
 
-To enable this feature, set `` `` setting to ``True`` and install the plotting libraries ``matplotlib`` and ``seaborn`` with
+To enable this feature, set ``EXPLORER_CHARTS_ENABLED`` setting to ``True`` and install the plotting libraries ``matplotlib`` and ``seaborn`` with
 
 .. code-block:: console
 
