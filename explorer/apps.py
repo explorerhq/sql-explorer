@@ -8,6 +8,7 @@ class ExplorerAppConfig(AppConfig):
 
     name = 'explorer'
     verbose_name = _('SQL Explorer')
+    default_auto_field = 'django.db.models.AutoField'
 
     def ready(self):
         from explorer.schema import build_async_schemas
