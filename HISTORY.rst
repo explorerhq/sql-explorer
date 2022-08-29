@@ -8,6 +8,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 `unreleased`_ changes
 ---------------------
 
+* #484: Avoid creating migration when using `BigAutoField` as `DEFAULT_AUTO_FIELD`
+
 `2.4.1`_ (2022-03-10)
 ---------------------
 * `#471`_: Fix extra white space in description and SQL fields.
