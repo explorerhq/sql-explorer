@@ -47,6 +47,8 @@ setup(
     version=version,
     author="Chris Clark",
     author_email="chris@untrod.com",
+    maintainer='Mark Walker',
+    maintainer_email='theshow@gmail.com',
     description=("A pluggable app that allows users (admins) to execute SQL,"
                  " view, and export the results."),
     license="MIT",

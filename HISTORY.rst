@@ -8,7 +8,11 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 `unreleased`_ changes
 ---------------------
 
-* #484: Avoid creating migration when using `BigAutoField` as `DEFAULT_AUTO_FIELD`
+
+`2.4.2`_ (2022-08-30)
+---------------------
+* `#484`_: Added ``DEFAULT_AUTO_FIELD`` (Fix `#483`_)
+* `#475`_: Add ``SET`` to blacklisted keywords
 
 `2.4.1`_ (2022-03-10)
 ---------------------
@@ -347,7 +351,8 @@ Initial Release
 .. _2.3.0: https://github.com/groveco/django-sql-explorer/compare/2.2.0...2.3.0
 .. _2.4.0: https://github.com/groveco/django-sql-explorer/compare/2.3.0...2.4.0
 .. _2.4.1: https://github.com/groveco/django-sql-explorer/compare/2.4.0...2.4.1
-.. _unreleased: https://github.com/groveco/django-sql-explorer/compare/4.1.0...master
+.. _2.4.2: https://github.com/groveco/django-sql-explorer/compare/2.4.1...2.4.2
+.. _unreleased: https://github.com/groveco/django-sql-explorer/compare/2.4.2...master
 
 .. _#254: https://github.com/groveco/django-sql-explorer/pull/254
 .. _#334: https://github.com/groveco/django-sql-explorer/pull/334
@@ -391,6 +396,8 @@ Initial Release
 .. _#450: https://github.com/groveco/django-sql-explorer/pull/450
 .. _#470: https://github.com/groveco/django-sql-explorer/pull/470
 .. _#471: https://github.com/groveco/django-sql-explorer/pull/471
+.. _#475: https://github.com/groveco/django-sql-explorer/pull/475
+.. _#484: https://github.com/groveco/django-sql-explorer/pull/484
 
 .. _#269: https://github.com/groveco/django-sql-explorer/issues/269
 .. _#288: https://github.com/groveco/django-sql-explorer/issues/288
@@ -403,5 +410,6 @@ Initial Release
 .. _#433: https://github.com/groveco/django-sql-explorer/issues/433
 .. _#440: https://github.com/groveco/django-sql-explorer/issues/440
 .. _#443: https://github.com/groveco/django-sql-explorer/issues/443
+.. _#483: https://github.com/groveco/django-sql-explorer/issues/483
 
 .. _furo: https://github.com/pradyunsg/furo
