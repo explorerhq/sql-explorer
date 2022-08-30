@@ -7,7 +7,7 @@ from pydoc import locate
 #   'Original Database': 'my_important_database_readonly_connection',
 #   'Client Database 2': 'other_database_connection'
 # }
-# EXPLORER_DEFAULT_CONNECTION = 'my_important_database_readonly_connection'
+# EXPLORER_DEFAULT_CONNECTION = 'Original Database'
 
 EXPLORER_CONNECTIONS = getattr(settings, 'EXPLORER_CONNECTIONS', {})
 EXPLORER_DEFAULT_CONNECTION = getattr(

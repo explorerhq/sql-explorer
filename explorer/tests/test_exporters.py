@@ -3,9 +3,9 @@ import json
 from datetime import date, datetime
 
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db import connections
 from django.test import TestCase
 from django.utils import timezone
+from explorer.connections import connections
 
 from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
 from explorer.exporters import CSVExporter, JSONExporter, ExcelExporter

@@ -11,7 +11,6 @@ from explorer.views.auth import PermissionRequiredMixin
 
 
 class SchemaView(PermissionRequiredMixin, View):
-
     permission_required = 'change_permission'
 
     @method_decorator(xframe_options_sameorigin)
@@ -20,8 +19,13 @@ class SchemaView(PermissionRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         connection = kwargs.get('connection', '')
+
         if connection not in connections:
-            raise Http404
+            # legacy fallback.. DB connections used to be accessed by their Django name
+            # rather than their alias. While these names won't show up as a key in
+            # `connections`, they will still resolve.
+            if connections.get(connection) is None:
+                raise Http404
         schema = schema_info(connection)
         if schema:
             return render(

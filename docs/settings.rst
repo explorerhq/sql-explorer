@@ -100,7 +100,12 @@ Generate DB schema asynchronously. Requires Celery and ``EXPLORER_TASKS_ENABLED`
 Default connection
 ******************
              
-The name of the Django database connection to use. Ideally set this to a connection with read only permissions
+The ``Friendly Name`` connection alias from ``EXPLORER_CONNECTIONS`` for the database connection to use. Ideally set
+this to a connection alias with read only permissions.
+
+Note: This used to use the Django connection name rather than the alias name. While the former will still work,
+it is a deprecated usage and configurations should be updated to guard against removal of the deprecated
+behavior.
 
 .. code-block:: python
 

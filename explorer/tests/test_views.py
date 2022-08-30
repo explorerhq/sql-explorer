@@ -4,13 +4,14 @@ from unittest.mock import Mock, patch
 
 from django.contrib.auth.models import User
 from django.core.cache import cache
-from django.db import connections
 from django.test import TestCase
 from django.urls import reverse
 from django.forms.models import model_to_dict
 from django.shortcuts import redirect
+from explorer.connections import connections
 
 from explorer.app_settings import (
+    EXPLORER_CONNECTIONS as CONNS,
     EXPLORER_DEFAULT_CONNECTION as CONN,
     EXPLORER_TOKEN
 )
@@ -614,6 +615,12 @@ class TestSchemaView(TestCase):
             reverse("explorer_schema", kwargs={'connection': 'foo'})
         )
         self.assertEqual(resp.status_code, 404)
+
+    def test_does_not_return_404_on_legacy_connection_lookup(self):
+        resp = self.client.get(
+            reverse("explorer_schema", kwargs={'connection': list(CONNS.values())[0]})
+        )
+        self.assertEqual(resp.status_code, 200)
 
     def test_admin_required(self):
         self.client.logout()

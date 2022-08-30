@@ -56,13 +56,13 @@ Configure your settings to something like:
 .. code-block:: python
 
     EXPLORER_CONNECTIONS = { 'Default': 'readonly' }
-    EXPLORER_DEFAULT_CONNECTION = 'readonly'
+    EXPLORER_DEFAULT_CONNECTION = 'Default'
 
 The first setting lists the connections you want to allow Explorer to
 use. The keys of the connections dictionary are friendly names to show
 Explorer users, and the values are the actual database aliases used in
 ``settings.DATABASES``. It is highly recommended to setup read-only roles
-in your database, add them in your project's ``DATABASES`` setting and 
+in your database, add them in your project's ``DATABASES`` setting and
 use these read-only cconnections in the ``EXPLORER_CONNECTIONS``.
 
 If you want to quickly use django-sql-explorer with the existing default
@@ -72,13 +72,13 @@ can use the following settings:
 .. code-block:: python
 
     EXPLORER_CONNECTIONS = { 'Default': 'default' }
-    EXPLORER_DEFAULT_CONNECTION = 'default'
+    EXPLORER_DEFAULT_CONNECTION = 'Default'
 
 Finally, run migrate to create the tables:
 
 ``python manage.py migrate``
 
-You can now browse to https://yoursite/explorer/ and get exploring! 
+You can now browse to https://yoursite/explorer/ and get exploring!
 
 There are a handful of features (snapshots, emailing queries) that
 rely on Celery and the dependencies in optional-requirements.txt. If
