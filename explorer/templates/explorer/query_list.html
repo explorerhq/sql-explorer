@@ -1,14 +1,6 @@
 {% extends "explorer/base.html" %}
 {% load i18n static %}
 
-{% block sql_explorer_navlinks %}
-    {% if can_change %}
-        <li><a href="{% url 'query_create' %}">{% trans "New Query" %}</a></li>
-        <li><a href="{% url 'explorer_playground' %}">{% trans "Playground" %}</a></li>
-        <li><a href="{% url 'explorer_logs' %}">{% trans "Logs" %}</a></li>
-    {% endif %}
-{% endblock %}
-
 {% block sql_explorer_content %}
     {% if recent_queries|length > 0 %}
         <h3>

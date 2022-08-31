@@ -1,14 +1,6 @@
 {% extends "explorer/base.html" %}
 {% load explorer_tags i18n %}
 
-{% block sql_explorer_navlinks %}
-    {% if can_change %}
-        <li><a href="{% url 'query_create' %}">{% trans "New Query" %}</a></li>
-        <li class="active"><a href="">{% trans "Playground" %}</a></li>
-        <li><a href="{% url 'explorer_logs' %}">{% trans "Logs" %}</a></li>
-    {% endif %}
-{% endblock %}
-
 {% block sql_explorer_content %}
 <div class="row">
     <div id="query_area" class="col-md-12">

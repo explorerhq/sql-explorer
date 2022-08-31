@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{% static 'explorer/css/pivot.min.css' %}" />
     <link rel="stylesheet" href="{% static 'explorer/css/bootstrap.min.css' %}" />
     <link rel="stylesheet" href="{% static 'explorer/css/explorer.css' %}" />
+    {% block extrastyle %}{% endblock %}
 
     <script src="{% static 'explorer/js/jquery.min.js' %}"></script>
     <script src="{% static 'explorer/js/jquery.cookie.min.js' %}"></script>
@@ -35,7 +36,22 @@
                     </div>
                     <div class="navbar-collapse collapse">
                         <ul class="nav navbar-nav">
-                            {% block sql_explorer_navlinks %}{% endblock %}
+                            {% block sql_explorer_navlinks %}
+                                {% if can_change %}
+                                    <li{% if not query and view_name == 'query_create' %} class="active" {% endif %}>
+                                        <a href="{% url 'query_create' %}">{% trans "New Query" %}</a>
+                                    </li>
+                                    <li{% if not query and view_name == 'explorer_playground' %} class="active" {% endif %}>
+                                        <a href="{% url 'explorer_playground' %}">{% trans "Playground" %}</a>
+                                    </li>
+                                {% endif %}
+                                {% if query %}
+                                    <li class="active"><a href="">{% trans "Query Detail" %}</a></li>
+                                {% endif %}
+                                <li{% if not query and view_name == 'explorer_logs' %} class="active" {% endif %}>
+                                    <a href="{% url 'explorer_logs' %}">{% trans "Logs" %}</a>
+                                </li>
+                            {% endblock %}
                         </ul>
                     </div>
                 </div>
