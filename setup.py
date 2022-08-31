@@ -44,7 +44,7 @@ long_description = (this_directory / "README.rst").read_text()
 
 setup(
     name=name,
-    version=version,
+    version=release,
     author="Chris Clark",
     author_email="chris@untrod.com",
     maintainer='Mark Walker',
