@@ -40,7 +40,8 @@ from explorer.utils import (
     fmt_sql,
     allowed_query_pks,
     url_get_show,
-    url_get_fullscreen
+    url_get_fullscreen,
+    create_query_params
 )
 
 from explorer.schema import schema_info
@@ -101,7 +102,9 @@ if django.VERSION > (1, 11):
 def _export(request, query, download=True):
     format = request.GET.get('format', 'csv')
     exporter_class = get_exporter_class(format)
-    query.params = url_get_params(request)
+    query_params = url_get_params(request)
+    if query_params:
+        create_query_params(query, query_params)
     delim = request.GET.get('delim')
     exporter = exporter_class(query)
     try:
@@ -377,7 +380,9 @@ class QueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
     @staticmethod
     def get_instance_and_form(request, query_id):
         query = get_object_or_404(Query, pk=query_id)
-        query.params = url_get_params(request)
+        query_params = url_get_params(request)
+        if query_params:
+            create_query_params(query, query_params)
         form = QueryForm(request.POST if len(request.POST) else None, instance=query)
         return query, form
 

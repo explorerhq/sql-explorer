@@ -41,7 +41,6 @@ class Query(models.Model):
                                   help_text="Name of DB connection (as specified in settings) to use for this query. Will use EXPLORER_DEFAULT_CONNECTION if left blank")
 
     def __init__(self, *args, **kwargs):
-        self.params = kwargs.get('params')
         kwargs.pop('params', None)
         super(Query, self).__init__(*args, **kwargs)
 
@@ -51,6 +50,10 @@ class Query(models.Model):
 
     def __str__(self):
         return six.text_type(self.title)
+
+    @property
+    def params(self):
+        return {k: v for k, v in self.query_params.values_list('key', 'value')}
 
     def get_run_count(self):
         return self.querylog_set.count()
@@ -148,6 +151,21 @@ class QueryLog(models.Model):
 
     class Meta:
         ordering = ['-run_at']
+
+
+class QueryParam(models.Model):
+    key = models.CharField(blank=True, null=True, max_length=128)
+    value = models.CharField(blank=True, null=True, max_length=255)
+    query = models.ForeignKey(
+        Query,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name='query_params'
+    )
+
+    class Meta:
+        unique_together = ('query', 'key')
 
 
 class QueryResult(object):
