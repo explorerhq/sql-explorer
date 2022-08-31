@@ -9,6 +9,11 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 ---------------------
 
 
+`2.5.0`_ (2022-08-30)
+---------------------
+* `#481`_: Added query output as charts using new setting ``EXPLORER_CHARTS_ENABLED`` and 2 additional dependencies (Fix `#480`_)
+* `#478`_: Improve template block inheritance to allow easier customisation. (Fix `#477`_)
+
 `2.4.2`_ (2022-08-30)
 ---------------------
 * `#484`_: Added ``DEFAULT_AUTO_FIELD`` (Fix `#483`_)
@@ -397,6 +402,8 @@ Initial Release
 .. _#470: https://github.com/groveco/django-sql-explorer/pull/470
 .. _#471: https://github.com/groveco/django-sql-explorer/pull/471
 .. _#475: https://github.com/groveco/django-sql-explorer/pull/475
+.. _#478: https://github.com/groveco/django-sql-explorer/pull/478
+.. _#481: https://github.com/groveco/django-sql-explorer/pull/481
 .. _#484: https://github.com/groveco/django-sql-explorer/pull/484
 
 .. _#269: https://github.com/groveco/django-sql-explorer/issues/269
@@ -410,6 +417,8 @@ Initial Release
 .. _#433: https://github.com/groveco/django-sql-explorer/issues/433
 .. _#440: https://github.com/groveco/django-sql-explorer/issues/440
 .. _#443: https://github.com/groveco/django-sql-explorer/issues/443
+.. _#477: https://github.com/groveco/django-sql-explorer/issues/477
+.. _#480: https://github.com/groveco/django-sql-explorer/issues/480
 .. _#483: https://github.com/groveco/django-sql-explorer/issues/483
 
 .. _furo: https://github.com/pradyunsg/furo

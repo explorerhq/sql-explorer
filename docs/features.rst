@@ -129,8 +129,14 @@ To enable this feature, set ``EXPLORER_CHARTS_ENABLED`` setting to ``True`` and 
 
 .. code-block:: console
 
-   pip install matplotlib
-   pip install seaborn
+   pip install django-sql-explorer[graphs]
+
+Or if you already have the package installed, add the additional dependencies
+
+.. code-block:: console
+
+   pip install "matplotlib<4"
+   pip install "seaborn<0.12"
 
 This will add the "Pie chart" and the "Line chart" tabs alongside the "Preview" and the "Pivot" tabs in the query results view.
 
