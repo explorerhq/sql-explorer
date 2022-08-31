@@ -120,6 +120,22 @@ Pivot Table
 - Hit the link icon on the top right to get a URL to recreate the
   exact pivot setup to share with colleagues.
 
+Displaying query results as charts
+----------------------------------
+
+If the results table adheres to a certain format, the results can be displayed as a pie chart or a line chart.
+
+To enable this feature, set ``EXPLORER_CHARTS_ENABLED`` setting to ``True`` and install the plotting libraries ``matplotlib`` and ``seaborn`` with
+
+.. code-block:: console
+
+   pip install matplotlib
+   pip install seaborn
+
+This will add the "Pie chart" and the "Line chart" tabs alongside the "Preview" and the "Pivot" tabs in the query results view.
+
+The tabs show the respective charts if the query result table adheres to a format which the chart widget can read. Otherwise a message explaining the required format together with an example query is displayed.
+
 Query Logs
 ----------
 - Explorer will save a snapshot of every query you execute so you

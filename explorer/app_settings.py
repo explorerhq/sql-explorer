@@ -129,3 +129,5 @@ FROM_EMAIL = getattr(
 )
 
 UNSAFE_RENDERING = getattr(settings, "EXPLORER_UNSAFE_RENDERING", False)
+
+EXPLORER_CHARTS_ENABLED = getattr(settings, "EXPLORER_CHARTS_ENABLED", False)
