@@ -40,8 +40,7 @@ from explorer.utils import (
     fmt_sql,
     allowed_query_pks,
     url_get_show,
-    url_get_fullscreen,
-    create_query_params
+    url_get_fullscreen
 )
 
 from explorer.schema import schema_info
@@ -104,7 +103,7 @@ def _export(request, query, download=True):
     exporter_class = get_exporter_class(format)
     query_params = url_get_params(request)
     if query_params:
-        create_query_params(query, query_params)
+        query.create_query_params(query_params)
     delim = request.GET.get('delim')
     exporter = exporter_class(query)
     try:
@@ -382,7 +381,7 @@ class QueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
         query = get_object_or_404(Query, pk=query_id)
         query_params = url_get_params(request)
         if query_params:
-            create_query_params(query, query_params)
+            query.create_query_params(query_params)
         form = QueryForm(request.POST if len(request.POST) else None, instance=query)
         return query, form
 

@@ -176,21 +176,3 @@ def s3_upload(key, data):
     k.set_acl('public-read')
     k.set_metadata('Content-Type', 'text/csv')
     return k.generate_url(expires_in=0, query_auth=False)
-
-
-def create_query_params(query, data):
-    '''
-    Method to create the QueryParam objects and associate them to a Query obj
-    Args:
-        - `query`: Query object
-        - `data`: dict
-    '''
-    from explorer.models import QueryParam
-    # First remove all associated QueryParam objs before creating new ones
-    query.query_params.all().delete()
-    query_params_to_create = [
-        QueryParam(query=query, key=k, value=v)
-        for k, v in data.items()
-    ]
-    # Now bulk create new ones
-    QueryParam.objects.bulk_create(query_params_to_create)
