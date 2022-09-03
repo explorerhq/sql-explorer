@@ -63,7 +63,7 @@ use. The keys of the connections dictionary are friendly names to show
 Explorer users, and the values are the actual database aliases used in
 ``settings.DATABASES``. It is highly recommended to setup read-only roles
 in your database, add them in your project's ``DATABASES`` setting and 
-use these read-only cconnections in the ``EXPLORER_CONNECTIONS``.
+use these read-only connections in the ``EXPLORER_CONNECTIONS``.
 
 If you want to quickly use django-sql-explorer with the existing default
 connection **and know what you are doing** (or you are on development), you

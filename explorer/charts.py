@@ -49,7 +49,7 @@ def get_line_chart(result: QueryResult) -> Optional[str]:
 
     A line chart is rendered if
     * there is at least on row of in the result table
-    * there is at least one numeric column (the first colum (with index 0) does not count)
+    * there is at least one numeric column (the first column (with index 0) does not count)
 
     The first column is used as x-axis labels.
     All other numeric columns represent a line on the chart.
