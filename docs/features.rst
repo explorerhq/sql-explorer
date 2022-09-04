@@ -84,7 +84,7 @@ Schema Helper
   schema. This can sometimes be slow, as it issues a separate
   query for each table it introspects. Therefore, once generated,
   Explorer caches the schema information. There is also the option
-  to generate the schema information asyncronously, via Celery. To
+  to generate the schema information asynchronously, via Celery. To
   enable this, make sure Celery is installed and configured, and
   set ``EXPLORER_ENABLE_TASKS`` and ``EXPLORER_ASYNC_SCHEMA`` to
   ``True``.
