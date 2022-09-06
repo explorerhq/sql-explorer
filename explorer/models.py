@@ -51,7 +51,6 @@ class Query(models.Model):
     )
 
     def __init__(self, *args, **kwargs):
-        self.params = kwargs.get('params')
         kwargs.pop('params', None)
         super().__init__(*args, **kwargs)
 
@@ -62,6 +61,10 @@ class Query(models.Model):
 
     def __str__(self):
         return str(self.title)
+
+    @property
+    def params(self):
+        return {k: v for k, v in self.query_params.values_list('key', 'value')}
 
     def get_run_count(self):
         return self.querylog_set.count()
@@ -146,6 +149,21 @@ class Query(models.Model):
                 ) for k in keys_s
             ]
 
+    def create_query_params(self, data):
+        '''
+        Method to create the QueryParam objects and associate them to a Query obj
+        Args:
+            - `data`: dict
+        '''
+        # First remove all associated QueryParam objs before creating new ones
+        self.query_params.all().delete()
+        query_params_to_create = [
+            QueryParam(query=self, key=k, value=v)
+            for k, v in data.items()
+        ]
+        # Now bulk create new ones
+        QueryParam.objects.bulk_create(query_params_to_create)
+
 
 class SnapShot:
 
@@ -179,6 +197,21 @@ class QueryLog(models.Model):
 
     class Meta:
         ordering = ['-run_at']
+
+
+class QueryParam(models.Model):
+    key = models.CharField(blank=True, null=True, max_length=128)
+    value = models.CharField(blank=True, null=True, max_length=255)
+    query = models.ForeignKey(
+        Query,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name='query_params'
+    )
+
+    class Meta:
+        unique_together = ('query', 'key')
 
 
 class QueryResult:

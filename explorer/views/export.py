@@ -10,7 +10,9 @@ from explorer.utils import url_get_params
 def _export(request, query, download=True):
     _fmt = request.GET.get('format', 'csv')
     exporter_class = get_exporter_class(_fmt)
-    query.params = url_get_params(request)
+    query_params = url_get_params(request)
+    if query_params:
+        query.create_query_params(query_params)
     delim = request.GET.get('delim')
     exporter = exporter_class(query)
     try:

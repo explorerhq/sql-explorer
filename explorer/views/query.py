@@ -129,7 +129,9 @@ class QueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
     @staticmethod
     def get_instance_and_form(request, query_id):
         query = get_object_or_404(Query, pk=query_id)
-        query.params = url_get_params(request)
+        query_params = url_get_params(request)
+        if query_params:
+            query.create_query_params(query_params)
         form = QueryForm(
             request.POST if len(request.POST) else None,
             instance=query
