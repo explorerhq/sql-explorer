@@ -83,9 +83,9 @@ setup(
         'sqlparse>=0.4.0',
     ],
     extras_require={
-        "graphs": [
-            'matplotlib<4',
-            'seaborn<0.12'
+        "charts": [
+            "matplotlib<4",
+            "seaborn<0.12"
         ],
         "xls": [
             'xlsxwriter>=1.2.1'

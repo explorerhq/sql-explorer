@@ -84,7 +84,7 @@ Schema Helper
   schema. This can sometimes be slow, as it issues a separate
   query for each table it introspects. Therefore, once generated,
   Explorer caches the schema information. There is also the option
-  to generate the schema information asyncronously, via Celery. To
+  to generate the schema information asynchronously, via Celery. To
   enable this, make sure Celery is installed and configured, and
   set ``EXPLORER_ENABLE_TASKS`` and ``EXPLORER_ASYNC_SCHEMA`` to
   ``True``.
@@ -129,6 +129,7 @@ To enable this feature, set ``EXPLORER_CHARTS_ENABLED`` setting to ``True`` and 
 
 .. code-block:: console
 
+<<<<<<< HEAD
    pip install django-sql-explorer[graphs]
 
 Or if you already have the package installed, add the additional dependencies
@@ -137,6 +138,9 @@ Or if you already have the package installed, add the additional dependencies
 
    pip install "matplotlib<4"
    pip install "seaborn<0.12"
+=======
+   pip install "django-sql-explorer[charts]"
+>>>>>>> master
 
 This will add the "Pie chart" and the "Line chart" tabs alongside the "Preview" and the "Pivot" tabs in the query results view.
 
