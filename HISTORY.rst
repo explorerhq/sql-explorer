@@ -9,6 +9,14 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 ---------------------
 
 
+`2.5.0`_ (2022-10-09)
+---------------------
+* `#494`_: Fixes Security hole in blacklist for MySQL (`#490`_)
+* `#488`_: docs: Fix a few typos
+* `#481`_: feat: Add pie and line chart tabs to query result preview
+* `#478`_: feat: Improved templates to make easier to customize (Fix `#477`_)
+
+
 `2.4.2`_ (2022-08-30)
 ---------------------
 * `#484`_: Added ``DEFAULT_AUTO_FIELD`` (Fix `#483`_)
@@ -397,7 +405,11 @@ Initial Release
 .. _#470: https://github.com/groveco/django-sql-explorer/pull/470
 .. _#471: https://github.com/groveco/django-sql-explorer/pull/471
 .. _#475: https://github.com/groveco/django-sql-explorer/pull/475
+.. _#478: https://github.com/groveco/django-sql-explorer/pull/478
+.. _#481: https://github.com/groveco/django-sql-explorer/pull/481
 .. _#484: https://github.com/groveco/django-sql-explorer/pull/484
+.. _#488: https://github.com/groveco/django-sql-explorer/pull/488
+.. _#494: https://github.com/groveco/django-sql-explorer/pull/494
 
 .. _#269: https://github.com/groveco/django-sql-explorer/issues/269
 .. _#288: https://github.com/groveco/django-sql-explorer/issues/288
@@ -410,6 +422,8 @@ Initial Release
 .. _#433: https://github.com/groveco/django-sql-explorer/issues/433
 .. _#440: https://github.com/groveco/django-sql-explorer/issues/440
 .. _#443: https://github.com/groveco/django-sql-explorer/issues/443
+.. _#477: https://github.com/groveco/django-sql-explorer/issues/477
 .. _#483: https://github.com/groveco/django-sql-explorer/issues/483
+.. _#490: https://github.com/groveco/django-sql-explorer/issues/490
 
 .. _furo: https://github.com/pradyunsg/furo
