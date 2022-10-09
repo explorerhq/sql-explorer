@@ -22,7 +22,7 @@ EXPLORER_SQL_BLACKLIST = getattr(
         'RENAME ',
         'DROP',
         'TRUNCATE',
-        'INSERT INTO',
+        'INSERT',
         'UPDATE',
         'REPLACE',
         'DELETE',
