@@ -183,6 +183,9 @@ Power tips
   the SQL editor area.
 - Hit the "Format" button to format and clean up your SQL (this is
   non-validating -- just formatting).
+- If you find the "Format" button is not working, it may be due to the
+  following setting ``CSRF_COOKIE_HTTPONLY = True`` which prevents
+  client javascript from reading the CSRF cookie (see Django docs).
 - Use the Query Logs feature to share one-time queries that aren't
   worth creating a persistent query for. Just run your SQL in the
   playground, then navigate to ``/logs`` and share the link
