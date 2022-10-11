@@ -131,3 +131,9 @@ FROM_EMAIL = getattr(
 UNSAFE_RENDERING = getattr(settings, "EXPLORER_UNSAFE_RENDERING", False)
 
 EXPLORER_CHARTS_ENABLED = getattr(settings, "EXPLORER_CHARTS_ENABLED", False)
+
+# If set to True will autorun queries when viewed which is the historical behavior
+# Default to True if not set in order to be backwards compatible
+# If set to False will not autorun queries containing parameters when viewed
+# - user will need to run by clicking the Save & Run Button to execute
+EXPLORER_AUTORUN_QUERY_WITH_PARAMS = getattr(settings, "EXPLORER_AUTORUN_QUERY_WITH_PARAMS", True)

@@ -62,7 +62,7 @@ The first setting lists the connections you want to allow Explorer to
 use. The keys of the connections dictionary are friendly names to show
 Explorer users, and the values are the actual database aliases used in
 ``settings.DATABASES``. It is highly recommended to setup read-only roles
-in your database, add them in your project's ``DATABASES`` setting and 
+in your database, add them in your project's ``DATABASES`` setting and
 use these read-only connections in the ``EXPLORER_CONNECTIONS``.
 
 If you want to quickly use django-sql-explorer with the existing default
@@ -78,7 +78,17 @@ Finally, run migrate to create the tables:
 
 ``python manage.py migrate``
 
-You can now browse to https://yoursite/explorer/ and get exploring! 
+You can now browse to https://yoursite/explorer/ and get exploring!
+
+The default behavior when viewing a parameterized query is to autorun the associated
+SQL with the default parameter values. This may perform poorly and you may want
+a chance for your users to review the parameters before running. If so you may add
+the following setting which will allow the user to view the query and adjust any
+parameters before hitting "Save & Run"
+
+.. code-block:: python
+
+    EXPLORER_AUTORUN_QUERY_WITH_PARAMS = False
 
 There are a handful of features (snapshots, emailing queries) that
 rely on Celery and the dependencies in optional-requirements.txt. If
