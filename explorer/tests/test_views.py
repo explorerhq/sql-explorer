@@ -1,3 +1,4 @@
+import importlib
 import json
 import time
 from unittest.mock import Mock, patch
@@ -5,11 +6,12 @@ from unittest.mock import Mock, patch
 from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.db import connections
-from django.test import TestCase
-from django.urls import reverse
 from django.forms.models import model_to_dict
 from django.shortcuts import redirect
+from django.test import TestCase
+from django.urls import reverse
 
+from explorer import app_settings
 from explorer.app_settings import (
     EXPLORER_DEFAULT_CONNECTION as CONN,
     EXPLORER_TOKEN
@@ -17,6 +19,14 @@ from explorer.app_settings import (
 from explorer.models import Query, QueryLog, MSG_FAILED_BLACKLIST
 from explorer.tests.factories import SimpleQueryFactory, QueryLogFactory
 from explorer.utils import user_can_see_query
+
+
+def reload_app_settings():
+    """
+    Reload app settings, otherwise changes from testing context manager won't take effect
+    app_settings are loaded at time of import
+    """
+    importlib.reload(app_settings)
 
 
 class TestQueryListView(TestCase):
@@ -168,6 +178,30 @@ class TestQueryDetailView(TestCase):
         )
         self.assertTemplateUsed(resp, 'explorer/query.html')
         self.assertNotContains(resp, '6872')
+
+    def test_doesnt_render_results_if_params_and_no_autorun(self):
+        with self.settings(EXPLORER_AUTORUN_QUERY_WITH_PARAMS=False):
+            reload_app_settings()
+            query = SimpleQueryFactory(sql='select 6870+3 where 1=$$myparam:1$$;')
+            resp = self.client.get(
+                reverse(
+                    "query_detail", kwargs={'query_id': query.id}
+                )
+            )
+            self.assertTemplateUsed(resp, 'explorer/query.html')
+            self.assertNotContains(resp, '6873')
+
+    def test_does_render_results_if_params_and_autorun(self):
+        with self.settings(EXPLORER_AUTORUN_QUERY_WITH_PARAMS=True):
+            reload_app_settings()
+            query = SimpleQueryFactory(sql='select 6870+4 where 1=$$myparam:1$$;')
+            resp = self.client.get(
+                reverse(
+                    "query_detail", kwargs={'query_id': query.id}
+                )
+            )
+            self.assertTemplateUsed(resp, 'explorer/query.html')
+            self.assertContains(resp, '6874')
 
     def test_admin_required(self):
         self.client.logout()

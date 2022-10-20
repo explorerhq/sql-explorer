@@ -15,7 +15,7 @@ from explorer.views.auth import PermissionRequiredMixin
 from explorer.views.mixins import ExplorerContextMixin
 from explorer.views.utils import query_viewmodel
 
-from django.utils.translation import gettext_lazy as _ 
+from django.utils.translation import gettext_lazy as _
 
 class PlayQueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
 
@@ -95,6 +95,9 @@ class QueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
         query.save()  # updates the modified date
         show = url_get_show(request)
         rows = url_get_rows(request)
+        params = query.available_params()
+        if not app_settings.EXPLORER_AUTORUN_QUERY_WITH_PARAMS and params:
+            show = False
         vm = query_viewmodel(
             request,
             query,
