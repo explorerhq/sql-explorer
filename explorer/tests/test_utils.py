@@ -4,7 +4,6 @@ from unittest.mock import Mock
 from django.test import TestCase
 
 from explorer import app_settings
-from explorer.actions import generate_report_action
 from explorer.tests.factories import SimpleQueryFactory
 from explorer.utils import (
     passes_blacklist, param, swap_params, extract_params,
@@ -17,46 +16,173 @@ class TestSqlBlacklist(TestCase):
 
     def setUp(self):
         self.orig = app_settings.EXPLORER_SQL_BLACKLIST
-        self.orig_wl = app_settings.EXPLORER_SQL_WHITELIST
 
     def tearDown(self):
         app_settings.EXPLORER_SQL_BLACKLIST = self.orig
-        app_settings.EXPLORER_SQL_WHITELIST = self.orig_wl
 
     def test_overriding_blacklist(self):
         app_settings.EXPLORER_SQL_BLACKLIST = []
-        r = SimpleQueryFactory(sql="SELECT 1+1 AS \"DELETE\";")
-        fn = generate_report_action()
-        result = fn(None, None, [r, ])
-        self.assertEqual(result.content.decode('utf-8-sig'), 'DELETE\r\n2\r\n')
+        sql = "DELETE FROM some_table;"
+        passes, words = passes_blacklist(sql)
+        self.assertTrue(passes)
 
-    def test_default_blacklist_prevents_deletes(self):
-        r = SimpleQueryFactory(sql="SELECT 1+1 AS \"DELETE\";")
-        fn = generate_report_action()
-        result = fn(None, None, [r, ])
-        self.assertEqual(result.content.decode('utf-8-sig'), '0')
+    def test_not_overriding_blacklist(self):
+        sql = "DELETE FROM some_table;"
+        passes, words = passes_blacklist(sql)
+        self.assertFalse(passes)
 
-    def test_queries_deleting_stuff_are_not_ok(self):
+    # Various flavors of select - all should be ok
+    def test_select_keywords_as_literals(self):
+        sql = "SELECT * from eventtype where eventtype.value = 'Grant Date';"
+        passes, words = passes_blacklist(sql)
+        self.assertTrue(passes)
+
+    def test_select_containing_drop_in_word(self):
+        sql = "SELECT * FROM student droptable WHERE name LIKE 'Robert%'"
+        self.assertTrue(passes_blacklist(sql)[0])
+
+    def test_select_with_case(self):
+        sql = '''SELECT   ProductNumber, Name, "Price Range" =
+          CASE
+             WHEN ListPrice =  0 THEN 'Mfg item - not for resale'
+             WHEN ListPrice < 50 THEN 'Under $50'
+             WHEN ListPrice >= 50 and ListPrice < 250 THEN 'Under $250'
+             WHEN ListPrice >= 250 and ListPrice < 1000 THEN 'Under $1000'
+             ELSE 'Over $1000'
+          END
+        FROM Production.Product
+        ORDER BY ProductNumber ;
+        '''
+        passes, words = passes_blacklist(sql)
+        self.assertTrue(passes)
+
+    def test_select_with_subselect(self):
+        sql = '''SELECT a.studentid, a.name, b.total_marks
+            FROM student a, marks b
+            WHERE a.studentid = b.studentid AND b.total_marks >
+            (SELECT total_marks
+            FROM marks
+            WHERE studentid =  'V002');
+            '''
+        passes, words = passes_blacklist(sql)
+        self.assertTrue(passes)
+
+    def test_select_with_replace_function(self):
+        sql = "SELECT replace('test string', 'st', '**');"
+        passes, words = passes_blacklist(sql)
+        self.assertTrue(passes)
+
+    def test_dml_commit(self):
+        sql = "COMMIT TRANSACTION;"
+        passes, words = passes_blacklist(sql)
+        self.assertFalse(passes)
+
+    def test_dml_delete(self):
         sql = "'distraction'; deLeTe from table; " \
               "SELECT 1+1 AS TWO; drop view foo;"
         passes, words = passes_blacklist(sql)
         self.assertFalse(passes)
         self.assertEqual(len(words), 2)
-        self.assertEqual(words[0], 'DROP')
-        self.assertEqual(words[1], 'DELETE')
 
-    def test_queries_dropping_views_is_not_ok_and_not_case_sensitive(self):
-        sql = "SELECT 1+1 AS TWO; drop ViEw foo;"
-        self.assertFalse(passes_blacklist(sql)[0])
+    def test_dml_insert(self):
+        sql = "INSERT INTO products (product_no, name, price) VALUES (1, 'Cheese', 9.99);"
+        passes, words = passes_blacklist(sql)
+        self.assertFalse(passes)
 
-    def test_queries_containing_drop_in_word_is_ok(self):
-        sql = "SELECT * FROM student droptable WHERE name LIKE 'Robert%'"
-        self.assertTrue(passes_blacklist(sql)[0])
+    def test_dml_merge(self):
+        sql = '''MERGE INTO wines w
+            USING (VALUES('Chateau Lafite 2003', '24')) v
+            ON v.column1 = w.winename
+            WHEN NOT MATCHED
+              INSERT VALUES(v.column1, v.column2)
+            WHEN MATCHED
+              UPDATE SET stock = stock + v.column2;'''
+        passes, words = passes_blacklist(sql)
+        self.assertFalse(passes)
 
-    def test_sql_whitelist_ok(self):
-        app_settings.EXPLORER_SQL_WHITELIST = ['dropper']
-        sql = "SELECT 1+1 AS TWO; dropper ViEw foo;"
-        self.assertTrue(passes_blacklist(sql)[0])
+    def test_dml_replace(self):
+        sql = "REPLACE INTO test VALUES (1, 'Old', '2014-08-20 18:47:00');"
+        passes, words = passes_blacklist(sql)
+        self.assertFalse(passes)
+
+    def test_dml_rollback(self):
+        sql = "ROLLBACK TO SAVEPOINT my_savepoint;"
+        passes, words = passes_blacklist(sql)
+        self.assertFalse(passes)
+
+    def test_dml_set(self):
+        sql = "SET TIME ZONE 'PST8PDT';"
+        passes, words = passes_blacklist(sql)
+        self.assertFalse(passes)
+
+    def test_dml_start(self):
+        sql = "START TRANSACTION;"
+        passes, words = passes_blacklist(sql)
+        self.assertFalse(passes)
+
+    def test_dml_update(self):
+        sql = '''UPDATE accounts SET (contact_first_name, contact_last_name) =
+        (SELECT first_name, last_name FROM employees
+         WHERE employees.id = accounts.sales_person);'''
+        passes, words = passes_blacklist(sql)
+        self.assertFalse(passes)
+
+    def test_dml_upsert(self):
+        sql = "UPSERT INTO Users VALUES (10, 'John', 'Smith', 27, 60000);"
+        passes, words = passes_blacklist(sql)
+        self.assertFalse(passes)
+
+    def test_ddl_alter(self):
+        sql = '''ALTER TABLE foo
+        ALTER COLUMN foo_timestamp DROP DEFAULT,
+        ALTER COLUMN foo_timestamp TYPE timestamp with time zone
+        USING
+            timestamp with time zone 'epoch' + foo_timestamp * interval '1 second',
+        ALTER COLUMN foo_timestamp SET DEFAULT now();'''
+        passes, words = passes_blacklist(sql)
+        self.assertFalse(passes)
+
+    def test_ddl_create(self):
+        sql = '''CREATE TABLE Persons (
+            PersonID int,
+            LastName varchar(255),
+            FirstName varchar(255),
+            Address varchar(255),
+            City varchar(255)
+        );
+        '''
+        passes, words = passes_blacklist(sql)
+        self.assertFalse(passes)
+
+    def test_ddl_drop(self):
+        sql = "DROP TABLE films, distributors;"
+        passes, words = passes_blacklist(sql)
+        self.assertFalse(passes)
+
+    def test_ddl_rename(self):
+        sql = "RENAME TABLE old_table_name TO new_table_name;"
+        passes, words = passes_blacklist(sql)
+        self.assertFalse(passes)
+
+    def test_ddl_truncate(self):
+        sql = "TRUNCATE bigtable, othertable RESTART IDENTITY;"
+        passes, words = passes_blacklist(sql)
+        self.assertFalse(passes)
+
+    def test_dcl_grant(self):
+        sql = "GRANT ALL PRIVILEGES ON kinds TO manuel;"
+        passes, words = passes_blacklist(sql)
+        self.assertFalse(passes)
+
+    def test_dcl_revoke(self):
+        sql = "REVOKE ALL PRIVILEGES ON kinds FROM manuel;"
+        passes, words = passes_blacklist(sql)
+        self.assertFalse(passes)
+
+    def test_dcl_revoke_bad_syntax(self):
+        sql = "REVOKE ON kinds; FROM manuel;"
+        passes, words = passes_blacklist(sql)
+        self.assertFalse(passes)
 
 
 class TestParams(TestCase):
@@ -90,16 +216,16 @@ class TestParams(TestCase):
 
     def test_extracting_params(self):
         tests = [
-            ('please swap $$this0$$',                {'this0': ''}),
-            ('please swap $$THis0$$',                {'this0': ''}),
+            ('please swap $$this0$$', {'this0': ''}),
+            ('please swap $$THis0$$', {'this0': ''}),
             ('please swap $$this6$$ $$this6:that$$', {'this6': 'that'}),
-            ('please swap $$this_7:foo, bar$$',      {'this_7': 'foo, bar'}),
-            ('please swap $$this8:$$',               {}),
-            ('do nothing with $$this1 $$',           {}),
-            ('do nothing with $$this2 :$$',          {}),
-            ('do something with $$this3: $$',        {'this3': ' '}),
-            ('do nothing with $$this4: ',            {}),
-            ('do nothing with $$this5$that$$',       {}),
+            ('please swap $$this_7:foo, bar$$', {'this_7': 'foo, bar'}),
+            ('please swap $$this8:$$', {}),
+            ('do nothing with $$this1 $$', {}),
+            ('do nothing with $$this2 :$$', {}),
+            ('do something with $$this3: $$', {'this3': ' '}),
+            ('do nothing with $$this4: ', {}),
+            ('do nothing with $$this5$that$$', {}),
         ]
         for s in tests:
             self._assertSwap(s)

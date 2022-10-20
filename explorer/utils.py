@@ -1,41 +1,52 @@
-import functools
 import re
+from collections import deque
+from typing import Tuple, Iterable
 
+import sqlparse
+from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView
-from django.contrib.auth import REDIRECT_FIELD_NAME
 from sqlparse import format as sql_format
+from sqlparse.sql import TokenList, Token
+from sqlparse.tokens import Keyword
 
 from explorer import app_settings
 
 EXPLORER_PARAM_TOKEN = "$$"
 
 
-def passes_blacklist(sql):
-    clean = functools.reduce(
-        lambda s, term: s.upper().replace(term, ''),
-        [t.upper() for t in app_settings.EXPLORER_SQL_WHITELIST],
-        sql
-    )
-
-    regex_blacklist = [
-        (
-            bl_word,
-            re.compile(
-                r'(^|\W){}($|\W)'.format(bl_word),
-                flags=re.IGNORECASE
-            )
-        )
-        for bl_word in app_settings.EXPLORER_SQL_BLACKLIST
-    ]
+def passes_blacklist(sql: str) -> Tuple[bool, Iterable[str]]:
+    sql_strings = sqlparse.split(sql)
+    keyword_tokens = set()
+    for sql_string in sql_strings:
+        statements = sqlparse.parse(sql_string)
+        for statement in statements:
+            for token in walk_tokens(statement):
+                if not token.is_whitespace and not isinstance(token, TokenList):
+                    if token.ttype in Keyword:
+                        keyword_tokens.add(str(token.value).upper())
 
     fails = [
         bl_word
-        for bl_word, bl_regex in regex_blacklist
-        if bl_regex.findall(clean)
+        for bl_word in app_settings.EXPLORER_SQL_BLACKLIST
+        if bl_word.upper() in keyword_tokens
     ]
 
-    return not any(fails), fails
+    return not bool(fails), fails
+
+
+def walk_tokens(token: TokenList) -> Iterable[Token]:
+    """
+    Generator to walk all tokens in a Statement
+    https://stackoverflow.com/questions/54982118/parse-case-when-statements-with-sqlparse
+    :param token: TokenList
+    """
+    queue = deque([token])
+    while queue:
+        token = queue.popleft()
+        if isinstance(token, TokenList):
+            queue.extend(token)
+        yield token
 
 
 def _format_field(field):

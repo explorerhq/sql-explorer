@@ -18,31 +18,31 @@ EXPLORER_DEFAULT_CONNECTION = getattr(
 EXPLORER_SQL_BLACKLIST = getattr(
     settings, 'EXPLORER_SQL_BLACKLIST',
     (
-        'ALTER',
-        'RENAME ',
-        'DROP',
-        'TRUNCATE',
-        'INSERT',
-        'UPDATE',
-        'REPLACE',
+        # DML
+        'COMMIT',
         'DELETE',
-        'CREATE TABLE',
+        'INSERT',
+        'MERGE',
+        'REPLACE',
+        'ROLLBACK',
+        'SET',
+        'START',
+        'UPDATE',
+        'UPSERT',
+
+        # DDL
+        'ALTER',
+        'CREATE',
+        'DROP',
+        'RENAME',
+        'TRUNCATE',
+
+        # DCL
         'GRANT',
-        'OWNER TO',
-        'SET'
+        'REVOKE',
     )
 )
 
-EXPLORER_SQL_WHITELIST = getattr(
-    settings,
-    'EXPLORER_SQL_WHITELIST',
-    (
-        'CREATED',
-        'UPDATED',
-        'DELETED',
-        'REGEXP_REPLACE'
-    )
-)
 
 EXPLORER_DEFAULT_ROWS = getattr(settings, 'EXPLORER_DEFAULT_ROWS', 1000)
 

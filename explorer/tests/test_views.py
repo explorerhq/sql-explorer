@@ -308,7 +308,7 @@ class TestQueryDetailView(TestCase):
         query = SimpleQueryFactory(sql="select 1;")
         resp = self.client.post(
             reverse("query_detail", kwargs={'query_id': query.id}),
-            data={'sql': "select 'delete';"}
+            data={'sql': "delete from auth_user;"}
         )
         end = len(conn.queries)
 
@@ -500,7 +500,7 @@ class TestQueryPlayground(TestCase):
     def test_fails_blacklist(self):
         resp = self.client.post(
             reverse("explorer_playground"),
-            {'sql': "select 'delete'"}
+            {'sql': "delete from auth_user;"}
         )
         self.assertTemplateUsed(resp, 'explorer/play.html')
         self.assertContains(resp, MSG_FAILED_BLACKLIST % '')
