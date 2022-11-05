@@ -8,6 +8,7 @@ $emailCsv.each(function () {
   var $this = $(this);
   $this.popover({
     html: true,
+    sanitize: false,
     trigger: 'manual',
     placement: 'left',
     content:
