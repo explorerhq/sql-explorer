@@ -195,7 +195,10 @@ def get_s3_bucket():
 def s3_upload(key, data):
     bucket = get_s3_bucket()
     bucket.upload_fileobj(data, key, ExtraArgs={'ContentType': "text/csv"})
+    return s3_url(bucket, key)
 
+
+def s3_url(bucket, key):
     url = bucket.meta.client.generate_presigned_url(
         ClientMethod='get_object',
         Params={'Bucket': app_settings.S3_BUCKET, 'Key': key},

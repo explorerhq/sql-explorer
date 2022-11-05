@@ -2,16 +2,21 @@ import logging
 from time import time
 
 from django.conf import settings
-from django.db import DatabaseError, models, transaction
+from django.db import models, DatabaseError, transaction
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from explorer import app_settings
 from explorer.utils import (
-    extract_params, get_params_for_url, get_s3_bucket, get_valid_connection, passes_blacklist, shared_dict_update,
+    passes_blacklist,
     swap_params,
+    extract_params,
+    shared_dict_update,
+    get_s3_bucket,
+    s3_url,
+    get_params_for_url,
+    get_valid_connection
 )
-
 
 MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist: %s"
 
@@ -133,13 +138,13 @@ class Query(models.Model):
     def snapshots(self):
         if app_settings.ENABLE_TASKS:
             b = get_s3_bucket()
-            keys = b.objects.filter(Prefix=f'query-{self.id}/snap-')
-            keys_s = sorted(keys, key=lambda k: k.last_modified)
+            objects = b.objects.filter(Prefix=f'query-{self.id}/snap-')
+            objects_s = sorted(objects, key=lambda k: k.last_modified)
             return [
                 SnapShot(
-                    k.generate_url(expires_in=0, query_auth=False),
-                    k.last_modified
-                ) for k in keys_s
+                    s3_url(b, o.key),
+                    o.last_modified
+                ) for o in objects_s
             ]
 
 
