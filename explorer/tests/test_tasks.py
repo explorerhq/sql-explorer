@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from datetime import datetime, timedelta
 from io import StringIO
 from unittest.mock import patch
@@ -7,7 +8,10 @@ from django.test import TestCase
 
 from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
 from explorer.models import QueryLog
-from explorer.tasks import build_schema_cache_async, execute_query, snapshot_queries, truncate_querylogs
+from explorer.tasks import (
+    execute_query, snapshot_queries, truncate_querylogs,
+    build_schema_cache_async
+)
 from explorer.tests.factories import SimpleQueryFactory
 
 
@@ -31,7 +35,9 @@ class TestTasks(TestCase):
         )
         self.assertIn('[SQL Explorer] Report ', mail.outbox[1].subject)
         self.assertEqual(
-            mocked_upload.call_args[0][1].getvalue().encode('utf-8').decode('utf-8-sig'),
+            mocked_upload
+                .call_args[0][1].getvalue()
+                .decode('utf-8-sig'),
             output.getvalue()
         )
         self.assertEqual(mocked_upload.call_count, 1)

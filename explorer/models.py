@@ -133,7 +133,7 @@ class Query(models.Model):
     def snapshots(self):
         if app_settings.ENABLE_TASKS:
             b = get_s3_bucket()
-            keys = b.list(prefix=f'query-{self.id}/snap-')
+            keys = b.objects.filter(Prefix=f'query-{self.id}/snap-')
             keys_s = sorted(keys, key=lambda k: k.last_modified)
             return [
                 SnapShot(
