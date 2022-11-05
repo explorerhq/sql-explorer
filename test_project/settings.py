@@ -1,5 +1,4 @@
 import os
-import djcelery
 
 SECRET_KEY = 'shhh'
 DEBUG = True
@@ -34,8 +33,8 @@ DATABASES = {
 }
 
 EXPLORER_CONNECTIONS = {
-    #'Postgres': 'postgres',
-    #'MySQL': 'mysql',
+    # 'Postgres': 'postgres',
+    # 'MySQL': 'mysql',
     'SQLite': 'default',
     'Another': 'alt'
 }
@@ -68,7 +67,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'explorer',
-    'djcelery'
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -83,11 +81,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
 ]
 
-TEST_RUNNER = 'djcelery.contrib.test_runner.CeleryTestSuiteRunner'
+CELERY_TASK_ALWAYS_EAGER = True
 
-djcelery.setup_loader()
-CELERY_ALWAYS_EAGER = True
-BROKER_BACKEND = 'memory'
+# added to help debug tasks
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Explorer-specific
 

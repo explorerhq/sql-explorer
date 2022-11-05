@@ -2,6 +2,7 @@ import re
 from collections import deque
 from typing import Tuple, Iterable
 
+import boto3
 import sqlparse
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.forms import AuthenticationForm
@@ -184,19 +185,18 @@ def get_valid_connection(alias=None):
 
 
 def get_s3_bucket():
-    from boto.s3.connection import S3Connection
-
-    conn = S3Connection(app_settings.S3_ACCESS_KEY,
-                        app_settings.S3_SECRET_KEY)
-    return conn.get_bucket(app_settings.S3_BUCKET)
+    s3 = boto3.resource('s3',
+                        aws_access_key_id=app_settings.S3_ACCESS_KEY,
+                        aws_secret_access_key=app_settings.S3_SECRET_KEY)
+    return s3.Bucket(name=app_settings.S3_BUCKET)
 
 
 def s3_upload(key, data):
-    from boto.s3.key import Key
     bucket = get_s3_bucket()
-    k = Key(bucket)
-    k.key = key
-    k.set_contents_from_file(data, rewind=True)
-    k.set_acl('public-read')
-    k.set_metadata('Content-Type', 'text/csv')
-    return k.generate_url(expires_in=0, query_auth=False)
+    bucket.upload_fileobj(data, key, ExtraArgs={'ContentType': "text/csv"})
+
+    url = bucket.meta.client.generate_presigned_url(
+        ClientMethod='get_object',
+        Params={'Bucket': app_settings.S3_BUCKET, 'Key': key},
+        ExpiresIn=3600)
+    return url

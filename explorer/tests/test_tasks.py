@@ -37,7 +37,7 @@ class TestTasks(TestCase):
         self.assertEqual(
             mocked_upload
                 .call_args[0][1].getvalue()
-                .encode('utf-8').decode('utf-8-sig'),
+                .decode('utf-8-sig'),
             output.getvalue()
         )
         self.assertEqual(mocked_upload.call_count, 1)

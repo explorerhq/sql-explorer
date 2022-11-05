@@ -59,7 +59,7 @@ class TestJson(TestCase):
 
         res = JSONExporter(query=None)._get_output(res).getvalue()
         expected = [{'a': 1, '': None}, {'a': 'Jenét', '': '1'}]
-        self.assertEqual(res, json.dumps(expected))
+        self.assertEqual(res.decode('utf-8'), json.dumps(expected))
 
     def test_writing_datetimes(self):
         res = QueryResult(
@@ -72,7 +72,7 @@ class TestJson(TestCase):
 
         res = JSONExporter(query=None)._get_output(res).getvalue()
         expected = [{'a': 1, 'b': date.today()}]
-        self.assertEqual(res, json.dumps(expected, cls=DjangoJSONEncoder))
+        self.assertEqual(res.decode('utf-8'), json.dumps(expected, cls=DjangoJSONEncoder))
 
 
 class TestExcel(TestCase):
