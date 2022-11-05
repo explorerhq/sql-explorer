@@ -198,5 +198,5 @@ def s3_upload(key, data):
     url = bucket.meta.client.generate_presigned_url(
         ClientMethod='get_object',
         Params={'Bucket': app_settings.S3_BUCKET, 'Key': key},
-        ExpiresIn=3600)
+        ExpiresIn=app_settings.S3_LINK_EXPIRATION)
     return url

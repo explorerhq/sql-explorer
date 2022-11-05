@@ -36,12 +36,7 @@ def execute_query(query_id, email_address):
         ) for _ in range(20)
     )
     try:
-        # I am sure there is a much more efficient way to do this but boto3 expects a binary file basically
-        csv_file_io = exporter.get_file_output()
-        csv_file_io.seek(0)
-        csv_data: str = csv_file_io.read()
-        bio = io.BytesIO(bytes(csv_data, 'utf-8'))
-        url = s3_upload(f'{random_part}.csv', bio)
+        url = s3_upload(f'{random_part}.csv', convert_csv_to_bytesio(exporter))
         subj = f'[SQL Explorer] Report "{q.title}" is ready'
         msg = f'Download results:\n\r{url}'
     except Exception as e:
@@ -49,6 +44,15 @@ def execute_query(query_id, email_address):
         msg = f'Error: {e}\nPlease contact an administrator'
         logger.exception(f'{subj}: {e}')
     send_mail(subj, msg, app_settings.FROM_EMAIL, [email_address])
+
+
+# I am sure there is a much more efficient way to do this but boto3 expects a binary file basically
+def convert_csv_to_bytesio(csv_exporter):
+    csv_file_io = csv_exporter.get_file_output()
+    csv_file_io.seek(0)
+    csv_data: str = csv_file_io.read()
+    bio = io.BytesIO(bytes(csv_data, 'utf-8'))
+    return bio
 
 
 @shared_task
@@ -62,11 +66,7 @@ def snapshot_query(query_id):
             date.today().strftime('%Y%m%d-%H:%M:%S')
         )
         logger.info(f"Uploading snapshot for query {query_id} as {k}...")
-        csv_file_io = exporter.get_file_output()
-        csv_file_io.seek(0)
-        csv_data: str = csv_file_io.read()
-        bio = io.BytesIO(bytes(csv_data, 'utf-8'))
-        url = s3_upload(k, bio)
+        url = s3_upload(k, convert_csv_to_bytesio(exporter))
         logger.info(
             f"Done uploading snapshot for query {query_id}. URL: {url}"
         )

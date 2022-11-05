@@ -45,7 +45,7 @@ Snapshots
        'schedule': crontab(hour=1, minute=0)
    }
 
-- Requires celery, obviously. Also uses djcelery and tinys3. All
+- Requires celery, obviously. Also uses boto3. All
   of these deps are optional and can be installed with
   ``pip install -r optional-requirements.txt``
 - The checkbox for opting a query into a snapshot is ALL THE WAY
