@@ -82,7 +82,7 @@ class JSONExporter(BaseExporter):
             )
 
         json_data = json.dumps(data, cls=DjangoJSONEncoder)
-        return BytesIO(bytes(json_data, 'utf-8'))
+        return StringIO(json_data)
 
 
 class ExcelExporter(BaseExporter):
