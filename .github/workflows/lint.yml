@@ -35,4 +35,4 @@ jobs:
         uses: liskin/gh-problem-matcher-wrap@v2
         with:
           linters: isort
-          run: isort -c -rc -df explorer
+          run: isort --check --diff explorer
