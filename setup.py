@@ -3,12 +3,15 @@ import sys
 from pathlib import Path
 
 from setuptools import setup
+
+
 try:
     from sphinx.setup_command import BuildDoc
 except ImportError:
     BuildDoc = None
 
 from explorer import get_version
+
 
 # Utility function to read the README file.
 # Used for the long_description.  It's nice, because now 1) we have a top level
@@ -67,19 +70,18 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Topic :: Utilities',
-        'Framework :: Django :: 2.2',
-        'Framework :: Django :: 3.0',
-        'Framework :: Django :: 3.1',
         'Framework :: Django :: 3.2',
+        'Framework :: Django :: 4.0',
+        'Framework :: Django :: 4.1',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3 :: Only',
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.8',
     install_requires=[
-        'Django>=2.2.27',
+        'Django>=3.2',
         'sqlparse>=0.4.0',
     ],
     extras_require={

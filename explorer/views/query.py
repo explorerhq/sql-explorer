@@ -1,21 +1,19 @@
-# -*- coding: utf-8 -*-
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
+from django.utils.translation import gettext_lazy as _
 from django.views import View
 
 from explorer import app_settings
 from explorer.forms import QueryForm
-from explorer.models import Query, QueryLog, MSG_FAILED_BLACKLIST
+from explorer.models import MSG_FAILED_BLACKLIST, Query, QueryLog
 from explorer.utils import (
-    url_get_query_id, url_get_log_id, url_get_show,
-    url_get_rows, url_get_fullscreen, url_get_params
+    url_get_fullscreen, url_get_log_id, url_get_params, url_get_query_id, url_get_rows, url_get_show,
 )
 from explorer.views.auth import PermissionRequiredMixin
 from explorer.views.mixins import ExplorerContextMixin
 from explorer.views.utils import query_viewmodel
 
-from django.utils.translation import gettext_lazy as _
 
 class PlayQueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
 

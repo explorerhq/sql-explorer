@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
 from django.conf import settings
+
 from factory import Sequence, SubFactory
 from factory.django import DjangoModelFactory
 

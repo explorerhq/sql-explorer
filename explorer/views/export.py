@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from django.db import DatabaseError
 from django.http import HttpResponse
 

@@ -1,23 +1,26 @@
-from datetime import date, datetime, timedelta
 import random
 import string
+from datetime import date, datetime, timedelta
 
-from django.core.mail import send_mail
 from django.core.cache import cache
+from django.core.mail import send_mail
 from django.db import DatabaseError
 
 from explorer import app_settings
 from explorer.exporters import get_exporter_class
 from explorer.models import Query, QueryLog
 
+
 if app_settings.ENABLE_TASKS:
     from celery import task
     from celery.utils.log import get_task_logger
+
     from explorer.utils import s3_upload
     logger = get_task_logger(__name__)
 else:
-    from explorer.utils import noop_decorator as task
     import logging
+
+    from explorer.utils import noop_decorator as task
     logger = logging.getLogger(__name__)
 
 

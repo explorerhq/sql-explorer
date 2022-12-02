@@ -1,11 +1,13 @@
 from django.test import TestCase, override_settings
+
+
 try:
     from django.urls import reverse
 except ImportError:
     from django.core.urlresolvers import reverse
 
-from django.contrib.auth.models import User
 from django.conf import settings
+from django.contrib.auth.models import User
 
 
 class TestCsrfCookieName(TestCase):

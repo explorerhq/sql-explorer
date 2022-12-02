@@ -6,7 +6,7 @@ def view_permission(request, **kwargs):
     return app_settings.EXPLORER_PERMISSION_VIEW(request)\
         or user_can_see_query(request, **kwargs)\
         or (app_settings.EXPLORER_TOKEN_AUTH_ENABLED()
-            and (request.META.get('HTTP_X_API_TOKEN') ==
+            and (request.headers.get('X-Api-Token') ==
                  app_settings.EXPLORER_TOKEN
                  or request.GET.get('token') == app_settings.EXPLORER_TOKEN))
 

@@ -1,5 +1,7 @@
-from django.conf import settings
 from pydoc import locate
+
+from django.conf import settings
+
 
 # The 'correct' configuration for Explorer looks like:
 

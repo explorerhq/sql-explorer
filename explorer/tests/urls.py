@@ -4,6 +4,7 @@ from django.urls import path
 
 from explorer.urls import urlpatterns
 
+
 admin.autodiscover()
 
 urlpatterns += [

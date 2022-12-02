@@ -1,5 +1,7 @@
 import os
+
 import djcelery
+
 
 SECRET_KEY = 'shhh'
 DEBUG = True
@@ -34,8 +36,8 @@ DATABASES = {
 }
 
 EXPLORER_CONNECTIONS = {
-    #'Postgres': 'postgres',
-    #'MySQL': 'mysql',
+    # 'Postgres': 'postgres',
+    # 'MySQL': 'mysql',
     'SQLite': 'default',
     'Another': 'alt'
 }

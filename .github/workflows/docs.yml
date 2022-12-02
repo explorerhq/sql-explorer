@@ -17,4 +17,4 @@ jobs:
       - name: Build docs
         run: |
           cd docs
-          sphinx-build -b html -n -d _build/doctrees   . _build/html
+          sphinx-build -b html -n -d _build/doctrees . _build/html

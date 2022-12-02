@@ -1,12 +1,13 @@
-from typing import Optional, Iterable
 from io import BytesIO
+from typing import Iterable, Optional
 
 from django.core.exceptions import ImproperlyConfigured
 
+
 try:
     import matplotlib.pyplot as plt
-    from matplotlib.figure import Figure
     import seaborn as sns
+    from matplotlib.figure import Figure
 except ImportError:
     from . import app_settings
 

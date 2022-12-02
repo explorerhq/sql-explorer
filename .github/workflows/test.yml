@@ -8,11 +8,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [ 3.6, 3.7, 3.8]
+        python-version: [ 3.8]
         requirements-file: [
-            django-2.2.txt,
-            django-3.0.txt,
-            django-3.1.txt,
             django-3.2.txt
         ]
         os: [

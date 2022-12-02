@@ -1,13 +1,10 @@
-# -*- coding: utf-8 -*-
-from unittest.mock import patch, Mock
+from unittest.mock import Mock, patch
 
 from django.db import connections
 from django.test import TestCase
 
 from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
-from explorer.models import (
-    QueryLog, Query, QueryResult, ColumnSummary, ColumnHeader
-)
+from explorer.models import ColumnHeader, ColumnSummary, Query, QueryLog, QueryResult
 from explorer.tests.factories import SimpleQueryFactory
 
 

@@ -1,16 +1,18 @@
 import re
 from collections import deque
-from typing import Tuple, Iterable
+from typing import Iterable, Tuple
 
-import sqlparse
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView
+
+import sqlparse
 from sqlparse import format as sql_format
-from sqlparse.sql import TokenList, Token
+from sqlparse.sql import Token, TokenList
 from sqlparse.tokens import Keyword
 
 from explorer import app_settings
+
 
 EXPLORER_PARAM_TOKEN = "$$"
 
