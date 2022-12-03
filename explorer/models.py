@@ -2,21 +2,16 @@ import logging
 from time import time
 
 from django.conf import settings
-from django.db import models, DatabaseError, transaction
+from django.db import DatabaseError, models, transaction
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from explorer import app_settings
 from explorer.utils import (
-    passes_blacklist,
-    swap_params,
-    extract_params,
-    shared_dict_update,
-    get_s3_bucket,
-    s3_url,
-    get_params_for_url,
-    get_valid_connection
+    extract_params, get_params_for_url, get_s3_bucket, get_valid_connection, passes_blacklist, s3_url,
+    shared_dict_update, swap_params,
 )
+
 
 MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist: %s"
 

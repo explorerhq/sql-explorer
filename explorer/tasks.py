@@ -1,14 +1,14 @@
-from datetime import date, datetime, timedelta
+import io
 import random
 import string
+from datetime import date, datetime, timedelta
 
-from django.core.mail import send_mail
 from django.core.cache import cache
+from django.core.mail import send_mail
 
 from explorer import app_settings
 from explorer.exporters import get_exporter_class
 from explorer.models import Query, QueryLog
-import io
 
 
 if app_settings.ENABLE_TASKS:
@@ -18,8 +18,9 @@ if app_settings.ENABLE_TASKS:
     from explorer.utils import s3_upload
     logger = get_task_logger(__name__)
 else:
-    from explorer.utils import noop_decorator as shared_task
     import logging
+
+    from explorer.utils import noop_decorator as shared_task
     logger = logging.getLogger(__name__)
 
 
