@@ -77,23 +77,25 @@ class TestQueryModel(TestCase):
         log = QueryLog.objects.first()
         self.assertEqual(log.duration, res.duration)
 
+    @patch('explorer.models.s3_url')
     @patch('explorer.models.get_s3_bucket')
-    def test_get_snapshots_sorts_snaps(self, mocked_conn):
-        conn = Mock()
-        conn.list = Mock()
+    def test_get_snapshots_sorts_snaps(self, mocked_get_s3_bucket, mocked_s3_url):
+        bucket = Mock()
+        bucket.objects.filter = Mock()
         k1 = Mock()
-        k1.generate_url.return_value = 'http://s3.com/foo'
+        k1.key = 'foo'
         k1.last_modified = 'b'
         k2 = Mock()
-        k2.generate_url.return_value = 'http://s3.com/bar'
+        k2.key = 'bar'
         k2.last_modified = 'a'
-        conn.list.return_value = [k1, k2]
-        mocked_conn.return_value = conn
+        bucket.objects.filter.return_value = [k1, k2]
+        mocked_get_s3_bucket.return_value = bucket
+        mocked_s3_url.return_value = 'http://s3.com/presigned_url'
         q = SimpleQueryFactory()
         snaps = q.snapshots
-        self.assertEqual(conn.list.call_count, 1)
-        self.assertEqual(snaps[0].url, 'http://s3.com/bar')
-        conn.list.assert_called_once_with(prefix=f'query-{q.id}/snap-')
+        self.assertEqual(bucket.objects.filter.call_count, 1)
+        self.assertEqual(snaps[0].url, 'http://s3.com/presigned_url')
+        bucket.objects.filter.assert_called_once_with(Prefix=f'query-{q.id}/snap-')
 
     def test_final_sql_uses_merged_params(self):
         q = SimpleQueryFactory(sql="select '$$foo:bar$$', '$$qux$$';")

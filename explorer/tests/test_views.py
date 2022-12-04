@@ -283,14 +283,14 @@ class TestQueryDetailView(TestCase):
     @patch('explorer.models.get_s3_bucket')
     def test_query_snapshot_renders(self, mocked_conn):
         conn = Mock()
-        conn.list = Mock()
+        conn.objects.filter = Mock()
         k1 = Mock()
         k1.generate_url.return_value = 'http://s3.com/foo'
         k1.last_modified = '2015-01-01'
         k2 = Mock()
         k2.generate_url.return_value = 'http://s3.com/bar'
         k2.last_modified = '2015-01-02'
-        conn.list.return_value = [k1, k2]
+        conn.objects.filter.return_value = [k1, k2]
         mocked_conn.return_value = conn
 
         query = SimpleQueryFactory(sql="select 1;", snapshot=True)

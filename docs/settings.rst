@@ -228,6 +228,17 @@ S3 Bucket for snapshot upload
    EXPLORER_S3_BUCKET = None
 
 
+S3 link expiration
+******************
+
+S3 link expiration time. Defaults to 3600 seconds (1hr) if not specified.
+Links are generated as presigned urls for security
+
+.. code-block:: python
+
+   EXPLORER_S3_S3_LINK_EXPIRATION = 3600
+
+
 From email
 **********
 
