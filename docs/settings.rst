@@ -239,7 +239,7 @@ S3 region. Defaults to us-east-1 if not specified.
 
 
 
-S3 region
+S3 endpoint url
 ******************
 
 S3 endpoint url. Normally not necessary to set.
