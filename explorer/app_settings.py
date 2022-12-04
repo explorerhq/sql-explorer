@@ -126,10 +126,12 @@ ENABLE_TASKS = getattr(settings, "EXPLORER_TASKS_ENABLED", False)
 S3_ACCESS_KEY = getattr(settings, "EXPLORER_S3_ACCESS_KEY", None)
 S3_SECRET_KEY = getattr(settings, "EXPLORER_S3_SECRET_KEY", None)
 S3_BUCKET = getattr(settings, "EXPLORER_S3_BUCKET", None)
-S3_LINK_EXPIRATION: int = getattr(settings, "EXPLORER_S3_S3_LINK_EXPIRATION", 3600)
+S3_LINK_EXPIRATION: int = getattr(settings, "EXPLORER_S3_LINK_EXPIRATION", 3600)
 FROM_EMAIL = getattr(
     settings, 'EXPLORER_FROM_EMAIL', 'django-sql-explorer@example.com'
 )
+S3_REGION = getattr(settings, "EXPLORER_S3_REGION", "us-east-1")
+S3_ENDPOINT_URL = getattr(settings, "EXPLORER_S3_ENDPOINT_URL", None)
 
 UNSAFE_RENDERING = getattr(settings, "EXPLORER_UNSAFE_RENDERING", False)
 

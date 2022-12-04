@@ -187,9 +187,14 @@ def get_valid_connection(alias=None):
 
 
 def get_s3_bucket():
-    s3 = boto3.resource('s3',
-                        aws_access_key_id=app_settings.S3_ACCESS_KEY,
-                        aws_secret_access_key=app_settings.S3_SECRET_KEY)
+    kwargs = {
+        'aws_access_key_id': app_settings.S3_ACCESS_KEY,
+        'aws_secret_access_key': app_settings.S3_SECRET_KEY,
+        'region_name': app_settings.S3_REGION
+    }
+    if app_settings.S3_ENDPOINT_URL:
+        kwargs['endpoint_url'] = app_settings.S3_ENDPOINT_URL
+    s3 = boto3.resource('s3', **kwargs)
     return s3.Bucket(name=app_settings.S3_BUCKET)
 
 
