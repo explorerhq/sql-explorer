@@ -1,5 +1,6 @@
 from unittest.mock import Mock, patch
 
+from django.core.exceptions import ValidationError
 from django.db import connections
 from django.test import TestCase
 
@@ -102,6 +103,14 @@ class TestQueryModel(TestCase):
         q.params = {'qux': 'mux'}
         expected = "select 'bar', 'mux';"
         self.assertEqual(q.final_sql(), expected)
+
+    def test_final_sql_fails_blacklist_with_bad_param(self):
+        q = SimpleQueryFactory(sql="$$command$$ from bar;")
+        q.params = {'command': 'delete'}
+        expected = "delete from bar;"
+        self.assertEqual(q.final_sql(), expected)
+        with self.assertRaises(ValidationError):
+            q.execute_query_only()
 
     def test_cant_query_with_unregistered_connection(self):
         from explorer.utils import InvalidExplorerConnectionException

@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -16,7 +17,6 @@ from explorer.views.utils import query_viewmodel
 
 
 class PlayQueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
-
     permission_required = 'change_permission'
 
     def get(self, request):
@@ -85,7 +85,6 @@ class PlayQueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
 
 
 class QueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
-
     permission_required = 'view_permission'
 
     def get(self, request, query_id):
@@ -117,14 +116,24 @@ class QueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
         show = url_get_show(request)
         query, form = QueryView.get_instance_and_form(request, query_id)
         success = form.is_valid() and form.save()
-        vm = query_viewmodel(
-            request,
-            query,
-            form=form,
-            run_query=show,
-            rows=url_get_rows(request),
-            message=_("Query saved.") if success else None
-        )
+        try:
+            vm = query_viewmodel(
+                request,
+                query,
+                form=form,
+                run_query=show,
+                rows=url_get_rows(request),
+                message=_("Query saved.") if success else None
+            )
+        except ValidationError as ve:
+            vm = query_viewmodel(
+                request,
+                query,
+                form=form,
+                run_query=False,
+                rows=url_get_rows(request),
+                error=ve.message
+            )
         return self.render_template('explorer/query.html', vm)
 
     @staticmethod

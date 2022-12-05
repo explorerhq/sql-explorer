@@ -2,6 +2,7 @@ import logging
 from time import time
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import DatabaseError, models, transaction
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -14,7 +15,6 @@ from explorer.utils import (
 
 
 MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist: %s"
-
 
 logger = logging.getLogger(__name__)
 
@@ -74,6 +74,18 @@ class Query(models.Model):
         return swap_params(self.sql, self.available_params())
 
     def execute_query_only(self):
+        # check blacklist every time sql is run to catch parameterized SQL
+        passes_blacklist_flag, failing_words = self.passes_blacklist()
+
+        error = MSG_FAILED_BLACKLIST % ', '.join(
+            failing_words) if not passes_blacklist_flag else None
+
+        if error:
+            raise ValidationError(
+                error,
+                code="InvalidSql"
+            )
+
         return QueryResult(
             self.final_sql(), get_valid_connection(self.connection)
         )
@@ -151,7 +163,6 @@ class SnapShot:
 
 
 class QueryLog(models.Model):
-
     sql = models.TextField(blank=True)
     query = models.ForeignKey(
         Query,
