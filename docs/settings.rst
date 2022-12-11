@@ -228,6 +228,30 @@ S3 Bucket for snapshot upload
    EXPLORER_S3_BUCKET = None
 
 
+S3 region
+******************
+
+S3 region. Defaults to us-east-1 if not specified.
+
+.. code-block:: python
+
+   EXPLORER_S3_REGION = 'us-east-1'
+
+
+
+S3 endpoint url
+******************
+
+S3 endpoint url. Normally not necessary to set.
+Useful to set if you are using a non-AWS S3 service or you are using a private AWS endpoint.
+
+
+.. code-block:: python
+
+   EXPLORER_S3_ENDPOINT_URL = 'https://accesspoint.vpce-abc123-abcdefgh.s3.us-east-1.vpce.amazonaws.com'
+
+
+
 S3 link expiration
 ******************
 
@@ -236,7 +260,7 @@ Links are generated as presigned urls for security
 
 .. code-block:: python
 
-   EXPLORER_S3_S3_LINK_EXPIRATION = 3600
+   EXPLORER_S3_LINK_EXPIRATION = 3600
 
 
 From email
