@@ -3,15 +3,15 @@ from typing import Iterable, Optional
 
 from django.core.exceptions import ImproperlyConfigured
 
+from explorer import app_settings
 
-try:
-    import matplotlib.pyplot as plt
-    import seaborn as sns
-    from matplotlib.figure import Figure
-except ImportError:
-    from . import app_settings
 
-    if app_settings.EXPLORER_CHARTS_ENABLED:
+if app_settings.EXPLORER_CHARTS_ENABLED:
+    try:
+        import matplotlib.pyplot as plt
+        import seaborn as sns
+        from matplotlib.figure import Figure
+    except ImportError:
         raise ImproperlyConfigured(
             "If `EXPLORER_CHARTS_ENABLED` is enabled, `matplotlib` and `seaborn` must be installed.")
 
