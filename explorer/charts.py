@@ -5,6 +5,7 @@ from django.core.exceptions import ImproperlyConfigured
 
 from explorer import app_settings
 
+
 if app_settings.EXPLORER_CHARTS_ENABLED:
     try:
         import matplotlib.pyplot as plt
