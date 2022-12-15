@@ -9,7 +9,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 ---------------------
 
 
-`3.0.0`_ (2022-12-14)
+`3.0.0`_ (2022-12-15)
 ---------------------
 * Add support for Django >3.2 and drop support for <3.2
 * Add support for Python 3.9, 3.10 and 3.11 and drop support for <3.8
