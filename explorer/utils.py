@@ -6,7 +6,6 @@ from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView
 
-import boto3
 import sqlparse
 from sqlparse import format as sql_format
 from sqlparse.sql import Token, TokenList
@@ -187,6 +186,7 @@ def get_valid_connection(alias=None):
 
 
 def get_s3_bucket():
+    import boto3
     kwargs = {
         'aws_access_key_id': app_settings.S3_ACCESS_KEY,
         'aws_secret_access_key': app_settings.S3_SECRET_KEY,
@@ -210,3 +210,11 @@ def s3_url(bucket, key):
         Params={'Bucket': app_settings.S3_BUCKET, 'Key': key},
         ExpiresIn=app_settings.S3_LINK_EXPIRATION)
     return url
+
+
+def is_xls_writer_available():
+    try:
+        import xlsxwriter  # noqa
+        return True
+    except ImportError:
+        return False

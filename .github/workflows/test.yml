@@ -2,6 +2,11 @@ name: Tests
 
 on: [push, pull_request]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+
 jobs:
   unit-tests:
     runs-on: ${{ matrix.os }}
@@ -18,7 +23,44 @@ jobs:
             django-version: '3.2'
           - python-version: '3.11'
             django-version: '4.0'
+    env:
+        ENABLE_TASKS: no
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements/base.txt
+          pip install Django==${{ matrix.django-version }}
+          python setup.py install
 
+      - name: Run tests
+        run: coverage run --source=explorer manage.py test
+
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v3
+
+  unit-tests-with-optional-packages:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.8', '3.9', '3.10', '3.11']
+        django-version: ['3.2', '4.0', '4.1']
+        os: [
+          ubuntu-20.04,
+        ]
+        exclude:
+          - python-version: '3.11'
+            django-version: '3.2'
+          - python-version: '3.11'
+            django-version: '4.0'
+    env:
+        ENABLE_TASKS: yes
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}

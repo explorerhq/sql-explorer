@@ -95,5 +95,5 @@ EXPLORER_TRANSFORMS = (
 )
 
 EXPLORER_USER_QUERY_VIEWS = {}
-EXPLORER_TASKS_ENABLED = True
+EXPLORER_TASKS_ENABLED = os.environ.get('ENABLE_TASKS') == 'yes'  # variable set in github action - assumed to be str
 EXPLORER_S3_BUCKET = 'thisismybucket.therearemanylikeit.butthisoneismine'
