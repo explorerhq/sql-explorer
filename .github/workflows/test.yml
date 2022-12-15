@@ -138,7 +138,7 @@ jobs:
       - name: Download data
         uses: marcofaggian/action-download-multiple-artifacts@v3.0.7
         with:
-          name: basic-coverage-data extra-coverage-data
+          names: basic-coverage-data extra-coverage-data
 
       - name: Combine coverage
         run: |
