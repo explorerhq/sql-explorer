@@ -1,9 +1,11 @@
+import unittest
 from unittest.mock import Mock, patch
 
 from django.core.exceptions import ValidationError
 from django.db import connections
 from django.test import TestCase
 
+from explorer import app_settings
 from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
 from explorer.models import ColumnHeader, ColumnSummary, Query, QueryLog, QueryResult
 from explorer.tests.factories import SimpleQueryFactory
@@ -78,6 +80,7 @@ class TestQueryModel(TestCase):
         log = QueryLog.objects.first()
         self.assertEqual(log.duration, res.duration)
 
+    @unittest.skipIf(not app_settings.ENABLE_TASKS, 'tasks not enabled')
     @patch('explorer.models.s3_url')
     @patch('explorer.models.get_s3_bucket')
     def test_get_snapshots_sorts_snaps(self, mocked_get_s3_bucket, mocked_s3_url):

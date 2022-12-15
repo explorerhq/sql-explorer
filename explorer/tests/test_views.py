@@ -1,6 +1,7 @@
 import importlib
 import json
 import time
+import unittest
 from unittest.mock import Mock, patch
 
 from django.contrib.auth.models import User
@@ -280,6 +281,7 @@ class TestQueryDetailView(TestCase):
         with self.settings(EXPLORER_USER_QUERY_VIEWS={99: [111, 123]}):
             self.assertTrue(user_can_see_query(request, **kwargs))
 
+    @unittest.skipIf(not app_settings.ENABLE_TASKS, 'tasks not enabled')
     @patch('explorer.models.get_s3_bucket')
     def test_query_snapshot_renders(self, mocked_conn):
         conn = Mock()
@@ -654,6 +656,7 @@ class TestSchemaView(TestCase):
         )
         self.assertTemplateUsed(resp, 'admin/login.html')
 
+    @unittest.skipIf(not app_settings.ENABLE_TASKS, 'tasks not enabled')
     @patch('explorer.schema.do_async')
     def test_builds_async(self, mocked_async_check):
         mocked_async_check.return_value = True

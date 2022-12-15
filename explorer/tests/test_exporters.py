@@ -1,4 +1,5 @@
 import json
+import unittest
 from datetime import date, datetime
 
 from django.core.serializers.json import DjangoJSONEncoder
@@ -10,6 +11,7 @@ from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
 from explorer.exporters import CSVExporter, ExcelExporter, JSONExporter
 from explorer.models import QueryResult
 from explorer.tests.factories import SimpleQueryFactory
+from explorer.utils import is_xls_writer_available
 
 
 class TestCsv(TestCase):
@@ -76,6 +78,7 @@ class TestJson(TestCase):
 
 class TestExcel(TestCase):
 
+    @unittest.skipIf(not is_xls_writer_available(), 'excel exporter not available')
     def test_writing_excel(self):
         """
         This is a pretty crap test. It at least exercises the code.
@@ -109,6 +112,7 @@ class TestExcel(TestCase):
 
         self.assertEqual(res[:2], expected)
 
+    @unittest.skipIf(not is_xls_writer_available(), 'excel exporter not available')
     def test_writing_dict_fields(self):
         res = QueryResult(
             SimpleQueryFactory(

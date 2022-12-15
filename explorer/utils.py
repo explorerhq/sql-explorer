@@ -210,3 +210,11 @@ def s3_url(bucket, key):
         Params={'Bucket': app_settings.S3_BUCKET, 'Key': key},
         ExpiresIn=app_settings.S3_LINK_EXPIRATION)
     return url
+
+
+def is_xls_writer_available():
+    try:
+        import xlsxwriter  # noqa
+        return True
+    except ImportError:
+        return False
