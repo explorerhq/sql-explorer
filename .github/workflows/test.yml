@@ -8,13 +8,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [ 3.8]
-        requirements-file: [
-            django-3.2.txt
-        ]
+        python-version: ['3.8', '3.9', '3.10', '3.11']
+        django-version: ['3.2', '4.0', '4.1']
         os: [
           ubuntu-20.04,
         ]
+        exclude:
+          - python-version: '3.11'
+            django-version: '3.2'
+          - python-version: '3.11'
+            django-version: '4.0'
 
     steps:
       - uses: actions/checkout@v1
@@ -25,11 +28,47 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
+          pip install -r requirements/base.txt
           pip install -r requirements/optional.txt
-          pip install -r requirements/${{ matrix.requirements-file }}
+          pip install Django==${{ matrix.django-version }}
           python setup.py install
 
       - name: Run tests
+        run: coverage run --source=explorer manage.py test
+
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v3
+
+  unit-tests-future-versions:
+    # Runs for all Django/Python versions which are not yet supported
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.8', '3.9', '3.10', '3.11']
+        django-version: [
+          'https://github.com/django/django/archive/main.tar.gz'
+        ]
+        os: [
+          ubuntu-20.04,
+        ]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
         run: |
-          coverage run --source=explorer manage.py test
-          coverage report
+          python -m pip install --upgrade pip
+          pip install ${{ matrix.django-version }} coverage
+          python setup.py install
+
+      - name: Run coverage
+        run: coverage run --source=explorer manage.py test
+        continue-on-error: true
+
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v3

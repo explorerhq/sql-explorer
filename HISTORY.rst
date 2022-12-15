@@ -9,6 +9,20 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 ---------------------
 
 
+`3.0.0`_ (2022-12-15)
+---------------------
+* Add support for Django >3.2 and drop support for <3.2
+* Add support for Python 3.9, 3.10 and 3.11 and drop support for <3.8
+* `#496`_: Document breakage of "Format" button due to ``CSRF_COOKIE_HTTPONLY`` (`#492`_)
+* `#497`_: Avoid execution of parameterised queries when viewing query
+* `#498`_: Change sql blacklist functionality from regex to sqlparse
+* `#500`_: Form display in popup now requires sanitize: false flag
+* `#501`_: Updated celery support
+* `#504`_: Added pre-commit hooks
+* `#505`_: Feature/more s3 providers
+* `#506`_: Check sql blacklist on execution as well as save
+* `#508`_: Conditionally import optional packages
+
 `2.5.0`_ (2022-10-09)
 ---------------------
 * `#494`_: Fixes Security hole in blacklist for MySQL (`#490`_)
@@ -360,6 +374,8 @@ Initial Release
 .. _2.4.0: https://github.com/groveco/django-sql-explorer/compare/2.3.0...2.4.0
 .. _2.4.1: https://github.com/groveco/django-sql-explorer/compare/2.4.0...2.4.1
 .. _2.4.2: https://github.com/groveco/django-sql-explorer/compare/2.4.1...2.4.2
+.. _2.5.0: https://github.com/groveco/django-sql-explorer/compare/2.4.2...2.5.0
+.. _3.0.0: https://github.com/groveco/django-sql-explorer/compare/2.5.0...3.0.0
 .. _unreleased: https://github.com/groveco/django-sql-explorer/compare/2.4.2...master
 
 .. _#254: https://github.com/groveco/django-sql-explorer/pull/254
@@ -410,6 +426,15 @@ Initial Release
 .. _#484: https://github.com/groveco/django-sql-explorer/pull/484
 .. _#488: https://github.com/groveco/django-sql-explorer/pull/488
 .. _#494: https://github.com/groveco/django-sql-explorer/pull/494
+.. _#496: https://github.com/groveco/django-sql-explorer/pull/496
+.. _#497: https://github.com/groveco/django-sql-explorer/pull/497
+.. _#498: https://github.com/groveco/django-sql-explorer/pull/498
+.. _#500: https://github.com/groveco/django-sql-explorer/pull/500
+.. _#501: https://github.com/groveco/django-sql-explorer/pull/501
+.. _#504: https://github.com/groveco/django-sql-explorer/pull/504
+.. _#505: https://github.com/groveco/django-sql-explorer/pull/505
+.. _#506: https://github.com/groveco/django-sql-explorer/pull/506
+.. _#508: https://github.com/groveco/django-sql-explorer/pull/508
 
 .. _#269: https://github.com/groveco/django-sql-explorer/issues/269
 .. _#288: https://github.com/groveco/django-sql-explorer/issues/288
@@ -425,5 +450,6 @@ Initial Release
 .. _#477: https://github.com/groveco/django-sql-explorer/issues/477
 .. _#483: https://github.com/groveco/django-sql-explorer/issues/483
 .. _#490: https://github.com/groveco/django-sql-explorer/issues/490
+.. _#492: https://github.com/groveco/django-sql-explorer/issues/492
 
 .. _furo: https://github.com/pradyunsg/furo
