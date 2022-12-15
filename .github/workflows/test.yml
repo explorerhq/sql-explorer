@@ -44,7 +44,7 @@ jobs:
       - name: Upload coverage data
         uses: actions/upload-artifact@v2
         with:
-          name: coverage-data
+          name: basic-coverage-data
           path: '.coverage.*'
 
   unit-tests-with-optional-packages:
@@ -84,7 +84,7 @@ jobs:
       - name: Upload coverage data
         uses: actions/upload-artifact@v2
         with:
-          name: coverage-data
+          name: extra-coverage-data
           path: '.coverage.*'
 
   unit-tests-future-versions:
@@ -136,9 +136,9 @@ jobs:
         run: python -m pip install --upgrade coverage[toml]
 
       - name: Download data
-        uses: actions/download-artifact@v2
+        uses: marcofaggian/action-download-multiple-artifacts@v1
         with:
-          name: coverage-data
+          name: basic-coverage-data extra-coverage-data
 
       - name: Combine coverage
         run: |
