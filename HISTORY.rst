@@ -12,7 +12,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 `3.0.0`_ (2022-12-14)
 ---------------------
 * Add support for Django >3.2 and drop support for <3.2
-* Add support for Python 3.9 and 3.10 and drop support for <3.8
+* Add support for Python 3.9, 3.10 and 3.11 and drop support for <3.8
 * `#496`_: Document breakage of "Format" button due to ``CSRF_COOKIE_HTTPONLY`` (`#492`_)
 * `#497`_: Avoid execution of parameterised queries when viewing query
 * `#498`_: Change sql blacklist functionality from regex to sqlparse
