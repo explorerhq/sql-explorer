@@ -139,6 +139,7 @@ jobs:
         uses: marcofaggian/action-download-multiple-artifacts@v4.0.1
         with:
           names: basic-coverage-data extra-coverage-data
+          paths: "./ ./"
 
       - name: Combine coverage
         run: |
