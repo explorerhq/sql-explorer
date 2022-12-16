@@ -82,7 +82,7 @@ setup(
     ],
     python_requires='>=3.8',
     install_requires=[
-        'Django>=3.2',
+        'Django>=3.2.12',
         'sqlparse>=0.4.0',
     ],
     extras_require={
@@ -90,8 +90,12 @@ setup(
             "matplotlib<4",
             "seaborn<0.12"
         ],
+        "snapshots": [
+            "boto3>=1.20.0",
+            "celery>=4.0"
+        ],
         "xls": [
-            'xlsxwriter>=1.2.1'
+            'xlsxwriter>=1.3.6'
         ]
     },
     cmdclass={

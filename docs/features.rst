@@ -47,7 +47,7 @@ Snapshots
 
 - Requires celery, obviously. Also uses boto3. All
   of these deps are optional and can be installed with
-  ``pip install -r optional-requirements.txt``
+  ``pip install "django-sql-explorer[snapshots]"``
 - The checkbox for opting a query into a snapshot is ALL THE WAY
   on the bottom of the query view (underneath the results table).
 - You must also have the setting ``EXPLORER_TASKS_ENABLED`` enabled.

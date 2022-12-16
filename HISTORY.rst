@@ -9,6 +9,10 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 ---------------------
 
 
+`3.0.1`_ (2022-12-16)
+---------------------
+* `#515`_: Fix for running without optional packages
+
 `3.0.0`_ (2022-12-15)
 ---------------------
 * Add support for Django >3.2 and drop support for <3.2
@@ -435,6 +439,7 @@ Initial Release
 .. _#505: https://github.com/groveco/django-sql-explorer/pull/505
 .. _#506: https://github.com/groveco/django-sql-explorer/pull/506
 .. _#508: https://github.com/groveco/django-sql-explorer/pull/508
+.. _#515: https://github.com/groveco/django-sql-explorer/pull/515
 
 .. _#269: https://github.com/groveco/django-sql-explorer/issues/269
 .. _#288: https://github.com/groveco/django-sql-explorer/issues/288
