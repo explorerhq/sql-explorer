@@ -46,7 +46,7 @@ Name                                                           Version  License
 `floatThead <http://mkoryak.github.io/floatThead/>`_           1.4.0    MIT
 `list.js <http://listjs.com>`_                                 1.2.0    MIT
 `pivottable.js <http://nicolas.kruchten.com/pivottable/>`_     2.0.2    MIT
-`tableToExcel.js <https://github.com/linways/table-to-excel>`_ 1.0.4    MIT
+`sheetjs <https://git.sheetjs.com/sheetjs/sheetjs>`_           0.19.1   APACHE 2.0
 ============================================================== ======== ================
 
 - All are served locally, with jQuery UI being a custom build.

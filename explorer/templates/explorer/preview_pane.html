@@ -168,16 +168,14 @@
                                             button.addEventListener("click", e => {
                                                 let table = document.querySelector(".pvtTable");
                                                 if (typeof (table) != 'undefined' && table != null) {
-                                                    TableToExcel.convert(table, {
-                                                        {% if query %}
-                                                            name: "pivot-export-{{ query.title|slugify }}.xlsx",
-                                                        {% else %}
-                                                            name: "pivot-export-playground.xlsx",
-                                                        {%  endif %}
-                                                        sheet: {
-                                                            name: "Sheet 1"
-                                                        }
-                                                    });
+                                                    /* Create worksheet from HTML DOM TABLE */
+                                                    let wb = XLSX.utils.table_to_book(table);
+                                                    let wb_name = "pivot-export-playground.xlsx";
+                                                    {% if query %}
+                                                        wb_name = "pivot-export-{{ query.title|slugify }}.xlsx";
+                                                    {%  endif %}
+                                                    /* Export to file (start a download) */
+                                                    XLSX.writeFile(wb, wb_name);
                                                 }
                                             });
                                         </script>
