@@ -226,7 +226,9 @@ class TestParams(TestCase):
             ('do nothing with $$this5$that$$', {}),
             ('check label $$this|label:val$$', {'this': {'default': 'val', 'label': 'label'}}),
             ('check case $$this|label Case:Va l$$', {'this': {'default': 'Va l', 'label': 'label Case'}}),
-            ('check label case and unicode $$this|label Case ελληνικά:val Τέστ$$', {'this': {'default': 'val Τέστ', 'label': 'label Case ελληνικά'}}),
+            ('check label case and unicode $$this|label Case ελληνικά:val Τέστ$$', {
+                'this': {'default': 'val Τέστ', 'label': 'label Case ελληνικά'}
+            }),
         ]
         for s in tests:
             self._assertSwap(s)
