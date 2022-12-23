@@ -68,6 +68,10 @@ Parameterized Queries
   parameterized queries with colleagues
 - Use ``$$paramName:defaultValue$$`` to provide default values for the
   parameters.
+- Use ``$$paramName|label$$`` to add a label (e.g. "User ID") to the
+  parameter.
+- You can combine both a default and label to your parameter but you must
+  start with the label: ``$$paramName|label:defaultValue$$``.
 
 Schema Helper
 -------------

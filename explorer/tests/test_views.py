@@ -202,6 +202,18 @@ class TestQueryDetailView(TestCase):
             self.assertTemplateUsed(resp, 'explorer/query.html')
             self.assertContains(resp, '6874')
 
+    def test_does_render_label_if_params_and_autorun(self):
+        with self.settings(EXPLORER_AUTORUN_QUERY_WITH_PARAMS=True):
+            reload_app_settings()
+            query = SimpleQueryFactory(sql='select 6870+4 where 1=$$myparam|test my param label:1$$;')
+            resp = self.client.get(
+                reverse(
+                    "query_detail", kwargs={'query_id': query.id}
+                )
+            )
+            self.assertTemplateUsed(resp, 'explorer/query.html')
+            self.assertContains(resp, 'test my param label')
+
     def test_admin_required(self):
         self.client.logout()
         query = SimpleQueryFactory()

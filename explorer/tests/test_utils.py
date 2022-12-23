@@ -214,16 +214,19 @@ class TestParams(TestCase):
 
     def test_extracting_params(self):
         tests = [
-            ('please swap $$this0$$', {'this0': ''}),
-            ('please swap $$THis0$$', {'this0': ''}),
-            ('please swap $$this6$$ $$this6:that$$', {'this6': 'that'}),
-            ('please swap $$this_7:foo, bar$$', {'this_7': 'foo, bar'}),
+            ('please swap $$this0$$', {'this0': {'default': '', 'label': ''}}),
+            ('please swap $$THis0$$', {'this0': {'default': '', 'label': ''}}),
+            ('please swap $$this6$$ $$this6:that$$', {'this6': {'default': 'that', 'label': ''}}),
+            ('please swap $$this_7:foo, bar$$', {'this_7': {'default': 'foo, bar', 'label': ''}}),
             ('please swap $$this8:$$', {}),
             ('do nothing with $$this1 $$', {}),
             ('do nothing with $$this2 :$$', {}),
-            ('do something with $$this3: $$', {'this3': ' '}),
+            ('do something with $$this3: $$', {'this3': {'default': ' ', 'label': ''}}),
             ('do nothing with $$this4: ', {}),
             ('do nothing with $$this5$that$$', {}),
+            ('check label $$this|label:val$$', {'this': {'default': 'val', 'label': 'label'}}),
+            ('check case $$this|label Case:Va l$$', {'this': {'default': 'Va l', 'label': 'label Case'}}),
+            ('check label case and unicode $$this|label Case ελληνικά:val Τέστ$$', {'this': {'default': 'val Τέστ', 'label': 'label Case ελληνικά'}}),
         ]
         for s in tests:
             self._assertSwap(s)

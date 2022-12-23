@@ -22,6 +22,14 @@ class TestQueryModel(TestCase):
         q = SimpleQueryFactory(sql="select '$$foo:bar$$';")
         self.assertEqual(q.available_params(), {'foo': 'bar'})
 
+    def test_default_params_used_even_with_labels(self):
+        q = SimpleQueryFactory(sql="select '$$foo|label:bar$$';")
+        self.assertEqual(q.available_params(), {'foo': 'bar'})
+
+    def test_default_params_and_labels(self):
+        q = SimpleQueryFactory(sql="select '$$foo|Label:bar$$';")
+        self.assertEqual(q.available_params_w_labels(), {'foo': {'label': 'Label', 'val': 'bar'}})
+
     def test_query_log(self):
         self.assertEqual(0, QueryLog.objects.count())
         q = SimpleQueryFactory(connection='alt')
