@@ -34,19 +34,20 @@ Name                                                                    Version 
 
 JavaScript
 
-============================================================ ======== ================
-Name                                                         Version  License
-============================================================ ======== ================
-`Twitter Boostrap <http://getbootstrap.com/>`_               3.4.1    MIT
-`jQuery <http://jquery.com/>`_                               3.6.0    MIT
-`jQuery Cookie <https://github.com/carhartl/jquery-cookie>`_ 1.4.1    MIT
-`jQuery UI <https://jqueryui.com>`_                          1.13.1   MIT
-`Underscore <http://underscorejs.org/>`_                     1.13.2   MIT
-`Codemirror <http://codemirror.net/>`_                       5.65.1   MIT
-`floatThead <http://mkoryak.github.io/floatThead/>`_         1.4.0    MIT
-`list.js <http://listjs.com>`_                               1.2.0    MIT
-`pivottable.js <http://nicolas.kruchten.com/pivottable/>`_   2.0.2    MIT
-============================================================ ======== ================
+============================================================== ======== ================
+Name                                                           Version  License
+============================================================== ======== ================
+`Twitter Boostrap <http://getbootstrap.com/>`_                 3.4.1    MIT
+`jQuery <http://jquery.com/>`_                                 3.6.0    MIT
+`jQuery Cookie <https://github.com/carhartl/jquery-cookie>`_   1.4.1    MIT
+`jQuery UI <https://jqueryui.com>`_                            1.13.1   MIT
+`Underscore <http://underscorejs.org/>`_                       1.13.2   MIT
+`Codemirror <http://codemirror.net/>`_                         5.65.1   MIT
+`floatThead <http://mkoryak.github.io/floatThead/>`_           1.4.0    MIT
+`list.js <http://listjs.com>`_                                 1.2.0    MIT
+`pivottable.js <http://nicolas.kruchten.com/pivottable/>`_     2.0.2    MIT
+`sheetjs <https://git.sheetjs.com/sheetjs/sheetjs>`_           0.19.1   APACHE 2.0
+============================================================== ======== ================
 
 - All are served locally, with jQuery UI being a custom build.
 

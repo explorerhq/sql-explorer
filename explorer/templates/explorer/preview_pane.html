@@ -1,258 +1,288 @@
 {% load i18n %}
 
 {% if headers %}
-    <div class="row">
-        <div class="col-md-12">
-            <div role="tabpanel">
-                <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation" class="active">
-                        <a id="preview-tab-label" href="#previewpane" aria-controls="previewpane" role="tab" data-toggle="tab">
-                            {% trans "Preview" %}
+<div class="row">
+    <div class="col-md-12">
+        <div role="tabpanel">
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active">
+                    <a id="preview-tab-label" href="#previewpane" aria-controls="previewpane" role="tab"
+                       data-toggle="tab">
+                        {% trans "Preview" %}
+                    </a>
+                </li>
+                {% if query.id and query.snapshot %}
+                    <li role="presentation">
+                        <a href="#snapshots" aria-controls="snapshots" role="tab" data-toggle="tab">
+                            {% trans "Snapshots" %}
                         </a>
                     </li>
-                    {% if query.id and query.snapshot %}
+                {% endif %}
+                {% if data %}
+                    <li role="presentation">
+                        <a id="pivot-tab-label" href="#pivot" aria-controls="pivot" role="tab" data-toggle="tab">
+                            {% trans "Pivot" %}
+                        </a>
+                    </li>
+                    {% if charts_enabled %}
                         <li role="presentation">
-                            <a href="#snapshots" aria-controls="snapshots" role="tab" data-toggle="tab">
-                                {% trans "Snapshots" %}
+                            <a id="pie-chart-tab-label" href="#pie-chart" aria-controls="pie-chart" role="tab"
+                               data-toggle="tab">
+                                {% trans "Pie chart" %}
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a id="line-chart-tab-label" href="#line-chart" aria-controls="line-chart" role="tab"
+                               data-toggle="tab">
+                                {% trans "Line chart" %}
                             </a>
                         </li>
                     {% endif %}
-                    {% if data %}
-                        <li role="presentation">
-                            <a id="pivot-tab-label" href="#pivot" aria-controls="pivot" role="tab" data-toggle="tab">
-                                {% trans "Pivot" %}
-                            </a>
-                        </li>
-                        {% if charts_enabled %}
-                            <li role="presentation">
-                                <a id="pie-chart-tab-label" href="#pie-chart" aria-controls="pie-chart" role="tab" data-toggle="tab">
-                                    {% trans "Pie chart" %}
-                                </a>
-                            </li>
-                            <li role="presentation">
-                                <a id="line-chart-tab-label" href="#line-chart" aria-controls="line-chart" role="tab" data-toggle="tab">
-                                    {% trans "Line chart" %}
-                                </a>
-                            </li>
-                        {% endif %}
-                    {% endif %}
-                </ul>
-                <div class="tab-content">
-                    <div role="tabpanel" class="tab-pane active" id="previewpane">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        {% if data %}
-                                            <a title="Show row numbers" id="counter-toggle" href="#">#</a>&nbsp
-                                        {% endif %}
-                                        <span class="panel-title">
+                {% endif %}
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="previewpane">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    {% if data %}
+                                        <a title="Show row numbers" id="counter-toggle" href="#">#</a>&nbsp
+                                    {% endif %}
+                                    <span class="panel-title">
                                             {% blocktrans trimmed with duration=duration|floatformat:2 %}
                                                 Execution time: {{ duration }} ms
                                             {% endblocktrans %}
                                         </span>
-                                    </div>
-                                    <div class="col-md-6 text-right">
+                                </div>
+                                <div class="col-md-6 text-right">
                                         <span class="row-control">
                                             {% if rows > total_rows %}
-                                                {% trans "Showing" %}&nbsp;<input class="rows-input" type="text" name="rows" id="rows" value="{{ total_rows }}" />
+                                                {% trans "Showing" %}&nbsp;
+                                                <input class="rows-input" type="text" name="rows" id="rows"
+                                                       value="{{ total_rows }}"/>
                                             {% else %}
-                                                {% trans "First" %}&nbsp;<input class="rows-input" type="text" name="rows" id="rows" value="{{ rows }}" />
+                                                {% trans "First" %}&nbsp;
+                                                <input class="rows-input" type="text" name="rows" id="rows"
+                                                       value="{{ rows }}"/>
                                             {% endif %}
                                             {% blocktrans %}of {{ total_rows }} total rows.{% endblocktrans %}
                                         </span>
-                                        <span>
+                                    <span>
                                             <small>
-                                                <a id="fullscreen" href="./?{{ fullscreen_params }}" target="_blank" title="Fullscreen results">
+                                                <a id="fullscreen" href="./?{{ fullscreen_params }}" target="_blank"
+                                                   title="Fullscreen results">
                                                     <i class="glyphicon glyphicon-resize-full"></i>
                                                 </a>
                                             </small>
                                         </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="overflow-wrapper">
+                            <table class="table table-striped table-hover" id="preview">
+                                <thead class="data-headers">
+                                <tr>
+                                    <th class="preview-header counter"></th>
+                                    {% for h in headers %}
+                                        <th class="preview-header"><span class="sort" data-sort="{{ forloop.counter0 }}"
+                                                                         data-dir="asc">{{ h }}</span></th>
+                                    {% endfor %}
+                                </tr>
+                                <tr class="stats-th">
+                                    <th class="counter"></th>
+                                    {% for h in headers %}
+                                        <th>
+                                            {% if h.summary %}
+                                                <i class="stats-expand glyphicon glyphicon-education"></i>
+                                                <div class="stats-wrapper">
+                                                    {% for label, value in h.summary.stats.items %}
+                                                        <div class="stat-wrapper"><span class="stat-label">{{ label }}:&nbsp;</span><span
+                                                            class="stat-value">{{ value }}</span></div>
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        </th>
+                                    {% endfor %}
+                                </tr>
+                                </thead>
+                                <tbody class="list">
+                                {% if data %}
+                                {% for row in data %}
+                                <tr class="data-row">
+                                    <td class="counter">{{ forloop.counter0 }}</td>
+                                    {% for i in row %}
+                                    {% if unsafe_rendering %}
+                                    <td class="{{ forloop.counter0 }}">
+                                        {% autoescape off %}{{ i }}{% endautoescape %}
+                                    </td>
+                                    {% else %}
+                                    <td class="{{ forloop.counter0 }}">{{ i }}</td>
+                                    {% endif %}
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                                {% else %}
+                                <tr class="text-center">
+                                    <td colspan="{{ headers|length }}">
+                                        {% trans "Empty Resultset" %}
+                                    </td>
+                                </tr>
+                                {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                {% if query.id and query.snapshot and query.snapshots %}
+                    <div role="tabpanel" class="tab-pane" id="snapshots">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <span class="panel-title">{{ snapshots|length }} Snapshots <small>(oldest first)</small></span>
+                            </div>
+                            <div class="overflow-wrapper">
+                                <p>
+                                <ul>
+                                    {% for s in snapshots %}
+                                        <li><a href='{{ s.url }}'>{{ s.last_modified }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if data %}
+                    <div role="tabpanel" class="tab-pane" id="pivot">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <span class="panel-title">{% trans "Pivot" %}</span>
+                                    </div>
+                                    <div class="col-md-6 text-right">
+                                        <button id="button-excel">Export Pivot to Excel</button>
+                                        <script>
+                                            let button = document.querySelector("#button-excel");
+
+                                            button.addEventListener("click", e => {
+                                                let table = document.querySelector(".pvtTable");
+                                                if (typeof (table) != 'undefined' && table != null) {
+                                                    /* Create worksheet from HTML DOM TABLE */
+                                                    let wb = XLSX.utils.table_to_book(table);
+                                                    let wb_name = "pivot-export-playground.xlsx";
+                                                    {% if query %}
+                                                        wb_name = "pivot-export-{{ query.title|slugify }}.xlsx";
+                                                    {%  endif %}
+                                                    /* Export to file (start a download) */
+                                                    XLSX.writeFile(wb, wb_name);
+                                                }
+                                            });
+                                        </script>
+                                        <small>
+                                            <a id="pivot-bookmark"
+                                               data-baseurl="{% url 'explorer_playground' %}?querylog_id={{ ql_id }}"
+                                               href="#">
+                                                <i class="glyphicon glyphicon-link"></i>
+                                            </a>
+                                        </small>
                                     </div>
                                 </div>
                             </div>
                             <div class="overflow-wrapper">
-                                <table class="table table-striped table-hover" id="preview">
-                                    <thead class="data-headers">
-                                        <tr>
-                                            <th class="preview-header counter"></th>
-                                            {% for h in headers %}
-                                                <th class="preview-header"><span class="sort" data-sort="{{ forloop.counter0 }}" data-dir="asc">{{ h }}</span></th>
-                                            {% endfor %}
-                                        </tr>
-                                        <tr class="stats-th">
-                                            <th class="counter"></th>
-                                            {% for h in headers %}
-                                                <th>
-                                                    {% if h.summary %}
-                                                        <i class="stats-expand glyphicon glyphicon-education"></i>
-                                                        <div class="stats-wrapper">
-                                                            {% for label, value in h.summary.stats.items %}
-                                                                <div class="stat-wrapper"><span class="stat-label">{{ label }}:&nbsp;</span><span class="stat-value">{{ value }}</span></div>
-                                                            {% endfor %}
-                                                        </div>
-                                                    {% endif %}
-                                                </th>
-                                            {% endfor %}
-                                        </tr>
-                                    </thead>
-                                    <tbody class="list">
-                                        {% if data %}
-                                            {% for row in data %}
-                                                <tr class="data-row">
-                                                    <td class="counter">{{ forloop.counter0 }}</td>
-                                                    {% for i in row %}
-                                                        {% if unsafe_rendering %}
-                                                            <td class="{{ forloop.counter0 }}">
-                                                                {% autoescape off %}{{ i }}{% endautoescape %}
-                                                            </td>
-                                                        {% else %}
-                                                            <td class="{{ forloop.counter0 }}">{{ i }}</td>
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                </tr>
-                                            {% endfor %}
-                                        {% else %}
-                                            <tr class="text-center">
-                                                <td colspan="{{ headers|length }}">
-                                                    {% trans "Empty Resultset" %}
-                                                </td>
-                                            </tr>
-                                        {% endif %}
-                                    </tbody>
-                                </table>
+                                <div class="pivot-table"></div>
                             </div>
                         </div>
                     </div>
-                    {% if query.id and query.snapshot and query.snapshots %}
-                        <div role="tabpanel" class="tab-pane" id="snapshots">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <span class="panel-title">{{ snapshots|length }} Snapshots <small>(oldest first)</small></span>
-                                </div>
-                                <div class="overflow-wrapper">
-                                    <p>
-                                        <ul>
-                                        {%  for s in snapshots %}
-                                            <li><a href='{{ s.url }}'>{{ s.last_modified }}</a></li>
-                                        {% endfor %}
-                                        </ul>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    {% endif %}
-                    {% if data %}
-                        <div role="tabpanel" class="tab-pane" id="pivot">
+                    {% if charts_enabled %}
+                        <div role="tabpanel" class="tab-pane" id="pie-chart">
                             <div class="panel panel-default">
                                 <div class="panel-heading">
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <span class="panel-title">{% trans "Pivot" %}</span>
-                                        </div>
-                                        <div class="col-md-6 text-right">
-                                            <small>
-                                                <a id="pivot-bookmark" data-baseurl="{% url 'explorer_playground' %}?querylog_id={{ ql_id }}" href="#">
-                                                    <i class="glyphicon glyphicon-link"></i>
-                                                </a>
-                                            </small>
+                                            <span class="panel-title">{% trans "Pie chart" %}</span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="overflow-wrapper">
-                                    <div class="pivot-table"></div>
-                                </div>
-                            </div>
-                        </div>
-                        {% if charts_enabled %}
-                            <div role="tabpanel" class="tab-pane" id="pie-chart">
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <span class="panel-title">{% trans "Pie chart" %}</span>
-                                            </div>
+                                    {% if pie_chart_svg %}
+                                        <div style="margin: 2em;">
+                                            {{ pie_chart_svg | safe }}
                                         </div>
-                                    </div>
-                                    <div class="overflow-wrapper">
-                                        {% if pie_chart_svg %}
-                                            <div style="margin: 2em;">
-                                                {{ pie_chart_svg | safe }}
-                                            </div>
-                                        {% else %}
-                                            <div style="margin: 6em;">
-                                                <p>{% blocktrans %}
-                                                    This query result table is not formatted in a way
-                                                    which could be displayed as a pie chart.
-                                                {% endblocktrans %}</p>
-                                                <p>{% blocktrans %}
-                                                    Query results can be displayed as a pie chart as follows:
-                                                    each row represents one sector of the pie;
-                                                    the first column will be used as a label
-                                                    while the second column is used to determine the size of the sector.
-                                                    Thus the second column must be of a numeric type.
-                                                    Rows which contain <code>NULL</code>s will be ignored.
-                                                {% endblocktrans %}</p>
-                                                <p>{% blocktrans %}
-                                                    Use this sample query to see it in action:
-                                                {% endblocktrans %}</p>
-                                                <pre>
+                                    {% else %}
+                                        <div style="margin: 6em;">
+                                            <p>{% blocktrans %}
+                                                This query result table is not formatted in a way
+                                                which could be displayed as a pie chart.
+                                            {% endblocktrans %}</p>
+                                            <p>{% blocktrans %}
+                                                Query results can be displayed as a pie chart as follows:
+                                                each row represents one sector of the pie;
+                                                the first column will be used as a label
+                                                while the second column is used to determine the size of the sector.
+                                                Thus the second column must be of a numeric type.
+                                                Rows which contain <code>NULL</code>s will be ignored.
+                                            {% endblocktrans %}</p>
+                                            <p>{% blocktrans %}
+                                                Use this sample query to see it in action:
+                                            {% endblocktrans %}</p>
+                                            <pre>
     SELECT *
     FROM (VALUES ('apple', 7),
                  ('orange', 8),
                  ('grape', 9),
                  ('peppermint', 1))
         AS fruit_salad_proportions;</pre>
-                                            </div>
-                                        {% endif %}
-                                    </div>
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </div>
-                            <div role="tabpanel" class="tab-pane" id="line-chart">
-                                <div class="panel panel-default">
-                                    <div class="panel-heading">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <span class="panel-title">{% trans "Line chart" %}</span>
-                                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="line-chart">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <span class="panel-title">{% trans "Line chart" %}</span>
                                         </div>
                                     </div>
-                                    <div class="overflow-wrapper">
-                                        {% if line_chart_svg %}
-                                            <div style="margin: 2em;">
-                                                {{ line_chart_svg | safe }}
-                                            </div>
-                                        {% else %}
-                                            <div style="margin: 6em;">
-                                                <p>{% blocktrans %}
-                                                    This query result table is not formatted in a way
-                                                    which could be displayed as a line chart.
-                                                {% endblocktrans %}</p>
-                                                <p>{% blocktrans %}
-                                                    Query results can be displayed as a line chart as follows:
-                                                    the first column represents the values on the x-axis (e.g. dates).
-                                                    All other numeric columns represent one line on the chart.
-                                                    Other columns will be ignored.
-                                                {% endblocktrans %}</p>
-                                                <p>{% blocktrans %}
-                                                    Use this sample query to see it in action:
-                                                {% endblocktrans %}</p>
-                                                    <pre>
+                                </div>
+                                <div class="overflow-wrapper">
+                                    {% if line_chart_svg %}
+                                        <div style="margin: 2em;">
+                                            {{ line_chart_svg | safe }}
+                                        </div>
+                                    {% else %}
+                                        <div style="margin: 6em;">
+                                            <p>{% blocktrans %}
+                                                This query result table is not formatted in a way
+                                                which could be displayed as a line chart.
+                                            {% endblocktrans %}</p>
+                                            <p>{% blocktrans %}
+                                                Query results can be displayed as a line chart as follows:
+                                                the first column represents the values on the x-axis (e.g. dates).
+                                                All other numeric columns represent one line on the chart.
+                                                Other columns will be ignored.
+                                            {% endblocktrans %}</p>
+                                            <p>{% blocktrans %}
+                                                Use this sample query to see it in action:
+                                            {% endblocktrans %}</p>
+                                            <pre>
     SELECT *
     FROM (VALUES ('2019-01-01'::date, 500,550,530),
                  ('2020-01-01'::date, 530, 580, 570),
                  ('2021-01-01'::date, 580, 590, 670),
                  ('2022-01-01'::date, 700, 620, 780))
         AS fruit_salad_proportions(date, generosity, joy, happiness);</pre>
-                                            </div>
-                                        {% endif %}
-                                    </div>
+                                        </div>
+                                    {% endif %}
                                 </div>
                             </div>
-                        {% endif %}
+                        </div>
                     {% endif %}
-                </div>
+                {% endif %}
             </div>
         </div>
     </div>
+</div>
 {% endif %}
