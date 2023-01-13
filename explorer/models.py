@@ -13,7 +13,6 @@ from explorer.utils import (
     shared_dict_update, swap_params,
 )
 
-
 MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist: %s"
 
 logger = logging.getLogger(__name__)
@@ -186,6 +185,20 @@ class QueryLog(models.Model):
 
     class Meta:
         ordering = ['-run_at']
+
+
+class QueryFavorite(models.Model):
+    query = models.ForeignKey(
+        Query,
+        on_delete=models.CASCADE
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
+
+    class Meta:
+        unique_together = ['query', 'user']
 
 
 class QueryResult:

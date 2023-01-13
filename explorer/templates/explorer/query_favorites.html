@@ -1,0 +1,25 @@
+{% extends "explorer/base.html" %}
+{% load i18n %}
+
+{% block sql_explorer_content %}
+    <h2>{% trans "Favorite Queries" %}</h2>
+    <div class="table-responsive">
+        <table class="table table-striped query-list">
+            <thead>
+            <tr>
+                <th>{% trans "Query" %}</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for favorite in favorites %}
+                <tr>
+                    <th>
+                        <a href="{% url 'query_detail' favorite.query.id %}">{{ favorite.query.title }}</a>
+                    </th>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -6,6 +6,7 @@ from .email import EmailCsvQueryView
 from .format_sql import format_sql
 from .list import ListQueryLogView, ListQueryView
 from .query import PlayQueryView, QueryView
+from .query_favorite import QueryFavoritesView, QueryFavoriteView
 from .schema import SchemaView
 from .stream import StreamQueryView
 
@@ -24,5 +25,7 @@ __all__ = [
     'SafeLoginView',
     'StreamQueryView',
     'SchemaView',
-    'format_sql'
+    'format_sql',
+    'QueryFavoritesView',
+    'QueryFavoriteView',
 ]

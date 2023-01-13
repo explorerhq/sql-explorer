@@ -2,7 +2,8 @@ from django.urls import path, re_path
 
 from explorer.views import (
     CreateQueryView, DeleteQueryView, DownloadFromSqlView, DownloadQueryView, EmailCsvQueryView, ListQueryLogView,
-    ListQueryView, PlayQueryView, QueryView, SchemaView, StreamQueryView, format_sql,
+    ListQueryView, PlayQueryView, QueryView, SchemaView, StreamQueryView, format_sql, QueryFavoritesView,
+    QueryFavoriteView
 )
 
 
@@ -34,5 +35,7 @@ urlpatterns = [
     ),
     path('logs/', ListQueryLogView.as_view(), name='explorer_logs'),
     path('format/', format_sql, name='format_sql'),
+    path('favorites/', QueryFavoritesView.as_view(), name='query_favorites'),
+    path('favorite/<int:query_id>', QueryFavoriteView.as_view(), name='query_favorite'),
     path('', ListQueryView.as_view(), name='explorer_index'),
 ]
