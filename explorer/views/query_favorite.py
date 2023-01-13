@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views import View
 
-from explorer.models import QueryFavorite, Query
+from explorer.models import Query, QueryFavorite
 from explorer.views.auth import PermissionRequiredMixin
 from explorer.views.mixins import ExplorerContextMixin
 
@@ -15,7 +15,7 @@ class QueryFavoritesView(PermissionRequiredMixin, ExplorerContextMixin, View):
         favorites = QueryFavorite.objects.filter(user=user).select_related('user').select_related('query').order_by(
             'query__title')
         return self.render_template(
-            f'explorer/query_favorites.html', {'favorites': favorites}
+            'explorer/query_favorites.html', {'favorites': favorites}
         )
 
 
@@ -46,4 +46,3 @@ class QueryFavoriteView(PermissionRequiredMixin, ExplorerContextMixin, View):
         else:
             QueryFavorite.objects.get_or_create(user=user, query=query)
         return JsonResponse(QueryFavoriteView.build_favorite_response(user, query))
-

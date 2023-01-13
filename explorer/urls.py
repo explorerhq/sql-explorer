@@ -2,8 +2,8 @@ from django.urls import path, re_path
 
 from explorer.views import (
     CreateQueryView, DeleteQueryView, DownloadFromSqlView, DownloadQueryView, EmailCsvQueryView, ListQueryLogView,
-    ListQueryView, PlayQueryView, QueryView, SchemaView, StreamQueryView, format_sql, QueryFavoritesView,
-    QueryFavoriteView
+    ListQueryView, PlayQueryView, QueryFavoritesView, QueryFavoriteView, QueryView, SchemaView, StreamQueryView,
+    format_sql,
 )
 
 

@@ -13,6 +13,7 @@ from explorer.utils import (
     shared_dict_update, swap_params,
 )
 
+
 MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist: %s"
 
 logger = logging.getLogger(__name__)

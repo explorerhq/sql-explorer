@@ -15,7 +15,7 @@ from django.urls import reverse
 from explorer import app_settings
 from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
 from explorer.app_settings import EXPLORER_TOKEN
-from explorer.models import MSG_FAILED_BLACKLIST, Query, QueryLog, QueryFavorite
+from explorer.models import MSG_FAILED_BLACKLIST, Query, QueryFavorite, QueryLog
 from explorer.tests.factories import QueryLogFactory, SimpleQueryFactory
 from explorer.utils import user_can_see_query
 
