@@ -12,7 +12,7 @@ class QueryFavoritesView(PermissionRequiredMixin, ExplorerContextMixin, View):
 
     def get(self, request):
         user = request.user
-        favorites = QueryFavorite.objects.filter(user=user).select_related('user').select_related('query').order_by(
+        favorites = QueryFavorite.objects.filter(user=user).select_related('query', 'user').order_by(
             'query__title')
         return self.render_template(
             'explorer/query_favorites.html', {'favorites': favorites}
