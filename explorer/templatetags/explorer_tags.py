@@ -17,3 +17,11 @@ def export_buttons(query=None):
         'exporters': exporters,
         'query': query,
     }
+
+
+@register.inclusion_tag('explorer/query_favorite_button.html', takes_context=True)
+def query_favorite_button(context, query_id, is_favorite):
+    return {
+        'query_id': query_id,
+        'is_favorite': is_favorite
+    }

@@ -8,11 +8,7 @@
             <h2>
                 {% if query %}
                     {{ query.title }}
-                    {% if is_favorite %}
-                        <i class="glyphicon glyphicon-heart text-danger" id="query_favorite_toggle" style="cursor: pointer;"></i>
-                    {% else %}
-                        <i class="glyphicon glyphicon-heart-empty text-danger" id="query_favorite_toggle" style="cursor: pointer;"></i>
-                    {% endif %}
+                    {% query_favorite_button query.id is_favorite %}
                     {% if shared %}<small>&nbsp;&nbsp;shared</small>{% endif %}
 
                 {% else %}

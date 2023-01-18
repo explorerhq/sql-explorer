@@ -102,19 +102,6 @@ ExplorerEditor.prototype.formatSql = function() {
     }.bind(this));
 };
 
-ExplorerEditor.prototype.toggleFavorite = function() {
-    $.post("../favorite/" + this.queryId , { }, function(data) {
-        let is_favorite = data.is_favorite;
-        if(is_favorite) {
-            $("#query_favorite_toggle").removeClass("glyphicon-heart-empty").addClass("glyphicon-heart");
-        }else{
-            $("#query_favorite_toggle").removeClass("glyphicon-heart").addClass("glyphicon-heart-empty");
-        }
-    }.bind(this), 'json').fail(function() {
-        alert( "error" );
-    });
-};
-
 ExplorerEditor.prototype.showRows = function() {
     var rows = this.$rows.val(),
         $form = $("#editor");
@@ -155,11 +142,6 @@ ExplorerEditor.prototype.bind = function() {
     $("#format_button").click(function(e) {
         e.preventDefault();
         this.formatSql();
-    }.bind(this));
-
-    $("#query_favorite_toggle").click(function(e) {
-        e.preventDefault();
-        this.toggleFavorite();
     }.bind(this));
 
     $("#rows").keyup(function() {

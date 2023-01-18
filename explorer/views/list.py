@@ -5,14 +5,13 @@ from django.forms.models import model_to_dict
 from django.views.generic import ListView
 
 from explorer import app_settings
-from explorer.models import Query, QueryLog
+from explorer.models import Query, QueryFavorite, QueryLog
 from explorer.utils import allowed_query_pks, url_get_query_id
 from explorer.views.auth import PermissionRequiredMixin
 from explorer.views.mixins import ExplorerContextMixin
 
 
 class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
-
     permission_required = 'view_permission_list'
     model = Query
 
@@ -88,6 +87,8 @@ class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
         pattern = re.compile(r'[\W_]+')
 
         headers = Counter([q.title.split(' - ')[0] for q in self.object_list])
+        query_favorites_for_user = QueryFavorite.objects.filter(user_id=self.request.user.id).values_list('query_id',
+                                                                                                          flat=True)
 
         for q in self.object_list:
             model_dict = model_to_dict(q)
@@ -111,14 +112,14 @@ class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
                 'is_header': False,
                 'run_count': q.querylog_set.count(),
                 'created_by_user':
-                    str(q.created_by_user) if q.created_by_user else None
+                    str(q.created_by_user) if q.created_by_user else None,
+                'is_favorite': q.id in query_favorites_for_user
             })
             dict_list.append(model_dict)
         return dict_list
 
 
 class ListQueryLogView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
-
     context_object_name = "recent_logs"
     model = QueryLog
     paginate_by = 20
