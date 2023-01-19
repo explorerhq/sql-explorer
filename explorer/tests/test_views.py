@@ -825,3 +825,22 @@ class TestEmailQuery(TestCase):
             **{'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'}
         )
         self.assertEqual(mocked_execute.delay.call_count, 1)
+
+    def test_email_403(self):
+        query = SimpleQueryFactory()
+        url = reverse("email_csv_query", kwargs={'query_id': query.id})
+        response = self.client.post(
+            url,
+            data={},
+            **{'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'}
+        )
+        self.assertEqual(response.status_code, 403)
+
+    def test_email_no_xml_403(self):
+        query = SimpleQueryFactory()
+        url = reverse("email_csv_query", kwargs={'query_id': query.id})
+        response = self.client.post(
+            url,
+            data={},
+        )
+        self.assertEqual(response.status_code, 403)
