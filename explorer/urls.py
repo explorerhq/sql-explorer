@@ -1,4 +1,4 @@
-from django.urls import path, re_path
+from django.urls import path
 
 from explorer.views import (
     CreateQueryView, DeleteQueryView, DownloadFromSqlView, DownloadQueryView, EmailCsvQueryView, ListQueryLogView,
@@ -28,8 +28,8 @@ urlpatterns = [
     ),
     path('new/', CreateQueryView.as_view(), name='query_create'),
     path('play/', PlayQueryView.as_view(), name='explorer_playground'),
-    re_path(
-        r'schema/(?P<connection>.+)$', SchemaView.as_view(),
+    path(
+        'schema/<path:connection>', SchemaView.as_view(),
         name='explorer_schema'
     ),
     path('logs/', ListQueryLogView.as_view(), name='explorer_logs'),
