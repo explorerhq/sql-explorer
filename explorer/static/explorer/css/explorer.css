@@ -174,3 +174,11 @@ a#fullscreen {
     padding-left: 1rem;
     color: #18bc9c;
 }
+
+.query_favorite_toggle {
+    cursor: pointer;
+}
+
+.query_favourite_detail {
+    float: right;
+}

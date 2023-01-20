@@ -1,8 +1,6 @@
 {% if is_favorite %}
-    <i class="glyphicon glyphicon-heart text-danger query_favorite_toggle" data-id="{{ query_id }}"
-       style="cursor: pointer;"></i>
+    <i class="glyphicon glyphicon-heart text-danger {{ extra_classes }}" data-id="{{ query_id }}" data-url="{% url 'query_favorite' query_id%}"></i>
 {% else %}
-    <i class="glyphicon glyphicon-heart-empty text-danger query_favorite_toggle" data-id="{{ query_id }}"
-       style="cursor: pointer;"></i>
+    <i class="glyphicon glyphicon-heart-empty text-danger {{ extra_classes }}" data-id="{{ query_id }}" data-url="{% url 'query_favorite' query_id%}"></i>
 {% endif %}
 

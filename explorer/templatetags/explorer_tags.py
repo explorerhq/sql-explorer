@@ -19,9 +19,10 @@ def export_buttons(query=None):
     }
 
 
-@register.inclusion_tag('explorer/query_favorite_button.html', takes_context=True)
-def query_favorite_button(context, query_id, is_favorite):
+@register.inclusion_tag('explorer/query_favorite_button.html')
+def query_favorite_button(query_id, is_favorite, extra_classes):
     return {
         'query_id': query_id,
-        'is_favorite': is_favorite
+        'is_favorite': is_favorite,
+        'extra_classes': extra_classes
     }

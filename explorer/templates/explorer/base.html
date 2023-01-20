@@ -87,26 +87,9 @@
     <script src="{% static 'explorer/js/comment.min.js' %}"></script>
     <script src="{% static 'explorer/js/jquery.floatThead.min.js' %}"></script>
     <script src="{% static 'explorer/js/pivot.min.js' %}"></script>
-     <script src="{% static 'explorer/js/xlsx.mini.min.js' %}"></script>
+    <script src="{% static 'explorer/js/xlsx.mini.min.js' %}"></script>
+    <script src="{% static 'explorer/js/favorites.js' %}"></script>
     {% block sql_explorer_scripts %}{% endblock %}
-    <script>
-        let toggle_favorite = function () {
-            let queryId = $(this).data('id');
-            let favoriteUrl = "{% url 'query_favorite' 0 %}";
-            $.post(favoriteUrl.replace('0', queryId), {}, function (data) {
-                let is_favorite = data.is_favorite;
-                let selector = '.query_favorite_toggle[data-id=' + queryId + ']';
-                if (is_favorite) {
-                    $(selector).removeClass("glyphicon-heart-empty").addClass("glyphicon-heart");
-                } else {
-                    $(selector).removeClass("glyphicon-heart").addClass("glyphicon-heart-empty");
-                }
-            }.bind(this), 'json').fail(function () {
-                alert("error");
-            });
-        }
-        $('.query_favorite_toggle').click(toggle_favorite);
-    </script>
 </body>
 
 </html>
