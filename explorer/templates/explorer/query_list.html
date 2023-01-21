@@ -1,5 +1,5 @@
 {% extends "explorer/base.html" %}
-{% load i18n static %}
+{% load explorer_tags i18n static %}
 
 {% block sql_explorer_content %}
     {% if recent_queries|length > 0 %}
@@ -56,6 +56,7 @@
                         <th>{% trans "Play" %}</th>
                         <th>{% trans "Delete" %}</th>
                     {% endif %}
+                    <th>{%  trans "Favorite" %}</th>
                     <th>{% trans "Run Count" %}</th>
                 </tr>
             </thead>
@@ -105,6 +106,7 @@
                                     </a>
                                 </td>
                             {% endif %}
+                            <td> {% query_favorite_button object.id object.is_favorite 'query_favorite_toggle' %}</td>
                             <td>{{ object.run_count }}</td>
                         {% endif %}
                     </tr>

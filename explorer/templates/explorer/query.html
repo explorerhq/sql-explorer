@@ -8,7 +8,9 @@
             <h2>
                 {% if query %}
                     {{ query.title }}
+                    {% query_favorite_button query.id is_favorite 'query_favorite_toggle query_favourite_detail'%}
                     {% if shared %}<small>&nbsp;&nbsp;shared</small>{% endif %}
+
                 {% else %}
                     {% trans "New Query" %}
                 {% endif %}

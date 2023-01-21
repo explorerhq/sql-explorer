@@ -138,7 +138,7 @@ class QueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
 
     @staticmethod
     def get_instance_and_form(request, query_id):
-        query = get_object_or_404(Query, pk=query_id)
+        query = get_object_or_404(Query.objects.prefetch_related('favorites'), pk=query_id)
         query.params = url_get_params(request)
         form = QueryForm(
             request.POST if len(request.POST) else None,

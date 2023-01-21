@@ -15,7 +15,7 @@ from django.urls import reverse
 from explorer import app_settings
 from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
 from explorer.app_settings import EXPLORER_TOKEN
-from explorer.models import MSG_FAILED_BLACKLIST, Query, QueryLog
+from explorer.models import MSG_FAILED_BLACKLIST, Query, QueryFavorite, QueryLog
 from explorer.tests.factories import QueryLogFactory, SimpleQueryFactory
 from explorer.utils import user_can_see_query
 
@@ -844,3 +844,42 @@ class TestEmailQuery(TestCase):
             data={},
         )
         self.assertEqual(response.status_code, 403)
+
+
+class TestQueryFavorites(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_superuser(
+            'admin', 'admin@admin.com', 'pwd'
+        )
+        self.client.login(username='admin', password='pwd')
+        self.q = SimpleQueryFactory(title='query for x, y')
+        QueryFavorite.objects.create(user=self.user, query=self.q)
+
+    def test_returns_favorite_list(self):
+        resp = self.client.get(
+            reverse("query_favorites")
+        )
+        self.assertContains(resp, 'query for x, y')
+
+
+class TestQueryFavorite(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_superuser(
+            'admin', 'admin@admin.com', 'pwd'
+        )
+        self.client.login(username='admin', password='pwd')
+        self.q = SimpleQueryFactory(title='query for x, y')
+
+    def test_toggle(self):
+        resp = self.client.post(
+            reverse("query_favorite",  args=(self.q.id,))
+        )
+        resp = json.loads(resp.content.decode('utf-8'))
+        self.assertTrue(resp['is_favorite'])
+        resp = self.client.post(
+            reverse("query_favorite",  args=(self.q.id,))
+        )
+        resp = json.loads(resp.content.decode('utf-8'))
+        self.assertFalse(resp['is_favorite'])

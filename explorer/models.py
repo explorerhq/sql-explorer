@@ -154,6 +154,12 @@ class Query(models.Model):
                 ) for o in objects_s
             ]
 
+    def is_favorite(self, user):
+        if user.is_authenticated:
+            return self.favorites.filter(user_id=user.id).exists()
+        else:
+            return False
+
 
 class SnapShot:
 
@@ -186,6 +192,22 @@ class QueryLog(models.Model):
 
     class Meta:
         ordering = ['-run_at']
+
+
+class QueryFavorite(models.Model):
+    query = models.ForeignKey(
+        Query,
+        on_delete=models.CASCADE,
+        related_name='favorites'
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='favorites'
+    )
+
+    class Meta:
+        unique_together = ['query', 'user']
 
 
 class QueryResult:

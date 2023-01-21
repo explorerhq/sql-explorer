@@ -51,6 +51,9 @@
                                 <li{% if not query and view_name == 'explorer_logs' %} class="active" {% endif %}>
                                     <a href="{% url 'explorer_logs' %}">{% trans "Logs" %}</a>
                                 </li>
+                                <li{% if not query and view_name == 'query_favorites' %} class="active" {% endif %}>
+                                    <a href="{% url 'query_favorites' %}">{% trans "Favorite Queries" %}</a>
+                                </li>
                             {% endblock %}
                         </ul>
                     </div>
@@ -84,7 +87,8 @@
     <script src="{% static 'explorer/js/comment.min.js' %}"></script>
     <script src="{% static 'explorer/js/jquery.floatThead.min.js' %}"></script>
     <script src="{% static 'explorer/js/pivot.min.js' %}"></script>
-     <script src="{% static 'explorer/js/xlsx.mini.min.js' %}"></script>
+    <script src="{% static 'explorer/js/xlsx.mini.min.js' %}"></script>
+    <script src="{% static 'explorer/js/favorites.js' %}"></script>
     {% block sql_explorer_scripts %}{% endblock %}
 </body>
 

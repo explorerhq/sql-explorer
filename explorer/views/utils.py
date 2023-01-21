@@ -2,6 +2,7 @@ from django.db import DatabaseError
 
 from explorer import app_settings
 from explorer.charts import get_line_chart, get_pie_chart
+from explorer.models import QueryFavorite
 
 
 def query_viewmodel(request, query, title=None, form=None, message=None,
@@ -35,6 +36,11 @@ def query_viewmodel(request, query, title=None, form=None, message=None,
             'querylog_id': ql.id
         })
 
+    user = request.user
+    is_favorite = False
+    if user.is_authenticated:
+        is_favorite = QueryFavorite.objects.filter(user=user, query=query).exists()
+
     ret = {
         'tasks_enabled': app_settings.ENABLE_TASKS,
         'params': query.available_params(),
@@ -58,6 +64,7 @@ def query_viewmodel(request, query, title=None, form=None, message=None,
         'fullscreen_params': fullscreen_params.urlencode(),
         'charts_enabled': app_settings.EXPLORER_CHARTS_ENABLED,
         'pie_chart_svg': get_pie_chart(res) if app_settings.EXPLORER_CHARTS_ENABLED and has_valid_results else None,
-        'line_chart_svg': get_line_chart(res) if app_settings.EXPLORER_CHARTS_ENABLED and has_valid_results else None
+        'line_chart_svg': get_line_chart(res) if app_settings.EXPLORER_CHARTS_ENABLED and has_valid_results else None,
+        'is_favorite': is_favorite
     }
     return ret
