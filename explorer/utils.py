@@ -62,15 +62,21 @@ def param(name):
 def swap_params(sql, params):
     p = params.items() if params else {}
     for k, v in p:
-        regex = re.compile(r"\$\$%s(?:\:([^\$]+))?\$\$" % str(k).lower(), re.I)
+        regex = re.compile(r"\$\$%s(?:\|([^\$\:]+))?(?:\:([^\$]+))?\$\$" % str(k).lower(), re.I)
         sql = regex.sub(str(v), sql)
     return sql
 
 
 def extract_params(text):
-    regex = re.compile(r"\$\$([a-z0-9_]+)(?:\:([^\$]+))?\$\$")
-    params = re.findall(regex, text.lower())
-    return {p[0]: p[1] if len(p) > 1 else '' for p in params}
+    regex = re.compile(r"\$\$([a-z0-9_]+)(?:\|([^\$\:]+))?(?:\:([^\$]+))?\$\$", re.IGNORECASE)
+    params = re.findall(regex, text)
+    # Matching will result to ('name', 'label', 'default')
+    return {
+        p[0].lower(): {
+            'label': p[1],
+            'default': p[2]
+        } for p in params if len(p) > 1
+    }
 
 
 def safe_login_prompt(request):

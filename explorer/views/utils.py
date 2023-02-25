@@ -43,7 +43,7 @@ def query_viewmodel(request, query, title=None, form=None, message=None,
 
     ret = {
         'tasks_enabled': app_settings.ENABLE_TASKS,
-        'params': query.available_params(),
+        'params': query.available_params_w_labels(),
         'title': title,
         'shared': query.shared,
         'query': query,

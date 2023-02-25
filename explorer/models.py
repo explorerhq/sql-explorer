@@ -111,9 +111,27 @@ class Query(models.Model):
         :rtype: dict
         """
         p = extract_params(self.sql)
+        p2 = {k: v['default'] for k, v in p.items()}
+
         if self.params:
-            shared_dict_update(p, self.params)
-        return p
+            shared_dict_update(p2, self.params)
+        return p2
+
+    def available_params_w_labels(self):
+        """
+        Merge parameter values into a dictionary of available parameters with their labels
+
+        :return: A merged dictionary of parameter names and values/labels.
+                 Values of non-existent parameters are removed.
+        :rtype: dict
+        """
+        p = extract_params(self.sql)
+        return {
+            k: {
+                'label': v['label'] if v['label'] else k,
+                'val': self.params[k] if self.params and k in self.params else v['default']
+            } for k, v in p.items()
+        }
 
     def get_absolute_url(self):
         return reverse("query_detail", kwargs={'query_id': self.id})

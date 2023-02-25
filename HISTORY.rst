@@ -8,6 +8,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 `unreleased`_ changes
 ---------------------
 
+* `#519`_: Add labels to params like ``$$paramName|label:defaultValue$$``
 
 `3.0.1`_ (2022-12-16)
 ---------------------
@@ -441,6 +442,7 @@ Initial Release
 .. _#506: https://github.com/groveco/django-sql-explorer/pull/506
 .. _#508: https://github.com/groveco/django-sql-explorer/pull/508
 .. _#515: https://github.com/groveco/django-sql-explorer/pull/515
+.. _#519: https://github.com/groveco/django-sql-explorer/pull/519
 
 .. _#269: https://github.com/groveco/django-sql-explorer/issues/269
 .. _#288: https://github.com/groveco/django-sql-explorer/issues/288
@@ -457,5 +459,6 @@ Initial Release
 .. _#483: https://github.com/groveco/django-sql-explorer/issues/483
 .. _#490: https://github.com/groveco/django-sql-explorer/issues/490
 .. _#492: https://github.com/groveco/django-sql-explorer/issues/492
+
 
 .. _furo: https://github.com/pradyunsg/furo
