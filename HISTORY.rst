@@ -8,7 +8,20 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 `unreleased`_ changes
 ---------------------
 
+
+`3.1.0`_ (2023-02-25)
+---------------------
+
+* `#520`_: Favorite queries
 * `#519`_: Add labels to params like ``$$paramName|label:defaultValue$$``
+* `#517`_: Pivot export
+
+* `#524`_: ci: pre-commit autoupdate
+* `#523`_: ci: ran pre-commit on all files for ci bot integration
+* `#522`_: ci: coverage update
+* `#521`_: ci: Adding django 4.2 to the test suite
+
+
 
 `3.0.1`_ (2022-12-16)
 ---------------------
@@ -382,7 +395,8 @@ Initial Release
 .. _2.5.0: https://github.com/groveco/django-sql-explorer/compare/2.4.2...2.5.0
 .. _3.0: https://github.com/groveco/django-sql-explorer/compare/2.5.0...3.0
 .. _3.0.1: https://github.com/groveco/django-sql-explorer/compare/3.0...3.0.1
-.. _unreleased: https://github.com/groveco/django-sql-explorer/compare/2.4.2...master
+.. _3.1.0: https://github.com/groveco/django-sql-explorer/compare/3.0.1...3.1.0
+.. _unreleased: https://github.com/groveco/django-sql-explorer/compare/3.1.0...master
 
 .. _#254: https://github.com/groveco/django-sql-explorer/pull/254
 .. _#334: https://github.com/groveco/django-sql-explorer/pull/334
@@ -442,7 +456,13 @@ Initial Release
 .. _#506: https://github.com/groveco/django-sql-explorer/pull/506
 .. _#508: https://github.com/groveco/django-sql-explorer/pull/508
 .. _#515: https://github.com/groveco/django-sql-explorer/pull/515
+.. _#517: https://github.com/groveco/django-sql-explorer/pull/517
 .. _#519: https://github.com/groveco/django-sql-explorer/pull/519
+.. _#520: https://github.com/groveco/django-sql-explorer/pull/520
+.. _#521: https://github.com/groveco/django-sql-explorer/pull/521
+.. _#522: https://github.com/groveco/django-sql-explorer/pull/522
+.. _#523: https://github.com/groveco/django-sql-explorer/pull/523
+.. _#524: https://github.com/groveco/django-sql-explorer/pull/524
 
 .. _#269: https://github.com/groveco/django-sql-explorer/issues/269
 .. _#288: https://github.com/groveco/django-sql-explorer/issues/288
