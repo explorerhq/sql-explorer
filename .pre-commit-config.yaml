@@ -40,3 +40,10 @@ repos:
     rev: 5.12.0
     hooks:
       - id: isort
+
+  - repo: https://github.com/remastr/pre-commit-django-check-migrations
+    rev: v0.1.0
+    hooks:
+      - id: check-migrations-created
+        args: [--manage-path=manage.py]
+        additional_dependencies: [django==4.1]
