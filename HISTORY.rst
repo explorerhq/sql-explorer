@@ -11,7 +11,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 `3.1.1`_ (2023-02-27)
 ---------------------
-* Added `makemigrations --check` pre-commit hook
+* `#529`_: Added ``makemigrations --check`` pre-commit hook
 * `#528`_: Add missing migration
 
 `3.1.0`_ (2023-02-25)
@@ -467,6 +467,7 @@ Initial Release
 .. _#523: https://github.com/groveco/django-sql-explorer/pull/523
 .. _#524: https://github.com/groveco/django-sql-explorer/pull/524
 .. _#528: https://github.com/groveco/django-sql-explorer/pull/528
+.. _#529: https://github.com/groveco/django-sql-explorer/pull/529
 
 .. _#269: https://github.com/groveco/django-sql-explorer/issues/269
 .. _#288: https://github.com/groveco/django-sql-explorer/issues/288
