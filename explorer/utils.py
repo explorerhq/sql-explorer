@@ -205,6 +205,8 @@ def get_s3_bucket():
 
 
 def s3_upload(key, data):
+    if app_settings.S3_DESTINATION:
+        key = '/'.join([app_settings.S3_DESTINATION, key])
     bucket = get_s3_bucket()
     bucket.upload_fileobj(data, key, ExtraArgs={'ContentType': "text/csv"})
     return s3_url(bucket, key)
