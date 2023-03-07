@@ -1,7 +1,16 @@
-var csrf_token = $.cookie(csrfCookieName);
+function getCsrfToken() {
+    if (csrfCookieHttpOnly) {
+        // get from hidden input
+        // @see https://docs.djangoproject.com/en/4.1/howto/csrf/#acquiring-csrf-token-from-html
+        return $('[name=csrfmiddlewaretoken]').val();
+    }
+
+    return $.cookie(csrfCookieName);
+}
+
 $.ajaxSetup({
     beforeSend: function(xhr) {
-        xhr.setRequestHeader("X-CSRFToken", csrf_token);
+        xhr.setRequestHeader("X-CSRFToken", getCsrfToken());
     }
 });
 
