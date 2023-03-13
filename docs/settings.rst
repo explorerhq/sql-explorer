@@ -252,6 +252,25 @@ Useful to set if you are using a non-AWS S3 service or you are using a private A
 
 
 
+S3 destination path
+********************
+
+S3 destination path. Defaults to empty string.
+Useful to set destination folder relative to S3 bucket.
+Along with settings ``EXPLORER_S3_ENDPOINT_URL`` and ``EXPLORER_S3_BUCKET`` you can specify full destination path for async query results.
+
+.. code-block:: python
+
+    EXPLORER_S3_DESTINATION = 'explorer/query'
+
+    # if
+    EXPLORER_S3_ENDPOINT_URL = 'https://amazonaws.com'
+    EXPLORER_S3_BUCKET = 'test-bucket'
+    # then files will be saved to
+    # https://amazonaws.com/test-bucket/explorer/query/filename1.csv
+    # where `filename1.csv` is generated filename
+
+
 S3 link expiration
 ******************
 

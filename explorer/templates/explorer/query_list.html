@@ -2,6 +2,7 @@
 {% load explorer_tags i18n static %}
 
 {% block sql_explorer_content %}
+    <div style="display: none">{% csrf_token %}</div>
     {% if recent_queries|length > 0 %}
         <h3>
             {% blocktrans trimmed with qlen=recent_queries|length %}
