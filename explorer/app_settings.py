@@ -99,6 +99,14 @@ except ImportError:
 EXPLORER_DATA_EXPORTERS = getattr(
     settings, 'EXPLORER_DATA_EXPORTERS', DEFAULT_EXPORTERS
 )
+DEFAULT_UPLOADERS = [
+    ('FileUploader', 'explorer.uploaders.FileUploader'),
+    ('S3Uploader', 'explorer.uploaders.S3Uploader'),
+]
+EXPLORER_DATA_UPLOADERS = getattr(
+    settings, 'EXPLORER_DATA_UPLOADERS', DEFAULT_UPLOADERS
+)
+EXPLORER_DEFAULT_UPLOADER = 'FileUploader'
 CSV_DELIMETER = getattr(settings, "EXPLORER_CSV_DELIMETER", ",")
 
 # API access
@@ -123,6 +131,9 @@ EXPLORER_NO_PERMISSION_VIEW = lambda: locate(# noqa
 # Async task related. Note that the EMAIL_HOST settings must be set up for
 # email to work.
 ENABLE_TASKS = getattr(settings, "EXPLORER_TASKS_ENABLED", False)
+SNAPSHOTS_FILE_PREFIX = getattr(settings, "EXPLORER_SNAPSHOTS_FILE_PREFIX", "report-")
+SNAPSHOTS_UPLOAD_DIR = getattr(settings, "EXPLORER_SNAPSHOTS_UPLOAD_DIR", None)
+SNAPSHOTS_DOWNLOAD_DIR = getattr(settings, "EXPLORER_SNAPSHOTS_DOWNLOAD_DIR", None)
 S3_ACCESS_KEY = getattr(settings, "EXPLORER_S3_ACCESS_KEY", None)
 S3_SECRET_KEY = getattr(settings, "EXPLORER_S3_SECRET_KEY", None)
 S3_BUCKET = getattr(settings, "EXPLORER_S3_BUCKET", None)

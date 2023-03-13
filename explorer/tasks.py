@@ -1,4 +1,3 @@
-import io
 import random
 import string
 from datetime import date, datetime, timedelta
@@ -9,13 +8,12 @@ from django.core.mail import send_mail
 from explorer import app_settings
 from explorer.exporters import get_exporter_class
 from explorer.models import Query, QueryLog
+from explorer.uploaders import get_uploader_class
 
 
 if app_settings.ENABLE_TASKS:
     from celery import shared_task
     from celery.utils.log import get_task_logger
-
-    from explorer.utils import s3_upload
     logger = get_task_logger(__name__)
 else:
     import logging
@@ -33,13 +31,15 @@ def execute_query(query_id, email_address):
               [email_address])
 
     exporter = get_exporter_class('csv')(q)
+    uploader = get_uploader_class(app_settings.EXPLORER_DEFAULT_UPLOADER)
     random_part = ''.join(
         random.choice(
             string.ascii_uppercase + string.digits
         ) for _ in range(20)
     )
+    filename = f"{app_settings.SNAPSHOTS_FILE_PREFIX}{date.today().strftime('%Y%m%d%H%M%S')}-{random_part}"
     try:
-        url = s3_upload(f'{random_part}.csv', convert_csv_to_bytesio(exporter))
+        url = uploader().upload(filename, exporter)
         subj = f'[SQL Explorer] Report "{q.title}" is ready'
         msg = f'Download results:\n\r{url}'
     except Exception as e:
@@ -49,27 +49,19 @@ def execute_query(query_id, email_address):
     send_mail(subj, msg, app_settings.FROM_EMAIL, [email_address])
 
 
-# I am sure there is a much more efficient way to do this but boto3 expects a binary file basically
-def convert_csv_to_bytesio(csv_exporter):
-    csv_file_io = csv_exporter.get_file_output()
-    csv_file_io.seek(0)
-    csv_data: str = csv_file_io.read()
-    bio = io.BytesIO(bytes(csv_data, 'utf-8'))
-    return bio
-
-
 @shared_task
 def snapshot_query(query_id):
     try:
         logger.info(f"Starting snapshot for query {query_id}...")
         q = Query.objects.get(pk=query_id)
         exporter = get_exporter_class('csv')(q)
-        k = 'query-{}/snap-{}.csv'.format(
+        uploader = get_uploader_class(app_settings.EXPLORER_DEFAULT_UPLOADER)
+        filename = 'query-{}/snap-{}.csv'.format(
             q.id,
             date.today().strftime('%Y%m%d-%H:%M:%S')
         )
         logger.info(f"Uploading snapshot for query {query_id} as {k}...")
-        url = s3_upload(k, convert_csv_to_bytesio(exporter))
+        url = uploader().upload(filename, exporter)
         logger.info(
             f"Done uploading snapshot for query {query_id}. URL: {url}"
         )

@@ -9,7 +9,7 @@ from django.utils.translation import gettext_lazy as _
 
 from explorer import app_settings
 from explorer.utils import (
-    extract_params, get_params_for_url, get_s3_bucket, get_valid_connection, passes_blacklist, s3_url,
+    extract_params, get_params_for_url, get_valid_connection, passes_blacklist,
     shared_dict_update, swap_params,
 )
 
@@ -162,12 +162,14 @@ class Query(models.Model):
     @property
     def snapshots(self):
         if app_settings.ENABLE_TASKS:
-            b = get_s3_bucket()
+            from explorer.uploaders import S3Uploader
+            s3 = S3Uploader()
+            b = s3.get_s3_bucket()
             objects = b.objects.filter(Prefix=f'query-{self.id}/snap-')
             objects_s = sorted(objects, key=lambda k: k.last_modified)
             return [
                 SnapShot(
-                    s3_url(b, o.key),
+                    s3.s3_url(b, o.key),
                     o.last_modified
                 ) for o in objects_s
             ]
