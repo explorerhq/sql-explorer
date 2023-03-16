@@ -18,6 +18,12 @@
         {% if message %}
             <div class="alert alert-info">{{ message }}</div>
         {% endif %}
+        <div class="alert alert-warning">
+            Note: Starting March 16th, access to the <b>phone_number</b> column has been removed for the following
+            tables: voice_workflow_campaigncallcontact, voice_core_callcontact, compliance_outreachblacklist,
+            whatsapp2_whatsapp2inboundmessage, whatsapp2_whatsapp2outboundmessage and
+            voice_compliance_businessoutreach. Please avoid using `select *` for these tables.
+        </div>
         {% if lag_exists %}
           <div class="alert alert-warning">Warning! The query results might be outdated since some data was last updated around {{ replication_lag }}.</div>
         {% endif %}
