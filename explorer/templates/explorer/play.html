@@ -1,45 +1,50 @@
 {% extends "explorer/base.html" %}
 
 {% block sql_explorer_navlinks %}
-    {% if can_change %}
-      <li><a href="{% url "query_create" %}">New Query</a></li>
-      <li class="active"><a href="">Playground</a></li>
-      <li><a href="{% url "explorer_logs" %}">Logs</a></li>
-      <li><a href="{% url "explorer_change_logs" %}">Change Logs</a></li>
-    {% endif %}
+{% if can_change %}
+<li><a href="{% url " query_create" %}">New Query</a></li>
+<li class="active"><a href="">Playground</a></li>
+<li><a href="{% url " explorer_logs" %}">Logs</a></li>
+<li><a href="{% url " explorer_change_logs" %}">Change Logs</a></li>
+{% endif %}
 {% endblock %}
 
 {% block sql_explorer_content %}
 <div class="row">
     <div id="query_area" class="col-md-12">
-        <h2>Playground</h2>
-        <p>The playground is for experimenting and writing ad-hoc queries. By default, nothing you do here will be saved.</p>
+        <h2>Playground Test</h2>
+        <p>The playground is for experimenting and writing ad-hoc queries. By default, nothing you do here will be
+            saved.</p>
         {% if lag_exists %}
-          <div class="alert alert-warning">Warning! The query results might be outdated since some data was last updated around {{ replication_lag }}.</div>
+        <div class="alert alert-warning">Warning! The query results might be outdated since some data was last updated
+            around {{ replication_lag }}.</div>
         {% endif %}
         </br>
         <p>
-            <b>Note:</b> Starting March 16th, access to the <b>phone_number</b> column has been removed for the following
+            <b>Note:</b> Starting March 16th, access to the <b>phone_number</b> column has been removed for the
+            following
             tables: voice_workflow_campaigncallcontact, voice_core_callcontact, compliance_outreachblacklist,
             whatsapp2_whatsapp2inboundmessage, whatsapp2_whatsapp2outboundmessage and
             voice_compliance_businessoutreach. Please avoid using `select *` for these tables.
         </p>
-        <form role="form" action="{% url "explorer_playground" %}" method="post" id="editor" class="playground-form">{% csrf_token %}
+        <form role="form" action="{% url " explorer_playground" %}" method="post" id="editor" class="playground-form">{%
+            csrf_token %}
             {% if error %}
-                <div class="alert alert-danger">{{ error|escape }}</div>
+            <div class="alert alert-danger">{{ error|escape }}</div>
             {% endif %}
             <div class="panel panel-default sql-panel">
                 <div class="panel-heading">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <span class="panel-title">Playground SQL</span>
-                    </div>
-                    {% if ql_id %}
-                        <div class="col-md-6 text-right">
-                          <small><a href="{% url "explorer_playground" %}?querylog_id={{ ql_id }}"><i class="glyphicon glyphicon-link"></i></a></small>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <span class="panel-title">Playground SQL</span>
                         </div>
-                    {% endif %}
-                  </div>
+                        {% if ql_id %}
+                        <div class="col-md-6 text-right">
+                            <small><a href="{% url " explorer_playground" %}?querylog_id={{ ql_id }}"><i
+                                        class="glyphicon glyphicon-link"></i></a></small>
+                        </div>
+                        {% endif %}
+                    </div>
                 </div>
                 <div class="panel-content">
                     <textarea class="form-control" cols="40" id="id_sql" name="sql" rows="20">{{ query.sql }}</textarea>
@@ -48,11 +53,12 @@
             <div class="form-group">
                 <div class="text-center">
                     <div class="btn-group">
-                        <input type="submit" value="Refresh Preview" id="refresh_play_button" class="btn btn-default"/>
-                        <input type="submit" value="Save As New Query" id="create_button" class="btn btn-default"/>
-                        <input type="submit" value="Download CSV" id="download_play_button" class="btn btn-default"/>
+                        <input type="submit" value="Refresh Preview" id="refresh_play_button" class="btn btn-default" />
+                        <input type="submit" value="Save As New Query" id="create_button" class="btn btn-default" />
+                        <input type="submit" value="Download CSV" id="download_play_button" class="btn btn-default" />
                         <button type="button" class="btn btn-default" id="show_schema_button">Show Schema</button>
-                        <button type="button" class="btn btn-default" id="hide_schema_button" style="display: none;">Hide Schema</button>
+                        <button type="button" class="btn btn-default" id="hide_schema_button"
+                            style="display: none;">Hide Schema</button>
                         <button type="button" class="btn btn-default" id="format_button">Format</button>
                     </div>
                 </div>
@@ -69,11 +75,9 @@
 {% endblock %}
 
 {% block sql_explorer_scripts %}
-    <script>
-        $(function() {
-            var e = new ExplorerEditor(queryId, dataUrl);
-        });
-    </script>
+<script>
+    $(function () {
+        var e = new ExplorerEditor(queryId, dataUrl);
+    });
+</script>
 {% endblock %}
-
-
