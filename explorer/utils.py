@@ -32,6 +32,9 @@ def passes_blacklist(sql):
 def get_connection():
     return connections[app_settings.EXPLORER_CONNECTION_NAME] if app_settings.EXPLORER_CONNECTION_NAME else connection
 
+def get_connection_pii():
+    return connections[app_settings.EXPLORER_CONNECTION_NAME_PII] if app_settings.EXPLORER_CONNECTION_NAME_PII else connection
+
 
 def schema_info():
     """

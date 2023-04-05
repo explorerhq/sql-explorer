@@ -1,4 +1,4 @@
-from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection, get_s3_connection
+from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection, get_s3_connection , get_connection_pii
 from future.utils import python_2_unicode_compatible
 from django.db import models, DatabaseError
 from time import time
@@ -22,6 +22,7 @@ class Query(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     last_run_date = models.DateTimeField(auto_now=True)
     snapshot = models.BooleanField(default=False, help_text="Include in snapshot task (if enabled)")
+    # connection=models.BooleanField(default=False, help_text="use to select connection type")
 
     def __init__(self, *args, **kwargs):
         self.params = kwargs.get('params')
@@ -47,8 +48,9 @@ class Query(models.Model):
     def final_sql(self):
         return swap_params(self.sql, self.available_params())
 
-    def execute_query_only(self):
-        return QueryResult(self.final_sql())
+    def execute_query_only(self,connection_type=None):
+        
+        return QueryResult(self.final_sql(),connection_type)
 
     def execute_with_logging(self, executing_user):
         ql = self.log(executing_user)
@@ -61,6 +63,13 @@ class Query(models.Model):
         ret = self.execute_query_only()
         ret.process()
         return ret
+    
+    def execute_pii(self):
+        ret = self.execute_query_only(True)
+        ret.process()
+        return ret
+        
+        
 
     def available_params(self):
         """
@@ -131,7 +140,7 @@ class QueryChangeLog(models.Model):
 
 class QueryResult(object):
 
-    def __init__(self, sql):
+    def __init__(self, sql, connection_type=None):
 
         self.sql = sql
 
@@ -140,6 +149,7 @@ class QueryResult(object):
         self._description = cursor.description or []
         self._data = [list(r) for r in cursor.fetchall()]
         self.duration = duration
+        self.connection_type=connection_type
 
         cursor.close()
 
@@ -193,7 +203,10 @@ class QueryResult(object):
                     r[ix] = t.format(str(r[ix]))
 
     def execute_query(self):
-        conn = get_connection()
+        if(self.connection_type):
+            conn = get_connection_pii()  # can change connectiion type here to use different role --> get_connection_pii()
+        else:
+            conn= get_connection()
         cursor = conn.cursor()
         start_time = time()
 

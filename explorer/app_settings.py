@@ -2,6 +2,7 @@ from django.conf import settings
 
 # Required
 EXPLORER_CONNECTION_NAME = getattr(settings, 'EXPLORER_CONNECTION_NAME', None)
+EXPLORER_CONNECTION_PII_NAME = getattr(settings, 'EXPLORER_CONNECTION_PII_NAME', None)
 
 # Change the behavior of explorer
 EXPLORER_SQL_BLACKLIST = getattr(settings, 'EXPLORER_SQL_BLACKLIST', ('ALTER', 'RENAME ', 'DROP', 'TRUNCATE', 'INSERT INTO', 'UPDATE', 'REPLACE', 'DELETE', 'CREATE TABLE', 'SCHEMA', 'GRANT', 'OWNER TO'))
