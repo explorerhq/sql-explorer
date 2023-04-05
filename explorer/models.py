@@ -22,7 +22,7 @@ class Query(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     last_run_date = models.DateTimeField(auto_now=True)
     snapshot = models.BooleanField(default=False, help_text="Include in snapshot task (if enabled)")
-    # connection=models.BooleanField(default=False, help_text="use to select connection type")
+    connection=models.BooleanField(default=False, help_text="use to select connection type")
 
     def __init__(self, *args, **kwargs):
         self.params = kwargs.get('params')
@@ -150,6 +150,8 @@ class QueryResult(object):
         self._data = [list(r) for r in cursor.fetchall()]
         self.duration = duration
         self.connection_type=connection_type
+        print("----------------------------debug-------------------------")
+        print(self)       
 
         cursor.close()
 
