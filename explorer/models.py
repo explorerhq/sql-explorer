@@ -64,7 +64,7 @@ class Query(models.Model):
         return ret, ql
 
     def execute(self):
-        ret = self.execute_query_only()
+        ret = self.execute_query_only(False)
         ret.process()
         return ret
 
@@ -149,18 +149,22 @@ class QueryResult(object):
     def __init__(self, sql, connection_type=None):
 
         self.sql = sql
+        logger.info(
+            "----------------------------debug1-------------------------")
+        if (connection_type):
+            self.connection_type = connection_type
+        else:
+            self.connection_type = False
 
         cursor, duration = self.execute_query()
 
         self._description = cursor.description or []
         self._data = [list(r) for r in cursor.fetchall()]
         self.duration = duration
-        if (connection_type):
-            self.connection_type = connection_type
-        else:
-            self.connection_type = False
-        print("----------------------------debug-------------------------")
-        print(self)
+
+        logger.info(
+            "----------------------------debug-------------------------")
+        logger.info(self)
 
         cursor.close()
 
