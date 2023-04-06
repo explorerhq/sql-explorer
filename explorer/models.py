@@ -155,8 +155,10 @@ class QueryResult(object):
         self._description = cursor.description or []
         self._data = [list(r) for r in cursor.fetchall()]
         self.duration = duration
-        if(connection_type):
+        if (connection_type):
             self.connection_type = connection_type
+        else:
+            self.connection_type = False
         print("----------------------------debug-------------------------")
         print(self)
 
