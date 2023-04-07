@@ -40,7 +40,7 @@ def get_connection():
 
 
 def get_connection_pii():
-    return connections[app_settings.EXPLORER_CONNECTION_NAME_PII] if app_settings.EXPLORER_CONNECTION_NAME_PII else connection
+    return connections[app_settings.EXPLORER_CONNECTION_PII_NAME] if app_settings.EXPLORER_CONNECTION_PII_NAME else connection
 
 
 def schema_info():
