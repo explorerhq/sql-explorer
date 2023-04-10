@@ -25,8 +25,6 @@ class Query(models.Model):
     last_run_date = models.DateTimeField(auto_now=True)
     snapshot = models.BooleanField(
         default=False, help_text="Include in snapshot task (if enabled)")
-    connection = models.BooleanField(
-        default=False, help_text="use to select connection type")
 
     def __init__(self, *args, **kwargs):
         self.params = kwargs.get('params')
@@ -225,6 +223,8 @@ class QueryResult(object):
                 "----------------------------pii-connection-------------------------")
             conn = get_connection_pii()
         else:
+            logger.info(
+                "----------------------------non-pii-connection-------------------------")
             conn = get_connection()
         cursor = conn.cursor()
         start_time = time()
