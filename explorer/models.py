@@ -219,8 +219,10 @@ class QueryResult(object):
                     r[ix] = t.format(str(r[ix]))
 
     def execute_query(self):
+        # can change connectiion type here to use different role --> get_connection_pii()
         if (self.connection_type):
-            # can change connectiion type here to use different role --> get_connection_pii()
+            logger.info(
+                "----------------------------pii-connection-------------------------")
             conn = get_connection_pii()
         else:
             conn = get_connection()

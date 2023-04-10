@@ -4,7 +4,7 @@
 {% block sql_explorer_navlinks %}
 {% if can_change %}
 <li><a href="{% url " query_create" %}">New Query</a></li>
-<li><a href="{% url " explorer_playground" %}">Play</a></li>
+<li><a href="{% url " explorer_playground" %}">ground</a></li>
 <li><a href="{% url " explorer_logs" %}">Logs</a></li>
 <li><a href="{% url " explorer_change_logs" %}">Change Logs</a></li>
 {% endif %}
@@ -54,7 +54,7 @@
                 {% endif %}
                 <th>CSV</th>
                 {% if can_change %}
-                <th>Play</th>
+                <th>Playground</th>
                 <th>Delete</th>
                 {% endif %}
                 <th>Run Count</th>
