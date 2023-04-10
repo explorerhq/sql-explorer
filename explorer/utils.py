@@ -40,6 +40,8 @@ def get_connection():
 
 
 def get_connection_pii():
+    print("-------------------explorer_pii_connection---------------------")
+    print(app_settings.EXPLORER_CONNECTION_PII_NAME)
     return connections[app_settings.EXPLORER_CONNECTION_PII_NAME] if app_settings.EXPLORER_CONNECTION_PII_NAME else connection
 
 

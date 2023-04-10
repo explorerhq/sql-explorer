@@ -67,6 +67,7 @@ class Query(models.Model):
         return ret
 
     def execute_pii(self):
+        print("execute_pii")
         ret = self.execute_query_only(True)
         ret.process()
         return ret
@@ -147,7 +148,7 @@ class QueryResult(object):
     def __init__(self, sql, connection_type=None):
 
         self.sql = sql
-        logger.info(
+        print(
             "----------------------------debug1-------------------------")
         if (connection_type):
             self.connection_type = connection_type
@@ -160,9 +161,9 @@ class QueryResult(object):
         self._data = [list(r) for r in cursor.fetchall()]
         self.duration = duration
 
-        logger.info(
+        print(
             "----------------------------debug-------------------------")
-        logger.info(self)
+        
 
         cursor.close()
 
@@ -219,11 +220,11 @@ class QueryResult(object):
     def execute_query(self):
         # can change connectiion type here to use different role --> get_connection_pii()
         if (self.connection_type):
-            logger.info(
+            print(
                 "----------------------------pii-connection-------------------------")
             conn = get_connection_pii()
         else:
-            logger.info(
+            print(
                 "----------------------------non-pii-connection-------------------------")
             conn = get_connection()
         cursor = conn.cursor()
