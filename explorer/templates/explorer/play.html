@@ -1,12 +1,12 @@
 {% extends "explorer/base.html" %}
 
 {% block sql_explorer_navlinks %}
-{% if can_change %}
-<li><a href="{% url "query_create" %}">New Query</a></li>
-<li class="active"><a href="">Playground</a></li>
-<li><a href="{% url "explorer_logs" %}">Logs</a></li>
-<li><a href="{% url "explorer_change_logs" %}">Change Logs</a></li>
-{% endif %}
+    {% if can_change %}
+      <li><a href="{% url "query_create" %}">New Query</a></li>
+      <li class="active"><a href="">Playground</a></li>
+      <li><a href="{% url "explorer_logs" %}">Logs</a></li>
+      <li><a href="{% url "explorer_change_logs" %}">Change Logs</a></li>
+    {% endif %}
 {% endblock %}
 
 {% block sql_explorer_content %}
