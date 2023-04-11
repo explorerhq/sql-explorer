@@ -40,12 +40,12 @@ def passes_blacklist(sql):
 
 
 def get_connection():
-    print("explorer_connection succesfull")
+    logger.info("explorer_connection succesfull")
     return connections[app_settings.EXPLORER_CONNECTION_NAME] if app_settings.EXPLORER_CONNECTION_NAME else connection
 
 
 def get_connection_pii():
-    print("explorer_pii_connection succesfull")
+    logger.info("explorer_pii_connection succesfull")
     return connections[app_settings.EXPLORER_CONNECTION_PII_NAME] if app_settings.EXPLORER_CONNECTION_PII_NAME else connection
 
 

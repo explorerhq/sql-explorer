@@ -67,7 +67,6 @@ class Query(models.Model):
         return ret
 
     def execute_pii(self):
-        print("execute_pii")
         ret = self.execute_query_only(True)
         ret.process()
         return ret
