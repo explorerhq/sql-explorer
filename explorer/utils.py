@@ -12,6 +12,11 @@ import string
 import re
 import functools
 import sys
+import logging
+
+logger = logging.getLogger(__name__)
+
+
 PY3 = sys.version_info[0] == 3
 
 if PY3:
@@ -35,13 +40,12 @@ def passes_blacklist(sql):
 
 
 def get_connection():
-    print("-------------------explorer_connection---------------------")
+    print("explorer_connection succesfull")
     return connections[app_settings.EXPLORER_CONNECTION_NAME] if app_settings.EXPLORER_CONNECTION_NAME else connection
 
 
 def get_connection_pii():
-    print("-------------------explorer_pii_connection---------------------")
-    print(app_settings.EXPLORER_CONNECTION_PII_NAME)
+    print("explorer_pii_connection succesfull")
     return connections[app_settings.EXPLORER_CONNECTION_PII_NAME] if app_settings.EXPLORER_CONNECTION_PII_NAME else connection
 
 

@@ -29,9 +29,9 @@
             <td>{{ object.run_by_user.email }}</td>
             <td>{{ object.duration|floatformat:2 }}ms</td>
             <td class="log-sql">{{ object.sql }}</td>
-            <td> {% if object.query_id %}<a href="{% url " query_detail" object.query_id %}">Query {{ object.query_id
+            <td> {% if object.query_id %}<a href="{% url "query_detail" object.query_id %}">Query {{ object.query_id
                     }}</a>{% elif object.is_playground %}Playground{% else %}--{% endif %}</td>
-            <td><a href="{% url " explorer_playground" %}?querylog_id={{ object.id }}">Open</a></td>
+            <td><a href="{% url "explorer_playground" %}?querylog_id={{ object.id }}">Open</a></td>
         </tr>
         {% endfor %}
     </tbody>

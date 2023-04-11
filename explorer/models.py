@@ -148,8 +148,6 @@ class QueryResult(object):
     def __init__(self, sql, connection_type=None):
 
         self.sql = sql
-        print(
-            "----------------------------debug1-------------------------")
         if (connection_type):
             self.connection_type = connection_type
         else:
@@ -160,10 +158,6 @@ class QueryResult(object):
         self._description = cursor.description or []
         self._data = [list(r) for r in cursor.fetchall()]
         self.duration = duration
-
-        print(
-            "----------------------------debug-------------------------")
-        
 
         cursor.close()
 
@@ -220,12 +214,11 @@ class QueryResult(object):
     def execute_query(self):
         # can change connectiion type here to use different role --> get_connection_pii()
         if (self.connection_type):
-            print(
-                "----------------------------pii-connection-------------------------")
+            logger.info(
+                "pii-connection")
             conn = get_connection_pii()
         else:
-            print(
-                "----------------------------non-pii-connection-------------------------")
+            logger.info("non-pii-connection")
             conn = get_connection()
         cursor = conn.cursor()
         start_time = time()

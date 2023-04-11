@@ -2,10 +2,10 @@
 
 {% block sql_explorer_navlinks %}
 {% if can_change %}
-<li><a href="{% url " query_create" %}">New Query</a></li>
-<li><a href="{% url " explorer_playground" %}">Playground</a></li>
-<li><a href="{% url " explorer_logs" %}">Logs</a></li>
-<li class="active"><a href="{% url " explorer_change_logs" %}">Change Logs</a></li>
+<li><a href="{% url "query_create" %}">New Query</a></li>
+<li><a href="{% url "explorer_playground" %}">Playground</a></li>
+<li><a href="{% url "explorer_logs" %}">Logs</a></li>
+<li class="active"><a href="{% url "explorer_change_logs" %}">Change Logs</a></li>
 {% endif %}
 {% endblock %}
 
@@ -29,9 +29,9 @@
             <td>{{ object.run_by_user.email }}</td>
             <td class="log-sql">{{ object.old_sql }}</td>
             <td class="log-sql">{{ object.new_sql }}</td>
-            <td> {% if object.query_id %}<a href="{% url " query_detail" object.query_id %}">Query {{ object.query_id
+            <td> {% if object.query_id %}<a href="{% url "query_detail" object.query_id %}">Query {{ object.query_id
                     }}</a>{% elif object.is_playground %}Playground{% else %}--{% endif %}</td>
-            <td><a href="{% url " explorer_playground" %}?query_id={{ object.query_id }}">Open</a></td>
+            <td><a href="{% url "explorer_playground" %}?query_id={{ object.query_id }}">Open</a></td>
         </tr>
         {% endfor %}
     </tbody>
