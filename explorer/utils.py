@@ -1,20 +1,28 @@
+from django.contrib.auth import REDIRECT_FIELD_NAME
+from django.contrib.auth.views import login
+from django.contrib.admin.forms import AdminAuthenticationForm
+import datetime
+import sqlparse
+from ago import human
+from six.moves import cStringIO
+from django.http import HttpResponse
+from django.db import connections, connection, DatabaseError
+from explorer import app_settings
+import string
+import re
 import functools
 import sys
+import logging
+
+logger = logging.getLogger(__name__)
+
+
 PY3 = sys.version_info[0] == 3
 
 if PY3:
     import csv
 else:
     import unicodecsv as csv
-import re
-import string
-from explorer import app_settings
-from django.db import connections, connection, DatabaseError
-from django.http import HttpResponse
-from six.moves import cStringIO
-from ago import human
-import sqlparse
-import datetime
 
 EXPLORER_PARAM_TOKEN = "$$"
 
@@ -24,13 +32,21 @@ REPLICATION_LAG_THRESHOLD_VALUE_IN_MINUTES = 3
 
 
 def passes_blacklist(sql):
-    clean = functools.reduce(lambda sql, term: sql.upper().replace(term, ""), [t.upper() for t in app_settings.EXPLORER_SQL_WHITELIST], sql)
-    fails = [bl_word for bl_word in app_settings.EXPLORER_SQL_BLACKLIST if bl_word in clean.upper()]
+    clean = functools.reduce(lambda sql, term: sql.upper().replace(term, ""), [
+                             t.upper() for t in app_settings.EXPLORER_SQL_WHITELIST], sql)
+    fails = [
+        bl_word for bl_word in app_settings.EXPLORER_SQL_BLACKLIST if bl_word in clean.upper()]
     return not any(fails), fails
 
 
 def get_connection():
+    logger.info("explorer_connection succesfull")
     return connections[app_settings.EXPLORER_CONNECTION_NAME] if app_settings.EXPLORER_CONNECTION_NAME else connection
+
+
+def get_connection_pii():
+    logger.info("explorer_pii_connection succesfull")
+    return connections[app_settings.EXPLORER_CONNECTION_PII_NAME] if app_settings.EXPLORER_CONNECTION_PII_NAME else connection
 
 
 def schema_info():
@@ -56,20 +72,21 @@ def schema_info():
     for label, app in apps.app_configs.items():
         if app.name not in app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS:
             for model_name, model in apps.get_app_config(label).models.items():
-                friendly_model = "%s -> %s" % (app.name, model._meta.object_name)
+                friendly_model = "%s -> %s" % (app.name,
+                                               model._meta.object_name)
                 ret.append((
-                              friendly_model,
-                              model._meta.db_table,
-                              [_format_field(f) for f in model._meta.fields]
-                          ))
+                    friendly_model,
+                    model._meta.db_table,
+                    [_format_field(f) for f in model._meta.fields]
+                ))
 
                 # Do the same thing for many_to_many fields. These don't show up in the field list of the model
                 # because they are stored as separate "through" relations and have their own tables
                 ret += [(
-                           friendly_model,
-                           m2m.rel.through._meta.db_table,
-                           [_format_field(f) for f in m2m.rel.through._meta.fields]
-                        ) for m2m in model._meta.many_to_many]
+                    friendly_model,
+                    m2m.rel.through._meta.db_table,
+                    [_format_field(f) for f in m2m.rel.through._meta.fields]
+                ) for m2m in model._meta.many_to_many]
 
     return sorted(ret, key=lambda t: t[1])
 
@@ -146,9 +163,6 @@ def csv_report(query, delim=None):
 
 
 # Helpers
-from django.contrib.admin.forms import AdminAuthenticationForm
-from django.contrib.auth.views import login
-from django.contrib.auth import REDIRECT_FIELD_NAME
 
 
 def safe_admin_login_prompt(request):
@@ -258,10 +272,12 @@ def check_replication_lag():
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT now() - pg_last_xact_replay_timestamp() AS replication_lag")
+    cursor.execute(
+        "SELECT now() - pg_last_xact_replay_timestamp() AS replication_lag")
     replication_lag = cursor.fetchone()[0]
 
-    threshold_value = datetime.timedelta(minutes=REPLICATION_LAG_THRESHOLD_VALUE_IN_MINUTES)
+    threshold_value = datetime.timedelta(
+        minutes=REPLICATION_LAG_THRESHOLD_VALUE_IN_MINUTES)
 
     if not replication_lag or replication_lag <= threshold_value:
         return False, None
