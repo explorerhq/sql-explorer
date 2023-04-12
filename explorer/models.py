@@ -50,9 +50,9 @@ class Query(models.Model):
     def final_sql(self):
         return swap_params(self.sql, self.available_params())
 
-    def execute_query_only(self, is_connection_type_pii=None):
+    def execute_query_only(self, is_is_connection_type_pii_pii=None):
 
-        return QueryResult(self.final_sql(), is_connection_type_pii)
+        return QueryResult(self.final_sql(), is_is_connection_type_pii_pii)
 
     def execute_with_logging(self, executing_user):
         ql = self.log(executing_user)
@@ -144,13 +144,13 @@ class QueryChangeLog(models.Model):
 
 class QueryResult(object):
 
-    def __init__(self, sql, connection_type=None):
+    def __init__(self, sql, is_connection_type_pii=None):
 
         self.sql = sql
-        if (connection_type):
-            self.connection_type = connection_type
+        if (is_connection_type_pii):
+            self.is_connection_type_pii = is_connection_type_pii
         else:
-            self.connection_type = False
+            self.is_connection_type_pii = False
 
         cursor, duration = self.execute_query()
 
@@ -212,7 +212,7 @@ class QueryResult(object):
 
     def execute_query(self):
         # can change connectiion type here to use different role --> get_connection_pii()
-        if (self.connection_type):
+        if (self.is_connection_type_pii):
             logger.info(
                 "pii-connection")
             conn = get_connection_pii()
