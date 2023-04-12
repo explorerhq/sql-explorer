@@ -50,9 +50,9 @@ class Query(models.Model):
     def final_sql(self):
         return swap_params(self.sql, self.available_params())
 
-    def execute_query_only(self, connection_type=None):
+    def execute_query_only(self, is_connection_type_pii=None):
 
-        return QueryResult(self.final_sql(), connection_type)
+        return QueryResult(self.final_sql(), is_connection_type_pii)
 
     def execute_with_logging(self, executing_user):
         ql = self.log(executing_user)
