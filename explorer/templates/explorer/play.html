@@ -12,7 +12,7 @@
 {% block sql_explorer_content %}
 <div class="row">
     <div id="query_area" class="col-md-12">
-        <h2>Playground Test</h2>
+        <h2>Playground</h2>
         <p>The playground is for experimenting and writing ad-hoc queries. By default, nothing you do here will be
             saved.</p>
         {% if lag_exists %}
@@ -27,8 +27,8 @@
             whatsapp2_whatsapp2inboundmessage, whatsapp2_whatsapp2outboundmessage and
             voice_compliance_businessoutreach. Please avoid using `select *` for these tables.
         </p>
-        <form role="form" action="{% url "explorer_playground" %}" method="post" id="editor" class="playground-form">{%
-            csrf_token %}
+        <form role="form" action="{% url "explorer_playground" %}" method="post" id="editor" class="playground-form">
+        {% csrf_token %}
             {% if error %}
             <div class="alert alert-danger">{{ error|escape }}</div>
             {% endif %}
