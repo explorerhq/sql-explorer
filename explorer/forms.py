@@ -40,7 +40,7 @@ class SqlField(Field):
         if error:
 
             raise ValidationError(
-                error,
+                str(error)+"test",
                 code="InvalidSql"
             )
 
