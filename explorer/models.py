@@ -1,4 +1,4 @@
-from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection, get_s3_connection, get_connection_pii, apply_mask, get_pii_tables, explorer_pii_tables, pii_regex_patterns
+from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection, get_s3_connection, get_connection_pii
 from future.utils import python_2_unicode_compatible
 from django.db import models, DatabaseError
 from time import time
@@ -158,31 +158,7 @@ class QueryResult(object):
 
         self._description = cursor.description or []
         self._data = [list(r) for r in cursor.fetchall()]
-        # pattern = "|".join(explorer_pii_tables)
-        # match= re.findall(pattern, self.sql)
-        # for i in explorer_pii_tables:
-        #     if i in self.sql:
-        #         pii_freq = len(re.findall(pii_regex_patterns["phone"], str(self._data)))
-        #         for freq in range(pii_freq):
-        #             regex = re.search(pii_regex_patterns["phone"], str(self._data))
-        #             if(regex):
-        #                 if regex:
-        #                     self._data = str(self._data).replace(regex.group().rstrip(),apply_mask(regex.group().rstrip()))
-        
-        # for data_iter,data in self._data:
-        #     for field_iter,field in enumerate(data):
-        #         if(type(field) == type({})):
-        #             pii_freq = len(re.findall(pii_regex_patterns["phone"], str(field)))
-        #             for freq in range(pii_freq):
-        #                 regex = re.search(pii_regex_patterns["phone"], str(field))
-        #                 if(regex):
-        #                     self._data[data_iter][field_iter] = json.loads(str(data[field_iter]).replace(regex.group().rstrip(),apply_mask(regex.group().rstrip())))
-                    
-        #         else:
-        #             pass
-        
-                
-                
+
         self.duration = duration
 
         cursor.close()

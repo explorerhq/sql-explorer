@@ -325,32 +325,20 @@ class QueryView(ExplorerContextMixin, View):
         show = url_get_show(request)
         query, form = QueryView.get_instance_and_form(request, query_id)
 
-        # old_sql = query.sql
-        # form_isvalid = form.is_valid()
-        # if form_isvalid:
-        #     new_sql = request.POST.get('sql')
-        #     if not compare_sql(old_sql, new_sql):
-        #         change_log = QueryChangeLog(
-        #             old_sql=old_sql,
-        #             new_sql=new_sql,
-        #             query=query,
-        #             run_by_user=request.user,
-        #         )
-        #         change_log.save()
-        # success = form_isvalid and form.save()
-        # try:
-        #     vm = query_viewmodel(request, query, form=form, run_query=show,
-        #                          message="Query saved." if success else None)
-        # except Exception as ve:
-        #     vm = query_viewmodel(
-        #         request,
-        #         query,
-        #         form=form,
-        #         run_query=False,
-        #         error=ve.message
-        #     )
-
-        success = form.is_valid() and form.save()
+        old_sql = query.sql
+        form_isvalid = form.is_valid()
+        if form_isvalid:
+            new_sql = request.POST.get('sql')
+            if not compare_sql(old_sql, new_sql):
+                change_log = QueryChangeLog(
+                    old_sql=old_sql,
+                    new_sql=new_sql,
+                    query=query,
+                    run_by_user=request.user,
+                )
+                change_log.save()
+        success = form_isvalid and form.save()
+       
         try:
             vm = query_viewmodel(
                 request,
@@ -360,6 +348,7 @@ class QueryView(ExplorerContextMixin, View):
                 message=_("Query saved.") if success else None
             )
         except ValidationError as ve:
+            print("error while save only",ve)
             vm = query_viewmodel(
                 request,
                 query,

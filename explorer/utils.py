@@ -284,29 +284,4 @@ def check_replication_lag():
 
     return True, human(replication_lag, 4)
 
-
-explorer_pii_tables = ["voice_core_voicecalllog"
-                       "voice_workflow_campaigncallcontactsmslog"
-                       "voice_workflow_campaigncallcontactivrlog"
-                       "voice_core_callcontactdata"
-                       "whatsapp2_whatsapp2inboundmessage"
-                       "whatsapp2_whatsapp2outboundmessage"]
-
-pii_regex_patterns = {
-    "email": "([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)",
-    "phone": "(\+\d{1,3}[- ]?)?\d{10}[\s , )]",
-    "pan": "[A-Z]{5}[0-9]{4}[A-Z]{1}",
-    "aadhar": "[0-9]{4}[ -]?[0-9]{4}[ -]?[0-9]{4}[" " , . )]",
-    "recording_url": str('[https?: // " ]\S+\.mp3[ \ {t1} . , " ]?'.format(t1="'")),
-}
-
-
-def get_pii_tables():
-    return explorer_pii_tables
-
-
-def apply_mask(value):
-    val = value[: int(len(value) / 2)] + "*" * int(len(value) / 2)
-    return value.replace(value, val)
-    
     
