@@ -3,6 +3,7 @@ from django.forms.widgets import CheckboxInput
 from explorer.models import Query, MSG_FAILED_BLACKLIST
 from django.db import DatabaseError
 import logging
+import re
 _ = lambda x: x
 
 logger = logging.getLogger(__name__)
@@ -24,10 +25,13 @@ class SqlField(Field):
         if not error and not query.available_params():
             try:
                 query.execute_query_only()
-            # except DatabaseError as e:
-            except Exception as e:
+            except DatabaseError as e:
+            
                 logger.info("------------------error executing query: %s-----------------", e)
-                error=e
+                if(re.search("permission denied", str(e))):
+                    error=None
+                else:
+                    error=e
 
         if error:
             raise ValidationError(

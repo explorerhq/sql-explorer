@@ -48,6 +48,7 @@ from functools import wraps
 
 logger = logging.getLogger(__name__)
 
+
 def view_permission(f):
     @wraps(f)
     def wrap(request, *args, **kwargs):
@@ -340,9 +341,9 @@ class QueryView(ExplorerContextMixin, View):
                 )
                 change_log.save()
         success = form_isvalid and form.save()
-       
+
         try:
-            logger.info("---------------------------------try-------------------------")
+
             vm = query_viewmodel(
                 request,
                 query,
@@ -351,15 +352,13 @@ class QueryView(ExplorerContextMixin, View):
                 message=_("Query saved.") if success else None
             )
         except ValidationError as ve:
-            logger.info(
-                "---------------------------------except-------------------------")
-            logger.info("error while save only",ve)
+
             vm = query_viewmodel(
                 request,
                 query,
                 form=form,
                 run_query=False,
-                message=("Query Saved"),
+                message=("Query Saved but not executed."),
                 error=ve.message
             )
         return self.render_template('explorer/query.html', vm)
