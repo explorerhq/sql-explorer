@@ -14,7 +14,7 @@ function ExplorerEditor(queryId, dataUrl) {
 	this.$snapshotField = $("#id_snapshot");
 	this.$paramFields = this.$form.find(".param");
 
-	this.$submit = $("#refresh_play_button, #save_button", "#save_only_button");
+	this.$submit = $("#refresh_play_button, #save_button");
 
 	if (!this.$submit.length) {
 		this.$submit = $("#refresh_button");
@@ -181,10 +181,17 @@ ExplorerEditor.prototype.bind = function () {
 	});
 
 	$("#save_only_button").click(function () {
-		// save the query only
-		saveQuery.bind(this)();
-		// remove the snapshot field from the form
-		this.$snapshotField.remove();
+		var params = this.getParams(this);
+		if (params) {
+			this.$form.attr(
+				"action",
+				"../" + this.queryId + "/?show=0&params=" + this.serializeParams(params)
+			);
+		} else {
+			this.$form.attr("action", "../" + this.queryId + "/?show=0");
+		}
+		this.$snapshotField.hide();
+		this.$form.append(this.$snapshotField);
 	});
 
 	$("#refresh_button").click(
