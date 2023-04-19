@@ -297,7 +297,7 @@ class PlayQueryView(ExplorerContextMixin, View):
         error = MSG_FAILED_BLACKLIST % ', '.join(
             failing_words) if not passes_blacklist else None
         run_query = not bool(error) if show_results else False
-        return self.render_with_sql(request, query, run_query=run_query, error=str(error)+"300")
+        return self.render_with_sql(request, query, run_query=run_query, error=error)
 
     def render(self, request):
         return self.render_template('explorer/play.html', RequestContext(request, {'title': 'Playground'}))
@@ -358,7 +358,7 @@ class QueryView(ExplorerContextMixin, View):
                 form=form,
                 run_query=False,
                 message=_("QUERY SAVED"),
-                error=ve.message+"test1"
+                error=ve.message+"test"
             )
         return self.render_template('explorer/query.html', vm)
 
