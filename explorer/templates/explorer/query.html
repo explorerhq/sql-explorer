@@ -2,12 +2,12 @@
 
 {% block sql_explorer_navlinks %}
 {% if can_change %}
-<li{% if not query %} class="active" {% endif %}><a href="{% url " query_create" %}">New Query</a></li>
-    <li><a href="{% url " explorer_playground" %}">Playground</a></li>
+<li{% if not query %} class="active" {% endif %}><a href="{% url "query_create" %}">New Query</a></li>
+    <li><a href="{% url "explorer_playground" %}">Playground</a></li>
     {% endif %}
     {% if query %}<li class="active"><a href="">Query Detail</a></li>{% endif %}
-    <li><a href="{% url " explorer_logs" %}">Logs</a></li>
-    <li><a href="{% url " explorer_change_logs" %}">Change Logs</a></li>
+    <li><a href="{% url "explorer_logs" %}">Logs</a></li>
+    <li><a href="{% url "explorer_change_logs" %}">Change Logs</a></li>
     {% endblock %}
 
     {% block sql_explorer_content %}
@@ -25,10 +25,10 @@
             {% endif %}
             <div>
                 {% if query %}
-                <form role="form" class="form-horizontal" action="{% url " query_detail" query.id %}" method="post"
+                <form role="form" class="form-horizontal" action="{% url "query_detail" query.id %}" method="post"
                     id="editor">{% csrf_token %}
                     {% else %}
-                    <form role="form" class="form-horizontal" action="{% url " query_create" %}" method="post"
+                    <form role="form" class="form-horizontal" action="{% url "query_create" %}" method="post"
                         id="editor">{% csrf_token %}
                         {% endif %}
                         {% if error %}
@@ -91,8 +91,10 @@
                                 <div class="btn-group">
                                     {% if can_change %}
                                     <input type="submit" value="Save & Run" class="btn btn-default" id="save_button" />
+                                    <input type="submit" value="Save & test" class="btn btn-default" id="save_only_button" />
+
                                     {% if query %}
-                                    <button class="btn btn-default download_button" href="{% url " query_csv" query.id
+                                    <button class="btn btn-default download_button" href="{% url "query_csv" query.id
                                         %}">Download CSV</button>
                                     <input type="submit" value="Open in Playground" class="btn btn-default"
                                         id="playground_button" />
@@ -105,7 +107,7 @@
                                     <button type="button" class="btn btn-default" id="format_button">Format</button>
                                     {% else %}
                                     <input type="submit" value="Refresh" class="btn btn-default" id="refresh_button" />
-                                    <button class="btn btn-default download_button" href="{% url " query_csv" query.id
+                                    <button class="btn btn-default download_button" href="{% url "query_csv" query.id
                                         %}">Download CSV</button>
                                     {% endif %}
                                 </div>
