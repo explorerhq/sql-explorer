@@ -229,7 +229,10 @@ class QueryResult(object):
             cursor.execute(self.sql)
         except DatabaseError as e:
             cursor.close()
-            raise DatabaseError(str(e)+"test_execute_query")
+            if (re.search("permission denied for table", str(e))):
+                raise DatabaseError(str(e)+" but QUERY is Saved")
+            else:
+                raise e
 
         return cursor, ((time() - start_time) * 1000)
 
