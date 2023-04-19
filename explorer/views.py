@@ -153,7 +153,8 @@ class ListQueryView(ExplorerContextMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(ListQueryView, self).get_context_data(**kwargs)
         context['object_list'] = self._build_queries_and_headers()
-        context['recent_queries'] = self.get_queryset().order_by('-last_run_date')[:app_settings.EXPLORER_RECENT_QUERY_COUNT]
+        context['recent_queries'] = self.get_queryset().order_by(
+            '-last_run_date')[:app_settings.EXPLORER_RECENT_QUERY_COUNT]
         context['tasks_enabled'] = app_settings.ENABLE_TASKS
         return context
 
@@ -161,7 +162,8 @@ class ListQueryView(ExplorerContextMixin, ListView):
         if app_settings.EXPLORER_PERMISSION_VIEW(self.request.user):
             qs = Query.objects.prefetch_related('created_by_user').all()
         else:
-            qs = Query.objects.prefetch_related('created_by_user').filter(pk__in=allowed_query_pks(self.request.user.id))
+            qs = Query.objects.prefetch_related('created_by_user').filter(
+                pk__in=allowed_query_pks(self.request.user.id))
         return qs.annotate(run_count=Count('querylog'))
 
     def _build_queries_and_headers(self):
@@ -288,7 +290,8 @@ class PlayQueryView(ExplorerContextMixin, View):
         show_results = request.POST.get('show', True)
         query = Query(sql=sql, title="Playground")
         passes_blacklist, failing_words = query.passes_blacklist()
-        error = MSG_FAILED_BLACKLIST % ', '.join(failing_words) if not passes_blacklist else None
+        error = MSG_FAILED_BLACKLIST % ', '.join(
+            failing_words) if not passes_blacklist else None
         run_query = not bool(error) if show_results else False
         return self.render_with_sql(request, query, run_query=run_query, error=error)
 
@@ -296,8 +299,7 @@ class PlayQueryView(ExplorerContextMixin, View):
         return self.render_template('explorer/play.html', RequestContext(request, {'title': 'Playground'}))
 
     def render_with_sql(self, request, query, run_query=True, error=None):
-        return self.render_template('explorer/play.html', query_viewmodel(request, query, title="Playground"
-                                                                          , run_query=run_query, error=error))
+        return self.render_template('explorer/play.html', query_viewmodel(request, query, title="Playground", run_query=run_query, error=error))
 
 
 class QueryView(ExplorerContextMixin, View):
@@ -309,7 +311,8 @@ class QueryView(ExplorerContextMixin, View):
     def get(self, request, query_id):
         query, form = QueryView.get_instance_and_form(request, query_id)
         query.save()  # updates the modified date
-        show = url_get_show(request)  # if a query is timing out, it can be useful to nav to /query/id/?show=0
+        # if a query is timing out, it can be useful to nav to /query/id/?show=0
+        show = url_get_show(request)
         vm = query_viewmodel(request, query, form=form, run_query=show)
         return self.render_template('explorer/query.html', vm)
 
@@ -320,8 +323,8 @@ class QueryView(ExplorerContextMixin, View):
             )
         show = url_get_show(request)
         query, form = QueryView.get_instance_and_form(request, query_id)
-        
-        old_sql = query.sql;
+
+        old_sql = query.sql
         form_isvalid = form.is_valid()
         if form_isvalid:
             new_sql = request.POST.get('sql')
@@ -335,7 +338,8 @@ class QueryView(ExplorerContextMixin, View):
                 change_log.save()
         success = form_isvalid and form.save()
         try:
-            vm = query_viewmodel(request, query, form=form, run_query=show, message="Query saved." if success else None)
+            vm = query_viewmodel(request, query, form=form, run_query=show,
+                                 message="Query saved." if success else None)
         except ValidationError as ve:
             vm = query_viewmodel(
                 request,
@@ -344,18 +348,19 @@ class QueryView(ExplorerContextMixin, View):
                 run_query=False,
                 error=ve.message
             )
-            
+
         return self.render_template('explorer/query.html', vm)
 
     @staticmethod
     def get_instance_and_form(request, query_id):
         query = get_object_or_404(Query, pk=query_id)
         query.params = url_get_params(request)
-        form = QueryForm(request.POST if len(request.POST) else None, instance=query)
+        form = QueryForm(request.POST if len(
+            request.POST) else None, instance=query)
         return query, form
 
 
-def gstquery_viewmodel(request, query, title=None, form=None, message=None, run_query=True, error=None):
+def query_viewmodel(request, query, title=None, form=None, message=None, run_query=True, error=None):
     rows = url_get_rows(request)
     res = None
     ql = None
@@ -369,26 +374,26 @@ def gstquery_viewmodel(request, query, title=None, form=None, message=None, run_
             error = str(e)
     has_valid_results = not error and res and run_query
     ret = RequestContext(request, {
-            'tasks_enabled': app_settings.ENABLE_TASKS,
-            'params': query.available_params(),
-            'title': title,
-            'shared': query.shared,
-            'query': query,
-            'form': form,
-            'message': message,
-            'error': error,
-            'rows': rows,
-            'data': res.data[:rows] if has_valid_results else None,
-            'headers': res.headers if has_valid_results else None,
-            'total_rows': len(res.data) if has_valid_results else None,
-            'duration': res.duration if has_valid_results else None,
-            'has_stats': len([h for h in res.headers if h.summary]) if has_valid_results else False,
-            'dataUrl': reverse_lazy('query_csv', kwargs={'query_id': query.id}) if query.id else '',
-            'bucket': app_settings.S3_BUCKET,
-            'snapshots': query.snapshots if query.snapshot else [],
-            'ql_id': ql.id if ql else None,
-            'lag_exists': lag_exists,
-            'replication_lag': replication_lag,
-            }
-        )
+        'tasks_enabled': app_settings.ENABLE_TASKS,
+        'params': query.available_params(),
+        'title': title,
+        'shared': query.shared,
+        'query': query,
+        'form': form,
+        'message': message,
+        'error': error,
+        'rows': rows,
+        'data': res.data[:rows] if has_valid_results else None,
+        'headers': res.headers if has_valid_results else None,
+        'total_rows': len(res.data) if has_valid_results else None,
+        'duration': res.duration if has_valid_results else None,
+        'has_stats': len([h for h in res.headers if h.summary]) if has_valid_results else False,
+        'dataUrl': reverse_lazy('query_csv', kwargs={'query_id': query.id}) if query.id else '',
+        'bucket': app_settings.S3_BUCKET,
+        'snapshots': query.snapshots if query.snapshot else [],
+        'ql_id': ql.id if ql else None,
+        'lag_exists': lag_exists,
+        'replication_lag': replication_lag,
+    }
+    )
     return ret
