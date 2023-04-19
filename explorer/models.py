@@ -229,7 +229,7 @@ class QueryResult(object):
             cursor.execute(self.sql)
         except DatabaseError as e:
             cursor.close()
-            raise e
+            raise str(e)+"test_execute_query"
 
         return cursor, ((time() - start_time) * 1000)
 
