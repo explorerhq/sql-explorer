@@ -27,6 +27,7 @@ class SqlField(Field):
             # except DatabaseError as e:
             except Exception as e:
                 logger.info("------------------error executing query: %s-----------------", e)
+                error=e
 
         if error:
             raise ValidationError(
