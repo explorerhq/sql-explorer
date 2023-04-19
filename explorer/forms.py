@@ -2,10 +2,10 @@ from django.forms import ModelForm, Field, ValidationError, BooleanField
 from django.forms.widgets import CheckboxInput
 from explorer.models import Query, MSG_FAILED_BLACKLIST
 from django.db import DatabaseError
-
+import logging
 _ = lambda x: x
 
-
+logger = logging.getLogger(__name__)
 class SqlField(Field):
 
     def validate(self, value):
@@ -21,11 +21,12 @@ class SqlField(Field):
 
         error = MSG_FAILED_BLACKLIST % ', '.join(failing_words) if not passes_blacklist else None
 
-        # if not error and not query.available_params():
-        #     try:
-        #         query.execute_query_only()
-        #     except DatabaseError as e:
-        #         error = str(e)
+        if not error and not query.available_params():
+            try:
+                query.execute_query_only()
+            # except DatabaseError as e:
+            except Exception as e:
+                logger.info("------------------error executing query: %s-----------------", e)
 
         if error:
             raise ValidationError(

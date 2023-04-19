@@ -1,5 +1,6 @@
 from explorer.tasks import execute_query
 import six
+import logging
 
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
@@ -45,6 +46,7 @@ import re
 import json
 from functools import wraps
 
+logger = logging.getLogger(__name__)
 
 def view_permission(f):
     @wraps(f)
@@ -340,6 +342,7 @@ class QueryView(ExplorerContextMixin, View):
         success = form_isvalid and form.save()
        
         try:
+            logger.info("---------------------------------try-------------------------")
             vm = query_viewmodel(
                 request,
                 query,
@@ -348,7 +351,9 @@ class QueryView(ExplorerContextMixin, View):
                 message=_("Query saved.") if success else None
             )
         except ValidationError as ve:
-            print("error while save only",ve)
+            logger.info(
+                "---------------------------------except-------------------------")
+            logger.info("error while save only",ve)
             vm = query_viewmodel(
                 request,
                 query,
