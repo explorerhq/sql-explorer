@@ -343,13 +343,12 @@ class QueryView(ExplorerContextMixin, View):
         success = form_isvalid and form.save()
 
         try:
-
             vm = query_viewmodel(
                 request,
                 query,
                 form=form,
                 run_query=show,
-                message=_("Query saved.") if success else None
+                message=_("Query saved.") if success else "Query not saved"
             )
         except ValidationError as ve:
 
@@ -358,7 +357,6 @@ class QueryView(ExplorerContextMixin, View):
                 query,
                 form=form,
                 run_query=False,
-                message=("Query Saved but not executed."),
                 error=ve.message
             )
         return self.render_template('explorer/query.html', vm)

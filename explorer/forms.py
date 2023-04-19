@@ -4,9 +4,12 @@ from explorer.models import Query, MSG_FAILED_BLACKLIST
 from django.db import DatabaseError
 import logging
 import re
-_ = lambda x: x
+def _(x): return x
+
 
 logger = logging.getLogger(__name__)
+
+
 class SqlField(Field):
 
     def validate(self, value):
@@ -20,22 +23,24 @@ class SqlField(Field):
 
         passes_blacklist, failing_words = query.passes_blacklist()
 
-        error = MSG_FAILED_BLACKLIST % ', '.join(failing_words) if not passes_blacklist else None
+        error = MSG_FAILED_BLACKLIST % ', '.join(
+            failing_words) if not passes_blacklist else None
 
         if not error and not query.available_params():
             try:
                 query.execute_query_only()
             except DatabaseError as e:
-            
-                logger.info("------------------error executing query: %s-----------------", e)
-                if(re.search("permission denied", str(e))):
-                    error=None
+
+                logger.info("error executing query: %s", e)
+                if (re.search("permission denied for table", str(e))):
+                    error = None
                 else:
-                    error=e
+                    error = e
 
         if error:
+
             raise ValidationError(
-                _(error),
+                error,
                 code="InvalidSql"
             )
 
