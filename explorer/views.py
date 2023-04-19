@@ -349,7 +349,7 @@ class QueryView(ExplorerContextMixin, View):
         #         run_query=False,
         #         error=ve.message
         #     )
-        
+
         success = form.is_valid() and form.save()
         try:
             vm = query_viewmodel(
@@ -357,7 +357,6 @@ class QueryView(ExplorerContextMixin, View):
                 query,
                 form=form,
                 run_query=show,
-                rows=url_get_rows(request),
                 message=_("Query saved.") if success else None
             )
         except ValidationError as ve:
@@ -366,12 +365,9 @@ class QueryView(ExplorerContextMixin, View):
                 query,
                 form=form,
                 run_query=False,
-                rows=url_get_rows(request),
                 error=ve.message
             )
         return self.render_template('explorer/query.html', vm)
-
-        
 
     @staticmethod
     def get_instance_and_form(request, query_id):
