@@ -321,9 +321,8 @@ class QueryView(ExplorerContextMixin, View):
             return HttpResponseRedirect(
                 reverse_lazy('query_detail', kwargs={'query_id': query_id})
             )
-        show = url_get_show(request)
-        query, form = QueryView.get_instance_and_form(request, query_id)
 
+        query, form = QueryView.get_instance_and_form(request, query_id)
         old_sql = query.sql
         form_isvalid = form.is_valid()
         if form_isvalid:
@@ -337,18 +336,8 @@ class QueryView(ExplorerContextMixin, View):
                 )
                 change_log.save()
         success = form_isvalid and form.save()
-        try:
-            vm = query_viewmodel(request, query, form=form, run_query=show,
-                                 message="Query saved." if success else None)
-        except ValidationError as ve:
-            vm = query_viewmodel(
-                request,
-                query,
-                form=form,
-                run_query=False,
-                error=ve.message
-            )
-
+        vm = query_viewmodel(request, query, form=form,
+                             message="Query saved." if success else None)
         return self.render_template('explorer/query.html', vm)
 
     @staticmethod
