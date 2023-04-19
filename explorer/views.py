@@ -354,6 +354,7 @@ class QueryView(ExplorerContextMixin, View):
                 query,
                 form=form,
                 run_query=False,
+                message=("Query Saved"),
                 error=ve.message
             )
         return self.render_template('explorer/query.html', vm)
