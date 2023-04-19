@@ -15,6 +15,7 @@ from django.http import HttpResponse
 from django.db import DatabaseError
 from django.db.models import Count
 from django.forms import ValidationError
+from django.utils.translation import gettext_lazy as _
 
 from explorer.models import Query, QueryLog, QueryChangeLog, MSG_FAILED_BLACKLIST
 from explorer import app_settings
@@ -324,32 +325,53 @@ class QueryView(ExplorerContextMixin, View):
         show = url_get_show(request)
         query, form = QueryView.get_instance_and_form(request, query_id)
 
-        old_sql = query.sql
-        form_isvalid = form.is_valid()
-        if form_isvalid:
-            new_sql = request.POST.get('sql')
-            if not compare_sql(old_sql, new_sql):
-                change_log = QueryChangeLog(
-                    old_sql=old_sql,
-                    new_sql=new_sql,
-                    query=query,
-                    run_by_user=request.user,
-                )
-                change_log.save()
-        success = form_isvalid and form.save()
+        # old_sql = query.sql
+        # form_isvalid = form.is_valid()
+        # if form_isvalid:
+        #     new_sql = request.POST.get('sql')
+        #     if not compare_sql(old_sql, new_sql):
+        #         change_log = QueryChangeLog(
+        #             old_sql=old_sql,
+        #             new_sql=new_sql,
+        #             query=query,
+        #             run_by_user=request.user,
+        #         )
+        #         change_log.save()
+        # success = form_isvalid and form.save()
+        # try:
+        #     vm = query_viewmodel(request, query, form=form, run_query=show,
+        #                          message="Query saved." if success else None)
+        # except Exception as ve:
+        #     vm = query_viewmodel(
+        #         request,
+        #         query,
+        #         form=form,
+        #         run_query=False,
+        #         error=ve.message
+        #     )
+        
+        success = form.is_valid() and form.save()
         try:
-            vm = query_viewmodel(request, query, form=form, run_query=show,
-                                 message="Query saved." if success else None)
+            vm = query_viewmodel(
+                request,
+                query,
+                form=form,
+                run_query=show,
+                rows=url_get_rows(request),
+                message=_("Query saved.") if success else None
+            )
         except ValidationError as ve:
             vm = query_viewmodel(
                 request,
                 query,
                 form=form,
                 run_query=False,
+                rows=url_get_rows(request),
                 error=ve.message
             )
-
         return self.render_template('explorer/query.html', vm)
+
+        
 
     @staticmethod
     def get_instance_and_form(request, query_id):
