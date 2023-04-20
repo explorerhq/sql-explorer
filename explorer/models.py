@@ -5,6 +5,7 @@ from time import time
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.messages import constants as messages_constants
 from . import app_settings
 import logging
 import re
@@ -214,7 +215,7 @@ class QueryResult(object):
                 for ix, t in transforms:
                     r[ix] = t.format(str(r[ix]))
 
-    def execute_query(self):
+    def execute_query(request,self):
         # can change connectiion type here to use different role --> get_connection_pii()
         if (self.is_connection_type_pii):
             logger.info(
@@ -231,7 +232,8 @@ class QueryResult(object):
         except DatabaseError as e:
             cursor.close()
             if (re.search("permission denied for table", str(e))):
-                messages.error(self.request, "QUERY SAVED")
+                # messages.info(request, "QUERY SAVED")
+                messages.add_message(request, messages_constants.ERROR, str(e))
                 raise DatabaseError(str(e)+" but QUERY is Saved")
             else:
                 raise e
