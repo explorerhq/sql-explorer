@@ -148,9 +148,10 @@ class QueryChangeLog(models.Model):
 
 class QueryResult(object):
 
-    def __init__(self, sql, is_connection_type_pii=None):
+    def __init__(self, sql, is_connection_type_pii=None, request=None):
 
         self.sql = sql
+        self.request =request
         if (is_connection_type_pii):
             self.is_connection_type_pii = is_connection_type_pii
         else:
@@ -215,7 +216,7 @@ class QueryResult(object):
                 for ix, t in transforms:
                     r[ix] = t.format(str(r[ix]))
 
-    def execute_query(request,self):
+    def execute_query(self):
         # can change connectiion type here to use different role --> get_connection_pii()
         if (self.is_connection_type_pii):
             logger.info(
@@ -233,7 +234,7 @@ class QueryResult(object):
             cursor.close()
             if (re.search("permission denied for table", str(e))):
                 # messages.info(request, "QUERY SAVED")
-                messages.add_message(request, messages_constants.ERROR, str(e))
+                # messages.add_message(self.request, messages_constants.ERROR, str(e))
                 raise DatabaseError(str(e)+" but QUERY is Saved")
             else:
                 raise e
