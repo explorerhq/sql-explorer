@@ -148,10 +148,9 @@ class QueryChangeLog(models.Model):
 
 class QueryResult(object):
 
-    def __init__(self, sql, is_connection_type_pii=None, request=None):
+    def __init__(self, sql, is_connection_type_pii=None):
 
         self.sql = sql
-        self.request = request
         if (is_connection_type_pii):
             self.is_connection_type_pii = is_connection_type_pii
         else:
