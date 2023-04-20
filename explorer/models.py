@@ -151,7 +151,7 @@ class QueryResult(object):
     def __init__(self, sql, is_connection_type_pii=None, request=None):
 
         self.sql = sql
-        self.request =request
+        self.request = request
         if (is_connection_type_pii):
             self.is_connection_type_pii = is_connection_type_pii
         else:
@@ -233,9 +233,9 @@ class QueryResult(object):
         except DatabaseError as e:
             cursor.close()
             if (re.search("permission denied for table", str(e))):
-                # messages.info(request, "QUERY SAVED")
-                # messages.add_message(self.request, messages_constants.ERROR, str(e))
-                raise DatabaseError(str(e)+" but QUERY is Saved")
+
+                raise DatabaseError(
+                    "Query saved but unable to execute it because "+str(e))
             else:
                 raise e
 

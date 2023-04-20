@@ -38,9 +38,9 @@ class SqlField(Field):
                     error = e
 
         if error:
-            msg=str(error)+" test"
+            
             raise ValidationError(
-                msg,
+                _(error),
                 code="InvalidSql"
             )
 
