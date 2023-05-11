@@ -283,3 +283,5 @@ def check_replication_lag():
         return False, None
 
     return True, human(replication_lag, 4)
+
+    

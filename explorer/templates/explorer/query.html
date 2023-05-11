@@ -80,6 +80,7 @@
                         <div class="btn-group">
                             {% if can_change %}
                                 <input type="submit" value="Save & Run" class="btn btn-default" id="save_button" />
+                                
                                 {% if query %}
                                      <button class="btn btn-default download_button" href="{% url "query_csv" query.id %}">Download CSV</button>
                                      <input type="submit" value="Open in Playground" class="btn btn-default" id="playground_button"/>

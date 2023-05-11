@@ -4,8 +4,12 @@ from django.db import models, DatabaseError
 from time import time
 from django.core.urlresolvers import reverse
 from django.conf import settings
+from django.contrib import messages
+from django.contrib.messages import constants as messages_constants
 from . import app_settings
 import logging
+import re
+import json
 import six
 
 MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist: %s"
@@ -52,7 +56,7 @@ class Query(models.Model):
 
     def execute_query_only(self, is_connection_type_pii=None):
 
-        return QueryResult(self.final_sql(), is_connection_type_pii)
+        return QueryResult(self.final_sql(),self.title,is_connection_type_pii)
 
     def execute_with_logging(self, executing_user):
         ql = self.log(executing_user)
@@ -144,9 +148,10 @@ class QueryChangeLog(models.Model):
 
 class QueryResult(object):
 
-    def __init__(self, sql, is_connection_type_pii=None):
+    def __init__(self, sql, title,is_connection_type_pii=None):
 
         self.sql = sql
+        self.title=title
         if (is_connection_type_pii):
             self.is_connection_type_pii = is_connection_type_pii
         else:
@@ -156,6 +161,7 @@ class QueryResult(object):
 
         self._description = cursor.description or []
         self._data = [list(r) for r in cursor.fetchall()]
+
         self.duration = duration
 
         cursor.close()
@@ -226,7 +232,12 @@ class QueryResult(object):
             cursor.execute(self.sql)
         except DatabaseError as e:
             cursor.close()
-            raise e
+            if (re.search("permission denied for table", str(e)) and self.title != "Playground"):
+
+                raise DatabaseError(
+                    "Query saved but unable to execute it because "+str(e))
+            else:
+                raise e
 
         return cursor, ((time() - start_time) * 1000)
 

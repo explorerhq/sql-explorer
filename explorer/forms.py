@@ -2,8 +2,12 @@ from django.forms import ModelForm, Field, ValidationError, BooleanField
 from django.forms.widgets import CheckboxInput
 from explorer.models import Query, MSG_FAILED_BLACKLIST
 from django.db import DatabaseError
+import logging
+import re
+def _(x): return x
 
-_ = lambda x: x
+
+logger = logging.getLogger(__name__)
 
 
 class SqlField(Field):
@@ -14,20 +18,27 @@ class SqlField(Field):
 
         :param value: The SQL for this Query model.
         """
-
+        super().validate(value)
         query = Query(sql=value)
 
         passes_blacklist, failing_words = query.passes_blacklist()
 
-        error = MSG_FAILED_BLACKLIST % ', '.join(failing_words) if not passes_blacklist else None
+        error = MSG_FAILED_BLACKLIST % ', '.join(
+            failing_words) if not passes_blacklist else None
 
         if not error and not query.available_params():
             try:
                 query.execute_query_only()
             except DatabaseError as e:
-                error = str(e)
+
+                logger.info("error executing query: %s", e)
+                if (re.search("permission denied for table", str(e))):
+                    error = None
+                else:
+                    error = e
 
         if error:
+            
             raise ValidationError(
                 _(error),
                 code="InvalidSql"
