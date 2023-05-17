@@ -9,6 +9,10 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 ---------------------
 
 
+`3.2.0`_ (2023-05-17)
+---------------------
+* `#533`_: CSRF token httponly support + s3 destination for async results
+
 `3.1.1`_ (2023-02-27)
 ---------------------
 * `#529`_: Added ``makemigrations --check`` pre-commit hook
@@ -399,7 +403,8 @@ Initial Release
 .. _3.0.1: https://github.com/groveco/django-sql-explorer/compare/3.0...3.0.1
 .. _3.1.0: https://github.com/groveco/django-sql-explorer/compare/3.0.1...3.1.0
 .. _3.1.1: https://github.com/groveco/django-sql-explorer/compare/3.1.0...3.1.1
-.. _unreleased: https://github.com/groveco/django-sql-explorer/compare/3.1.1...master
+.. _3.2.0: https://github.com/groveco/django-sql-explorer/compare/3.1.1...3.2.0
+.. _unreleased: https://github.com/groveco/django-sql-explorer/compare/3.2.0...master
 
 .. _#254: https://github.com/groveco/django-sql-explorer/pull/254
 .. _#334: https://github.com/groveco/django-sql-explorer/pull/334
@@ -468,6 +473,7 @@ Initial Release
 .. _#524: https://github.com/groveco/django-sql-explorer/pull/524
 .. _#528: https://github.com/groveco/django-sql-explorer/pull/528
 .. _#529: https://github.com/groveco/django-sql-explorer/pull/529
+.. _#533: https://github.com/groveco/django-sql-explorer/pull/533
 
 .. _#269: https://github.com/groveco/django-sql-explorer/issues/269
 .. _#288: https://github.com/groveco/django-sql-explorer/issues/288

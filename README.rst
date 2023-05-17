@@ -2,10 +2,6 @@
    :target: https://django-sql-explorer.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
 
-.. image:: https://travis-ci.org/groveco/django-sql-explorer.svg?branch=master
-   :target: https://travis-ci.org/groveco/django-sql-explorer
-   :alt: Build Status
-
 .. image:: http://img.shields.io/pypi/v/django-sql-explorer.svg?style=flat-square
     :target: https://pypi.python.org/pypi/django-sql-explorer/
     :alt: Latest Version
@@ -72,7 +68,6 @@ Alternatives
 ------------
 
 * `django-sql-dashboard`_: provides an authenticated interface for executing read-only SQL queries directly against your PostgreSQL database, bringing a useful subset of `Datasette`_ to Django.
-
 
 
 .. _django-sql-dashboard: https://github.com/simonw/django-sql-dashboard
