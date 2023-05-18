@@ -193,10 +193,14 @@ def get_valid_connection(alias=None):
 
 def get_s3_bucket():
     import boto3
+    from botocore.client import Config
     kwargs = {
         'aws_access_key_id': app_settings.S3_ACCESS_KEY,
         'aws_secret_access_key': app_settings.S3_SECRET_KEY,
-        'region_name': app_settings.S3_REGION
+        'region_name': app_settings.S3_REGION,
+        'config': Config(
+            signature_version=app_settings.S3_SIGNATURE_VERSION
+        )
     }
     if app_settings.S3_ENDPOINT_URL:
         kwargs['endpoint_url'] = app_settings.S3_ENDPOINT_URL
