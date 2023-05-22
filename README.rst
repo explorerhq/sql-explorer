@@ -2,7 +2,7 @@
    :target: https://django-sql-explorer.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
 
-.. image:: https://travis-ci.org/groveco/django-sql-explorer.svg?branch=master
+.. image:: https://travis-ci.org/groveco/django-sql-explorer.svg?branch=main
    :target: https://travis-ci.org/groveco/django-sql-explorer
    :alt: Build Status
 
