@@ -109,7 +109,7 @@ class TestSqlBlacklist(TestCase):
         self.assertFalse(passes)
 
     def test_dml_set(self):
-        sql = "SET TIME ZONE 'PST8PDT';"
+        sql = "SET PASSWORD FOR 'user-name-here' = PASSWORD('new-password');"
         passes, words = passes_blacklist(sql)
         self.assertFalse(passes)
 
