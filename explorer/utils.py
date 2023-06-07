@@ -49,6 +49,11 @@ def get_connection_pii():
     return connections[app_settings.EXPLORER_CONNECTION_PII_NAME] if app_settings.EXPLORER_CONNECTION_PII_NAME else connection
 
 
+def get_connection_asyncapi_db():
+    logger.info("Connecting with async-api DB")
+    return connections[app_settings.EXPLORER_CONNECTION_ASYNC_API_DB_NAME] if app_settings.EXPLORER_CONNECTION_ASYNC_API_DB_NAME else connection
+
+
 def schema_info():
     """
     Construct schema information via introspection of the django models in the database.
@@ -284,4 +289,12 @@ def check_replication_lag():
 
     return True, human(replication_lag, 4)
 
-    
+
+def should_route_to_asyncapi_db(sql):
+    request_log_tables = ["request_log_requestlog", "request_log_requestlogdata"]
+    pattern = r"\b(?:%s)\b" % "|".join(map(re.escape, request_log_tables))
+    match = re.search(pattern, sql)
+    if match:
+        return True
+
+    return False
