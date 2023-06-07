@@ -1,4 +1,4 @@
-from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection, get_s3_connection, get_connection_pii
+from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection, get_s3_connection, get_connection_pii, get_connection_asyncapi_db, should_route_to_asyncapi_db
 from future.utils import python_2_unicode_compatible
 from django.db import models, DatabaseError
 from time import time
@@ -222,9 +222,13 @@ class QueryResult(object):
             logger.info(
                 "pii-connection")
             conn = get_connection_pii()
+        elif should_route_to_asyncapi_db(self.sql):
+            logger.info("Route to Async API DB")
+            conn = get_connection_asyncapi_db()
         else:
             logger.info("non-pii-connection")
             conn = get_connection()
+
         cursor = conn.cursor()
         start_time = time()
 
