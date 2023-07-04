@@ -27,6 +27,7 @@ else:
 EXPLORER_PARAM_TOKEN = "$$"
 
 REPLICATION_LAG_THRESHOLD_VALUE_IN_MINUTES = 3
+REQUEST_LOG_SQL_CUTOFF_DATE = "2023-06-01"
 
 # SQL Specific Things
 
@@ -298,3 +299,49 @@ def should_route_to_asyncapi_db(sql):
         return True
 
     return False
+
+
+def add_cutoff_date_to_requestlog_queries(sql):
+    cutoff_date = datetime.datetime.strptime(REQUEST_LOG_SQL_CUTOFF_DATE, "%Y-%m-%d")
+
+    # Split the SQL statement into different parts
+    parts = fmt_sql(sql).split('WHERE')
+    modified_sql = ''
+
+    if len(parts) == 1:
+        # No WHERE clause, add cutoff date filter
+        modified_sql = "{} WHERE created_at >= '{}'".format(parts[0], cutoff_date)
+    else:
+        # SQL statement contains a WHERE clause
+        modified_sql = parts[0]
+        conditions = parts[1].strip().split(' ')
+
+        # Find the position of GROUP BY or ORDER BY clauses
+        group_by_index = -1
+        order_by_index = -1
+        limit_index = -1
+
+        for i, condition in enumerate(conditions):
+            if condition == 'GROUP' and conditions[i + 1] == 'BY':
+                group_by_index = i
+            elif condition == 'ORDER' and conditions[i + 1] == 'BY':
+                order_by_index = i
+            elif condition == 'LIMIT':
+                limit_index = i
+
+        # Determine the index before which the cutoff date filter should be added
+        filter_indices = filter(lambda x: x != -1, [group_by_index, order_by_index, limit_index])
+        filter_index = min(filter_indices) if filter_indices else -1
+
+        if filter_index == -1:
+            # Add cutoff date filter after existing WHERE clause
+            modified_sql += " WHERE created_at >= '{}' AND {}".format(cutoff_date, parts[1])
+        else:
+            # Add cutoff date filter before GROUP BY, ORDER BY, or LIMIT clauses
+            modified_sql += " WHERE created_at >= '{}' {} {}".format(
+                cutoff_date,
+                'AND' if filter_index > 0 else '',
+                parts[1][:filter_index]
+            )
+
+    return fmt_sql(modified_sql)
