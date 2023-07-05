@@ -218,7 +218,7 @@ class QueryResult(object):
 
     def execute_query(self):
         # can change connectiion type here to use different role --> get_connection_pii()
-        route_to_asyncapi_db = should_route_to_asyncapi_db(sql)
+        route_to_asyncapi_db = should_route_to_asyncapi_db(self.sql)
         if (self.is_connection_type_pii):
             logger.info(
                 "pii-connection")

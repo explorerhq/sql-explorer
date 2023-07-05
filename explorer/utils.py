@@ -341,7 +341,7 @@ def add_cutoff_date_to_requestlog_queries(sql):
             modified_sql += " WHERE created_at >= '{}' {} {}".format(
                 cutoff_date,
                 'AND' if filter_index > 0 else '',
-                parts[1][:filter_index]
+                parts[1]
             )
 
     return fmt_sql(modified_sql)
