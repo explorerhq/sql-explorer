@@ -4,6 +4,8 @@ from django.conf import settings
 EXPLORER_CONNECTION_NAME = getattr(settings, 'EXPLORER_CONNECTION_NAME', None)
 EXPLORER_CONNECTION_PII_NAME = getattr(
     settings, 'EXPLORER_CONNECTION_PII_NAME', None)
+EXPLORER_CONNECTION_ASYNC_API_DB_NAME = getattr(
+    settings, 'EXPLORER_CONNECTION_ASYNC_API_DB_NAME', None)
 
 # Change the behavior of explorer
 EXPLORER_SQL_BLACKLIST = getattr(settings, 'EXPLORER_SQL_BLACKLIST', ('ALTER', 'RENAME ', 'DROP', 'TRUNCATE',
