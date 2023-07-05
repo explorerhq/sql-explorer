@@ -301,53 +301,31 @@ def should_route_to_asyncapi_db(sql):
     return False
 
 
+def check_and_update_sql_using_query_clause(sql, cutoff_date, query_clause):
+    # Split the SQL statement at the query_clause
+    parts = sql.split(query_clause)
+    select_clause = parts[0].strip()
+
+    # Check if clause is the last part of the SQL statement
+    if len(parts) > 1:
+        remaining_clause = query_clause + ' ' + parts[1].strip()
+    else:
+        remaining_clause = ''
+
+    # Add the "WHERE" clause with the cutoff date before the query_clause
+    modified_sql = '{} WHERE created_at >= \'{}\' {}'.format(select_clause, cutoff_date, remaining_clause)
+    return modified_sql
+
+
 def add_cutoff_date_to_sql_without_where_clause(sql, cutoff_date):
     sql = sql.strip()
     # Check if the SQL statement contains "GROUP BY", "ORDER BY", or "LIMIT" clauses
     if 'GROUP BY' in sql:
-        # Split the SQL statement at the "GROUP BY" clause
-        parts = sql.split('GROUP BY')
-        select_clause = parts[0].strip()
-
-        # Check if "GROUP BY" clause is the last part of the SQL statement
-        if len(parts) > 1:
-            remaining_clause = 'GROUP BY ' + parts[1].strip()
-        else:
-            remaining_clause = ''
-
-        # Add the "WHERE" clause with the cutoff date before "GROUP BY"
-        modified_sql = '{} WHERE created_at >= \'{}\' {}'.format(select_clause, cutoff_date, remaining_clause)
-        return modified_sql
-
+        return check_and_update_sql_using_query_clause(sql, cutoff_date, 'GROUP BY')
     if 'ORDER BY' in sql:
-        # Split the SQL statement at the "ORDER BY" clause
-        parts = sql.split('ORDER BY')
-        select_clause = parts[0].strip()
-
-        # Check if "ORDER BY" clause is the last part of the SQL statement
-        if len(parts) > 1:
-            remaining_clause = 'ORDER BY ' + parts[1].strip()
-        else:
-            remaining_clause = ''
-
-        # Add the "WHERE" clause with the cutoff date before "ORDER BY"
-        modified_sql = '{} WHERE created_at >= \'{}\' {}'.format(select_clause, cutoff_date, remaining_clause)
-        return modified_sql
-
+        return check_and_update_sql_using_query_clause(sql, cutoff_date, 'ORDER BY')
     if 'LIMIT' in sql:
-        # Split the SQL statement at the "LIMIT" clause
-        parts = sql.split('LIMIT')
-        select_clause = parts[0].strip()
-
-        # Check if "LIMIT" clause is the last part of the SQL statement
-        if len(parts) > 1:
-            remaining_clause = 'LIMIT' + parts[1].strip()
-        else:
-            remaining_clause = ''
-
-        # Add the "WHERE" clause with the cutoff date before "LIMIT"
-        modified_sql = '{} WHERE created_at >= \'{}\' {}'.format(select_clause, cutoff_date, remaining_clause)
-        return modified_sql
+        return check_and_update_sql_using_query_clause(sql, cutoff_date, 'LIMIT')
 
     # Add the "WHERE" clause with the cutoff date
     modified_sql = '{} WHERE created_at >= \'{}\''.format(sql, cutoff_date)
