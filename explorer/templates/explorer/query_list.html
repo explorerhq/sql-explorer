@@ -2,118 +2,120 @@
 {% load staticfiles %}
 
 {% block sql_explorer_navlinks %}
-    {% if can_change %}
-      <li><a href="{% url "query_create" %}">New Query</a></li>
-      <li><a href="{% url "explorer_playground" %}">Playground</a></li>
-      <li><a href="{% url "explorer_logs" %}">Logs</a></li>
-      <li><a href="{% url "explorer_change_logs" %}">Change Logs</a></li>
-    {% endif %}
+{% if can_change %}
+<li><a href="{% url "query_create" %}">New Query</a></li>
+<li><a href="{% url "explorer_playground" %}">Playground</a></li>
+<li><a href="{% url "explorer_logs" %}">Logs</a></li>
+<li><a href="{% url "explorer_change_logs" %}">Change Logs</a></li>
+{% endif %}
 {% endblock %}
 
 {% block sql_explorer_content %}
-    {% if recent_queries|length > 0 %}
-        <h3>{{ recent_queries|length }} Most Recently Used</h3>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Query</th>
-                    <th>Last Run</th>
-                    <th class="text-center">CSV</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for object in recent_queries %}
-                <tr>
-                    <td><a href="{% url "query_detail" object.id %}">{{ object.title }}</a></td>
-                    <td>{{ object.last_run_date|date:"SHORT_DATETIME_FORMAT" }}</td>
-                    <td class="text-center">
-                        <a href="{% url "query_download" object.id %}"><i class="glyphicon glyphicon-download"></i></a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
+{% if recent_queries|length > 0 %}
+<h3>{{ recent_queries|length }} Most Recently Used</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Query</th>
+            <th>Last Run</th>
+            <th class="text-center">CSV</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for object in recent_queries %}
+        <tr>
+            <td><a href="{% url "query_detail" object.id %}">{{ object.title }}</a></td>
+            <td>{{ object.last_run_date|date:"SHORT_DATETIME_FORMAT" }}</td>
+            <td class="text-center">
+                <a href="{% url "query_download" object.id %}"><i class="glyphicon glyphicon-download"></i></a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
 
-    <div id="queries">
-      <div class="row">
+<div id="queries">
+    <div class="row">
         <div class="col-md-6">
-          <h3>All Queries</h3>
+            <h3>All Queries</h3>
         </div>
         <div class="col-md-6 text-right">
-          <input class="search list-search" placeholder="Search" style="">
+            <input class="search list-search" placeholder="Search" style="">
         </div>
-      </div>
+    </div>
     <table class="table table-striped">
         <thead>
             <tr>
                 <th>Query</th>
                 <th>Created</th>
                 {% if tasks_enabled %}
-                  <th>Email</th>
+                <th>Email</th>
                 {% endif %}
                 <th>CSV</th>
                 {% if can_change %}
-                    <th>Play</th>
-                    <th>Delete</th>
+                <th>Play</th>
+                <th>Delete</th>
                 {% endif %}
                 <th>Run Count</th>
             </tr>
         </thead>
         <tbody class="list">
             {% for object in object_list %}
-            <tr {% if object.is_in_category %}class="collapse in collapse-{{ object.collapse_target }}"{% endif %}>
+            <tr {% if object.is_in_category %}class="collapse in collapse-{{ object.collapse_target }}" {% endif %}>
                 {% if object.is_header %}
-                    <td colspan="100">
-                        <strong>
-                            <span data-toggle="collapse" data-target=".collapse-{{object.collapse_target}}"
-                                      class="toggle">
+                <td colspan="100">
+                    <strong>
+                        <span data-toggle="collapse" data-target=".collapse-{{object.collapse_target}}" class="toggle">
                             {{ object.title }} ({{ object.count }})</span>
-                        </strong>
-                    </td>
+                    </strong>
+                </td>
                 {% else %}
-                    <td class="name" {% if object.is_in_category %}class="indented"{% endif %}>
-                        {% if object.is_in_category %}&nbsp;&rarr;&nbsp;{% endif %}<a href="{% url "query_detail" object.id %}">{{ object.title }}</a>
-                    </td>
-                    <td>{{ object.created_at|date:"SHORT_DATE_FORMAT" }}
-                        {% if object.created_by_user %}
-                            by {{ object.created_by_user }}
-                        {% endif %}
-                    </td>
-                    {% if tasks_enabled %}
-                      <td class="text-center">
-                          <a class="email-csv" data-id="{{ object.id }}" href="{% url "email_csv_query" object.id %}"><i class="glyphicon glyphicon-envelope"></i></a>
-                      </td>
+                <td class="name" {% if object.is_in_category %}class="indented" {% endif %}>
+                    {% if object.is_in_category %}&nbsp;&rarr;&nbsp;{% endif %}<a href="{% url "query_detail" object.id
+                        %}">{{ object.title }}</a>
+                </td>
+                <td>{{ object.created_at|date:"SHORT_DATE_FORMAT" }}
+                    {% if object.created_by_user %}
+                    by {{ object.created_by_user }}
                     {% endif %}
-                    <td class="text-center">
-                        <a href="{% url "query_download" object.id %}"><i class="glyphicon glyphicon-download"></i></a>
-                    </td>
-                    {% if can_change %}
-                        <td class="text-center">
-                            <a href="{% url "explorer_playground" %}?query_id={{ object.id }}"><i class="glyphicon glyphicon-new-window"></i></a>
-                        </td>
-                        <td class="text-center">
-                            <a href="{% url "query_delete" object.id %}"><i class="glyphicon glyphicon-trash"></i></a>
-                        </td>
-                    {% endif %}
-                    <td>{{ object.run_count }}</td>
+                </td>
+                {% if tasks_enabled %}
+                <td class="text-center">
+                    <a class="email-csv" data-id="{{ object.id }}" href="{% url "email_csv_query" object.id %}"><i
+                            class="glyphicon glyphicon-envelope"></i></a>
+                </td>
+                {% endif %}
+                <td class="text-center">
+                    <a href="{% url "query_download" object.id %}"><i class="glyphicon glyphicon-download"></i></a>
+                </td>
+                {% if can_change %}
+                <td class="text-center">
+                    <a href="{% url "explorer_playground" %}?query_id={{ object.id }}"><i
+                            class="glyphicon glyphicon-new-window"></i></a>
+                </td>
+                <td class="text-center">
+                    <a href="{% url "query_delete" object.id %}"><i class="glyphicon glyphicon-trash"></i></a>
+                </td>
+                {% endif %}
+                <td>{{ object.run_count }}</td>
 
                 {% endif %}
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    </div>
+</div>
 {% endblock %}
 
 {% block sql_explorer_scripts %}
-    <script>
-    $(function() {
+<script>
+    $(function () {
         function SearchFocus() {
             $(".search").focus();
         }
         var options = {
-            valueNames: [ 'name' ],
+            valueNames: ['name'],
             handlers: { 'updated': [SearchFocus] }
         };
         var queryList = new List('queries', options);

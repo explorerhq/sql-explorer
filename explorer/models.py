@@ -1,11 +1,15 @@
-from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection, get_s3_connection
+from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection, get_s3_connection, get_connection_pii, get_connection_asyncapi_db, should_route_to_asyncapi_db, add_cutoff_date_to_requestlog_queries
 from future.utils import python_2_unicode_compatible
 from django.db import models, DatabaseError
 from time import time
 from django.core.urlresolvers import reverse
 from django.conf import settings
+from django.contrib import messages
+from django.contrib.messages import constants as messages_constants
 from . import app_settings
 import logging
+import re
+import json
 import six
 
 MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist: %s"
@@ -13,15 +17,18 @@ MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist: %s"
 
 logger = logging.getLogger(__name__)
 
+
 @python_2_unicode_compatible
 class Query(models.Model):
     title = models.CharField(max_length=255)
     sql = models.TextField()
     description = models.TextField(null=True, blank=True)
-    created_by_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
+    created_by_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     last_run_date = models.DateTimeField(auto_now=True)
-    snapshot = models.BooleanField(default=False, help_text="Include in snapshot task (if enabled)")
+    snapshot = models.BooleanField(
+        default=False, help_text="Include in snapshot task (if enabled)")
 
     def __init__(self, *args, **kwargs):
         self.params = kwargs.get('params')
@@ -47,8 +54,9 @@ class Query(models.Model):
     def final_sql(self):
         return swap_params(self.sql, self.available_params())
 
-    def execute_query_only(self):
-        return QueryResult(self.final_sql())
+    def execute_query_only(self, is_connection_type_pii=None):
+
+        return QueryResult(self.final_sql(),self.title,is_connection_type_pii)
 
     def execute_with_logging(self, executing_user):
         ql = self.log(executing_user)
@@ -58,7 +66,12 @@ class Query(models.Model):
         return ret, ql
 
     def execute(self):
-        ret = self.execute_query_only()
+        ret = self.execute_query_only(False)
+        ret.process()
+        return ret
+
+    def execute_pii(self):
+        ret = self.execute_query_only(True)
         ret.process()
         return ret
 
@@ -100,8 +113,10 @@ class Query(models.Model):
 class QueryLog(models.Model):
 
     sql = models.TextField(null=True, blank=True)
-    query = models.ForeignKey(Query, null=True, blank=True, on_delete=models.SET_NULL)
-    run_by_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
+    query = models.ForeignKey(
+        Query, null=True, blank=True, on_delete=models.SET_NULL)
+    run_by_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True)
     run_at = models.DateTimeField(auto_now_add=True)
     duration = models.FloatField(blank=True, null=True)  # milliseconds
 
@@ -117,8 +132,10 @@ class QueryChangeLog(models.Model):
 
     old_sql = models.TextField(null=True, blank=True)
     new_sql = models.TextField(null=True, blank=True)
-    query = models.ForeignKey(Query, null=True, blank=True, on_delete=models.SET_NULL)
-    run_by_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
+    query = models.ForeignKey(
+        Query, null=True, blank=True, on_delete=models.SET_NULL)
+    run_by_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True)
     run_at = models.DateTimeField(auto_now_add=True)
 
     @property
@@ -131,14 +148,20 @@ class QueryChangeLog(models.Model):
 
 class QueryResult(object):
 
-    def __init__(self, sql):
+    def __init__(self, sql, title,is_connection_type_pii=None):
 
         self.sql = sql
+        self.title=title
+        if (is_connection_type_pii):
+            self.is_connection_type_pii = is_connection_type_pii
+        else:
+            self.is_connection_type_pii = False
 
         cursor, duration = self.execute_query()
 
         self._description = cursor.description or []
         self._data = [list(r) for r in cursor.fetchall()]
+
         self.duration = duration
 
         cursor.close()
@@ -179,7 +202,8 @@ class QueryResult(object):
         self.process_columns()
         self.process_rows()
 
-        logger.info("Explorer Query Processing took %sms." % ((time() - start_time) * 1000))
+        logger.info("Explorer test Query Processing took %sms." %
+                    ((time() - start_time) * 1000))
 
     def process_columns(self):
         for ix in self._get_numerics():
@@ -193,15 +217,36 @@ class QueryResult(object):
                     r[ix] = t.format(str(r[ix]))
 
     def execute_query(self):
-        conn = get_connection()
+        # can change connectiion type here to use different role --> get_connection_pii()
+        route_to_asyncapi_db = should_route_to_asyncapi_db(self.sql)
+        if (self.is_connection_type_pii):
+            logger.info(
+                "pii-connection")
+            conn = get_connection_pii()
+        elif route_to_asyncapi_db:
+            logger.info("Route to Async API DB")
+            conn = get_connection_asyncapi_db()
+        else:
+            logger.info("non-pii-connection")
+            conn = get_connection()
+
         cursor = conn.cursor()
         start_time = time()
 
         try:
-            cursor.execute(self.sql)
+            if route_to_asyncapi_db:
+                modified_sql = add_cutoff_date_to_requestlog_queries(self.sql)
+                cursor.execute(modified_sql)
+            else:
+                cursor.execute(self.sql)
         except DatabaseError as e:
             cursor.close()
-            raise e
+            if (re.search("permission denied for table", str(e)) and self.title != "Playground"):
+
+                raise DatabaseError(
+                    "Query saved but unable to execute it because "+str(e))
+            else:
+                raise e
 
         return cursor, ((time() - start_time) * 1000)
 
@@ -231,7 +276,8 @@ class ColumnStat(object):
         self.handles_null = handles_null
 
     def __call__(self, coldata):
-        self.value = round(float(self.statfn(coldata)), self.precision) if coldata else 0
+        self.value = round(float(self.statfn(coldata)),
+                           self.precision) if coldata else 0
 
     def __unicode__(self):
         return self.label
@@ -249,7 +295,8 @@ class ColumnSummary(object):
             ColumnStat("Avg", lambda x: float(sum(x)) / float(len(x))),
             ColumnStat("Min", min),
             ColumnStat("Max", max),
-            ColumnStat("NUL", lambda x: int(sum(map(lambda y: 1 if y is None else 0, x))), 0, True)
+            ColumnStat("NUL", lambda x: int(
+                sum(map(lambda y: 1 if y is None else 0, x))), 0, True)
         ]
         without_nulls = list(map(lambda x: 0 if x is None else x, col))
 
