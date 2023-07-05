@@ -301,6 +301,59 @@ def should_route_to_asyncapi_db(sql):
     return False
 
 
+def add_cutoff_date_to_sql_without_where_clause(sql, cutoff_date):
+    sql = sql.strip()
+    # Check if the SQL statement contains "GROUP BY", "ORDER BY", or "LIMIT" clauses
+    if 'GROUP BY' in sql:
+        # Split the SQL statement at the "GROUP BY" clause
+        parts = sql.split('GROUP BY')
+        select_clause = parts[0].strip()
+
+        # Check if "GROUP BY" clause is the last part of the SQL statement
+        if len(parts) > 1:
+            remaining_clause = 'GROUP BY ' + parts[1].strip()
+        else:
+            remaining_clause = ''
+
+        # Add the "WHERE" clause with the cutoff date before "GROUP BY"
+        modified_sql = '{} WHERE created_at >= \'{}\' {}'.format(select_clause, cutoff_date, remaining_clause)
+        return modified_sql
+
+    if 'ORDER BY' in sql:
+        # Split the SQL statement at the "ORDER BY" clause
+        parts = sql.split('ORDER BY')
+        select_clause = parts[0].strip()
+
+        # Check if "ORDER BY" clause is the last part of the SQL statement
+        if len(parts) > 1:
+            remaining_clause = 'ORDER BY ' + parts[1].strip()
+        else:
+            remaining_clause = ''
+
+        # Add the "WHERE" clause with the cutoff date before "ORDER BY"
+        modified_sql = '{} WHERE created_at >= \'{}\' {}'.format(select_clause, cutoff_date, remaining_clause)
+        return modified_sql
+
+    if 'LIMIT' in sql:
+        # Split the SQL statement at the "LIMIT" clause
+        parts = sql.split('LIMIT')
+        select_clause = parts[0].strip()
+
+        # Check if "LIMIT" clause is the last part of the SQL statement
+        if len(parts) > 1:
+            remaining_clause = 'LIMIT' + parts[1].strip()
+        else:
+            remaining_clause = ''
+
+        # Add the "WHERE" clause with the cutoff date before "LIMIT"
+        modified_sql = '{} WHERE created_at >= \'{}\' {}'.format(select_clause, cutoff_date, remaining_clause)
+        return modified_sql
+
+    # Add the "WHERE" clause with the cutoff date
+    modified_sql = '{} WHERE created_at >= \'{}\''.format(sql, cutoff_date)
+    return modified_sql
+
+
 def add_cutoff_date_to_requestlog_queries(sql):
     cutoff_date = datetime.datetime.strptime(REQUEST_LOG_SQL_CUTOFF_DATE, "%Y-%m-%d")
 
@@ -310,7 +363,7 @@ def add_cutoff_date_to_requestlog_queries(sql):
 
     if len(parts) == 1:
         # No WHERE clause, add cutoff date filter
-        modified_sql = "{} WHERE created_at >= '{}'".format(parts[0], cutoff_date)
+        modified_sql = add_cutoff_date_to_sql_without_where_clause(parts[0], cutoff_date)
     else:
         # SQL statement contains a WHERE clause
         modified_sql = parts[0]

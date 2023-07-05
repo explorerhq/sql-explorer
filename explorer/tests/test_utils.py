@@ -138,6 +138,18 @@ class TestAddCutoffDateToRequestLogQueries(TestCase):
         expected_sql = "SELECT * FROM request_log_requestlogdata WHERE created_at >= '2023-06-01 00:00:00'"
         self.assertEqual(modified_sql, fmt_sql(expected_sql))
 
+    def test_no_where_clause_but_contains_group_by_clause(self):
+        sql = "SELECT * FROM request_log_requestlogdata group by status"
+        modified_sql = add_cutoff_date_to_requestlog_queries(sql)
+        expected_sql = "SELECT * FROM request_log_requestlogdata WHERE created_at >= '2023-06-01 00:00:00' group by status"
+        self.assertEqual(modified_sql, fmt_sql(expected_sql))
+
+    def test_no_where_clause_but_contains_order_by_clause(self):
+        sql = "SELECT * FROM request_log_requestlogdata order by created_at"
+        modified_sql = add_cutoff_date_to_requestlog_queries(sql)
+        expected_sql = "SELECT * FROM request_log_requestlogdata WHERE created_at >= '2023-06-01 00:00:00' order by created_at"
+        self.assertEqual(modified_sql, fmt_sql(expected_sql))
+
     def test_with_where_clause(self):
         sql = "SELECT * FROM request_log_requestlogdata WHERE status = 'success'"
         modified_sql = add_cutoff_date_to_requestlog_queries(sql)
