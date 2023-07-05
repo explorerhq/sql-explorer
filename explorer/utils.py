@@ -383,7 +383,7 @@ def add_cutoff_date_to_requestlog_queries(sql):
                 limit_index = i
 
         # Determine the index before which the cutoff date filter should be added
-        filter_indices = filter(lambda x: x != -1, [group_by_index, order_by_index, limit_index])
+        filter_indices = list(filter(lambda x: x != -1, [group_by_index, order_by_index, limit_index]))
         filter_index = min(filter_indices) if filter_indices else -1
 
         if filter_index == -1:
