@@ -301,6 +301,37 @@ def should_route_to_asyncapi_db(sql):
     return False
 
 
+def check_and_update_sql_using_query_clause(sql, cutoff_date, query_clause):
+    # Split the SQL statement at the query_clause
+    parts = sql.split(query_clause)
+    select_clause = parts[0].strip()
+
+    # Check if clause is the last part of the SQL statement
+    if len(parts) > 1:
+        remaining_clause = query_clause + ' ' + parts[1].strip()
+    else:
+        remaining_clause = ''
+
+    # Add the "WHERE" clause with the cutoff date before the query_clause
+    modified_sql = '{} WHERE created_at >= \'{}\' {}'.format(select_clause, cutoff_date, remaining_clause)
+    return modified_sql
+
+
+def add_cutoff_date_to_sql_without_where_clause(sql, cutoff_date):
+    sql = sql.strip()
+    # Check if the SQL statement contains "GROUP BY", "ORDER BY", or "LIMIT" clauses
+    if 'GROUP BY' in sql:
+        return check_and_update_sql_using_query_clause(sql, cutoff_date, 'GROUP BY')
+    if 'ORDER BY' in sql:
+        return check_and_update_sql_using_query_clause(sql, cutoff_date, 'ORDER BY')
+    if 'LIMIT' in sql:
+        return check_and_update_sql_using_query_clause(sql, cutoff_date, 'LIMIT')
+
+    # Add the "WHERE" clause with the cutoff date
+    modified_sql = '{} WHERE created_at >= \'{}\''.format(sql, cutoff_date)
+    return modified_sql
+
+
 def add_cutoff_date_to_requestlog_queries(sql):
     cutoff_date = datetime.datetime.strptime(REQUEST_LOG_SQL_CUTOFF_DATE, "%Y-%m-%d")
 
@@ -310,7 +341,7 @@ def add_cutoff_date_to_requestlog_queries(sql):
 
     if len(parts) == 1:
         # No WHERE clause, add cutoff date filter
-        modified_sql = "{} WHERE created_at >= '{}'".format(parts[0], cutoff_date)
+        modified_sql = add_cutoff_date_to_sql_without_where_clause(parts[0], cutoff_date)
     else:
         # SQL statement contains a WHERE clause
         modified_sql = parts[0]
@@ -330,7 +361,7 @@ def add_cutoff_date_to_requestlog_queries(sql):
                 limit_index = i
 
         # Determine the index before which the cutoff date filter should be added
-        filter_indices = filter(lambda x: x != -1, [group_by_index, order_by_index, limit_index])
+        filter_indices = list(filter(lambda x: x != -1, [group_by_index, order_by_index, limit_index]))
         filter_index = min(filter_indices) if filter_indices else -1
 
         if filter_index == -1:
