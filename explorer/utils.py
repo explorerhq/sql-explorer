@@ -27,6 +27,7 @@ else:
 EXPLORER_PARAM_TOKEN = "$$"
 
 REPLICATION_LAG_THRESHOLD_VALUE_IN_MINUTES = 3
+REQUEST_LOG_SQL_CUTOFF_DATE = "2023-06-01"
 
 # SQL Specific Things
 
@@ -47,6 +48,11 @@ def get_connection():
 def get_connection_pii():
     logger.info("explorer_pii_connection succesfull")
     return connections[app_settings.EXPLORER_CONNECTION_PII_NAME] if app_settings.EXPLORER_CONNECTION_PII_NAME else connection
+
+
+def get_connection_asyncapi_db():
+    logger.info("Connecting with async-api DB")
+    return connections[app_settings.EXPLORER_CONNECTION_ASYNC_API_DB_NAME] if app_settings.EXPLORER_CONNECTION_ASYNC_API_DB_NAME else connection
 
 
 def schema_info():
@@ -284,4 +290,89 @@ def check_replication_lag():
 
     return True, human(replication_lag, 4)
 
-    
+
+def should_route_to_asyncapi_db(sql):
+    request_log_tables = ["request_log_requestlog", "request_log_requestlogdata"]
+    pattern = r"\b(?:%s)\b" % "|".join(map(re.escape, request_log_tables))
+    match = re.search(pattern, sql)
+    if match:
+        return True
+
+    return False
+
+
+def check_and_update_sql_using_query_clause(sql, cutoff_date, query_clause):
+    # Split the SQL statement at the query_clause
+    parts = sql.split(query_clause)
+    select_clause = parts[0].strip()
+
+    # Check if clause is the last part of the SQL statement
+    if len(parts) > 1:
+        remaining_clause = query_clause + ' ' + parts[1].strip()
+    else:
+        remaining_clause = ''
+
+    # Add the "WHERE" clause with the cutoff date before the query_clause
+    modified_sql = '{} WHERE created_at >= \'{}\' {}'.format(select_clause, cutoff_date, remaining_clause)
+    return modified_sql
+
+
+def add_cutoff_date_to_sql_without_where_clause(sql, cutoff_date):
+    sql = sql.strip()
+    # Check if the SQL statement contains "GROUP BY", "ORDER BY", or "LIMIT" clauses
+    if 'GROUP BY' in sql:
+        return check_and_update_sql_using_query_clause(sql, cutoff_date, 'GROUP BY')
+    if 'ORDER BY' in sql:
+        return check_and_update_sql_using_query_clause(sql, cutoff_date, 'ORDER BY')
+    if 'LIMIT' in sql:
+        return check_and_update_sql_using_query_clause(sql, cutoff_date, 'LIMIT')
+
+    # Add the "WHERE" clause with the cutoff date
+    modified_sql = '{} WHERE created_at >= \'{}\''.format(sql, cutoff_date)
+    return modified_sql
+
+
+def add_cutoff_date_to_requestlog_queries(sql):
+    cutoff_date = datetime.datetime.strptime(REQUEST_LOG_SQL_CUTOFF_DATE, "%Y-%m-%d")
+
+    # Split the SQL statement into different parts
+    parts = fmt_sql(sql).split('WHERE')
+    modified_sql = ''
+
+    if len(parts) == 1:
+        # No WHERE clause, add cutoff date filter
+        modified_sql = add_cutoff_date_to_sql_without_where_clause(parts[0], cutoff_date)
+    else:
+        # SQL statement contains a WHERE clause
+        modified_sql = parts[0]
+        conditions = parts[1].strip().split(' ')
+
+        # Find the position of GROUP BY or ORDER BY clauses
+        group_by_index = -1
+        order_by_index = -1
+        limit_index = -1
+
+        for i, condition in enumerate(conditions):
+            if condition == 'GROUP' and conditions[i + 1] == 'BY':
+                group_by_index = i
+            elif condition == 'ORDER' and conditions[i + 1] == 'BY':
+                order_by_index = i
+            elif condition == 'LIMIT':
+                limit_index = i
+
+        # Determine the index before which the cutoff date filter should be added
+        filter_indices = list(filter(lambda x: x != -1, [group_by_index, order_by_index, limit_index]))
+        filter_index = min(filter_indices) if filter_indices else -1
+
+        if filter_index == -1:
+            # Add cutoff date filter after existing WHERE clause
+            modified_sql += " WHERE created_at >= '{}' AND {}".format(cutoff_date, parts[1])
+        else:
+            # Add cutoff date filter before GROUP BY, ORDER BY, or LIMIT clauses
+            modified_sql += " WHERE created_at >= '{}' {} {}".format(
+                cutoff_date,
+                'AND' if filter_index > 0 else '',
+                parts[1]
+            )
+
+    return fmt_sql(modified_sql)
