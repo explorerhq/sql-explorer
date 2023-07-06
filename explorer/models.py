@@ -148,7 +148,7 @@ class QueryChangeLog(models.Model):
 
 class QueryResult(object):
 
-    def __init__(self, sql, title,is_connection_type_pii=None):
+    def __init__(self, sql, title=None,is_connection_type_pii=None):
 
         self.sql = sql
         self.title=title
