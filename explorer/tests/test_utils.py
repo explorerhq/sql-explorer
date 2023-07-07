@@ -135,41 +135,47 @@ class TestAddCutoffDateToRequestLogQueries(TestCase):
     def test_no_where_clause(self):
         sql = "SELECT * FROM request_log_requestlogdata"
         modified_sql = add_cutoff_date_to_requestlog_queries(sql)
-        expected_sql = "SELECT * FROM request_log_requestlogdata WHERE created_at >= '2023-06-01 00:00:00'"
+        expected_sql = "SELECT * FROM request_log_requestlogdata WHERE request_log_requestlogdata.created_at >= '2023-06-01 00:00:00'"
         self.assertEqual(modified_sql, fmt_sql(expected_sql))
 
     def test_no_where_clause_but_contains_group_by_clause(self):
         sql = "SELECT * FROM request_log_requestlogdata group by status"
         modified_sql = add_cutoff_date_to_requestlog_queries(sql)
-        expected_sql = "SELECT * FROM request_log_requestlogdata WHERE created_at >= '2023-06-01 00:00:00' group by status"
+        expected_sql = "SELECT * FROM request_log_requestlogdata WHERE request_log_requestlogdata.created_at >= '2023-06-01 00:00:00' group by status"
         self.assertEqual(modified_sql, fmt_sql(expected_sql))
 
     def test_no_where_clause_but_contains_order_by_clause(self):
-        sql = "SELECT * FROM request_log_requestlogdata order by created_at"
+        sql = "SELECT * FROM request_log_requestlogdata order by request_log_requestlogdata.created_at"
         modified_sql = add_cutoff_date_to_requestlog_queries(sql)
-        expected_sql = "SELECT * FROM request_log_requestlogdata WHERE created_at >= '2023-06-01 00:00:00' order by created_at"
+        expected_sql = "SELECT * FROM request_log_requestlogdata WHERE request_log_requestlogdata.created_at >= '2023-06-01 00:00:00' order by request_log_requestlogdata.created_at"
         self.assertEqual(modified_sql, fmt_sql(expected_sql))
 
     def test_with_where_clause(self):
         sql = "SELECT * FROM request_log_requestlogdata WHERE status = 'success'"
         modified_sql = add_cutoff_date_to_requestlog_queries(sql)
-        expected_sql = "SELECT * FROM request_log_requestlogdata WHERE created_at >= '2023-06-01 00:00:00' AND status = 'success'"
+        expected_sql = "SELECT * FROM request_log_requestlogdata WHERE request_log_requestlogdata.created_at >= '2023-06-01 00:00:00' AND status = 'success'"
         self.assertEqual(modified_sql, fmt_sql(expected_sql))
 
     def test_with_group_by_clause(self):
         sql = "SELECT * FROM request_log_requestlogdata WHERE status = 'success' GROUP BY user_id"
         modified_sql = add_cutoff_date_to_requestlog_queries(sql)
-        expected_sql = "SELECT * FROM request_log_requestlogdata WHERE created_at >= '2023-06-01 00:00:00' AND status = 'success' GROUP BY user_id"
+        expected_sql = "SELECT * FROM request_log_requestlogdata WHERE request_log_requestlogdata.created_at >= '2023-06-01 00:00:00' AND status = 'success' GROUP BY user_id"
         self.assertEqual(modified_sql, fmt_sql(expected_sql))
 
     def test_with_order_by_clause(self):
-        sql = "SELECT * FROM request_log_requestlogdata WHERE status = 'success' ORDER BY created_at DESC"
+        sql = "SELECT * FROM request_log_requestlogdata WHERE status = 'success' ORDER BY request_log_requestlogdata.created_at DESC"
         modified_sql = add_cutoff_date_to_requestlog_queries(sql)
-        expected_sql = "SELECT * FROM request_log_requestlogdata WHERE created_at >= '2023-06-01 00:00:00' AND status = 'success' ORDER BY created_at DESC"
+        expected_sql = "SELECT * FROM request_log_requestlogdata WHERE request_log_requestlogdata.created_at >= '2023-06-01 00:00:00' AND status = 'success' ORDER BY request_log_requestlogdata.created_at DESC"
         self.assertEqual(modified_sql, fmt_sql(expected_sql))
 
     def test_with_limit_clause(self):
         sql = "SELECT * FROM request_log_requestlogdata WHERE status = 'success' LIMIT 10"
         modified_sql = add_cutoff_date_to_requestlog_queries(sql)
-        expected_sql = "SELECT * FROM request_log_requestlogdata WHERE created_at >= '2023-06-01 00:00:00' AND status = 'success' LIMIT 10"
+        expected_sql = "SELECT * FROM request_log_requestlogdata WHERE request_log_requestlogdata.created_at >= '2023-06-01 00:00:00' AND status = 'success' LIMIT 10"
+        self.assertEqual(modified_sql, fmt_sql(expected_sql))
+
+    def test_with_join_query(self):
+        sql = "SELECT * FROM request_log_requestlogdata join request_log_requestlog on request_log_requestlogdata.requestlog=request_log_requestlog.id WHERE status = 'success' LIMIT 10"
+        modified_sql = add_cutoff_date_to_requestlog_queries(sql)
+        expected_sql = "SELECT * FROM request_log_requestlogdata join request_log_requestlog ON request_log_requestlogdata.requestlog=request_log_requestlog.id WHERE request_log_requestlogdata.created_at >= '2023-06-01 00:00:00' AND status = 'success' LIMIT 10"
         self.assertEqual(modified_sql, fmt_sql(expected_sql))
