@@ -313,7 +313,7 @@ def check_and_update_sql_using_query_clause(sql, cutoff_date, query_clause):
         remaining_clause = ''
 
     # Add the "WHERE" clause with the cutoff date before the query_clause
-    modified_sql = '{} WHERE created_at >= \'{}\' {}'.format(select_clause, cutoff_date, remaining_clause)
+    modified_sql = '{} WHERE request_log_requestlogdata.created_at >= \'{}\' {}'.format(select_clause, cutoff_date, remaining_clause)
     return modified_sql
 
 
@@ -328,7 +328,7 @@ def add_cutoff_date_to_sql_without_where_clause(sql, cutoff_date):
         return check_and_update_sql_using_query_clause(sql, cutoff_date, 'LIMIT')
 
     # Add the "WHERE" clause with the cutoff date
-    modified_sql = '{} WHERE created_at >= \'{}\''.format(sql, cutoff_date)
+    modified_sql = '{} WHERE request_log_requestlogdata.created_at >= \'{}\''.format(sql, cutoff_date)
     return modified_sql
 
 
@@ -366,10 +366,10 @@ def add_cutoff_date_to_requestlog_queries(sql):
 
         if filter_index == -1:
             # Add cutoff date filter after existing WHERE clause
-            modified_sql += " WHERE created_at >= '{}' AND {}".format(cutoff_date, parts[1])
+            modified_sql += " WHERE request_log_requestlogdata.created_at >= '{}' AND {}".format(cutoff_date, parts[1])
         else:
             # Add cutoff date filter before GROUP BY, ORDER BY, or LIMIT clauses
-            modified_sql += " WHERE created_at >= '{}' {} {}".format(
+            modified_sql += " WHERE request_log_requestlogdata.created_at >= '{}' {} {}".format(
                 cutoff_date,
                 'AND' if filter_index > 0 else '',
                 parts[1]
