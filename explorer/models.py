@@ -184,7 +184,7 @@ class QueryResult(object):
         }
         # Collect the indices for JSON and text columns
         for index, column in enumerate(self._description):
-            if column.type_code in type_code_and_column_indices_to_be_masked_dict:
+            if hasattr(column, "type_code") and column.type_code in type_code_and_column_indices_to_be_masked_dict:
                 type_code_and_column_indices_to_be_masked_dict[column.type_code].append(index)
 
         return type_code_and_column_indices_to_be_masked_dict
