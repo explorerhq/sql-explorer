@@ -165,8 +165,11 @@ class QueryResult(object):
 
         self._description = cursor.description or []
 
-        type_code_and_column_indices_to_be_masked_dict = self.get_type_code_and_column_indices_to_be_masked_dict()
-        self._data = self.get_data_to_be_displayed(cursor, type_code_and_column_indices_to_be_masked_dict)
+        if not is_connection_type_pii:
+            type_code_and_column_indices_to_be_masked_dict = self.get_type_code_and_column_indices_to_be_masked_dict()
+            self._data = self.get_data_to_be_displayed(cursor, type_code_and_column_indices_to_be_masked_dict)
+        else:
+            self._data = [list(r) for r in cursor.fetchall()]
 
         self.duration = duration
         cursor.close()
