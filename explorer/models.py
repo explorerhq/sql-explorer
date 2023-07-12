@@ -150,6 +150,21 @@ class QueryChangeLog(models.Model):
 
 class QueryResult(object):
     def get_type_code_and_column_indices_to_be_masked_dict(self):
+        """
+        Returns a dictionary of type code and column indices to be masked
+        Return type:
+        {
+            type_code: [column indices that match the type code]
+        }
+        Eg.
+        Say a table has three fields id, data, random_text. id is of type INT, data is of type JSON, and random_text is of type TEXT.
+        Then the return value will be:
+        {
+            TYPE_CODE_FOR_JSON: [1],
+            TYPE_CODE_FOR_TEXT: [2]
+        }
+        as 1 is the column index for JSON and 2 is the column index for TEXT
+        """
         type_code_and_column_indices_to_be_masked_dict = {
             TYPE_CODE_FOR_JSON: [],
             TYPE_CODE_FOR_TEXT: []
@@ -167,19 +182,34 @@ class QueryResult(object):
     def mask_text_data(self, data):
         return replace_regex(data, PII_MASKING_PATTERN_REPLACEMENT_DICT)
 
+    def get_masked_data(self, data, type_code):
+        """
+        Mask the data based on the type code.
+        """
+        if not data:
+            return data
+        if type_code == TYPE_CODE_FOR_JSON:
+            return self.mask_json_data(str(data))
+        elif type_code == TYPE_CODE_FOR_TEXT:
+            return self.mask_text_data(data)
+        return data
     def mask_pii_data(self, row, type_code_and_column_indices_to_be_masked_dict):
+        """
+        Mask the JSON and TEXT data types in the row.
+        """
         modified_row = list(row)
         for type_code, indices in type_code_and_column_indices_to_be_masked_dict.items():
             for index in indices:
-                if not modified_row[index]:
-                    continue
-                if type_code == TYPE_CODE_FOR_JSON:
-                    modified_row[index] = self.mask_json_data(str(modified_row[index]))
-                elif type_code == TYPE_CODE_FOR_TEXT:
-                    modified_row[index] = self.mask_text_data(modified_row[index])
+                modified_row[index] = self.get_masked_row_data(modified_row[index], type_code)
+
         return modified_row
 
     def get_data_to_be_displayed(self, cursor):
+        """
+        If the connection type allows PII, then return the data as is.
+        If connection type does not allow PII, then mask JSON and TEXT data types and then return the data.
+        JSON and TEXT data types can be identified by the type_code attribute of the column.
+        """
         if self.is_connection_type_pii:
             return [list(r) for r in cursor.fetchall()]
 
