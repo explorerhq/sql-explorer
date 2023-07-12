@@ -200,7 +200,7 @@ class QueryResult(object):
         modified_row = list(row)
         for type_code, indices in type_code_and_column_indices_to_be_masked_dict.items():
             for index in indices:
-                modified_row[index] = self.get_masked_row_data(modified_row[index], type_code)
+                modified_row[index] = self.get_masked_data(modified_row[index], type_code)
 
         return modified_row
 
