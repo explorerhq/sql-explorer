@@ -1,6 +1,4 @@
-from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection, \
-    get_s3_connection, get_connection_pii, get_connection_asyncapi_db, should_route_to_asyncapi_db, \
-    add_cutoff_date_to_requestlog_queries, replace_regex
+from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection, get_s3_connection, get_connection_pii, get_connection_asyncapi_db, should_route_to_asyncapi_db, add_cutoff_date_to_requestlog_queries, replace_regex
 from future.utils import python_2_unicode_compatible
 from django.db import models, DatabaseError
 from time import time
@@ -14,7 +12,7 @@ import re
 import json
 import six
 
-from .constants import PII_MASKING_PATTERN_REPLACEMENT_DICT, TYPE_CODE_FOR_JSON, TYPE_CODE_FOR_TEXT
+from explorer.constants import PII_MASKING_PATTERN_REPLACEMENT_DICT, TYPE_CODE_FOR_JSON, TYPE_CODE_FOR_TEXT
 
 MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist: %s"
 
@@ -151,6 +149,48 @@ class QueryChangeLog(models.Model):
 
 
 class QueryResult(object):
+    def get_type_code_and_column_indices_to_be_masked_dict(self):
+        type_code_and_column_indices_to_be_masked_dict = {
+            TYPE_CODE_FOR_JSON: [],
+            TYPE_CODE_FOR_TEXT: []
+        }
+        # Collect the indices for JSON and text columns
+        for index, column in enumerate(self._description):
+            if hasattr(column, "type_code") and column.type_code in type_code_and_column_indices_to_be_masked_dict:
+                type_code_and_column_indices_to_be_masked_dict[column.type_code].append(index)
+
+        return type_code_and_column_indices_to_be_masked_dict
+
+    def mask_json_data(self, data):
+        return json.dumps(replace_regex(data, PII_MASKING_PATTERN_REPLACEMENT_DICT))
+
+    def mask_text_data(self, data):
+        return replace_regex(data, PII_MASKING_PATTERN_REPLACEMENT_DICT)
+
+    def mask_pii_data(self, row, type_code_and_column_indices_to_be_masked_dict):
+        modified_row = list(row)
+        for type_code, indices in type_code_and_column_indices_to_be_masked_dict.items():
+            for index in indices:
+                if not modified_row[index]:
+                    continue
+                if type_code == TYPE_CODE_FOR_JSON:
+                    modified_row[index] = self.mask_json_data(str(modified_row[index]))
+                elif type_code == TYPE_CODE_FOR_TEXT:
+                    modified_row[index] = self.mask_text_data(modified_row[index])
+        return modified_row
+
+    def get_data_to_be_displayed(self, cursor):
+        if self.is_connection_type_pii:
+            return [list(r) for r in cursor.fetchall()]
+
+        type_code_and_column_indices_to_be_masked_dict = self.get_type_code_and_column_indices_to_be_masked_dict()
+        data_to_be_displayed = []
+
+        for row in cursor.fetchall():
+            modified_row = self.mask_pii_data(row, type_code_and_column_indices_to_be_masked_dict)
+            data_to_be_displayed.append(modified_row)
+
+        return data_to_be_displayed
 
     def __init__(self, sql, title=None,is_connection_type_pii=None):
 
@@ -165,49 +205,13 @@ class QueryResult(object):
 
         self._description = cursor.description or []
 
-        if not is_connection_type_pii:
-            type_code_and_column_indices_to_be_masked_dict = self.get_type_code_and_column_indices_to_be_masked_dict()
-            self._data = self.get_data_to_be_displayed(cursor, type_code_and_column_indices_to_be_masked_dict)
-        else:
-            self._data = [list(r) for r in cursor.fetchall()]
+        self._data = self.get_data_to_be_displayed(cursor)
 
         self.duration = duration
         cursor.close()
 
         self._headers = self._get_headers()
         self._summary = {}
-
-    def get_type_code_and_column_indices_to_be_masked_dict(self):
-        type_code_and_column_indices_to_be_masked_dict = {
-            TYPE_CODE_FOR_JSON: [],
-            TYPE_CODE_FOR_TEXT: []
-        }
-        # Collect the indices for JSON and text columns
-        for index, column in enumerate(self._description):
-            if hasattr(column, "type_code") and column.type_code in type_code_and_column_indices_to_be_masked_dict:
-                type_code_and_column_indices_to_be_masked_dict[column.type_code].append(index)
-
-        return type_code_and_column_indices_to_be_masked_dict
-
-    @staticmethod
-    def get_data_to_be_displayed(cursor, type_code_and_column_indices_to_be_masked_dict):
-        data_to_be_displayed = []
-        for row in cursor.fetchall():
-            modified_row = list(row)
-            for type_code, indices in type_code_and_column_indices_to_be_masked_dict.items():
-                for index in indices:
-                    if not modified_row[index]:
-                        continue
-                    if type_code == TYPE_CODE_FOR_JSON:
-                        modified_row[index] = json.dumps(
-                            replace_regex(str(modified_row[index]), PII_MASKING_PATTERN_REPLACEMENT_DICT))
-                    elif type_code == TYPE_CODE_FOR_TEXT:
-                        modified_row[index] = replace_regex(modified_row[index],
-                                                            PII_MASKING_PATTERN_REPLACEMENT_DICT)
-
-            data_to_be_displayed.append(modified_row)
-
-        return data_to_be_displayed
 
     @property
     def data(self):

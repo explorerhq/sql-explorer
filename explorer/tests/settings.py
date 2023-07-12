@@ -3,14 +3,22 @@ SECRET_KEY = 'shhh'
 SITE_ID = 1
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': ':memory:',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
-        'PORT': '',
-    }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': ':memory:',
+    #     'USER': '',
+    #     'PASSWORD': '',
+    #     'HOST': '',
+    #     'PORT': '',
+    # },
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "squadrun",  # migrated to 1.8
+        "USER": "postgres",
+        "PASSWORD": "123456",
+        "HOST": "db",
+        "PORT": "5432",
+    },
 }
 
 ROOT_URLCONF = 'explorer.tests.urls'
