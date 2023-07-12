@@ -1,4 +1,4 @@
-from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection, get_s3_connection, get_connection_pii, get_connection_asyncapi_db, should_route_to_asyncapi_db, add_cutoff_date_to_requestlog_queries, replace_regex
+from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection, get_s3_connection, get_connection_pii, get_connection_asyncapi_db, should_route_to_asyncapi_db, add_cutoff_date_to_requestlog_queries, mask_string
 from future.utils import python_2_unicode_compatible
 from django.db import models, DatabaseError
 from time import time
@@ -12,7 +12,7 @@ import re
 import json
 import six
 
-from explorer.constants import PII_MASKING_PATTERN_REPLACEMENT_DICT, TYPE_CODE_FOR_JSON, TYPE_CODE_FOR_TEXT
+from explorer.constants import TYPE_CODE_FOR_JSON, TYPE_CODE_FOR_TEXT
 
 MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist: %s"
 
@@ -176,12 +176,6 @@ class QueryResult(object):
 
         return type_code_and_column_indices_to_be_masked_dict
 
-    def mask_json_data(self, data):
-        return json.dumps(replace_regex(data, PII_MASKING_PATTERN_REPLACEMENT_DICT))
-
-    def mask_text_data(self, data):
-        return replace_regex(data, PII_MASKING_PATTERN_REPLACEMENT_DICT)
-
     def get_masked_data(self, data, type_code):
         """
         Mask the data based on the type code.
@@ -189,10 +183,11 @@ class QueryResult(object):
         if not data:
             return data
         if type_code == TYPE_CODE_FOR_JSON:
-            return self.mask_json_data(str(data))
+            return json.dumps(mask_string(str(data)))
         elif type_code == TYPE_CODE_FOR_TEXT:
-            return self.mask_text_data(data)
+            return mask_string(data)
         return data
+
     def mask_pii_data(self, row, type_code_and_column_indices_to_be_masked_dict):
         """
         Mask the JSON and TEXT data types in the row.

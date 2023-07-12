@@ -14,6 +14,8 @@ import functools
 import sys
 import logging
 
+from explorer.constants import PII_MASKING_PATTERN_REPLACEMENT_DICT
+
 logger = logging.getLogger(__name__)
 
 
@@ -377,23 +379,24 @@ def add_cutoff_date_to_requestlog_queries(sql):
 
     return fmt_sql(modified_sql)
 
-def replace_regex(string_to_masked, patten_replacement_dict):
+def mask_string(string_to_masked):
     """
     Replace a string with a dictionary of regex patterns and replacements
     Param 1: string that needs to be masked
-    Param 2: dictionary of regex patterns and replacements
 
     Eg.
-    Following patten_replacement_dict
+    Following is the PII_MASKING_PATTERN_REPLACEMENT_DICT as of now
     {
         r"(?:\+?\d{1,3}|0)?([6-9]\d{9})\b": "XXXXXXXXXXX", # For masking phone number
         r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b": "XXX@XXX.com", # For masking email
     }
-    would mask
-    the string: 'My number is +919191919191, their number is 9191919191, my email is abc@abc.com, their email is xyz@pq.in.'
-    to: 'My number is XXXXXXXXXXX, their number is XXXXXXXXXXX, my email is XXX@XXX.com, their email is XXX@XXX.com.'
+    It would mask the string:
+    'My number is +919191919191, their number is 9191919191, my email is abc@abc.com, their email is xyz@pq.in.'
+    to:
+    'My number is XXXXXXXXXXX, their number is XXXXXXXXXXX, my email is XXX@XXX.com, their email is XXX@XXX.com.'
     and return it.
     """
-    for pattern, replacement in patten_replacement_dict.items():
+
+    for pattern, replacement in PII_MASKING_PATTERN_REPLACEMENT_DICT.items():
         string_to_masked = re.sub(pattern, replacement, string_to_masked)
     return string_to_masked
