@@ -87,7 +87,7 @@ class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
         pattern = re.compile(r'[\W_]+')
 
         headers = Counter([q.title.split(' - ')[0] for q in self.object_list])
-        query_favorites_for_user = QueryFavorite.objects.filter(user_id=self.request.user.id).values_list('query_id',
+        query_favorites_for_user = QueryFavorite.objects.filter(user_id=self.request.user.pk).values_list('query_id',
                                                                                                           flat=True)
 
         for q in self.object_list:
