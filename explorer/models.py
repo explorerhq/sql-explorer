@@ -1,4 +1,4 @@
-from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection, get_s3_connection, get_connection_pii, get_connection_asyncapi_db, should_route_to_asyncapi_db, add_cutoff_date_to_requestlog_queries
+from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection, get_s3_connection, get_connection_pii, get_connection_asyncapi_db, should_route_to_asyncapi_db, add_cutoff_date_to_requestlog_queries, mask_string
 from future.utils import python_2_unicode_compatible
 from django.db import models, DatabaseError
 from time import time
@@ -11,6 +11,8 @@ import logging
 import re
 import json
 import six
+
+from explorer.constants import TYPE_CODE_FOR_JSON, TYPE_CODE_FOR_TEXT
 
 MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist: %s"
 
@@ -147,6 +149,73 @@ class QueryChangeLog(models.Model):
 
 
 class QueryResult(object):
+    def get_type_code_and_column_indices_to_be_masked_dict(self):
+        """
+        Returns a dictionary of type code and column indices to be masked
+        Return type:
+        {
+            type_code: [column indices that match the type code]
+        }
+        Eg.
+        Say a table has three fields id, data, random_text. id is of type INT, data is of type JSON, and random_text is of type TEXT.
+        Then the return value will be:
+        {
+            TYPE_CODE_FOR_JSON: [1],
+            TYPE_CODE_FOR_TEXT: [2]
+        }
+        as 1 is the column index for JSON and 2 is the column index for TEXT
+        """
+        type_code_and_column_indices_to_be_masked_dict = {
+            TYPE_CODE_FOR_JSON: [],
+            TYPE_CODE_FOR_TEXT: []
+        }
+        # Collect the indices for JSON and text columns
+        for index, column in enumerate(self._description):
+            if hasattr(column, "type_code") and column.type_code in type_code_and_column_indices_to_be_masked_dict:
+                type_code_and_column_indices_to_be_masked_dict[column.type_code].append(index)
+
+        return type_code_and_column_indices_to_be_masked_dict
+
+    def get_masked_data(self, data, type_code):
+        """
+        Mask the data based on the type code.
+        """
+        if not data:
+            return data
+        if type_code == TYPE_CODE_FOR_JSON:
+            return json.dumps(mask_string(str(data)))
+        elif type_code == TYPE_CODE_FOR_TEXT:
+            return mask_string(data)
+        return data
+
+    def mask_pii_data(self, row, type_code_and_column_indices_to_be_masked_dict):
+        """
+        Mask the JSON and TEXT data types in the row.
+        """
+        modified_row = list(row)
+        for type_code, indices in type_code_and_column_indices_to_be_masked_dict.items():
+            for index in indices:
+                modified_row[index] = self.get_masked_data(modified_row[index], type_code)
+
+        return modified_row
+
+    def get_data_to_be_displayed(self, cursor):
+        """
+        If the connection type allows PII, then return the data as is.
+        If connection type does not allow PII, then mask JSON and TEXT data types and then return the data.
+        JSON and TEXT data types can be identified by the type_code attribute of the column.
+        """
+        if self.is_connection_type_pii:
+            return [list(r) for r in cursor.fetchall()]
+
+        type_code_and_column_indices_to_be_masked_dict = self.get_type_code_and_column_indices_to_be_masked_dict()
+        data_to_be_displayed = []
+
+        for row in cursor.fetchall():
+            modified_row = self.mask_pii_data(row, type_code_and_column_indices_to_be_masked_dict)
+            data_to_be_displayed.append(modified_row)
+
+        return data_to_be_displayed
 
     def __init__(self, sql, title=None,is_connection_type_pii=None):
 
@@ -160,10 +229,10 @@ class QueryResult(object):
         cursor, duration = self.execute_query()
 
         self._description = cursor.description or []
-        self._data = [list(r) for r in cursor.fetchall()]
+
+        self._data = self.get_data_to_be_displayed(cursor)
 
         self.duration = duration
-
         cursor.close()
 
         self._headers = self._get_headers()

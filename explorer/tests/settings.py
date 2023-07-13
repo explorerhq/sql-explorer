@@ -10,7 +10,7 @@ DATABASES = {
         'PASSWORD': '',
         'HOST': '',
         'PORT': '',
-    }
+    },
 }
 
 ROOT_URLCONF = 'explorer.tests.urls'
