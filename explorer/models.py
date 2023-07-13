@@ -31,6 +31,12 @@ class Query(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     last_run_date = models.DateTimeField(auto_now=True)
+    ran_successfully = models.BooleanField(
+        null=False,
+        help_text=_("Indicate if the query completed successfully or resulted in an error"),
+        default=True
+    )
+
     snapshot = models.BooleanField(
         default=False,
         help_text=_("Include in snapshot task (if enabled)")
@@ -58,7 +64,7 @@ class Query(models.Model):
 
     def __str__(self):
         return str(self.title)
-
+    
     def get_run_count(self):
         return self.querylog_set.count()
 
@@ -93,6 +99,7 @@ class Query(models.Model):
     def execute_with_logging(self, executing_user):
         ql = self.log(executing_user)
         ret = self.execute()
+        self.ran_successfully = True
         ql.duration = ret.duration
         ql.save()
         return ret, ql

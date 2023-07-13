@@ -19,6 +19,8 @@ def query_viewmodel(request, query, title=None, form=None, message=None,
         try:
             res, ql = query.execute_with_logging(request.user)
         except DatabaseError as e:
+            query.ran_successfully = False
+            query.save()
             error = str(e)
     has_valid_results = not error and res and run_query
 

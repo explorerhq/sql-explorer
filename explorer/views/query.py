@@ -115,6 +115,7 @@ class QueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
             )
         show = url_get_show(request)
         query, form = QueryView.get_instance_and_form(request, query_id)
+        query.ran_successfully = True
         success = form.is_valid() and form.save()
         try:
             vm = query_viewmodel(

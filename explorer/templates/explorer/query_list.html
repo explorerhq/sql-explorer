@@ -58,6 +58,7 @@
                         <th>{% trans "Delete" %}</th>
                     {% endif %}
                     <th>{%  trans "Favorite" %}</th>
+                    <th>{%  trans "Ran Successfully" %}</th>
                     <th>{% trans "Run Count" %}</th>
                 </tr>
             </thead>
@@ -108,6 +109,7 @@
                                 </td>
                             {% endif %}
                             <td> {% query_favorite_button object.id object.is_favorite 'query_favorite_toggle' %}</td>
+                            <td><img src="{% if object.ran_successfully %}{% static 'explorer/img/icon-yes.svg' %}{% else %}{% static 'explorer/img/icon-no.svg' %}{% endif %}"/></td>
                             <td>{{ object.run_count }}</td>
                         {% endif %}
                     </tr>
