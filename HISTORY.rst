@@ -9,6 +9,11 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 ---------------------
 
 
+`3.2.1`_ (2023-07-13)
+---------------------
+* `#539`_: Test for SET PASSWORD
+* `#544`_: Fix `User` primary key reference
+
 `3.2.0`_ (2023-05-17)
 ---------------------
 * `#533`_: CSRF token httponly support + s3 destination for async results
@@ -474,6 +479,8 @@ Initial Release
 .. _#528: https://github.com/groveco/django-sql-explorer/pull/528
 .. _#529: https://github.com/groveco/django-sql-explorer/pull/529
 .. _#533: https://github.com/groveco/django-sql-explorer/pull/533
+.. _#539: https://github.com/groveco/django-sql-explorer/pull/539
+.. _#544: https://github.com/groveco/django-sql-explorer/pull/544
 
 .. _#269: https://github.com/groveco/django-sql-explorer/issues/269
 .. _#288: https://github.com/groveco/django-sql-explorer/issues/288
