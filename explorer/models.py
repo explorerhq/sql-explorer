@@ -97,12 +97,19 @@ class Query(models.Model):
         )
 
     def execute_with_logging(self, executing_user):
-        ql = self.log(executing_user)
-        ret = self.execute()
-        self.ran_successfully = True
-        ql.duration = ret.duration
-        ql.save()
-        return ret, ql
+        try:
+            ql = self.log(executing_user)
+            ret = self.execute()
+            self.ran_successfully = True
+            self.save()
+            ql.duration = ret.duration
+            ql.save()
+            return ret, ql
+        except DatabaseError as e:
+            self.ran_successfully = False
+            self.save()
+            raise e
+
 
     def execute(self):
         ret = self.execute_query_only()
