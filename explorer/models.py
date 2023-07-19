@@ -1,4 +1,4 @@
-from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection, get_s3_connection, get_connection_pii, get_connection_asyncapi_db, should_route_to_asyncapi_db, add_cutoff_date_to_requestlog_queries, mask_string
+from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection, get_s3_connection, get_connection_pii, get_connection_asyncapi_db, should_route_to_asyncapi_db, mask_string
 from future.utils import python_2_unicode_compatible
 from django.db import models, DatabaseError
 from time import time
@@ -287,12 +287,11 @@ class QueryResult(object):
 
     def execute_query(self):
         # can change connectiion type here to use different role --> get_connection_pii()
-        route_to_asyncapi_db = should_route_to_asyncapi_db(self.sql)
         if (self.is_connection_type_pii):
             logger.info(
                 "pii-connection")
             conn = get_connection_pii()
-        elif route_to_asyncapi_db:
+        elif should_route_to_asyncapi_db(self.sql):
             logger.info("Route to Async API DB")
             conn = get_connection_asyncapi_db()
         else:
@@ -303,11 +302,7 @@ class QueryResult(object):
         start_time = time()
 
         try:
-            if route_to_asyncapi_db:
-                modified_sql = add_cutoff_date_to_requestlog_queries(self.sql)
-                cursor.execute(modified_sql)
-            else:
-                cursor.execute(self.sql)
+            cursor.execute(self.sql)
         except DatabaseError as e:
             cursor.close()
             if (re.search("permission denied for table", str(e)) and self.title != "Playground"):
