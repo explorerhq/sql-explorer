@@ -14,7 +14,7 @@ import functools
 import sys
 import logging
 
-from explorer.constants import PII_MASKING_PATTERN_REPLACEMENT_DICT
+from explorer.constants import PII_MASKING_PATTERN_REPLACEMENT_DICT, ALLOW_PHONE_NUMBER_MASKING_GROUP_ID
 
 logger = logging.getLogger(__name__)
 
@@ -330,4 +330,4 @@ def is_phone_number_masked_for_user(user):
     Check if the user has permission to view masked phone numbers
     """
     user_group_ids = user.groups.all().values_list('id', flat=True)
-    return app_settings.ALLOW_PHONE_NUMBER_MASKING_GROUP_ID in user_group_ids
+    return ALLOW_PHONE_NUMBER_MASKING_GROUP_ID in user_group_ids

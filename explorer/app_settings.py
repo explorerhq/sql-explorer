@@ -24,8 +24,6 @@ EXPLORER_RECENT_QUERY_COUNT = getattr(
     settings, 'EXPLORER_RECENT_QUERY_COUNT', 10)
 CSV_DELIMETER = getattr(settings, "EXPLORER_CSV_DELIMETER", ",")
 
-ALLOW_PHONE_NUMBER_MASKING_GROUP_ID = 10439
-
 # API access
 EXPLORER_TOKEN = getattr(settings, 'EXPLORER_TOKEN', 'CHANGEME')
 # These are callable to aid testability by dodging the settings cache.
