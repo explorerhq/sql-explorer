@@ -177,7 +177,7 @@ class QueryResult(object):
                 type_code_and_column_indices_to_be_masked_dict[column.type_code].append(index)
 
             # Masking for player phone numbers
-            if hasattr(column, "type_code") and column.type_code in PLAYER_PHONE_NUMBER_MASKING_TYPE_CODES and is_phone_number_masked_for_user(self.used_by_user):
+            if self.used_by_user and is_phone_number_masked_for_user(self.used_by_user) and hasattr(column, "type_code") and column.type_code in PLAYER_PHONE_NUMBER_MASKING_TYPE_CODES:
                 type_code_and_column_indices_to_be_masked_dict[column.type_code].append(index)
 
         return type_code_and_column_indices_to_be_masked_dict
