@@ -1,6 +1,6 @@
 from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection, \
     get_s3_connection, get_connection_pii, get_connection_asyncapi_db, should_route_to_asyncapi_db, mask_string, \
-    is_phone_number_masked_for_user
+    is_pii_masked_for_user
 from future.utils import python_2_unicode_compatible
 from django.db import models, DatabaseError
 from time import time
@@ -14,7 +14,8 @@ import re
 import json
 import six
 
-from explorer.constants import TYPE_CODE_FOR_JSON, TYPE_CODE_FOR_TEXT, PLAYER_PHONE_NUMBER_MASKING_TYPE_CODES
+from explorer.constants import TYPE_CODE_FOR_JSON, TYPE_CODE_FOR_TEXT, PLAYER_PHONE_NUMBER_MASKING_TYPE_CODES, \
+    TYPE_CODE_FOR_CHAR
 
 MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist: %s"
 
@@ -58,24 +59,23 @@ class Query(models.Model):
     def final_sql(self):
         return swap_params(self.sql, self.available_params())
 
-    def execute_query_only(self, is_connection_type_pii=None):
-
-        return QueryResult(self.final_sql(),self.title,is_connection_type_pii, self.created_by_user)
+    def execute_query_only(self, is_connection_type_pii=None, executing_user=None):
+        return QueryResult(self.final_sql(), self.title, is_connection_type_pii, executing_user if executing_user else self.created_by_user)
 
     def execute_with_logging(self, executing_user):
         ql = self.log(executing_user)
-        ret = self.execute()
+        ret = self.execute(executing_user)
         ql.duration = ret.duration
         ql.save()
         return ret, ql
 
-    def execute(self):
-        ret = self.execute_query_only(False)
+    def execute(self, executing_user=None):
+        ret = self.execute_query_only(False, executing_user)
         ret.process()
         return ret
 
-    def execute_pii(self):
-        ret = self.execute_query_only(True)
+    def execute_pii(self, executing_user=None):
+        ret = self.execute_query_only(True, executing_user)
         ret.process()
         return ret
 
@@ -171,14 +171,23 @@ class QueryResult(object):
             TYPE_CODE_FOR_JSON: [],
             TYPE_CODE_FOR_TEXT: []
         }
+        phone_number_masking_indexes = []
+
         # Collect the indices for JSON and text columns
         for index, column in enumerate(self._description):
             if hasattr(column, "type_code") and column.type_code in type_code_and_column_indices_to_be_masked_dict:
                 type_code_and_column_indices_to_be_masked_dict[column.type_code].append(index)
 
             # Masking for player phone numbers
-            if self.used_by_user and is_phone_number_masked_for_user(self.used_by_user) and hasattr(column, "type_code") and column.type_code in PLAYER_PHONE_NUMBER_MASKING_TYPE_CODES:
-                type_code_and_column_indices_to_be_masked_dict[column.type_code].append(index)
+            if self.used_by_user and is_pii_masked_for_user(self.used_by_user) and hasattr(column, "type_code") and column.type_code in PLAYER_PHONE_NUMBER_MASKING_TYPE_CODES:
+                phone_number_masking_indexes.append(index)
+
+        # Masking for PII data in char fields if specific tables are used in SQL
+        if app_settings.TABLE_NAMES_FOR_PII_MASKING and phone_number_masking_indexes:
+            for table_name in app_settings.TABLE_NAMES_FOR_PII_MASKING:
+                if table_name in self.sql:
+                    type_code_and_column_indices_to_be_masked_dict[TYPE_CODE_FOR_CHAR] = phone_number_masking_indexes
+                    break
 
         return type_code_and_column_indices_to_be_masked_dict
 
@@ -225,16 +234,16 @@ class QueryResult(object):
 
         return data_to_be_displayed
 
-    def __init__(self, sql, title=None,is_connection_type_pii=None, created_by_user=None):
+    def __init__(self, sql, title=None, is_connection_type_pii=None, used_by_user=None):
 
         self.sql = sql
-        self.title=title
+        self.title = title
         if (is_connection_type_pii):
             self.is_connection_type_pii = is_connection_type_pii
         else:
             self.is_connection_type_pii = False
 
-        self.used_by_user = created_by_user
+        self.used_by_user = used_by_user
         cursor, duration = self.execute_query()
 
         self._description = cursor.description or []

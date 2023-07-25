@@ -325,9 +325,9 @@ def mask_string(string_to_masked):
     return string_to_masked
 
 
-def is_phone_number_masked_for_user(user):
+def is_pii_masked_for_user(user):
     """
     Check if the user has permission to view masked phone numbers
     """
     user_group_ids = user.groups.all().values_list('id', flat=True)
-    return ALLOW_PHONE_NUMBER_MASKING_GROUP_ID in user_group_ids
+    return ALLOW_PHONE_NUMBER_MASKING_GROUP_ID not in user_group_ids
