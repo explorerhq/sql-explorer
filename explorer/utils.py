@@ -14,7 +14,7 @@ import functools
 import sys
 import logging
 
-from explorer.constants import PII_MASKING_PATTERN_REPLACEMENT_DICT
+from explorer.constants import PII_MASKING_PATTERN_REPLACEMENT_DICT, ALLOW_PHONE_NUMBER_MASKING_GROUP_ID
 
 logger = logging.getLogger(__name__)
 
@@ -323,3 +323,11 @@ def mask_string(string_to_masked):
     for pattern, replacement in PII_MASKING_PATTERN_REPLACEMENT_DICT.items():
         string_to_masked = re.sub(pattern, replacement, string_to_masked)
     return string_to_masked
+
+
+def is_phone_number_masked_for_user(user):
+    """
+    Check if the user has permission to view masked phone numbers
+    """
+    user_group_ids = user.groups.all().values_list('id', flat=True)
+    return ALLOW_PHONE_NUMBER_MASKING_GROUP_ID in user_group_ids
