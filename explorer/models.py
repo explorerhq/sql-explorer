@@ -1,6 +1,6 @@
 from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection, \
     get_s3_connection, get_connection_pii, get_connection_asyncapi_db, should_route_to_asyncapi_db, mask_string, \
-    is_pii_masked_for_user
+    is_pii_masked_for_user, mask_player_pii
 from future.utils import python_2_unicode_compatible
 from django.db import models, DatabaseError
 from time import time
@@ -202,7 +202,7 @@ class QueryResult(object):
         elif type_code == TYPE_CODE_FOR_TEXT:
             return mask_string(data)
         elif type_code in PLAYER_PHONE_NUMBER_MASKING_TYPE_CODES:
-            return mask_string(data)
+            return mask_player_pii(data)
         return data
 
     def mask_pii_data(self, row, type_code_and_column_indices_to_be_masked_dict):

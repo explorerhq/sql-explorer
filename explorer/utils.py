@@ -14,7 +14,8 @@ import functools
 import sys
 import logging
 
-from explorer.constants import PII_MASKING_PATTERN_REPLACEMENT_DICT, ALLOW_PHONE_NUMBER_MASKING_GROUP_ID
+from explorer.constants import PII_MASKING_PATTERN_REPLACEMENT_DICT, ALLOW_PHONE_NUMBER_MASKING_GROUP_ID, \
+    PATTERN_FOR_FINDING_EMAIL, PATTERN_FOR_FINDING_PHONE_NUMBER
 
 logger = logging.getLogger(__name__)
 
@@ -323,6 +324,58 @@ def mask_string(string_to_masked):
     for pattern, replacement in PII_MASKING_PATTERN_REPLACEMENT_DICT.items():
         string_to_masked = re.sub(pattern, replacement, string_to_masked)
     return string_to_masked
+
+
+def get_masked_value(value: str):
+    """
+    This function will return the masked value depending upon the length of the value.
+    For eg.
+    1. value = None => masked_value = None
+    1. value = "son" => masked_value = "XXX"
+    2. value = "sunny" => masked_value = "sXXXy"
+    3. value = "my name is kunal" => masked_value = "myXXXXXXXXXXXal"
+    """
+
+    if not value:
+        return None
+
+    if len(value) <= 3:
+        return "".join("X" for _ in range(len(value)))
+    elif 4 <= len(value) <= 5:
+        return value[0] + "".join("X" for _ in range(len(value) - 2)) + value[-1]
+    else:
+        return value[:2] + "".join("X" for _ in range(len(value) - 2)) + value[-2:]
+
+
+def get_masked_email(email: str) -> str:
+    if not email or "@" not in email:
+        return email
+
+    local_part, domain_part = email.split("@")
+    masked_local_part = get_masked_value(local_part)
+    return masked_local_part + "@" + "".join("X" for _ in range(len(domain_part)))
+
+
+def get_masked_phone_number(phone_number: str) -> str:
+    if not phone_number or len(phone_number) < 10:
+        return phone_number
+
+    return "".join("X" for _ in range(len(phone_number) - 4)) + phone_number[-4:]
+
+
+def mask_player_pii(data: str) -> str:
+    if not data:
+        return data
+
+    matched_phone_numbers = re.findall(PATTERN_FOR_FINDING_PHONE_NUMBER, data)
+    for phone_number in matched_phone_numbers:
+        data = data.replace(phone_number, get_masked_phone_number(phone_number))
+
+    matched_emails = re.findall(PATTERN_FOR_FINDING_EMAIL, data)
+    for email in matched_emails:
+        data = data.replace(email, get_masked_email(email))
+
+    return data
 
 
 def is_pii_masked_for_user(user):
