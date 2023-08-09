@@ -125,14 +125,14 @@ def email_csv_query(request, query_id):
 def _csv_response(request, query_id, stream=False, delim=None):
     query = get_object_or_404(Query, pk=query_id)
     query.params = url_get_params(request)
-    return build_stream_response(query, delim) if stream else build_download_response(query, delim)
+    return build_stream_response(query, delim, user=request.user) if stream else build_download_response(query, delim, user=request.user)
 
 
 @change_permission
 @require_POST
 def download_csv_from_sql(request):
     sql = request.POST.get('sql')
-    return build_download_response(Query(sql=sql, title="Playground", params=url_get_params(request)))
+    return build_download_response(Query(sql=sql, title="Playground", params=url_get_params(request)), user=request.user)
 
 
 @change_permission

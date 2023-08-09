@@ -146,14 +146,14 @@ def get_filename_for_title(title):
     return filename
 
 
-def build_stream_response(query, delim=None):
-    data = csv_report(query, delim).getvalue()
+def build_stream_response(query, delim=None, user=None):
+    data = csv_report(query, delim, user).getvalue()
     response = HttpResponse(data, content_type='text')
     return response
 
 
-def build_download_response(query, delim=None):
-    data = csv_report(query, delim).getvalue()
+def build_download_response(query, delim=None, user=None):
+    data = csv_report(query, delim, user).getvalue()
     response = HttpResponse(data, content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="%s.csv"' % (
         get_filename_for_title(query.title)
@@ -162,9 +162,9 @@ def build_download_response(query, delim=None):
     return response
 
 
-def csv_report(query, delim=None):
+def csv_report(query, delim=None, user=None):
     try:
-        res = query.execute_query_only()
+        res = query.execute_query_only(executing_user=user)
         return write_csv(res.headers, res.data, delim)
     except DatabaseError as e:
         return str(e)
