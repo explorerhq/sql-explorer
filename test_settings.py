@@ -8,6 +8,7 @@ STATIC_URL = '/static/'
 ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1']
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+CSRF_COOKIE_HTTPONLY = False
 
 DATABASES = {
     'default': {
