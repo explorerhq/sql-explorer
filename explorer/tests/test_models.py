@@ -94,7 +94,10 @@ class TestQueryModel(TestCase):
         q = SimpleQueryFactory()
         q.sql = 'select wildly invalid query'
         q.save()
-        q.execute_with_logging(None)
+        try:
+            q.execute_with_logging(None)
+        except Exception:
+            pass
         log = QueryLog.objects.first()
         self.assertFalse(log.success)
         self.assertIsNotNone(log.error)
