@@ -92,7 +92,14 @@ class Query(models.Model):
 
     def execute_with_logging(self, executing_user):
         ql = self.log(executing_user)
-        ret = self.execute()
+        ql.save()
+        try:
+            ret = self.execute()
+        except DatabaseError as e:
+            ql.success = False
+            ql.error = str(e)
+            ql.save()
+            raise e
         ql.duration = ret.duration
         ql.save()
         return ret, ql
@@ -203,6 +210,8 @@ class QueryLog(models.Model):
     run_at = models.DateTimeField(auto_now_add=True)
     duration = models.FloatField(blank=True, null=True)  # milliseconds
     connection = models.CharField(blank=True, max_length=128, default='')
+    success = models.BooleanField(default=True)
+    error = models.TextField(blank=True, null=True)
 
     @property
     def is_playground(self):

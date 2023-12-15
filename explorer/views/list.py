@@ -111,6 +111,7 @@ class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
                 'created_at': q.created_at,
                 'is_header': False,
                 'run_count': q.querylog_set.count(),
+                'ran_successfully': q.querylog_set.first() and q.querylog_set.first().success,
                 'created_by_user':
                     str(q.created_by_user) if q.created_by_user else None,
                 'is_favorite': q.id in query_favorites_for_user
