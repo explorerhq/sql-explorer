@@ -17,6 +17,8 @@
 SQL Explorer
 ============
 
+`Documentation <https://django-sql-explorer.readthedocs.io/en/latest/>`_
+
 SQL Explorer aims to make the flow of data between people fast,
 simple, and confusion-free. It is a Django-based application that you
 can add to an existing Django site, or use as a standalone business
@@ -36,14 +38,7 @@ SQL Explorer values simplicity, intuitive use, unobtrusiveness,
 stability, and the principle of least surprise.
 
 SQL Explorer is inspired by any number of great query and
-reporting tools out there.
-
-The original idea came from Stack Exchange's `Data Explorer
-<http://data.stackexchange.com/stackoverflow/queries>`_, but also owes
-credit to similar projects like `Redash <http://redash.io/>`_ and
-`Blazer <https://github.com/ankane/blazer>`_.
-
-You can read the full documentation `here <https://django-sql-explorer.readthedocs.io/en/latest/>`_
+reporting tools out there. See inspirations and others, below.
 
 Sql Explorer is MIT licensed, and pull requests are welcome.
 
@@ -64,11 +59,9 @@ Sql Explorer is MIT licensed, and pull requests are welcome.
 .. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/2019_snapshots.png
 
 
-Alternatives
+Inspirations & Similar Projects
 ------------
 
-* `django-sql-dashboard`_: provides an authenticated interface for executing read-only SQL queries directly against your PostgreSQL database, bringing a useful subset of `Datasette`_ to Django.
-
-
-.. _django-sql-dashboard: https://github.com/simonw/django-sql-dashboard
-.. _Datasette : https://datasette.io/
+* `django-sql-dashboard <https://github.com/simonw/django-sql-dashboard>`_
+* Stack Exchange's `Data Explorer <http://data.stackexchange.com/stackoverflow/queries>`_
+* `Blazer <https://github.com/ankane/blazer>`_

@@ -2,7 +2,7 @@
 Change Log
 ==========
 
-This document records all notable changes to `django-sql-explorer <https://github.com/groveco/django-sql-explorer>`_.
+This document records all notable changes to `django-sql-explorer <https://github.com/chrisclark/django-sql-explorer>`_.
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 `unreleased`_ changes
