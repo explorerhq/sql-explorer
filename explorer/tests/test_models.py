@@ -87,6 +87,20 @@ class TestQueryModel(TestCase):
         res, ql = q.execute_with_logging(None)
         log = QueryLog.objects.first()
         self.assertEqual(log.duration, res.duration)
+        self.assertTrue(log.success)
+        self.assertIsNone(log.error)
+
+    def test_log_saves_errors(self):
+        q = SimpleQueryFactory()
+        q.sql = 'select wildly invalid query'
+        q.save()
+        try:
+            q.execute_with_logging(None)
+        except Exception:
+            pass
+        log = QueryLog.objects.first()
+        self.assertFalse(log.success)
+        self.assertIsNotNone(log.error)
 
     @unittest.skipIf(not app_settings.ENABLE_TASKS, 'tasks not enabled')
     @patch('explorer.models.s3_url')
