@@ -282,6 +282,18 @@ Links are generated as presigned urls for security
    EXPLORER_S3_LINK_EXPIRATION = 3600
 
 
+S3 signature version
+********************
+
+The signature version when signing requests.
+As of ``boto3`` version 1.13.21 the default signature version used for generating presigned urls is still ``v2``.
+To be able to access your s3 objects in all regions through presigned urls, explicitly set this to ``s3v4``.
+
+.. code-block:: python
+
+   EXPLORER_S3_SIGNATURE_VERSION = 's3v4'
+
+
 From email
 **********
 

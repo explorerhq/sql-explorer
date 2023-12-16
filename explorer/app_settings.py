@@ -133,6 +133,7 @@ FROM_EMAIL = getattr(
 S3_REGION = getattr(settings, "EXPLORER_S3_REGION", "us-east-1")
 S3_ENDPOINT_URL = getattr(settings, "EXPLORER_S3_ENDPOINT_URL", None)
 S3_DESTINATION = getattr(settings, "EXPLORER_S3_DESTINATION", '')
+S3_SIGNATURE_VERSION = getattr(settings, "EXPLORER_S3_SIGNATURE_VERSION", 'v2')
 
 UNSAFE_RENDERING = getattr(settings, "EXPLORER_UNSAFE_RENDERING", False)
 
