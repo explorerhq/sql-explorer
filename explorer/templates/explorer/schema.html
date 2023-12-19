@@ -9,12 +9,12 @@
       <p><input class="search" placeholder="{% trans "Search" %}" /></p>
         <div class="row">
             <div class="col">
-                <a class="btn btn-outline-secondary" id="collapse_all">
+                <a class="link-primary" id="collapse_all">
                     {% trans "Collapse All" %}
                 </a>
             </div>
             <div class="col">
-                <a class="btn btn-outline-secondary" id="expand_all">
+                <a class="link-primary" id="expand_all">
                     {% trans "Expand All" %}
                 </a>
             </div>
@@ -23,13 +23,13 @@
             <ul class="list">
                 {% for m in schema %}
                     <li>
-                        <div class="schema-header fw-semibold" style="display: inline-block">{{ m.0 }}</div>
+                        <div class="app schema-header fw-semibold" style="display: inline-block">{{ m.0 }}</div>
                         <div class="schema-table">
                             <table class="table table-sm">
                                 <tbody>
                                     {% for c in m.1 %}
                                         <tr>
-                                            <td><code>{{ c.0 }}</code></td>
+                                            <td class="name"><code>{{ c.0 }}</code></td>
                                             <td class="text-muted small">{{ c.1 }}</td>
                                         </tr>
                                     {% endfor %}

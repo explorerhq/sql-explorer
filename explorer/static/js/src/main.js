@@ -14,7 +14,7 @@ const route_initializers = {
             element.addEventListener('click', toggleFavorite);
         });
         function SearchFocus() {
-            const searchElement = document.querySelector('.search-foo');
+            const searchElement = document.querySelector('.search');
             if (searchElement) {
                 searchElement.focus();
             }
