@@ -26,7 +26,7 @@
                         <td>{{ object.run_at|date:"SHORT_DATETIME_FORMAT" }}</td>
                         <td class="text-center">
                             <a href="{% url 'download_query' object.query_id %}">
-                                <i class="glyphicon glyphicon-download"></i>
+                                <i class="bi-download"></i>
                             </a>
                         </td>
                     </tr>
@@ -87,32 +87,32 @@
                             {% if tasks_enabled %}
                               <td>
                                   <a class="email-csv" data-id="{{ object.id }}" href="{% url 'email_csv_query' object.id %}">
-                                      <i class="glyphicon glyphicon-envelope"></i>
+                                      <i class="bi-send-arrow-down"></i>
                                   </a>
                               </td>
                             {% endif %}
                             <td>
                                 <a href="{% url 'download_query' object.id %}">
-                                    <i class="glyphicon glyphicon-download"></i>
+                                    <i class="bi-download"></i>
                                 </a>
                             </td>
                             {% if can_change %}
                                 <td>
                                     <a href="{% url 'explorer_playground' %}?query_id={{ object.id }}">
-                                        <i class="glyphicon glyphicon-new-window"></i>
+                                        <i class="bi-code-square"></i>
                                     </a>
                                 </td>
                                 <td>
                                     <a href="{% url 'query_delete' object.id %}">
-                                        <i class="glyphicon glyphicon-trash"></i>
+                                        <i class="bi-trash"></i>
                                     </a>
                                 </td>
                             {% endif %}
                             <td> {% query_favorite_button object.id object.is_favorite 'query_favorite_toggle' %}</td>
                             <td>{% if object.ran_successfully %}
-                                    <i class="glyphicon glyphicon-ok-sign" style="color: green;"></i>
+                                    <i class="bi-check-circle" style="color: green;"></i>
                                 {% elif object.ran_successfully is not None %}
-                                    <i class="glyphicon glyphicon-remove-sign" style="color: red;"></i>
+                                    <i class="bi-slash-circle" style="color: red;"></i>
                                 {% endif %}
                             </td>
                             <td>{{ object.run_count }}</td>
@@ -122,20 +122,4 @@
             </tbody>
         </table>
     </div>
-{% endblock %}
-
-{% block sql_explorer_scripts %}
-<script>
-    $(function() {
-        function SearchFocus() {
-            $(".search").focus();
-        }
-        var options = {
-            valueNames: [ 'name' ],
-            handlers: { 'updated': [SearchFocus] }
-        };
-        var queryList = new List('queries', options);
-    });
-</script>
-<script src="{% static 'explorer/js/query-list.js' %}"></script>
 {% endblock %}

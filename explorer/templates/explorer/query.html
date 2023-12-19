@@ -2,6 +2,9 @@
 {% load explorer_tags i18n %}
 
 {% block sql_explorer_content %}
+<script type="text/javascript">
+    queryId = "{{ query.id }}";
+</script>
 <div class="row">
     <div id="query_area" class="query-area col-md-12">
         {% spaceless %}
@@ -88,11 +91,11 @@
                                 {% if query %}
                                     <small>
                                         <a href="#" title="Open in playground" id="playground_button">
-                                            <i class="glyphicon glyphicon-new-window"></i>
+                                            <i class="bi-window-plus"></i>
                                         </a>
                                     </small>
                                     <small>
-                                        <i id="sql_toggle" class="glyphicon glyphicon-resize-full"></i>
+                                        <i id="sql_toggle" class="bi-arrows-angle-expand"></i>
                                     </small>
                                 {% endif %}
                             </div>
@@ -176,27 +179,4 @@
         </small>
     </div>
 </div>
-{% endblock %}
-
-{% block sql_explorer_scripts %}
-    {{ block.super }}
-    <script>
-        $(function() {
-            var e = new ExplorerEditor(queryId);
-
-            $('#sql_toggle').on('click', function () {
-                $('.panel-content').slideToggle('slow');
-
-                if ($(this).hasClass('glyphicon-resize-full')) {
-                    $(this).addClass('glyphicon-resize-small').removeClass('glyphicon-resize-full');
-                } else {
-                    $(this).addClass('glyphicon-resize-full').removeClass('glyphicon-resize-small');
-                }
-
-            })
-            {% if query %}
-                $('.panel-content').hide();
-            {% endif %}
-        });
-    </script>
 {% endblock %}

@@ -72,7 +72,7 @@
                                             <small>
                                                 <a id="fullscreen" href="./?{{ fullscreen_params }}" target="_blank"
                                                    title="Fullscreen results">
-                                                    <i class="glyphicon glyphicon-resize-full"></i>
+                                                    <i class="bi-arrows-angle-expand"></i>
                                                 </a>
                                             </small>
                                         </span>
@@ -94,7 +94,7 @@
                                     {% for h in headers %}
                                         <th>
                                             {% if h.summary %}
-                                                <i class="stats-expand glyphicon glyphicon-education"></i>
+                                                <i class="stats-expand bi-calculator"></i>
                                                 <div class="stats-wrapper">
                                                     {% for label, value in h.summary.stats.items %}
                                                         <div class="stat-wrapper"><span class="stat-label">{{ label }}:&nbsp;</span><span
@@ -183,7 +183,7 @@
                                             <a id="pivot-bookmark"
                                                data-baseurl="{% url 'explorer_playground' %}?querylog_id={{ ql_id }}"
                                                href="#">
-                                                <i class="glyphicon glyphicon-link"></i>
+                                                <i class="bi-link"></i>
                                             </a>
                                         </small>
                                     </div>
