@@ -88,7 +88,7 @@
                             </td>
                             {% if tasks_enabled %}
                               <td>
-                                  <a class="email-csv" data-id="{{ object.id }}" href="{% url 'email_csv_query' object.id %}">
+                                  <a class="email-csv" data-query-id="{{ object.id }}">
                                       <i class="bi-send-arrow-down"></i>
                                   </a>
                               </td>
@@ -123,5 +123,35 @@
                 {% endfor %}
             </tbody>
         </table>
+    </div>
+
+    <div class="modal fade" id="emailCsvModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Email Query Results</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group">
+                        <input type="email" autofocus="true" name="email" id="emailCsvInput" class="form-control" placeholder="Email" />
+                        <label for="emailCsvInput" style="display: none" aria-hidden="true">{% trans 'Email' %}</label>
+                        <span class="input-group-btn">
+                            <button id="btnSubmitCsvEmail" type="button" class="btn btn-primary">Send</button>
+                        </span>
+                    </div>
+                    <div class="mt-3">
+                        <div class="alert alert-success" style="display: none;" role="alert" id="email-success-msg">
+                            {% trans 'Email will be sent when query completes' %}
+                        </div>
+                        <div class="alert alert-danger" style="display: none;" role="alert" id="email-error-msg">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}

@@ -1,68 +1,90 @@
 import $ from "jquery";
+import List from "list.js";
+import {getCsrfToken} from "./csrf";
+import {toggleFavorite} from "./favorites";
+import * as bootstrap from 'bootstrap'; // eslint-disable-line no-unused-vars
 
-export function setupList() {
-    var $emailCsv = $('.email-csv');
+function searchFocus() {
+    const searchElement = document.querySelector('.search');
+    if (searchElement) {
+        searchElement.focus();
+    }
+}
+export function setupQueryList() {
 
-    var isValidEmail = function (email) {
+    document.querySelectorAll('.query_favorite_toggle').forEach(function (element) {
+        element.addEventListener('click', toggleFavorite);
+    });
+
+    let options = {
+        valueNames: ['name'],
+        handlers: {'updated': [searchFocus]}
+    };
+    new List('queries', options);
+
+    setUpEmailCsv();
+}
+
+function setUpEmailCsv() {
+    let $emailCsv = $('.email-csv');
+    let emailModal = new bootstrap.Modal('#emailCsvModal', {});
+    let curQueryEmailId = null;
+
+    let isValidEmail = function (email) {
         return /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(email);
     };
 
-    $emailCsv.each(function () {
-        var $this = $(this);
-        $this.popover({
-            html: true,
-            sanitize: false,
-            trigger: 'manual',
-            placement: 'left',
-            content:
-                '<form class="email-csv-form" action="' + $this.prop('href') + '">' +
-                '<div class="input-group">' +
-                '<input type="email" autofocus="true" name="email" class="form-control" placeholder="Email" />' +
-                '<span class="input-group-btn">' +
-                '<button type="submit" class="btn btn-primary">Send</button>' +
-                '</span>' +
-                '</div>' +
-                '</form>'
-        });
-    });
+    let showEmailSuccess = () => {
+        const $msgSuccess = $('#email-success-msg');
+        const $msgAlert = $('#email-error-msg');
+        $msgSuccess.show();
+        $msgAlert.hide();
+        setTimeout(()=>emailModal.hide(), 2000);
+    }
 
-    $emailCsv.on('click', function (e) {
-        e.preventDefault();
-        var $this = $(this);
-        $emailCsv.not($this).popover('hide');
-        $this.popover('toggle');
-    });
-
-    $('body').on('submit', '.email-csv-form', function (e) {
-        e.preventDefault();
-        var url = this.action;
-        var $this = $(this);
-        var email = $this.find('[name=email]').val();
+    let showEmailError = (msg) => {
+        const $msgSuccess = $('#email-success-msg');
+        const $msgAlert = $('#email-error-msg');
+        $msgAlert.html(msg);
+        $msgSuccess.hide();
+        $msgAlert.show();
+    }
+    let handleEmailCsvSubmit = function (e) {
+        let email = document.querySelector('#emailCsvInput').value;
+        let url = '/' + curQueryEmailId + '/email_csv?email=' + email;
         if (isValidEmail(email)) {
             $.ajax({
                 url: url,
                 type: 'POST',
-                data: {
-                    email: $this.find('[name=email]').val()
+                headers: {
+                    'X-CSRFToken': getCsrfToken()
                 },
-                success: function () {
-                    var $el = $this.closest('td');
-                    $el.find('.popover-content').html("Ok! The query results will be emailed to you shortly.");
-                    var closeSoon = function () {
-                        $el.find('.email-csv').popover('hide');
-                    };
-                    setTimeout(closeSoon, 2000);
+                data: {
+                    email: email
+                },
+                success: showEmailSuccess,
+                error: (xhr, status, error) => {
+                    showEmailError(error);
                 }
             });
         } else {
-            $this.tooltip({
-                title: 'Email is invalid',
-                trigger: 'manual'
-            });
-            $this.tooltip('show');
-            setTimeout(function () {
-                $this.tooltip('hide');
-            }, 3000);
+            showEmailError('Email is invalid');
         }
+    }
+
+    document.querySelectorAll('#btnSubmitCsvEmail').forEach(function(element) {
+        element.addEventListener('click', handleEmailCsvSubmit);
     });
+
+    $emailCsv.on('click', function (e) {
+        e.preventDefault();
+        curQueryEmailId = $(this).data('query-id');
+        emailModal.show();
+    });
+
+    const emailModalEl = document.getElementById('emailCsvModal')
+    emailModalEl.addEventListener('hidden.bs.modal', event => {
+        $('#email-success-msg').hide();
+        $('#email-error-msg').hide();
+    })
 }

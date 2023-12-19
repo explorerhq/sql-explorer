@@ -32,7 +32,7 @@
                                 {% endblocktrans %}
                             </div>
                             <div class="col text-end">
-                                <span>
+                                <span class="me-1">
                                     {% if rows > total_rows %}
                                         {% trans "Showing" %}&nbsp;
                                         <input class="rows-input" type="text" name="rows" id="rows"
@@ -44,14 +44,10 @@
                                     {% endif %}
                                     {% blocktrans %}of {{ total_rows }} total rows.{% endblocktrans %}
                                 </span>
-                                <span>
-                                    <small>
-                                        <a id="fullscreen" href="./?{{ fullscreen_params }}" target="_blank"
-                                           title="Fullscreen results">
-                                            <i class="bi-arrows-angle-expand"></i>
-                                        </a>
-                                    </small>
-                                </span>
+                                <a id="fullscreen" href="./?{{ fullscreen_params }}" target="_blank"
+                                   title="Fullscreen results">
+                                    <i class="bi-arrows-angle-expand"></i>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -62,8 +58,8 @@
                                     <tr>
                                         <th class="preview-header counter"></th>
                                         {% for h in headers %}
-                                            <th class="preview-header"><div class="sort bi-arrow-down-up" data-sort="{{ forloop.counter0 }}"
-                                                                             data-dir="asc">{{ h }}</div></th>
+                                            <th class="preview-header"><span><i class="sort bi-chevron-expand pe-1" data-sort="{{ forloop.counter0 }}"
+                                                         data-dir="asc"></i>{{ h }}</span></th>
                                         {% endfor %}
                                     </tr>
                                     <tr class="stats-th">
@@ -72,12 +68,14 @@
                                             <th>
                                                 {% if h.summary %}
                                                     <i class="stats-expand bi-calculator"></i>
-                                                    <div class="stats-wrapper">
+                                                    <table class="stats-wrapper table table-sm fw-normal small">
                                                         {% for label, value in h.summary.stats.items %}
-                                                            <div class="stat-wrapper"><span class="stat-label">{{ label }}:&nbsp;</span><span
-                                                                class="stat-value">{{ value }}</span></div>
+                                                            <tr>
+                                                                <td>{{ label }}</td>
+                                                                <td>{{ value }}</td>
+                                                            </tr>
                                                         {% endfor %}
-                                                    </div>
+                                                    </table>
                                                 {% endif %}
                                             </th>
                                         {% endfor %}

@@ -1,9 +1,9 @@
-import $ from 'jquery';
 import {getCsrfToken} from "./csrf";
 
 export async function toggleFavorite() {
-    let queryId = $(this).data('id');
-    let favoriteUrl = $(this).data('url');
+    // Assuming this function is bound to an element, 'this' refers to that element
+    let queryId = this.dataset.id; // or this.getAttribute('data-id');
+    let favoriteUrl = this.dataset.url; // or this.getAttribute('data-url');
 
     try {
         let response = await fetch(favoriteUrl, {
@@ -17,12 +17,17 @@ export async function toggleFavorite() {
 
         let data = await response.json();
         let is_favorite = data.is_favorite;
-        let selector = '.query_favorite_toggle[data-id=' + queryId + ']';
+        let selector = `.query_favorite_toggle[data-id='${queryId}']`;
+        let element = document.querySelector(selector);
 
-        if (is_favorite) {
-            $(selector).removeClass("bi-heart").addClass("bi-heart-fill");
-        } else {
-            $(selector).removeClass("bi-heart-fill").addClass("bi-heart");
+        if (element) {
+            if (is_favorite) {
+                element.classList.remove("bi-heart");
+                element.classList.add("bi-heart-fill");
+            } else {
+                element.classList.remove("bi-heart-fill");
+                element.classList.add("bi-heart");
+            }
         }
     } catch (error) {
         console.error('Error:', error);
