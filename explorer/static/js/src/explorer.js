@@ -125,7 +125,7 @@ export class ExplorerEditor {
         if (noAutofocus === true) {
             $("#schema_frame").addClass("no-autofocus");
         }
-        $("#query_area").removeClass("col-md-12").addClass("col-md-9");
+        $("#query_area").removeClass("col").addClass("col-9");
         var schema$ = $("#schema");
         schema$.addClass("col-md-3");
         schema$.show();
@@ -136,9 +136,9 @@ export class ExplorerEditor {
     }
 
     hideSchema() {
-        $("#query_area").removeClass("col-md-9").addClass("col-md-12");
+        $("#query_area").removeClass("col-9").addClass("col");
         var schema$ = $("#schema");
-        schema$.removeClass("col-md-3");
+        schema$.removeClass("col-3");
         schema$.hide();
         $(this).hide();
         $("#show_schema_button").show();
