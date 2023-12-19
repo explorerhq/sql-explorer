@@ -1,3 +1,7 @@
+.cm-wrap { height: 350px; border: 1px solid silver}
+.cm-scroller { overflow: auto; min-height: 350px }
+.cm-content, .cm-gutter { min-height: 350px !important; }
+
 .collapse.in {
     display: table-row;
 }
@@ -19,10 +23,6 @@
     overflow: auto; height: 500px;
 }
 
-.list-search {
-    margin-top: 20px;
-}
-
 .data-headers {
     background: white;
 }
@@ -35,10 +35,6 @@
 .list {
     -webkit-padding-start: 0px;
     list-style: none;
-}
-
-.wrap {
-    padding-bottom: 15rem; /* ensure space for drop down buttons */
 }
 
 .schema-wrapper {
@@ -90,10 +86,8 @@ td.name.indented {
     vertical-align: top;
 }
 
-span.sort {
-    background: url('//cdn.datatables.net/1.10.0/images/sort_both.png') no-repeat;
+div.sort {
     cursor: pointer;
-    padding-left: 20px;
 }
 
 .pivot-table {

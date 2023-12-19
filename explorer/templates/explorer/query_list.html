@@ -4,44 +4,46 @@
 {% block sql_explorer_content %}
     <div style="display: none">{% csrf_token %}</div>
     {% if recent_queries|length > 0 %}
-        <h3>
-            {% blocktrans trimmed with qlen=recent_queries|length %}
-                Your {{qlen}} Most Recently Run
-            {% endblocktrans %}
-        </h3>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>{% trans "Query" %}</th>
-                    <th>{% trans "Last Run" %}</th>
-                    <th class="text-center">CSV</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for object in recent_queries %}
+        <div class="container">
+            <h3>
+                {% blocktrans trimmed with qlen=recent_queries|length %}
+                    Your {{qlen}} Most Recently Run
+                {% endblocktrans %}
+            </h3>
+            <table class="table table-striped">
+                <thead>
                     <tr>
-                        <td class="name">
-                            <a href="{% url 'query_detail' object.query_id %}">{{ object.query.title }}</a>
-                        </td>
-                        <td>{{ object.run_at|date:"SHORT_DATETIME_FORMAT" }}</td>
-                        <td class="text-center">
-                            <a href="{% url 'download_query' object.query_id %}">
-                                <i class="bi-download"></i>
-                            </a>
-                        </td>
+                        <th>{% trans "Query" %}</th>
+                        <th>{% trans "Last Run" %}</th>
+                        <th class="text-center">CSV</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for object in recent_queries %}
+                        <tr>
+                            <td class="name">
+                                <a href="{% url 'query_detail' object.query_id %}">{{ object.query.title }}</a>
+                            </td>
+                            <td>{{ object.run_at|date:"SHORT_DATETIME_FORMAT" }}</td>
+                            <td class="text-center">
+                                <a href="{% url 'download_query' object.query_id %}">
+                                    <i class="bi-download"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     {% endif %}
 
-    <div id="queries">
+    <div id="queries" class="container">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col">
                 <h3>{% trans "All Queries" %}</h3>
             </div>
-            <div class="col-md-6 text-right">
-                <input class="search list-search" placeholder="{% trans 'Search' %}" style="">
+            <div class="col text-end">
+                <input class="search" placeholder="{% trans 'Search' %}" style="">
             </div>
         </div>
         <table class="table table-striped">

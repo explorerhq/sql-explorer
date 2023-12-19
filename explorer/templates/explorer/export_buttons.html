@@ -1,11 +1,29 @@
-{% for key, name in exporters %}
-    {% if query and query.id %}
-        {% if query.params %}
-            <li><a href="{% url 'download_query' query.id %}?format={{ key }}&params={{ query.params_for_url }}">{{ name }}</a></li>
-        {% else %}
-            <li><a href="{% url 'download_query' query.id %}?format={{ key }}">{{ name }}</a></li>
-        {% endif %}
-    {% else %}
-        <li><input type="submit" value="{{ name }}" data-format="{{ key }}" class="download-button btn btn-link" /></li>
-    {% endif %}
-{% endfor %}
+{% load explorer_tags i18n %}
+
+<div class="btn-group" role="group">
+    <button id="download_options"
+            class="btn btn-outline-primary dropdown-toggle"
+            data-bs-toggle="dropdown" aria-expanded="false">
+        {% trans 'Download...' %}
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="download_options">
+        {% for key, name in exporters %}
+            {% if query and query.id %}
+                {% if query.params %}
+                    <li><a class="dropdown-item"
+                           href="{% url 'download_query' query.id %}?format={{ key }}&params={{ query.params_for_url }}">{{ name }}</a>
+                    </li>
+                {% else %}
+                    <li><a class="dropdown-item"
+                           href="{% url 'download_query' query.id %}?format={{ key }}">{{ name }}</a></li>
+                {% endif %}
+            {% else %}
+                <li><input type="submit" value="{{ name }}" data-format="{{ key }}"
+                           class="download-button dropdown-item"/></li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+</div>
+
+
+
