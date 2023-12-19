@@ -30,7 +30,6 @@ def get_script(file: str) -> str:
     return mark_safe(f'<script type="module" src="{base_url}{file}"></script>')  # nosec B308, B703
 
 
-
 @lru_cache
 def get_manifest():
     with open(VITE_MANIFEST_FILE) as f:

@@ -1,17 +1,19 @@
-.cm-wrap { height: 350px; border: 1px solid silver}
-.cm-scroller { overflow: auto; min-height: 350px }
-.cm-content, .cm-gutter { min-height: 350px !important; }
-
-.collapse.in {
-    display: table-row;
+.cm-wrap {
+    height: 350px;
+    border: 1px solid silver
 }
 
-.collapsing {
-    position: relative;
-    height: 0;
-    overflow: hidden;
-    -webkit-transition: height 0.01s ease;
-    transition: height 0.01s ease;
+.cm-scroller {
+    overflow: auto;
+    min-height: 350px
+}
+
+.cm-content, .cm-gutter {
+    min-height: 350px !important;
+}
+
+.link-primary {
+    cursor: pointer;
 }
 
 .rows-input {
@@ -50,52 +52,19 @@ td.name.indented {
 }
 
 .stats-wrapper {
-    width: 120px;
     display: none;
-}
-
-.stat-wrapper {
-    float: left;
-    width: 120px;
-}
-
-.stat-label {
-    width: 50%;
-    font-weight: 300;
-}
-
-.stat-value {
-    width: 50%;
-    font-weight: 500;
 }
 
 .stats-expand {
     cursor: pointer;
-    padding-left: 5px;
-}
-
-.data-row {
-    white-space: pre;
-}
-
-.CodeMirror {
-    height: 400px;
 }
 
 .table>thead>tr>th.preview-header {
-    vertical-align: top;
+    white-space: nowrap;
 }
 
 div.sort {
     cursor: pointer;
-}
-
-.pivot-table {
-    padding: 15px;
-}
-
-.pvtAxisContainer, .pvtVals {
-    border-color: #ddd;
 }
 
 #schema_frame {
@@ -107,66 +76,14 @@ div.sort {
     cursor: pointer;
 }
 
-.CodeMirror-lines .inserted {
-    animation: inserted-pulse 700ms;
-}
-
-@keyframes inserted-pulse {
-    0% {
-        background-color: #f9f2f4;
-        color: #c7254e;
-        font-weight: bold;
-    }
-    100% {
-        background-color: transparent;
-        color: inherit;
-        font-weight: normal;
-    }
-}
-
-.dropdown-menu {
-    z-index: 9999;
-}
-
-.dropdown-menu>li>input {
-    display: block;
-    padding: 3px 20px;
-    clear: both;
-    font-weight: 400;
-    line-height: 1.42857143;
-    color: #333;
-    white-space: nowrap;
-    width: 100%;
-    text-align: left;
-}
-
-.dropdown-menu>li>input:hover {
-    color: #262626;
-    text-decoration: none;
-    background-color: #f5f5f5;
-}
-
-a#fullscreen {
-    padding-left: 1rem;
-}
-
 .counter {
     display: none;
     background-color: #ecf0f1;
     font-family: monospace;
 }
 
-.name a {
-    text-decoration: none !important;
-}
-
 .sql {
     width: 33%;
-}
-
-#sql_toggle {
-    padding-left: 1rem;
-    color: #18bc9c;
 }
 
 .query_favorite_toggle {
