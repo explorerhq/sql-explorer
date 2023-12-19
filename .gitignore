@@ -8,7 +8,7 @@
 /build
 *#
 *~
-.coverage
+.coverage*
 /htmlcov/
 *.orig
 tmp

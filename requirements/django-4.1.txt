@@ -1,3 +1,0 @@
--r base.txt
-
-django>=4.1rc1,<4.2
