@@ -15,7 +15,8 @@ tmp
 venv/
 .venv/
 .tox/
-
+node_modules/
+explorer/public/
 # Sphinx documentation
 docs/_build/
 

@@ -2,6 +2,9 @@
 {% load explorer_tags i18n %}
 
 {% block sql_explorer_content %}
+<script type="text/javascript">
+    queryId = 'new';
+</script>
 <div class="row">
     <div id="query_area" class="col-md-12">
         <h2>{% trans "Playground" %}</h2>
@@ -37,7 +40,7 @@
                             <div class="col-md-6 text-right">
                                 <small>
                                     <a href="{% url 'explorer_playground' %}?querylog_id={{ ql_id }}">
-                                        <i class="glyphicon glyphicon-link"></i>
+                                        <i class="bi-link"></i>
                                     </a>
                                 </small>
                             </div>
@@ -93,12 +96,4 @@
 </div>
 {% include 'explorer/preview_pane.html' %}
 
-{% endblock %}
-
-{% block sql_explorer_scripts %}
-    <script>
-        $(function() {
-            var e = new ExplorerEditor(queryId);
-        });
-    </script>
 {% endblock %}
