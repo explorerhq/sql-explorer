@@ -8,6 +8,8 @@ import List from 'list.js'
 import $ from "jquery";
 import {getCsrfToken} from "./csrf";
 
+// TODO add back in XLSX export support
+
 const route_initializers = {
     explorer_index: function() {
         document.querySelectorAll('.query_favorite_toggle').forEach(function(element) {

@@ -43,6 +43,7 @@
     "jquery": "^3.7.1",
     "jquery-ui": "^1.13.2",
     "list.js": "^2.3.1",
-    "pivottable": "^2.23.0"
+    "pivottable": "^2.23.0",
+    "xlsx": "^0.18.5"
   }
 }

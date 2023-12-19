@@ -131,23 +131,6 @@
         {% if data %}
             <div class="tab-pane" id="nav-pivot" role="tabpanel" area-labelledby="nav-pivot-tab">
                 <button id="button-excel">{% trans "Export Pivot to Excel" %}</button>
-                <script>
-                    let button = document.querySelector("#button-excel");
-
-                    button.addEventListener("click", e => {
-                        let table = document.querySelector(".pvtTable");
-                        if (typeof (table) != 'undefined' && table != null) {
-                            /* Create worksheet from HTML DOM TABLE */
-                            let wb = XLSX.utils.table_to_book(table);
-                            let wb_name = "pivot-export-playground.xlsx";
-                            {% if query %}
-                                wb_name = "pivot-export-{{ query.title|slugify }}.xlsx";
-                            {%  endif %}
-                            /* Export to file (start a download) */
-                            XLSX.writeFile(wb, wb_name);
-                        }
-                    });
-                </script>
                 <small>
                     <a id="pivot-bookmark"
                        data-baseurl="{% url 'explorer_playground' %}?querylog_id={{ ql_id }}"
@@ -161,74 +144,73 @@
             </div>
             {% if charts_enabled %}
                 <div class="tab-pane" id="nav-piechart" role="tabpanel" area-labelledby="nav-piechart-tab">>
-
-                            <span class="panel-title">{% trans "Pie chart" %}</span>
-                            <div class="overflow-wrapper">
-                                    {% if pie_chart_svg %}
-                                        <div style="margin: 2em;">
-                                            {{ pie_chart_svg | safe }}
-                                        </div>
-                                    {% else %}
-                                        <div style="margin: 6em;">
-                                            <p>{% blocktrans %}
-                                                This query result table is not formatted in a way
-                                                which could be displayed as a pie chart.
-                                            {% endblocktrans %}</p>
-                                            <p>{% blocktrans %}
-                                                Query results can be displayed as a pie chart as follows:
-                                                each row represents one sector of the pie;
-                                                the first column will be used as a label
-                                                while the second column is used to determine the size of the sector.
-                                                Thus the second column must be of a numeric type.
-                                                Rows which contain <code>NULL</code>s will be ignored.
-                                            {% endblocktrans %}</p>
-                                            <p>{% blocktrans %}
-                                                Use this sample query to see it in action:
-                                            {% endblocktrans %}</p>
-                                            <pre>
+                    <span class="panel-title">{% trans "Pie chart" %}</span>
+                    <div class="overflow-wrapper">
+                        {% if pie_chart_svg %}
+                            <div style="margin: 2em;">
+                                {{ pie_chart_svg | safe }}
+                            </div>
+                        {% else %}
+                            <div style="margin: 6em;">
+                                <p>{% blocktrans %}
+                                    This query result table is not formatted in a way
+                                    which could be displayed as a pie chart.
+                                {% endblocktrans %}</p>
+                                <p>{% blocktrans %}
+                                    Query results can be displayed as a pie chart as follows:
+                                    each row represents one sector of the pie;
+                                    the first column will be used as a label
+                                    while the second column is used to determine the size of the sector.
+                                    Thus the second column must be of a numeric type.
+                                    Rows which contain <code>NULL</code>s will be ignored.
+                                {% endblocktrans %}</p>
+                                <p>{% blocktrans %}
+                                    Use this sample query to see it in action:
+                                {% endblocktrans %}</p>
+                                <pre>
     SELECT *
     FROM (VALUES ('apple', 7),
                  ('orange', 8),
                  ('grape', 9),
                  ('peppermint', 1))
         AS fruit_salad_proportions;</pre>
-                                        </div>
-                                    {% endif %}
                                 </div>
+                            {% endif %}
                         </div>
+                </div>
                 <div class="tab-pane" id="nav-linechart" role="tabpanel" area-labelledby="nav-linechart-tab">>
-                                    <span class="panel-title">{% trans "Line chart" %}</span>
-                                <div class="overflow-wrapper">
-                                    {% if line_chart_svg %}
-                                        <div style="margin: 2em;">
-                                            {{ line_chart_svg | safe }}
-                                        </div>
-                                    {% else %}
-                                        <div style="margin: 6em;">
-                                            <p>{% blocktrans %}
-                                                This query result table is not formatted in a way
-                                                which could be displayed as a line chart.
-                                            {% endblocktrans %}</p>
-                                            <p>{% blocktrans %}
-                                                Query results can be displayed as a line chart as follows:
-                                                the first column represents the values on the x-axis (e.g. dates).
-                                                All other numeric columns represent one line on the chart.
-                                                Other columns will be ignored.
-                                            {% endblocktrans %}</p>
-                                            <p>{% blocktrans %}
-                                                Use this sample query to see it in action:
-                                            {% endblocktrans %}</p>
-                                            <pre>
+                    <span class="panel-title">{% trans "Line chart" %}</span>
+                    <div class="overflow-wrapper">
+                            {% if line_chart_svg %}
+                                <div style="margin: 2em;">
+                                    {{ line_chart_svg | safe }}
+                                </div>
+                            {% else %}
+                                <div style="margin: 6em;">
+                                    <p>{% blocktrans %}
+                                        This query result table is not formatted in a way
+                                        which could be displayed as a line chart.
+                                    {% endblocktrans %}</p>
+                                    <p>{% blocktrans %}
+                                        Query results can be displayed as a line chart as follows:
+                                        the first column represents the values on the x-axis (e.g. dates).
+                                        All other numeric columns represent one line on the chart.
+                                        Other columns will be ignored.
+                                    {% endblocktrans %}</p>
+                                    <p>{% blocktrans %}
+                                        Use this sample query to see it in action:
+                                    {% endblocktrans %}</p>
+                                    <pre>
     SELECT *
     FROM (VALUES ('2019-01-01'::date, 500,550,530),
                  ('2020-01-01'::date, 530, 580, 570),
                  ('2021-01-01'::date, 580, 590, 670),
                  ('2022-01-01'::date, 700, 620, 780))
         AS fruit_salad_proportions(date, generosity, joy, happiness);</pre>
-                                        </div>
-                                    {% endif %}
                                 </div>
-                            </div>
+                            {% endif %}
+                    </div>
+                </div>
             {% endif %}
         {% endif %}
     </div>
