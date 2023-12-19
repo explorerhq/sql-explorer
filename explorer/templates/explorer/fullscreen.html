@@ -1,15 +1,18 @@
 {% load i18n static %}
+{% load vite %}
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% trans "SQL Explorer" %}{% if query %} - {{ query.title }}{% elif title %} - {{ title }}{% endif %}</title>
+    {% block style %}
+        {% vite_asset 'scss/main.scss' %}
+    {% endblock style %}
 </head>
 
-<body>
-{% spaceless %}
+<body class="m-3">
   <h2>
       {% if query %}
           {{ query.title }}{% if shared %}<small>&nbsp;&nbsp;shared</small>{% endif %}
@@ -17,7 +20,6 @@
           {% trans "New Query" %}
       {% endif %}
   </h2>
-{% endspaceless %}
   <table class="table table-striped">
       <thead>
           <tr>

@@ -1,12 +1,22 @@
 import $ from 'jquery';
 
-import { EditorView } from "@codemirror/view";
+import {basicSetup, EditorView } from "codemirror";
+import {sql} from "@codemirror/lang-sql"
+import {languages} from "@codemirror/language-data"
+
 import cookie from 'cookiejs';
 import List from 'list.js'
-import floatHead from 'floatthead';
 
-function editorFromTextArea(textarea, extensions) {
-    let view = new EditorView({doc: textarea.value, extensions})
+import 'floatthead'
+
+
+function editorFromTextArea(textarea) {
+    let view = new EditorView({
+        doc: textarea.value,
+        extensions: [
+            basicSetup,
+            sql({codeLanguages: languages}),
+        ]})
     textarea.parentNode.insertBefore(view.dom, textarea)
     textarea.style.display = "none"
     if (textarea.form) textarea.form.addEventListener("submit", () => {
@@ -19,7 +29,6 @@ export class ExplorerEditor {
     constructor(queryId) {
         this.queryId = queryId;
         this.$table = $("#preview");
-        this.domTable = document.getElementById("preview");
         this.$rows = $("#rows");
         this.$form = $("form");
         this.$snapshotField = $("#id_snapshot");
@@ -30,7 +39,7 @@ export class ExplorerEditor {
             this.$submit = $("#refresh_button");
         }
 
-        this.editor = editorFromTextArea(document.getElementById("id_sql"), []);
+        this.editor = editorFromTextArea(document.getElementById("id_sql"));
 
         this.bind();
 
@@ -161,17 +170,6 @@ export class ExplorerEditor {
             this.$form.append(this.$snapshotField);
         }.bind(this));
 
-        $("#save_only").click(function() {
-            var params = this.getParams(this);
-            if(params) {
-                this.$form.attr("action", "../" + this.queryId + "/?show=0&params=" + this.serializeParams(params));
-            } else {
-                this.$form.attr("action", "../" + this.queryId + "/?show=0");
-            }
-            this.$snapshotField.hide();
-            this.$form.append(this.$snapshotField);
-        }.bind(this));
-
         $("#refresh_button").click(function(e) {
             e.preventDefault();
             var params = this.getParams();
@@ -218,25 +216,31 @@ export class ExplorerEditor {
             e.preventDefault();
             $(".stats-expand").hide();
             $(".stats-wrapper").show();
-            this.domTable.floatThead("reflow");
+            this.$table.floatThead("reflow");
         }.bind(this));
 
         $("#counter-toggle").click(function(e) {
             e.preventDefault();
             $(".counter").toggle();
-            this.domTable.floatThead("reflow");
+            this.$table.floatThead("reflow");
         }.bind(this));
 
         $(".sort").click(function(e) {
             var t = $(e.target).data("sort");
             var dir = $(e.target).data("dir");
-            $(".sort").css("background-image", "url(//cdn.datatables.net/1.10.0/images/sort_both.png)")
+            $(".sort").addClass("bi-arrow-down-up");
+            $(".sort").removeClass("bi-arrow-down");
+            $(".sort").removeClass("bi-arrow-up");
             if (dir === "asc"){
                 $(e.target).data("dir", "desc");
-                $(e.target).css("background-image", "url(//cdn.datatables.net/1.10.0/images/sort_asc.png)")
+                $(e.target).addClass("bi-arrow-up");
+                $(e.target).removeClass("bi-arrow-down");
+                $(e.target).removeClass("bi-arrow-down-up");
             } else {
                 $(e.target).data("dir", "asc");
-                $(e.target).css("background-image", "url(//cdn.datatables.net/1.10.0/images/sort_desc.png)")
+                $(e.target).addClass("bi-arrow-down");
+                $(e.target).removeClass("bi-arrow-up");
+                $(e.target).removeClass("bi-arrow-down-up");
             }
             var vals = [];
             var ct = 0;

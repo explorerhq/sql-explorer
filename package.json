@@ -34,6 +34,8 @@
   },
   "homepage": "https://github.com/epicserve/django-base-site#readme",
   "dependencies": {
+    "@codemirror/lang-sql": "^6.5.4",
+    "@codemirror/language-data": "^6.3.1",
     "bootstrap-icons": "^1.11.2",
     "codemirror": "^6.0.1",
     "cookiejs": "^2.1.3",

@@ -1,15 +1,16 @@
 {% if params %}
-<div class="panel-footer">
-    <div class="form-inline">
+    <div class="mt-3 row">
+        <label class="form-label">Params</label>
         {% for k, v in params.items %}
-            <div class="form-group">
-                <label for="{{ k }}_param" class="control-label col-sm-4">{{ v.label }}:</label>
-                <div class="col-sm-7">
-                    <input type="text" data-param="{{ k }}" class="param form-control" name="{{ k }}_param" id="{{ k }}_param" placeholder="parameter" value="{{ v.val }}" />
+            <div class="col">
+                <div class="form-floating">
+                <input type="text" data-param="{{ k }}"
+                       class="param form-control"
+                       name="{{ k }}_param" id="{{ k }}_param"
+                       value="{{ v.val }}" />
+                <label for="{{ k }}_param">{{ v.label }}</label>
                 </div>
-                <div class="col-sm-1"></div>
             </div>
         {% endfor %}
     </div>
-</div>
 {% endif %}

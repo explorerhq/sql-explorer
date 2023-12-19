@@ -2,8 +2,8 @@
 {% load i18n %}
 
 {% block sql_explorer_content %}
-    <h3>{% blocktrans with pagenum=page_obj.number %}Recent Query Logs - Page {{pagenum}}{% endblocktrans %}</h3>
-    <div class="table-responsive">
+    <div class="container">
+        <h3>{% blocktrans with pagenum=page_obj.number %}Recent Query Logs - Page {{pagenum}}{% endblocktrans %}</h3>
         <table class="table table-striped query-list">
             <thead>
                 <tr>
@@ -44,22 +44,22 @@
                 {% endfor %}
             </tbody>
         </table>
-    </div>
-    {% if is_paginated %}
-        <div class="pagination">
-            <span class="page-links">
-                {% if page_obj.has_previous %}
-                    <a href="?page={{ page_obj.previous_page_number }}"><<</a>
-                {% endif %}
-                <span class="page-current">
-                    {% blocktrans trimmed with pnum=page_obj.number anum=page_obj.paginator.num_pages %}
-                        Page {{ pnum }} of {{ anum }}.
-                    {% endblocktrans %}
+        {% if is_paginated %}
+            <div class="pagination">
+                <span>
+                    {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}"><i class="bi-arrow-left-square"></i></a>
+                    {% endif %}
+                    <span class="page-current">
+                        {% blocktrans trimmed with pnum=page_obj.number anum=page_obj.paginator.num_pages %}
+                            Page {{ pnum }} of {{ anum }}
+                        {% endblocktrans %}
+                    </span>
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}"><i class="bi-arrow-right-square"></i></a>
+                    {% endif %}
                 </span>
-                {% if page_obj.has_next %}
-                    <a href="?page={{ page_obj.next_page_number }}">>></a>
-                {% endif %}
-            </span>
-        </div>
-    {% endif %}
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}
