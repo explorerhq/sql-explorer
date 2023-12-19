@@ -137,7 +137,7 @@
 
 {% include 'explorer/preview_pane.html' %}
 
-<div class="row">
+<div class="container row mt-1">
     {% if query and can_change and tasks_enabled %}
         <div class="col">
                 {{ form.snapshot }} {% blocktrans %}Snapshot{% endblocktrans %}
@@ -145,8 +145,8 @@
     {% endif %}
     <div class="col small">
         {% if query.avg_duration %}
-            {% blocktrans trimmed with avg_duration=query.avg_duration user_email=form.created_by_user_email created=form.created_at_time %}
-                Avg. execution: {{ avg_duration|floatformat:2 }}ms. Query created by {{ user_email }} on {{ created }}.
+            {% blocktrans trimmed with avg_duration_display=query.avg_duration_display user_email=form.created_by_user_email created=form.created_at_time %}
+                Avg. execution: {{ avg_duration_display }}ms. Query created by {{ user_email }} on {{ created }}.
             {% endblocktrans %}
         {% endif %}
     </div>
