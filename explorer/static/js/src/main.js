@@ -2,6 +2,8 @@ import * as bootstrap from 'bootstrap'; // eslint-disable-line no-unused-vars
 import {ExplorerEditor} from "./explorer"
 import {setupQueryList} from "./query-list"
 import {setupSchema} from "./schema";
+
+
 // TODO add back in XLSX export support
 
 const route_initializers = {

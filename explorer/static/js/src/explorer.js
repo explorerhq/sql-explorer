@@ -1,5 +1,4 @@
 import $ from 'jquery';
-
 import {basicSetup, EditorView } from "codemirror";
 import {sql} from "@codemirror/lang-sql"
 import {languages} from "@codemirror/language-data"
@@ -10,6 +9,9 @@ import List from 'list.js'
 import 'floatthead'
 import {getCsrfToken} from "./csrf";
 import {toggleFavorite} from "./favorites";
+
+import {pivotJq} from "./pivot";
+
 
 
 function editorFromTextArea(textarea) {
@@ -43,6 +45,8 @@ export class ExplorerEditor {
 
         this.editor = editorFromTextArea(document.getElementById("id_sql"));
 
+        pivotJq($);
+
         this.bind();
 
         if (cookie.get("schema_sidebar_open") === 'true') {
@@ -75,9 +79,9 @@ export class ExplorerEditor {
     }
 
     savePivotState(state) {
-        let bmark = btoa(JSON.stringify(_(state).pick("aggregatorName", "rows", "cols", "rendererName", "vals")));
-        let $el = $("#pivot-bookmark");
-        $el.attr("href", $el.data("baseurl") + "#" + bmark);
+        //let bmark = btoa(JSON.stringify(_(state).pick("aggregatorName", "rows", "cols", "rendererName", "vals")));
+        //let $el = $("#pivot-bookmark");
+        //$el.attr("href", $el.data("baseurl") + "#" + bmark);
     }
 
     updateQueryString(key, value, url) {
@@ -296,8 +300,8 @@ export class ExplorerEditor {
                 pivotState = {onRefresh: this.savePivotState};
             }
         }
-        // TODO implement pivot tables
-        //$(".pivot-table").pivotUI(this.$table, pivotState);
+
+        $(".pivot-table").pivotUI(this.$table, pivotState);
         if (navToPivot) {
             $("#pivot-tab-label").tab("show");
         }
