@@ -38,7 +38,7 @@ def query_viewmodel(request, query, title=None, form=None, message=None,
 
     user = request.user
     is_favorite = False
-    if user.is_authenticated:
+    if user.is_authenticated and query.pk:
         is_favorite = QueryFavorite.objects.filter(user=user, query=query).exists()
 
     ret = {
