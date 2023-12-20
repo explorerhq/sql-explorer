@@ -42,7 +42,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverage-data-${{ matrix.python-version }}
-          path: '${{ github.workspace }}/.coverage.*'
+          path: '${{ github.workspace }}/.coverage*'
 
   coverage:
     name: Coverage
@@ -65,7 +65,7 @@ jobs:
           pattern: coverage-data-*
           merge-multiple: true
 
-      - name: Combine coverage and fail if it's <100%
+      - name: Combine coverage
         run: |
           python -m coverage combine
           python -m coverage html --skip-covered --skip-empty
