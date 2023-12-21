@@ -1,25 +1,23 @@
 import $ from 'jquery';
-import {basicSetup, EditorView } from "codemirror";
-import {sql} from "@codemirror/lang-sql"
-import {languages} from "@codemirror/language-data"
+import { EditorView } from "codemirror";
+import { languages } from "@codemirror/language-data"
+import { explorerSetup } from "./codemirror-config";
 
 import cookie from 'cookiejs';
 import List from 'list.js'
 
 import 'floatthead'
-import {getCsrfToken} from "./csrf";
-import {toggleFavorite} from "./favorites";
+import { getCsrfToken } from "./csrf";
+import { toggleFavorite } from "./favorites";
 
 import {pivotJq} from "./pivot";
-
 
 
 function editorFromTextArea(textarea) {
     let view = new EditorView({
         doc: textarea.value,
         extensions: [
-            basicSetup,
-            sql({codeLanguages: languages}),
+            explorerSetup,
         ]})
     textarea.parentNode.insertBefore(view.dom, textarea)
     textarea.style.display = "none"
@@ -44,6 +42,10 @@ export class ExplorerEditor {
         }
 
         this.editor = editorFromTextArea(document.getElementById("id_sql"));
+
+        document.addEventListener('submitEventFromCM', (e) => {
+            this.$submit.click();
+        });
 
         pivotJq($);
 
@@ -73,15 +75,12 @@ export class ExplorerEditor {
         return encodeURIComponent(args.join("|"));
     }
 
-    doCodeMirrorSubmit() {
-        // Captures the cmd+enter keystroke and figures out which button to trigger.
-        this.$submit.click();
-    }
-
     savePivotState(state) {
-        //let bmark = btoa(JSON.stringify(_(state).pick("aggregatorName", "rows", "cols", "rendererName", "vals")));
-        //let $el = $("#pivot-bookmark");
-        //$el.attr("href", $el.data("baseurl") + "#" + bmark);
+        const picked = (({ aggregatorName, rows, cols, rendererName, vals }) => ({ aggregatorName, rows, cols, rendererName, vals }))(state);
+        const jsonString = JSON.stringify(picked);
+        let bmark = btoa(jsonString);
+        let $el = $("#pivot-bookmark");
+        $el.attr("href", $el.data("baseurl") + "#" + bmark);
     }
 
     updateQueryString(key, value, url) {
@@ -303,7 +302,8 @@ export class ExplorerEditor {
 
         $(".pivot-table").pivotUI(this.$table, pivotState);
         if (navToPivot) {
-            $("#pivot-tab-label").tab("show");
+            let pivotEl = document.querySelector('#nav-pivot-tab')
+            pivotEl.click()
         }
 
         setTimeout(function() {
