@@ -35,6 +35,7 @@ export class ExplorerEditor {
         this.$form = $("form");
         this.$snapshotField = $("#id_snapshot");
         this.$paramFields = this.$form.find(".param");
+        this.docChanged = false;
 
         this.$submit = $("#refresh_play_button, #save_button");
         if (!this.$submit.length) {
@@ -45,6 +46,10 @@ export class ExplorerEditor {
 
         document.addEventListener('submitEventFromCM', (e) => {
             this.$submit.click();
+        });
+
+        document.addEventListener('docChanged', (e) => {
+            this.docChanged = true;
         });
 
         pivotJq($);
@@ -171,6 +176,21 @@ export class ExplorerEditor {
     }
 
     bind() {
+
+        $(window).on("beforeunload", function () {
+            // Only do this if changed-input is on the page and we"re not on the playground page.
+            if (clientRoute === 'query_detail' && this.docChanged) {
+                return "You have unsaved changes to your query.";
+            }
+        }.bind(this));
+
+        // Disable unsaved changes warning when submitting the editor form
+        $(document).on("submit", "#editor", function(event){
+            // disable warning
+            $(window).off("beforeunload");
+        });
+
+
         document.querySelectorAll('.query_favorite_toggle').forEach(function(element) {
             element.addEventListener('click', toggleFavorite);
         });
@@ -322,15 +342,3 @@ export class ExplorerEditor {
 }
 
 // TODO make this work again
-$(window).on("beforeunload", function () {
-    // Only do this if changed-input is on the page and we"re not on the playground page.
-    if ($(".changed-input").length && !$(".playground-form").length) {
-        return "You have unsaved changes to your query.";
-    }
-});
-
-// Disable unsaved changes warning when submitting the editor form
-$(document).on("submit", "#editor", function(event){
-    // disable warning
-    $(window).off("beforeunload");
-});

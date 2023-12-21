@@ -1,6 +1,6 @@
 import {
     keymap, highlightSpecialChars, drawSelection, highlightActiveLine, dropCursor,
-    lineNumbers, highlightActiveLineGutter
+    lineNumbers, highlightActiveLineGutter, EditorView
 } from "@codemirror/view"
 import {
     defaultHighlightStyle, syntaxHighlighting, indentOnInput, bracketMatching,
@@ -13,6 +13,12 @@ import {lintKeymap} from "@codemirror/lint"
 import { Prec } from "@codemirror/state";
 import {sql} from "@codemirror/lang-sql";
 
+
+let updateListenerExtension = EditorView.updateListener.of((update) => {
+  if (update.docChanged) {
+    document.dispatchEvent(new CustomEvent('docChanged', {}));
+  }
+});
 
 const submitEventFromCM = new CustomEvent('submitEventFromCM', {});
 const submitKeymapArr = [
@@ -57,6 +63,7 @@ export const explorerSetup = (() => [
     highlightActiveLine(),
     highlightSelectionMatches(),
     submitKeymap,
+    updateListenerExtension,
     keymap.of([
         ...closeBracketsKeymap,
         ...defaultKeymap,
