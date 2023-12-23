@@ -65,6 +65,7 @@ def query_viewmodel(request, query, title=None, form=None, message=None,
         'charts_enabled': app_settings.EXPLORER_CHARTS_ENABLED,
         'pie_chart_svg': get_pie_chart(res) if app_settings.EXPLORER_CHARTS_ENABLED and has_valid_results else None,
         'line_chart_svg': get_line_chart(res) if app_settings.EXPLORER_CHARTS_ENABLED and has_valid_results else None,
-        'is_favorite': is_favorite
+        'is_favorite': is_favorite,
+        'show_sql_by_default': app_settings.EXPLORER_SHOW_SQL_BY_DEFAULT
     }
     return ret

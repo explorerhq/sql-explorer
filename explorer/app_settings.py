@@ -139,6 +139,8 @@ UNSAFE_RENDERING = getattr(settings, "EXPLORER_UNSAFE_RENDERING", False)
 
 EXPLORER_CHARTS_ENABLED = getattr(settings, "EXPLORER_CHARTS_ENABLED", False)
 
+EXPLORER_SHOW_SQL_BY_DEFAULT = getattr(settings, "EXPLORER_SHOW_SQL_BY_DEFAULT", True)
+
 # If set to True will autorun queries when viewed which is the historical behavior
 # Default to True if not set in order to be backwards compatible
 # If set to False will not autorun queries containing parameters when viewed
