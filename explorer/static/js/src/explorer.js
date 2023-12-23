@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import { EditorView } from "codemirror";
-import { languages } from "@codemirror/language-data"
+import { writeFile, utils as xlsxUtils } from "xlsx";
 import { explorerSetup } from "./codemirror-config";
 
 import cookie from 'cookiejs';
@@ -190,6 +190,18 @@ export class ExplorerEditor {
             $(window).off("beforeunload");
         });
 
+        let button = document.querySelector("#button-excel");
+        if (button) {
+                button.addEventListener("click", e => {
+                let table = document.querySelector(".pvtTable");
+                if (typeof (table) != 'undefined' && table != null) {
+                    /* Create worksheet from HTML DOM TABLE */
+                    let wb = xlsxUtils.table_to_book(table);
+                    let wb_name = "pivot-export-" + this.queryId + ".xlsx";
+                    writeFile(wb, wb_name);
+                }
+            });
+        }
 
         document.querySelectorAll('.query_favorite_toggle').forEach(function(element) {
             element.addEventListener('click', toggleFavorite);
