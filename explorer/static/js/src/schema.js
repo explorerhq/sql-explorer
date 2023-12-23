@@ -10,11 +10,11 @@ function searchFocus() {
 export function setupSchema() {
 
     let options = {
-        valueNames: ['name', 'app'],
+        valueNames: ['app-name'],
         handlers: {'updated': [searchFocus]}
     };
 
-    new List('tables', options);
+    new List('schema-contents', options);
 
     document.getElementById('collapse_all').addEventListener('click', function () {
         document.querySelectorAll('.schema-table').forEach(function (element) {
