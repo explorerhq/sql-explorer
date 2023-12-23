@@ -5,10 +5,10 @@
     "dev": "npx vite --config explorer/static/config/vite.config.js",
     "build": "npx vite build --config explorer/static/config/vite.config.js",
     "preview": "npx vite preview --config explorer/static/config/vite.config.js",
-    "lint-sass": "npx stylelint --config explorer/static/config/stylelint.config.js ./src/scss/",
+    "lint-sass": "npx stylelint --config explorer/static/config/stylelint.config.js ./explorer/static/scss/",
     "format-sass": "npx stylelint --config explorer/static/config/stylelint.config.js --fix 'src/**/*.{css,scss}'",
-    "lint-js": "npx eslint --config explorer/static/config/eslint.config.js ./src/js",
-    "format-js": "npx eslint --config explorer/static/config/eslint.config.js --fix ./src/js"
+    "lint-js": "npx eslint --config explorer/static/config/eslint.config.js ./explorer/static/js",
+    "format-js": "npx eslint --config explorer/static/config/eslint.config.js --fix ./explorer/static/js"
   },
   "devDependencies": {
     "bootstrap": "^5.0.1",

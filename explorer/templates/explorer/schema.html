@@ -5,8 +5,8 @@
 {% block sql_explorer_content_takeover %}
 <div class="schema-wrapper">
     <h4>{% trans "Schema" %}</h4>
-    <div id="tables">
-      <p><input class="search" placeholder="{% trans "Search" %}" /></p>
+    <div id="schema-contents">
+      <p><input class="search" placeholder="{% trans "Search Table Names" %}" /></p>
         <div class="row">
             <div class="col">
                 <a class="link-primary" id="collapse_all">
@@ -23,13 +23,13 @@
             <ul class="list">
                 {% for m in schema %}
                     <li>
-                        <div class="app schema-header fw-semibold" style="display: inline-block">{{ m.0 }}</div>
+                        <div class="app-name schema-header fw-semibold" style="display: inline-block">{{ m.0 }}</div>
                         <div class="schema-table">
                             <table class="table table-sm">
                                 <tbody>
                                     {% for c in m.1 %}
                                         <tr>
-                                            <td class="name"><code>{{ c.0 }}</code></td>
+                                            <td><code>{{ c.0 }}</code></td>
                                             <td class="text-muted small">{{ c.1 }}</td>
                                         </tr>
                                     {% endfor %}
