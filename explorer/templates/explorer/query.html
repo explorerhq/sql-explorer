@@ -75,30 +75,38 @@
                     <div class="alert alert-danger">{{ error|escape }}</div>
                 {% endfor %}
             {% endif %}
-            <div class="row">
-                <div class="col">
-                    <label for="id_sql" class="form-label">SQL</label>
-                </div>
-                {% if query %}
-                    <div class="col text-end">
-                        <small>
-                            <a href="#" title="Open in playground" id="playground_button">
-                                <i class="bi-code-square"></i>
-                            </a>
-                        </small>
+            <div class ="accordion accordion-flush" id="sql_accordion">
+                <div class="accordion-item">
+                    <div class="row accordion-header" id="sql_accordion_header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                                <label for="id_sql">SQL</label>
+                            </button>
                     </div>
-                {% endif %}
-            </div>
-            <div class="row">
-                <textarea
-                    class="form-control" {% if not can_change %} disabled {% endif %} cols="40" id="id_sql"
-                    name="sql" rows="20">{{ form.sql.value|default_if_none:"" }}
-                </textarea>
-            </div>
-            <div class="row">
-                {% if params %}
-                    {% include 'explorer/params.html' %}
-                {% endif %}
+                </div>
+                <div id="flush-collapseOne" class="accordion-collapse collapse{% if show_sql_by_default %} show{% endif %}" aria-labelledby="sql_accordion_header" data-bs-parent="#sql_accordion">
+                    <div class="accordion-body">
+                        <div class="row">
+                            <textarea
+                                class="form-control" {% if not can_change %} disabled {% endif %} cols="40" id="id_sql"
+                                name="sql" rows="20">{{ form.sql.value|default_if_none:"" }}
+                            </textarea>
+                        </div>
+                        {% if params %}
+                            <div class="row">
+                                {% include 'explorer/params.html' %}
+                            </div>
+                        {% endif %}
+                    {% if query %}
+                        <div class="row text-end">
+                            <small>
+                                <a href="#" title="Open in playground" id="playground_button">
+                                    <i class="bi-code-square"></i>
+                                </a>
+                            </small>
+                        </div>
+                    {% endif %}
+                    </div>
+                </div>
             </div>
 
             <div class="mt-3 text-center">
