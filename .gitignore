@@ -19,4 +19,4 @@ node_modules/
 explorer/public/
 # Sphinx documentation
 docs/_build/
-
+stats.html

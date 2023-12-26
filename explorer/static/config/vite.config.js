@@ -1,7 +1,8 @@
 import { resolve } from 'path';
+import { visualizer } from 'rollup-plugin-visualizer'
 
 export default {
-  plugins: [],
+  plugins: [visualizer()],
   root: resolve(__dirname, '../'),
   base: '/static/',
   server: {
