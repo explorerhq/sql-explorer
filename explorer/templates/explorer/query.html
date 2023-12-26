@@ -19,13 +19,6 @@
             {% endif %}
         </h2>
         {% if shared %}<small>&nbsp;&nbsp;shared</small>{% endif %}
-        {% if query %}
-            <div class="text-end small fw-semibold">
-                <a href="{% url 'explorer_logs' %}?query_id={{ query.id }}">
-                    {% trans "History" %}
-                </a>
-            </div>
-        {% endif %}
         {% if message %}
             <div class="alert alert-info">{{ message }}</div>
         {% endif %}
@@ -152,7 +145,9 @@
         {% if query.avg_duration %}
             {% blocktrans trimmed with avg_duration_display=query.avg_duration_display user_email=form.created_by_user_email created=form.created_at_time %}
                 Avg. execution: {{ avg_duration_display }}ms. Query created by {{ user_email }} on {{ created }}.
+
             {% endblocktrans %}
+            {% if query %}<a href="{% url 'explorer_logs' %}?query_id={{ query.id }}"> {% trans "History" %}</a>{% endif %}
         {% endif %}
     </div>
 </div>

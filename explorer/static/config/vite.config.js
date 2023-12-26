@@ -20,7 +20,7 @@ export default {
     },
   },
   build: {
-    outDir: resolve(__dirname, '../../public/static/dist'),
+    outDir: resolve(__dirname, '../../public/static'),
     assetsDir: '',
     manifest: true,
     emptyOutDir: true,

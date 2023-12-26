@@ -37,9 +37,6 @@ more.
 SQL Explorer values simplicity, intuitive use, unobtrusiveness,
 stability, and the principle of least surprise.
 
-SQL Explorer is inspired by any number of great query and
-reporting tools out there. See inspirations and others, below.
-
 Sql Explorer is MIT licensed, and pull requests are welcome.
 
 **A view of a query**
@@ -58,10 +55,17 @@ Sql Explorer is MIT licensed, and pull requests are welcome.
 
 .. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/2019_snapshots.png
 
-
-Inspirations & Similar Projects
+Development
 ------------
 
-* `django-sql-dashboard <https://github.com/simonw/django-sql-dashboard>`_
-* Stack Exchange's `Data Explorer <http://data.stackexchange.com/stackoverflow/queries>`_
-* `Blazer <https://github.com/ankane/blazer>`_
+To get started with development, clone the repo, and run the following commands:
+
+.. code-block::
+
+    $ pip install -r requirements/django-4.1.txt
+    $ npm install
+    $ npm run dev &
+    $ python manage.py migrate
+    $ python manage.py runserver
+
+You can now navigate to 127.0.0.1:8000/ and begin exploring!
