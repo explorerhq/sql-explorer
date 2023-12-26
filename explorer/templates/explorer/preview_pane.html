@@ -128,7 +128,7 @@
 
         {% if data %}
             <div class="tab-pane" id="nav-pivot" role="tabpanel" area-labelledby="nav-pivot-tab">
-                <button id="button-excel">{% trans "Export Pivot to Excel" %}</button>
+                <button id="button-excel">{% trans "Download as CSV" %}</button>
                 <small>
                     <a id="pivot-bookmark"
                        data-baseurl="{% url 'explorer_playground' %}?querylog_id={{ ql_id }}"
@@ -141,8 +141,7 @@
                 </div>
             </div>
             {% if charts_enabled %}
-                <div class="tab-pane" id="nav-piechart" role="tabpanel" area-labelledby="nav-piechart-tab">>
-                    <span class="panel-title">{% trans "Pie chart" %}</span>
+                <div class="tab-pane" id="nav-piechart" role="tabpanel" area-labelledby="nav-piechart-tab">
                     <div class="overflow-wrapper">
                         {% if pie_chart_svg %}
                             <div style="margin: 2em;">
@@ -176,8 +175,7 @@
                             {% endif %}
                         </div>
                 </div>
-                <div class="tab-pane" id="nav-linechart" role="tabpanel" area-labelledby="nav-linechart-tab">>
-                    <span class="panel-title">{% trans "Line chart" %}</span>
+                <div class="tab-pane" id="nav-linechart" role="tabpanel" area-labelledby="nav-linechart-tab">
                     <div class="overflow-wrapper">
                             {% if line_chart_svg %}
                                 <div style="margin: 2em;">

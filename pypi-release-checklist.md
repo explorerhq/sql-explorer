@@ -3,7 +3,8 @@
 - [x] Make sure any new files are included in MANIFEST.in
 - [x] Update version number in `explorer/__init__.py`
 - [x] Update any package dependencies in `setup.py`
-- [x] Commit the changes: 
+- [x] Run `npm install` and `npm run build`
+- [x] Commit the changes:
 ```
 git add .
 git commit -m "Release 1.0.0"
@@ -18,6 +19,8 @@ cd dist
 tar xzvf django-sql-explorer-x.x.tar.gz
 cd django-sql-explorer-x.x/
 python setup.py install
+npm install
+npm run build
 django-admin.py startproject explorertest
 cd explorertest/explorertest/
 emacs urls.py
