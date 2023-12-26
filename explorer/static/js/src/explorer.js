@@ -1,6 +1,5 @@
 import $ from 'jquery';
 import { EditorView } from "codemirror";
-import { writeFile, utils as xlsxUtils } from "xlsx";
 import { explorerSetup } from "./codemirror-config";
 
 import cookie from 'cookiejs';
@@ -11,6 +10,7 @@ import { getCsrfToken } from "./csrf";
 import { toggleFavorite } from "./favorites";
 
 import {pivotJq} from "./pivot";
+import {csvFromTable} from "./table-to-csv";
 
 
 function editorFromTextArea(textarea) {
@@ -195,10 +195,7 @@ export class ExplorerEditor {
                 button.addEventListener("click", e => {
                 let table = document.querySelector(".pvtTable");
                 if (typeof (table) != 'undefined' && table != null) {
-                    /* Create worksheet from HTML DOM TABLE */
-                    let wb = xlsxUtils.table_to_book(table);
-                    let wb_name = "pivot-export-" + this.queryId + ".xlsx";
-                    writeFile(wb, wb_name);
+                    csvFromTable(table);
                 }
             });
         }

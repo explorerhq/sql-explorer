@@ -4,8 +4,6 @@ import {setupQueryList} from "./query-list"
 import {setupSchema} from "./schema";
 
 
-// TODO add back in XLSX export support
-
 const route_initializers = {
     explorer_index: setupQueryList,
     query_detail: () => new ExplorerEditor(queryId),
