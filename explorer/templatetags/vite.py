@@ -5,11 +5,12 @@ from django import template
 from django.conf import settings
 from django.utils.safestring import mark_safe
 
+
 register = template.Library()
 
 VITE_OUTPUT_DIR = "/static/"
 VITE_MANIFEST_FILE = "./explorer/public/static/.vite/manifest.json"
-VITE_DEV_MODE = getattr(settings, "VITE_DEV_MODE", getattr(settings, "EXPLORER_DEBUG", False))
+VITE_DEV_MODE = getattr(settings, "VITE_DEV_MODE", False)
 VITE_SERVER_HOST = getattr(settings, "VITE_SERVER_HOST", "localhost")
 VITE_SERVER_PORT = getattr(settings, "VITE_SERVER_PORT", "5173")
 

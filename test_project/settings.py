@@ -2,8 +2,9 @@ import os
 
 
 SECRET_KEY = 'shhh'
-EXPLORER_DEBUG = True
+DEBUG = True
 STATIC_URL = '/static/'
+VITE_DEV_MODE = True
 
 ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1']
 
@@ -55,7 +56,7 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'django.template.context_processors.request',
             ],
-            'debug': EXPLORER_DEBUG
+            'debug': DEBUG
         },
     },
 ]
