@@ -39,7 +39,7 @@ class QueryForm(ModelForm):
         self.fields['connection'].widget.choices = self.connections
         if not self.instance.connection:
             self.initial['connection'] = EXPLORER_DEFAULT_CONNECTION
-        self.fields['connection'].widget.attrs['class'] = 'form-control'
+        self.fields['connection'].widget.attrs['class'] = 'form-select'
 
     def clean(self):
         if self.instance and self.data.get('created_by_user', None):

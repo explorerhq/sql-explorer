@@ -32,17 +32,17 @@
                 <div class="alert alert-danger">{{ error|escape }}</div>
             {% endif %}
             {{ form.non_field_errors }}
-            <div class="mb-3">
+            <div class="my-3 form-floating">
                 {% if form.title.errors %}{% for error in form.title.errors %}
                     <div class="alert alert-danger">{{ error|escape }}</div>
                 {% endfor %}{% endif %}
-                <label for="id_title" class="form-label">{% trans "Title" %}</label>
                 <input class="form-control" id="id_title" maxlength="255" name="title" type="text" {% if not can_change %}disabled{% endif %} value="{{ form.title.value|default_if_none:"" }}" />
+                <label for="id_title" class="form-label">{% trans "Title" %}</label>
             </div>
             {% if form.connections|length > 1 and can_change %}
-                <div class="mb-3">
-                    <label for="id_connection" class="form-label">{% trans "Connection" %}</label>
+                <div class="mb-3 form-floating">
                     {{ form.connection }}
+                    <label for="id_connection" class="form-label">{% trans "Connection" %}</label>
                 </div>
             {% else %}
                 {# still need to submit the connection, just hide the UI element #}
@@ -50,17 +50,17 @@
                   {{ form.connection }}
                 </div>
             {% endif %}
-            <div class="mb-3">
+            <div class="mb-3 form-floating">
                 {% if form.description.errors %}
                     <div class="alert alert-danger">{{ form.description.errors }}</div>
                 {% endif %}
-                <label for="id_description" class="form-label">
-                    {% trans "Description"%}
-                </label>
                 <textarea
                     id="id_description" class="form-control" cols="40" name="description"
                     {% if not can_change %}disabled{% endif %} rows="2"
                 >{{ form.description.value|default_if_none:"" }}</textarea>
+                <label for="id_description" class="form-label">
+                    {% trans "Description"%}
+                </label>
             </div>
             <input type="hidden" id="id_created_by_user" name="created_by_user" value="{{ form.created_by_user_email }}" />
             {% if form.sql.errors %}

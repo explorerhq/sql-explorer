@@ -19,9 +19,9 @@
             {% endif %}
             {{ form.non_field_errors }}
             {% if form.connections|length > 1 and can_change %}
-                <div class="mb-3">
-                    <label for="id_connection" class="form-label">{% trans "Connection" %}</label>
+                <div class="mb-3 form-floating">
                     {{ form.connection }}
+                    <label for="id_connection" class="form-label">{% trans "Connection" %}</label>
                 </div>
             {% else %}
                 {# still need to submit the connection, just hide the UI element #}
