@@ -66,11 +66,11 @@
             </thead>
             <tbody class="list">
                 {% for object in object_list %}
-                    <tr {% if object.is_in_category %}class="collapse in collapse-{{ object.collapse_target }}"{% endif %}>
+                    <tr {% if object.is_in_category %}class="collapse {{object.collapse_target}}"{% endif %}>
                         {% if object.is_header %}
                             <td colspan="100">
                                 <strong>
-                                    <span data-toggle="collapse" data-target=".collapse-{{object.collapse_target}}" class="toggle">
+                                    <span data-bs-toggle="collapse" style="cursor: pointer;" data-bs-target=".{{object.collapse_target}}">
                                         {{ object.title }} ({{ object.count }})
                                     </span>
                                 </strong>
