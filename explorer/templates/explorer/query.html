@@ -81,8 +81,7 @@
                         <div class="row">
                             <textarea
                                 class="form-control" {% if not can_change %} disabled {% endif %} cols="40" id="id_sql"
-                                name="sql" rows="20">{{ form.sql.value|default_if_none:"" }}
-                            </textarea>
+                                name="sql" rows="20">{{ form.sql.value|default_if_none:"" }}</textarea>
                         </div>
                         {% if params %}
                             <div class="row">
