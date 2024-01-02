@@ -35,6 +35,30 @@ def connection_schema_cache_key(connection_alias):
     return f'_explorer_cache_key_{connection_alias}'
 
 
+def connection_schema_json_cache_key(connection_alias):
+    return f'_explorer_cache_key_json_{connection_alias}'
+
+
+def transform_to_json_schema(schema_info):
+    json_schema = {}
+    for table_name, columns in schema_info:
+        json_schema[table_name] = []
+        for column_name, _ in columns:
+            json_schema[table_name].append(column_name)
+    return json_schema
+
+
+def schema_json_info(connection_alias):
+    key = connection_schema_json_cache_key(connection_alias)
+    ret = cache.get(key)
+    if ret:
+        return ret
+    si = schema_info(connection_alias) or []
+    json_schema = transform_to_json_schema(si)
+    cache.set(key, json_schema)
+    return json_schema
+
+
 def schema_info(connection_alias):
     key = connection_schema_cache_key(connection_alias)
     ret = cache.get(key)

@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import { EditorView } from "codemirror";
+
 import { explorerSetup } from "./codemirror-config";
 
 import cookie from 'cookiejs';
@@ -11,6 +12,9 @@ import { toggleFavorite } from "./favorites";
 
 import {pivotJq} from "./pivot";
 import {csvFromTable} from "./table-to-csv";
+
+import {schemaCompletionSource, StandardSQL} from "@codemirror/lang-sql";
+import {StateEffect} from "@codemirror/state";
 
 
 function editorFromTextArea(textarea) {
@@ -347,6 +351,24 @@ export class ExplorerEditor {
         this.$rows.keyup(function(event) {
             if(event.keyCode === 13){ this.showRows(); }
         }.bind(this));
+
+        fetch('/schema.json/' + $("#id_connection").val())
+            .then(response => {
+                return response.json();
+            })
+            .then(data => {
+                this.editor.dispatch({
+                    effects: StateEffect.appendConfig.of(
+                        StandardSQL.language.data.of({
+                          autocomplete: schemaCompletionSource({schema: data})
+                        })
+                    )
+                })
+                return data;
+            })
+            .catch(error => {
+                console.error('Error retrieving JSON schema:', error);
+            });
     }
 }
 

@@ -2,8 +2,8 @@ from django.urls import path
 
 from explorer.views import (
     CreateQueryView, DeleteQueryView, DownloadFromSqlView, DownloadQueryView, EmailCsvQueryView, ListQueryLogView,
-    ListQueryView, PlayQueryView, QueryFavoritesView, QueryFavoriteView, QueryView, SchemaView, StreamQueryView,
-    format_sql,
+    ListQueryView, PlayQueryView, QueryFavoritesView, QueryFavoriteView, QueryView, SchemaJsonView, SchemaView,
+    StreamQueryView, format_sql,
 )
 
 
@@ -32,6 +32,10 @@ urlpatterns = [
     path(
         'schema/<path:connection>', SchemaView.as_view(),
         name='explorer_schema'
+    ),
+    path(
+        'schema.json/<path:connection>', SchemaJsonView.as_view(),
+        name='explorer_schema_json'
     ),
     path('logs/', ListQueryLogView.as_view(), name='explorer_logs'),
     path('format/', format_sql, name='format_sql'),

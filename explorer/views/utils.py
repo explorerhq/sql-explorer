@@ -3,6 +3,7 @@ from django.db import DatabaseError
 from explorer import app_settings
 from explorer.charts import get_line_chart, get_pie_chart
 from explorer.models import QueryFavorite
+from explorer.schema import schema_json_info
 
 
 def query_viewmodel(request, query, title=None, form=None, message=None,
@@ -66,6 +67,7 @@ def query_viewmodel(request, query, title=None, form=None, message=None,
         'pie_chart_svg': get_pie_chart(res) if app_settings.EXPLORER_CHARTS_ENABLED and has_valid_results else None,
         'line_chart_svg': get_line_chart(res) if app_settings.EXPLORER_CHARTS_ENABLED and has_valid_results else None,
         'is_favorite': is_favorite,
-        'show_sql_by_default': app_settings.EXPLORER_SHOW_SQL_BY_DEFAULT
+        'show_sql_by_default': app_settings.EXPLORER_SHOW_SQL_BY_DEFAULT,
+        'schema_json': schema_json_info(query.connection if query else None),
     }
     return ret

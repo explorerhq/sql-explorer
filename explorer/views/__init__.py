@@ -7,7 +7,7 @@ from .format_sql import format_sql
 from .list import ListQueryLogView, ListQueryView
 from .query import PlayQueryView, QueryView
 from .query_favorite import QueryFavoritesView, QueryFavoriteView
-from .schema import SchemaView
+from .schema import SchemaJsonView, SchemaView
 from .stream import StreamQueryView
 
 
@@ -24,6 +24,7 @@ __all__ = [
     'QueryView',
     'SafeLoginView',
     'StreamQueryView',
+    'SchemaJsonView',
     'SchemaView',
     'format_sql',
     'QueryFavoritesView',

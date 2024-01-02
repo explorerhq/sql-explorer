@@ -1,11 +1,11 @@
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 
 from explorer.connections import connections
-from explorer.schema import schema_info
+from explorer.schema import schema_info, schema_json_info
 from explorer.views.auth import PermissionRequiredMixin
 
 
@@ -30,3 +30,14 @@ class SchemaView(PermissionRequiredMixin, View):
             )
         else:
             return render(request, 'explorer/schema_building.html')
+
+
+class SchemaJsonView(PermissionRequiredMixin, View):
+
+    permission_required = 'change_permission'
+
+    def get(self, request, *args, **kwargs):
+        connection = kwargs.get('connection', '')
+        if connection not in connections:
+            raise Http404
+        return JsonResponse(schema_json_info(connection))
