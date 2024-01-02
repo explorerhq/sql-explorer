@@ -106,7 +106,11 @@ def truncate_querylogs(days):
 
 @shared_task
 def build_schema_cache_async(connection_alias):
-    from .schema import build_schema_info, connection_schema_cache_key
+    from .schema import (
+        build_schema_info, connection_schema_cache_key, connection_schema_json_cache_key, transform_to_json_schema,
+    )
     ret = build_schema_info(connection_alias)
     cache.set(connection_schema_cache_key(connection_alias), ret)
+    cache.set(connection_schema_json_cache_key(connection_alias),
+              transform_to_json_schema(ret))
     return ret

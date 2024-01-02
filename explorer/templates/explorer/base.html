@@ -23,8 +23,8 @@
 {% block sql_explorer_content_takeover %}
         <nav class="navbar navbar-expand-lg navbar-light bg-light my-3">
             <div class="container-xxl bd-gutter flex-wrap flex-lg-nowrap">
-                <a class="navbar-brand"
-                   href="{% url 'explorer_index' %}">{% trans "SQL Explorer" %}</a>
+                <a class="navbar-brand{% if view_name == 'explorer_index' %} btn btn-primary text-white{% endif %}"
+                   href="{% url 'explorer_index' %}">{% trans "Explorer Home" %}</a>
                 <ul class="nav nav-pills">
                     {% if can_change %}
                         <li class="nav-item">

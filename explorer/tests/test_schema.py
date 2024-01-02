@@ -25,6 +25,9 @@ class TestSchemaInfo(TestCase):
         tables = [x[0] for x in res]
         self.assertIn('explorer_query', tables)
 
+        json_res = schema.schema_json_info(CONN)
+        self.assertListEqual(list(json_res.keys()), tables)
+
     @patch('explorer.schema._get_includes')
     @patch('explorer.schema._get_excludes')
     def test_table_exclusion_list(self, mocked_excludes, mocked_includes):
@@ -79,6 +82,17 @@ class TestSchemaInfo(TestCase):
         res = schema.schema_info(CONN)
         tables = [x[0] for x in res]
         self.assertIn('explorer_query', tables)
+
+    def test_transform_to_json(self):
+        schema_info = [
+            ('table1', [('col1', 'type1'), ('col2', 'type2')]),
+            ('table2', [('col1', 'type1'), ('col2', 'type2')]),
+        ]
+        json_schema = schema.transform_to_json_schema(schema_info)
+        self.assertEqual(json_schema, {
+            'table1': ['col1', 'col2'],
+            'table2': ['col1', 'col2'],
+        })
 
 
 def setup_sample_database_view():
