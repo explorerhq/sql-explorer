@@ -85,8 +85,6 @@ STORAGES = {
     },
 }
 
-STATICFILES_DIRS = ['./explorer/public/static']
-
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
 )

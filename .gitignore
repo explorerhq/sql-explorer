@@ -16,8 +16,7 @@ venv/
 .venv/
 .tox/
 node_modules/
-explorer/public/
+explorer/static/
 # Sphinx documentation
 docs/_build/
-stats.html
 .env
