@@ -371,5 +371,3 @@ export class ExplorerEditor {
             });
     }
 }
-
-// TODO make this work again

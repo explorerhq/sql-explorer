@@ -2,39 +2,28 @@
   "name": "django-sql-explorer",
   "description": "Django SQL Explorer",
   "scripts": {
-    "dev": "npx vite --config explorer/static/config/vite.config.js",
-    "build": "npx vite build --config explorer/static/config/vite.config.js",
-    "preview": "npx vite preview --config explorer/static/config/vite.config.js",
-    "lint-sass": "npx stylelint --config explorer/static/config/stylelint.config.js ./explorer/static/scss/",
-    "format-sass": "npx stylelint --config explorer/static/config/stylelint.config.js --fix 'src/**/*.{css,scss}'",
-    "lint-js": "npx eslint --config explorer/static/config/eslint.config.js ./explorer/static/js",
-    "format-js": "npx eslint --config explorer/static/config/eslint.config.js --fix ./explorer/static/js"
+    "dev": "npx vite --config vite.config.js",
+    "build": "npx vite build --config vite.config.js",
+    "preview": "npx vite preview --config vite.config.js"
   },
   "devDependencies": {
-    "bootstrap": "^5.0.1",
-    "eslint": "^8.48.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.27.5",
     "sass": "~1.69.0",
-    "stylelint": "^15.6.2",
-    "stylelint-config-recess-order": "^4.0.0",
-    "stylelint-config-standard-scss": "^11.0.0",
-    "stylelint-scss": "^5.0.0",
     "vite": "^5.0.1"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/chrisclark/django-sql-explorer.git"
   },
-  "author": "Brent O'Connor",
+  "author": "Chris Clark",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/epicserve/django-base-site/issues"
+    "url": "https://github.com/chrisclark/django-sql-explorer/issues"
   },
-  "homepage": "https://github.com/epicserve/django-base-site#readme",
+  "homepage": "https://github.com/chrisclark/django-sql-explorer#readme",
   "dependencies": {
     "@codemirror/lang-sql": "^6.5.4",
     "@codemirror/language-data": "^6.3.1",
+    "bootstrap": "^5.0.1",
     "bootstrap-icons": "^1.11.2",
     "codemirror": "^6.0.1",
     "cookiejs": "^2.1.3",
