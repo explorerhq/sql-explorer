@@ -1,4 +1,5 @@
 import json
+import os
 from functools import lru_cache
 
 from django import template
@@ -10,7 +11,7 @@ register = template.Library()
 
 VITE_OUTPUT_DIR = "/static/explorer/"
 VITE_DEV_DIR = "explorer/src/"
-VITE_MANIFEST_FILE = "./explorer/static/explorer/.vite/manifest.json"
+VITE_MANIFEST_FILE = os.path.join(os.path.dirname(__file__), '../static/explorer/.vite/manifest.json')
 VITE_DEV_MODE = getattr(settings, "VITE_DEV_MODE", False)
 VITE_SERVER_HOST = getattr(settings, "VITE_SERVER_HOST", "localhost")
 VITE_SERVER_PORT = getattr(settings, "VITE_SERVER_PORT", "5173")

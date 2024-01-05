@@ -352,7 +352,7 @@ export class ExplorerEditor {
             if(event.keyCode === 13){ this.showRows(); }
         }.bind(this));
 
-        fetch('/schema.json/' + $("#id_connection").val())
+        fetch('../schema.json/' + $("#id_connection").val())
             .then(response => {
                 return response.json();
             })

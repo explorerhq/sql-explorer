@@ -15,20 +15,20 @@ git commit -m "Release 1.0.0"
 ```
 python setup.py build
 mktmpenv
-z explorer
+cd django-sql-explorer
 cd dist
 tar xzvf django-sql-explorer-x.x.tar.gz
 cd django-sql-explorer-x.x/
 python setup.py install
-npm install
-npm run build
-django-admin.py startproject explorertest
+python -m django startproject explorertest
 cd explorertest/explorertest/
 emacs urls.py
->> from django.core.urls include url, include
->> url(r'^explorer/', include('explorer.urls')),
+>> from django.urls import path, include
+>> path('explorer/', include('explorer.urls')),
 emacs settings.py
 >> add 'explorer' to installed apps
+>> EXPLORER_CONNECTIONS = {'Default': 'default'}
+>> EXPLORER_DEFAULT_CONNECTION = 'default'
 cd..
 python manage.py migrate
 python manage.py createsuperuser
