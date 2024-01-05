@@ -1,5 +1,5 @@
 from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection, \
-    get_s3_connection, get_connection_pii, get_connection_asyncapi_db, should_route_to_asyncapi_db, mask_string, \
+    get_s3_connection, get_connection_pii, get_explorer_master_db_connection, get_connection_asyncapi_db, should_route_to_asyncapi_db, mask_string, \
     is_pii_masked_for_user, mask_player_pii
 from future.utils import python_2_unicode_compatible
 from django.db import models, DatabaseError
@@ -59,8 +59,8 @@ class Query(models.Model):
     def final_sql(self):
         return swap_params(self.sql, self.available_params())
 
-    def execute_query_only(self, is_connection_type_pii=None, executing_user=None):
-        return QueryResult(self.final_sql(), self.title, is_connection_type_pii, executing_user if executing_user else self.created_by_user)
+    def execute_query_only(self, is_connection_type_pii=None, executing_user=None, is_connection_for_explorer_master_db=False):
+        return QueryResult(self.final_sql(), self.title, is_connection_type_pii, executing_user if executing_user else self.created_by_user, is_connection_for_explorer_master_db)
 
     def execute_with_logging(self, executing_user):
         ql = self.log(executing_user)
@@ -76,6 +76,11 @@ class Query(models.Model):
 
     def execute_pii(self, executing_user=None):
         ret = self.execute_query_only(True, executing_user)
+        ret.process()
+        return ret
+
+    def execute_on_explorer_with_master_db(self, executing_user=None):
+        ret = self.execute_query_only(False, executing_user, is_connection_for_explorer_master_db=True)
         ret.process()
         return ret
 
@@ -234,10 +239,11 @@ class QueryResult(object):
 
         return data_to_be_displayed
 
-    def __init__(self, sql, title=None, is_connection_type_pii=None, used_by_user=None):
+    def __init__(self, sql, title=None, is_connection_type_pii=None, used_by_user=None, is_connection_for_explorer_master_db=False):
 
         self.sql = sql
         self.title = title
+        self.is_connection_for_explorer_master_db = is_connection_for_explorer_master_db
         if (is_connection_type_pii):
             self.is_connection_type_pii = is_connection_type_pii
         else:
@@ -312,6 +318,8 @@ class QueryResult(object):
         elif should_route_to_asyncapi_db(self.sql):
             logger.info("Route to Async API DB")
             conn = get_connection_asyncapi_db()
+        elif self.is_connection_for_explorer_master_db:
+            conn = get_explorer_master_db_connection()
         else:
             logger.info("non-pii-connection")
             conn = get_connection()

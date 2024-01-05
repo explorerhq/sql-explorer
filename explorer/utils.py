@@ -19,7 +19,6 @@ from explorer.constants import PII_MASKING_PATTERN_REPLACEMENT_DICT, ALLOW_PHONE
 
 logger = logging.getLogger(__name__)
 
-
 PY3 = sys.version_info[0] == 3
 
 if PY3:
@@ -31,12 +30,13 @@ EXPLORER_PARAM_TOKEN = "$$"
 
 REPLICATION_LAG_THRESHOLD_VALUE_IN_MINUTES = 3
 
+
 # SQL Specific Things
 
 
 def passes_blacklist(sql):
     clean = functools.reduce(lambda sql, term: sql.upper().replace(term, ""), [
-                             t.upper() for t in app_settings.EXPLORER_SQL_WHITELIST], sql)
+        t.upper() for t in app_settings.EXPLORER_SQL_WHITELIST], sql)
     fails = [
         bl_word for bl_word in app_settings.EXPLORER_SQL_BLACKLIST if bl_word in clean.upper()]
     return not any(fails), fails
@@ -47,14 +47,27 @@ def get_connection():
     return connections[app_settings.EXPLORER_CONNECTION_NAME] if app_settings.EXPLORER_CONNECTION_NAME else connection
 
 
+def get_explorer_master_db_connection():
+    logger.info("get_explorer_master_db_connection successful")
+    return connections[
+        app_settings.EXPLORER_MASTER_DB_CONNECTION_NAME] if app_settings.EXPLORER_MASTER_DB_CONNECTION_NAME else connection
+
+
 def get_connection_pii():
     logger.info("explorer_pii_connection succesfull")
     return connections[app_settings.EXPLORER_CONNECTION_PII_NAME] if app_settings.EXPLORER_CONNECTION_PII_NAME else connection
 
 
+def get_master_db_connection():
+    logger.info("explorer_pii_connection succesfull")
+    return connections[
+        app_settings.EXPLORER_CONNECTION_PII_NAME] if app_settings.EXPLORER_CONNECTION_PII_NAME else connection
+
+
 def get_connection_asyncapi_db():
     logger.info("Connecting with async-api DB")
-    return connections[app_settings.EXPLORER_CONNECTION_ASYNC_API_DB_NAME] if app_settings.EXPLORER_CONNECTION_ASYNC_API_DB_NAME else connection
+    return connections[
+        app_settings.EXPLORER_CONNECTION_ASYNC_API_DB_NAME] if app_settings.EXPLORER_CONNECTION_ASYNC_API_DB_NAME else connection
 
 
 def schema_info():
