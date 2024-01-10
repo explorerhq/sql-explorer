@@ -19,9 +19,9 @@ Security
   and can be overridden in your settings file.
 - Enforces a SQL blacklist so destructive queries don't get
   executed (delete, drop, alter, update etc). This is not
-  bulletproof and it's recommended that you instead configure a
-  read-only database role, but when not possible the blacklist
-  provides reasonable protection.
+  a substitute for using a readonly connection -- but is better
+  than nothing for certain use cases where a readonly connection
+  may not be available.
 
 Easy to get started
 -------------------
@@ -80,6 +80,7 @@ Schema Helper
   queries. Apps can be excluded from this list so users aren't
   bogged down with tons of irrelevant tables. See settings
   documentation below for details.
+- Autocomplete for table and column names in the Codemirror SQL editor
 - This is available quickly as a sidebar helper while composing
   queries (see screenshot)
 - Quick search for the tables you are looking for. Just start
@@ -115,7 +116,10 @@ Template Columns
   string. `Cool!`
 - Note you **must** set ``EXPLORER_UNSAFE_RENDERING`` to ``True`` if you
   want to see rendered HTML (vs string literals) in the output.
-  And be aware of the implications of enabling that setting.
+  This will globally un-escape query results in the preview pane. E.g.
+  any queries that return HTML will render as HTML in the preview pane.
+  This could have cross-site scripting implications if you don't trust
+  the data source you are querying.
 
 Pivot Table
 -----------
@@ -123,6 +127,7 @@ Pivot Table
   functionality (provided by Pivottable JS).
 - Hit the link icon on the top right to get a URL to recreate the
   exact pivot setup to share with colleagues.
+- Download the pivot view as a CSV.
 
 Displaying query results as charts
 ----------------------------------
@@ -187,9 +192,6 @@ Power tips
   the SQL editor area.
 - Hit the "Format" button to format and clean up your SQL (this is
   non-validating -- just formatting).
-- If you find the "Format" button is not working, it may be due to the
-  following setting ``CSRF_COOKIE_HTTPONLY = True`` which prevents
-  client javascript from reading the CSRF cookie (see Django docs).
 - Use the Query Logs feature to share one-time queries that aren't
   worth creating a persistent query for. Just run your SQL in the
   playground, then navigate to ``/logs`` and share the link
