@@ -12,4 +12,7 @@ from explorer.models import Query
 q = Query(sql='select * from explorer_query;', title='Sample Query')
 q.save()
 ORM
+nvm use
+nvm install
+npm run dev &
 python manage.py runserver

@@ -58,15 +58,9 @@ Sql Explorer is MIT licensed, and pull requests are welcome.
 Development
 ------------
 
-To get started with development, clone the repo, and run the following commands:
-
-.. code-block::
-
-    $ pip install -r requirements/optional.txt django~=4.2
-    $ nvm use
-    $ npm install
-    $ npm run dev &
-    $ python manage.py migrate
-    $ python manage.py runserver
+Included is a test_project that you can use to kick the tires. Just
+create a new virtualenv, cd into ``test_project`` and run ``start.sh`` (or
+walk through the steps yourself) to get a test instance of the app up
+and running.
 
 You can now navigate to 127.0.0.1:8000/ and begin exploring!

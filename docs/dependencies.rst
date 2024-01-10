@@ -34,23 +34,11 @@ Name                                                                    Version 
 
 JavaScript
 
-============================================================== ======== ================
-Name                                                           Version  License
-============================================================== ======== ================
-`Twitter Boostrap <http://getbootstrap.com/>`_                 3.4.1    MIT
-`jQuery <http://jquery.com/>`_                                 3.6.0    MIT
-`jQuery Cookie <https://github.com/carhartl/jquery-cookie>`_   1.4.1    MIT
-`jQuery UI <https://jqueryui.com>`_                            1.13.1   MIT
-`Codemirror <http://codemirror.net/>`_                         6.65.7   MIT
-`floatThead <http://mkoryak.github.io/floatThead/>`_           1.4.0    MIT
-`list.js <http://listjs.com>`_                                 1.2.0    MIT
-`pivottable.js <http://nicolas.kruchten.com/pivottable/>`_     2.0.2    MIT
-`sheetjs <https://git.sheetjs.com/sheetjs/sheetjs>`_           0.19.1   APACHE 2.0
-============================================================== ======== ================
+Please see package.json for the full list of JavaScript dependencies.
 
-- All are served locally, with jQuery UI being a custom build.
+Vite builds a single JS bundle for SQL Explorer. The bundle is larger than ideal, at ~600kb due primarily to CodeMirror and the pivot-table functionality (which, regrettably, requires jQuery UI for it's 'sortable' feature).
 
-pivottable.js relies on jQuery UI but only for the ``Sortable`` method.
+The bundle is distributed in the PyPi release (and will be found by collectstatic) or can be built via `npm run build`.
 
 Tests
 -----
@@ -73,7 +61,9 @@ then:
 Running Locally
 ---------------
 
-There is also a test_project that you can use to kick the tires. Just
+Included is a test_project that you can use to kick the tires. Just
 create a new virtualenv, cd into ``test_project`` and run ``start.sh`` (or
 walk through the steps yourself) to get a test instance of the app up
 and running.
+
+You can now navigate to 127.0.0.1:8000/ and begin exploring!
