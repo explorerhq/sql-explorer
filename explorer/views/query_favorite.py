@@ -7,26 +7,26 @@ from explorer.views.mixins import ExplorerContextMixin
 
 
 class QueryFavoritesView(PermissionRequiredMixin, ExplorerContextMixin, View):
-    permission_required = 'view_permission'
+    permission_required = "view_permission"
 
     def get(self, request):
-        favorites = QueryFavorite.objects.filter(user=request.user).select_related('query', 'user').order_by(
-            'query__title')
+        favorites = QueryFavorite.objects.filter(user=request.user).select_related("query", "user").order_by(
+            "query__title")
         return self.render_template(
-            'explorer/query_favorites.html', {'favorites': favorites}
+            "explorer/query_favorites.html", {"favorites": favorites}
         )
 
 
 class QueryFavoriteView(PermissionRequiredMixin, ExplorerContextMixin, View):
-    permission_required = 'view_permission'
+    permission_required = "view_permission"
 
     @staticmethod
     def build_favorite_response(user, query_id):
         is_favorite = QueryFavorite.objects.filter(user=user, query_id=query_id).exists()
         data = {
-            'status': 'success',
-            'query_id': query_id,
-            'is_favorite': is_favorite
+            "status": "success",
+            "query_id": query_id,
+            "is_favorite": is_favorite
         }
         return data
 

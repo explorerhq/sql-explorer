@@ -23,28 +23,28 @@ class TestCsv(TestCase):
         )
         res.execute_query()
         res.process()
-        res._data = [[1, None], ["Jenét", '1']]
+        res._data = [[1, None], ["Jenét", "1"]]
 
         res = CSVExporter(query=None)._get_output(res).getvalue()
         self.assertEqual(
-            res.encode('utf-8').decode('utf-8-sig'),
-            'a,\r\n1,\r\nJenét,1\r\n'
+            res.encode("utf-8").decode("utf-8-sig"),
+            "a,\r\n1,\r\nJenét,1\r\n"
         )
 
     def test_custom_delimiter(self):
-        q = SimpleQueryFactory(sql='select 1, 2')
+        q = SimpleQueryFactory(sql="select 1, 2")
         exporter = CSVExporter(query=q)
-        res = exporter.get_output(delim='|')
+        res = exporter.get_output(delim="|")
         self.assertEqual(
-            res.encode('utf-8').decode('utf-8-sig'),
-            '1|2\r\n1|2\r\n'
+            res.encode("utf-8").decode("utf-8-sig"),
+            "1|2\r\n1|2\r\n"
         )
 
     def test_writing_bom(self):
-        q = SimpleQueryFactory(sql='select 1, 2')
+        q = SimpleQueryFactory(sql="select 1, 2")
         exporter = CSVExporter(query=q)
         res = exporter.get_output()
-        self.assertEqual(res, '\ufeff1,2\r\n1,2\r\n')
+        self.assertEqual(res, "\ufeff1,2\r\n1,2\r\n")
 
 
 class TestJson(TestCase):
@@ -56,10 +56,10 @@ class TestJson(TestCase):
         )
         res.execute_query()
         res.process()
-        res._data = [[1, None], ["Jenét", '1']]
+        res._data = [[1, None], ["Jenét", "1"]]
 
         res = JSONExporter(query=None)._get_output(res).getvalue()
-        expected = [{'a': 1, '': None}, {'a': 'Jenét', '': '1'}]
+        expected = [{"a": 1, "": None}, {"a": "Jenét", "": "1"}]
         self.assertEqual(res, json.dumps(expected))
 
     def test_writing_datetimes(self):
@@ -72,13 +72,13 @@ class TestJson(TestCase):
         res._data = [[1, date.today()]]
 
         res = JSONExporter(query=None)._get_output(res).getvalue()
-        expected = [{'a': 1, 'b': date.today()}]
+        expected = [{"a": 1, "b": date.today()}]
         self.assertEqual(res, json.dumps(expected, cls=DjangoJSONEncoder))
 
 
 class TestExcel(TestCase):
 
-    @unittest.skipIf(not is_xls_writer_available(), 'excel exporter not available')
+    @unittest.skipIf(not is_xls_writer_available(), "excel exporter not available")
     def test_writing_excel(self):
         """
         This is a pretty crap test. It at least exercises the code.
@@ -91,7 +91,7 @@ class TestExcel(TestCase):
         res = QueryResult(
             SimpleQueryFactory(
                 sql='select 1 as "a", 2 as ""',
-                title='\\/*[]:?this title is longer than 32 characters'
+                title="\\/*[]:?this title is longer than 32 characters"
             ).sql,
             connections[CONN]
         )
@@ -108,16 +108,16 @@ class TestExcel(TestCase):
             query=SimpleQueryFactory()
         )._get_output(res).getvalue()
 
-        expected = b'PK'
+        expected = b"PK"
 
         self.assertEqual(res[:2], expected)
 
-    @unittest.skipIf(not is_xls_writer_available(), 'excel exporter not available')
+    @unittest.skipIf(not is_xls_writer_available(), "excel exporter not available")
     def test_writing_dict_fields(self):
         res = QueryResult(
             SimpleQueryFactory(
                 sql='select 1 as "a", 2 as ""',
-                title='\\/*[]:?this title is longer than 32 characters'
+                title="\\/*[]:?this title is longer than 32 characters"
             ).sql,
             connections[CONN]
         )
@@ -125,12 +125,12 @@ class TestExcel(TestCase):
         res.execute_query()
         res.process()
 
-        res._data = [[1, ['foo', 'bar']], [2, {'foo': 'bar'}]]
+        res._data = [[1, ["foo", "bar"]], [2, {"foo": "bar"}]]
 
         res = ExcelExporter(
             query=SimpleQueryFactory()
         )._get_output(res).getvalue()
 
-        expected = b'PK'
+        expected = b"PK"
 
         self.assertEqual(res[:2], expected)

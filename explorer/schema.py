@@ -32,11 +32,11 @@ def _include_table(t):
 
 
 def connection_schema_cache_key(connection_alias):
-    return f'_explorer_cache_key_{connection_alias}'
+    return f"_explorer_cache_key_{connection_alias}"
 
 
 def connection_schema_json_cache_key(connection_alias):
-    return f'_explorer_cache_key_json_{connection_alias}'
+    return f"_explorer_cache_key_json_{connection_alias}"
 
 
 def transform_to_json_schema(schema_info):
@@ -108,7 +108,7 @@ def build_schema_info(connection_alias):
                         row[1], row
                     )
                 except KeyError:
-                    field_type = 'Unknown'
+                    field_type = "Unknown"
                 td.append((column_name, field_type))
             ret.append((table_name, td))
     return ret

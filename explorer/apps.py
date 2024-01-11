@@ -6,9 +6,9 @@ from django.utils.translation import gettext_lazy as _
 
 class ExplorerAppConfig(AppConfig):
 
-    name = 'explorer'
-    verbose_name = _('SQL Explorer')
-    default_auto_field = 'django.db.models.AutoField'
+    name = "explorer"
+    verbose_name = _("SQL Explorer")
+    default_auto_field = "django.db.models.AutoField"
 
     def ready(self):
         from explorer.schema import build_async_schemas
@@ -31,14 +31,14 @@ def _validate_connections():
     # Validate connections
     if _get_default() not in _get_explorer_connections().values():
         raise ImproperlyConfigured(
-            f'EXPLORER_DEFAULT_CONNECTION is {_get_default()}, '
-            f'but that alias is not present in the values of '
-            f'EXPLORER_CONNECTIONS'
+            f"EXPLORER_DEFAULT_CONNECTION is {_get_default()}, "
+            f"but that alias is not present in the values of "
+            f"EXPLORER_CONNECTIONS"
         )
 
     for name, conn_name in _get_explorer_connections().items():
         if conn_name not in djcs:
             raise ImproperlyConfigured(
-                f'EXPLORER_CONNECTIONS contains ({name}, {conn_name}), '
-                f'but {conn_name} is not a valid Django DB connection.'
+                f"EXPLORER_CONNECTIONS contains ({name}, {conn_name}), "
+                f"but {conn_name} is not a valid Django DB connection."
             )

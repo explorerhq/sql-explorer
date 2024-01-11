@@ -38,7 +38,7 @@ class Query(models.Model):
     connection = models.CharField(
         blank=True,
         max_length=128,
-        default='',
+        default="",
         help_text=_(
             "Name of DB connection (as specified in settings) to use for "
             "this query."
@@ -47,14 +47,14 @@ class Query(models.Model):
     )
 
     def __init__(self, *args, **kwargs):
-        self.params = kwargs.get('params')
-        kwargs.pop('params', None)
+        self.params = kwargs.get("params")
+        kwargs.pop("params", None)
         super().__init__(*args, **kwargs)
 
     class Meta:
-        ordering = ['title']
-        verbose_name = _('Query')
-        verbose_name_plural = _('Queries')
+        ordering = ["title"]
+        verbose_name = _("Query")
+        verbose_name_plural = _("Queries")
 
     def __str__(self):
         return str(self.title)
@@ -65,13 +65,13 @@ class Query(models.Model):
     def avg_duration_display(self):
         d = self.avg_duration()
         if d:
-            return "{:10.3f}".format(self.avg_duration())
+            return f"{self.avg_duration():10.3f}"
         return ""
 
     def avg_duration(self):
         return self.querylog_set.aggregate(
-            models.Avg('duration')
-        )['duration__avg']
+            models.Avg("duration")
+        )["duration__avg"]
 
     def passes_blacklist(self):
         return passes_blacklist(self.final_sql())
@@ -83,7 +83,7 @@ class Query(models.Model):
         # check blacklist every time sql is run to catch parameterized SQL
         passes_blacklist_flag, failing_words = self.passes_blacklist()
 
-        error = MSG_FAILED_BLACKLIST % ', '.join(
+        error = MSG_FAILED_BLACKLIST % ", ".join(
             failing_words) if not passes_blacklist_flag else None
 
         if error:
@@ -124,7 +124,7 @@ class Query(models.Model):
         :rtype: dict
         """
         p = extract_params(self.sql)
-        p2 = {k: v['default'] for k, v in p.items()}
+        p2 = {k: v["default"] for k, v in p.items()}
 
         if self.params:
             shared_dict_update(p2, self.params)
@@ -141,13 +141,13 @@ class Query(models.Model):
         p = extract_params(self.sql)
         return {
             k: {
-                'label': v['label'] if v['label'] else k,
-                'val': self.params[k] if self.params and k in self.params else v['default']
+                "label": v["label"] if v["label"] else k,
+                "val": self.params[k] if self.params and k in self.params else v["default"]
             } for k, v in p.items()
         }
 
     def get_absolute_url(self):
-        return reverse("query_detail", kwargs={'query_id': self.id})
+        return reverse("query_detail", kwargs={"query_id": self.id})
 
     @property
     def params_for_url(self):
@@ -176,7 +176,7 @@ class Query(models.Model):
     def snapshots(self):
         if app_settings.ENABLE_TASKS:
             b = get_s3_bucket()
-            objects = b.objects.filter(Prefix=f'query-{self.id}/snap-')
+            objects = b.objects.filter(Prefix=f"query-{self.id}/snap-")
             objects_s = sorted(objects, key=lambda k: k.last_modified)
             return [
                 SnapShot(
@@ -215,7 +215,7 @@ class QueryLog(models.Model):
     )
     run_at = models.DateTimeField(auto_now_add=True)
     duration = models.FloatField(blank=True, null=True)  # milliseconds
-    connection = models.CharField(blank=True, max_length=128, default='')
+    connection = models.CharField(blank=True, max_length=128, default="")
     success = models.BooleanField(default=True)
     error = models.TextField(blank=True, null=True)
 
@@ -224,23 +224,23 @@ class QueryLog(models.Model):
         return self.query_id is None
 
     class Meta:
-        ordering = ['-run_at']
+        ordering = ["-run_at"]
 
 
 class QueryFavorite(models.Model):
     query = models.ForeignKey(
         Query,
         on_delete=models.CASCADE,
-        related_name='favorites'
+        related_name="favorites"
     )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name='favorites'
+        related_name="favorites"
     )
 
     class Meta:
-        unique_together = ['query', 'user']
+        unique_together = ["query", "user"]
 
 
 class QueryResult:
@@ -276,13 +276,13 @@ class QueryResult:
     def _get_headers(self):
         return [
             ColumnHeader(d[0]) for d in self._description
-        ] if self._description else [ColumnHeader('--')]
+        ] if self._description else [ColumnHeader("--")]
 
     def _get_numerics(self):
         if hasattr(self.connection.Database, "NUMBER"):
             return [
                 ix for ix, c in enumerate(self._description)
-                if hasattr(c, 'type_code') and c.type_code in self.connection.Database.NUMBER.values
+                if hasattr(c, "type_code") and c.type_code in self.connection.Database.NUMBER.values
             ]
         elif self.data:
             d = self.data[0]

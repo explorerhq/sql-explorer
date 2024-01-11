@@ -186,26 +186,26 @@ class TestSqlBlacklist(TestCase):
 class TestParams(TestCase):
 
     def test_swappable_params_are_built_correctly(self):
-        expected = EXPLORER_PARAM_TOKEN + 'foo' + EXPLORER_PARAM_TOKEN
-        self.assertEqual(expected, param('foo'))
+        expected = EXPLORER_PARAM_TOKEN + "foo" + EXPLORER_PARAM_TOKEN
+        self.assertEqual(expected, param("foo"))
 
     def test_params_get_swapped(self):
-        sql = 'please Swap $$this$$ and $$THat$$'
-        expected = 'please Swap here and there'
-        params = {'this': 'here', 'that': 'there'}
+        sql = "please Swap $$this$$ and $$THat$$"
+        expected = "please Swap here and there"
+        params = {"this": "here", "that": "there"}
         got = swap_params(sql, params)
         self.assertEqual(got, expected)
 
     def test_empty_params_does_nothing(self):
-        sql = 'please swap $$this$$ and $$that$$'
+        sql = "please swap $$this$$ and $$that$$"
         params = None
         got = swap_params(sql, params)
         self.assertEqual(got, sql)
 
     def test_non_string_param_gets_swapper(self):
-        sql = 'please swap $$this$$'
-        expected = 'please swap 1'
-        params = {'this': 1}
+        sql = "please swap $$this$$"
+        expected = "please swap 1"
+        params = {"this": 1}
         got = swap_params(sql, params)
         self.assertEqual(got, expected)
 
@@ -214,46 +214,46 @@ class TestParams(TestCase):
 
     def test_extracting_params(self):
         tests = [
-            ('please swap $$this0$$', {'this0': {'default': '', 'label': ''}}),
-            ('please swap $$THis0$$', {'this0': {'default': '', 'label': ''}}),
-            ('please swap $$this6$$ $$this6:that$$', {'this6': {'default': 'that', 'label': ''}}),
-            ('please swap $$this_7:foo, bar$$', {'this_7': {'default': 'foo, bar', 'label': ''}}),
-            ('please swap $$this8:$$', {}),
-            ('do nothing with $$this1 $$', {}),
-            ('do nothing with $$this2 :$$', {}),
-            ('do something with $$this3: $$', {'this3': {'default': ' ', 'label': ''}}),
-            ('do nothing with $$this4: ', {}),
-            ('do nothing with $$this5$that$$', {}),
-            ('check label $$this|label:val$$', {'this': {'default': 'val', 'label': 'label'}}),
-            ('check case $$this|label Case:Va l$$', {'this': {'default': 'Va l', 'label': 'label Case'}}),
-            ('check label case and unicode $$this|label Case ελληνικά:val Τέστ$$', {
-                'this': {'default': 'val Τέστ', 'label': 'label Case ελληνικά'}
+            ("please swap $$this0$$", {"this0": {"default": "", "label": ""}}),
+            ("please swap $$THis0$$", {"this0": {"default": "", "label": ""}}),
+            ("please swap $$this6$$ $$this6:that$$", {"this6": {"default": "that", "label": ""}}),
+            ("please swap $$this_7:foo, bar$$", {"this_7": {"default": "foo, bar", "label": ""}}),
+            ("please swap $$this8:$$", {}),
+            ("do nothing with $$this1 $$", {}),
+            ("do nothing with $$this2 :$$", {}),
+            ("do something with $$this3: $$", {"this3": {"default": " ", "label": ""}}),
+            ("do nothing with $$this4: ", {}),
+            ("do nothing with $$this5$that$$", {}),
+            ("check label $$this|label:val$$", {"this": {"default": "val", "label": "label"}}),
+            ("check case $$this|label Case:Va l$$", {"this": {"default": "Va l", "label": "label Case"}}),
+            ("check label case and unicode $$this|label Case ελληνικά:val Τέστ$$", {
+                "this": {"default": "val Τέστ", "label": "label Case ελληνικά"}
             }),
         ]
         for s in tests:
             self._assertSwap(s)
 
     def test_shared_dict_update(self):
-        source = {'foo': 1, 'bar': 2}
-        target = {'bar': None}  # ha ha!
-        self.assertEqual({'bar': 2}, shared_dict_update(target, source))
+        source = {"foo": 1, "bar": 2}
+        target = {"bar": None}  # ha ha!
+        self.assertEqual({"bar": 2}, shared_dict_update(target, source))
 
     def test_get_params_from_url(self):
         r = Mock()
-        r.GET = {'params': 'foo:bar|qux:mux'}
+        r.GET = {"params": "foo:bar|qux:mux"}
         res = get_params_from_request(r)
-        self.assertEqual(res['foo'], 'bar')
-        self.assertEqual(res['qux'], 'mux')
+        self.assertEqual(res["foo"], "bar")
+        self.assertEqual(res["qux"], "mux")
 
     def test_get_params_for_request(self):
-        q = SimpleQueryFactory(params={'a': 1, 'b': 2})
+        q = SimpleQueryFactory(params={"a": 1, "b": 2})
         # For some reason the order of the params is non-deterministic,
         # causing the following to periodically fail:
         #     self.assertEqual(get_params_for_url(q), 'a:1|b:2')
         # So instead we go for the following, convoluted, asserts:
         res = get_params_for_url(q)
-        res = res.split('|')
-        expected = ['a:1', 'b:2']
+        res = res.split("|")
+        expected = ["a:1", "b:2"]
         for e in expected:
             self.assertIn(e, res)
 

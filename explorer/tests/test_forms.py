@@ -18,7 +18,7 @@ class TestFormValidation(TestCase):
             SimpleQueryFactory(sql=None, created_by_user_id=None)
 
     def test_form_fails_blank(self):
-        q = SimpleQueryFactory(sql='', created_by_user_id=None)
+        q = SimpleQueryFactory(sql="", created_by_user_id=None)
         q.params = {}
         form = QueryForm(model_to_dict(q))
         self.assertFalse(form.is_valid())

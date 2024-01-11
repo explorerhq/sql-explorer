@@ -16,9 +16,9 @@ class PermissionRequiredMixin:
     def get_permission_required(self):
         if self.permission_required is None:
             raise ImproperlyConfigured(
-                '{0} is missing the permission_required attribute. '
-                'Define {0}.permission_required, or override '
-                '{0}.get_permission_required().'.format(
+                "{0} is missing the permission_required attribute. "
+                "Define {0}.permission_required, or override "
+                "{0}.get_permission_required().".format(
                     self.__class__.__name__
                 )
             )
@@ -39,13 +39,13 @@ class PermissionRequiredMixin:
 
 
 class SafeLoginView(LoginView):
-    template_name = 'admin/login.html'
+    template_name = "admin/login.html"
 
 
 def safe_login_view_wrapper(request):
     return SafeLoginView.as_view(
         extra_context={
-            'title': 'Log in',
+            "title": "Log in",
             REDIRECT_FIELD_NAME: request.get_full_path()
         }
     )(request)

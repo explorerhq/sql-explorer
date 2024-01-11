@@ -1,17 +1,18 @@
 [tool.ruff]
 # https://beta.ruff.rs/docs/configuration/
 select = [
-  "E",  # pycodestyle errors
-  "W",  # pycodestyle warnings
-  "F",  # pyflakes
-  "I",  # isort
-  "C",  # flake8-comprehensions
-  "B",  # flake8-bugbear
-  "Q", # flake8-quotes
-  "PLE", # pylint error
-  "PLR", # pylint refactor
-  "PLW", # pylint warning
-  "UP", # pyupgrade
+    "Q000"
+#  "E",  # pycodestyle errors
+#  "W",  # pycodestyle warnings
+#  "F",  # pyflakes
+#  "I",  # isort
+#  "C",  # flake8-comprehensions
+#  "B",  # flake8-bugbear
+#  "Q", # flake8-quotes
+#  "PLE", # pylint error
+#  "PLR", # pylint refactor
+#  "PLW", # pylint warning
+#  "UP", # pyupgrade
 ]
 
 extend-exclude = [

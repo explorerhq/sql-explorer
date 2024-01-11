@@ -6,6 +6,6 @@ from explorer.utils import fmt_sql
 
 @require_POST
 def format_sql(request):
-    sql = request.POST.get('sql', '')
+    sql = request.POST.get("sql", "")
     formatted = fmt_sql(sql)
     return JsonResponse({"formatted": formatted})

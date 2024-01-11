@@ -74,15 +74,15 @@ def get_line_chart(result: QueryResult) -> Optional[str]:
     # Rotate x-axis labels by 20 degrees to reduce overlap
     for label in ax.get_xticklabels():
         label.set_rotation(20)
-        label.set_ha('right')
+        label.set_ha("right")
     return get_svg(fig)
 
 
-def get_svg(fig: 'Figure') -> str:
+def get_svg(fig: "Figure") -> str:
     buffer = BytesIO()
-    fig.savefig(buffer, format='svg')
+    fig.savefig(buffer, format="svg")
     buffer.seek(0)
-    graph = buffer.getvalue().decode('utf-8')
+    graph = buffer.getvalue().decode("utf-8")
     buffer.close()
     return graph
 
