@@ -40,7 +40,7 @@ class TestSqlBlacklist(TestCase):
         self.assertTrue(passes_blacklist(sql)[0])
 
     def test_select_with_case(self):
-        sql = '''SELECT   ProductNumber, Name, "Price Range" =
+        sql = """SELECT   ProductNumber, Name, "Price Range" =
           CASE
              WHEN ListPrice =  0 THEN 'Mfg item - not for resale'
              WHEN ListPrice < 50 THEN 'Under $50'
@@ -50,18 +50,18 @@ class TestSqlBlacklist(TestCase):
           END
         FROM Production.Product
         ORDER BY ProductNumber ;
-        '''
+        """
         passes, words = passes_blacklist(sql)
         self.assertTrue(passes)
 
     def test_select_with_subselect(self):
-        sql = '''SELECT a.studentid, a.name, b.total_marks
+        sql = """SELECT a.studentid, a.name, b.total_marks
             FROM student a, marks b
             WHERE a.studentid = b.studentid AND b.total_marks >
             (SELECT total_marks
             FROM marks
             WHERE studentid =  'V002');
-            '''
+            """
         passes, words = passes_blacklist(sql)
         self.assertTrue(passes)
 
@@ -88,13 +88,13 @@ class TestSqlBlacklist(TestCase):
         self.assertFalse(passes)
 
     def test_dml_merge(self):
-        sql = '''MERGE INTO wines w
+        sql = """MERGE INTO wines w
             USING (VALUES('Chateau Lafite 2003', '24')) v
             ON v.column1 = w.winename
             WHEN NOT MATCHED
               INSERT VALUES(v.column1, v.column2)
             WHEN MATCHED
-              UPDATE SET stock = stock + v.column2;'''
+              UPDATE SET stock = stock + v.column2;"""
         passes, words = passes_blacklist(sql)
         self.assertFalse(passes)
 
@@ -119,9 +119,9 @@ class TestSqlBlacklist(TestCase):
         self.assertFalse(passes)
 
     def test_dml_update(self):
-        sql = '''UPDATE accounts SET (contact_first_name, contact_last_name) =
+        sql = """UPDATE accounts SET (contact_first_name, contact_last_name) =
         (SELECT first_name, last_name FROM employees
-         WHERE employees.id = accounts.sales_person);'''
+         WHERE employees.id = accounts.sales_person);"""
         passes, words = passes_blacklist(sql)
         self.assertFalse(passes)
 
@@ -131,24 +131,24 @@ class TestSqlBlacklist(TestCase):
         self.assertFalse(passes)
 
     def test_ddl_alter(self):
-        sql = '''ALTER TABLE foo
+        sql = """ALTER TABLE foo
         ALTER COLUMN foo_timestamp DROP DEFAULT,
         ALTER COLUMN foo_timestamp TYPE timestamp with time zone
         USING
             timestamp with time zone 'epoch' + foo_timestamp * interval '1 second',
-        ALTER COLUMN foo_timestamp SET DEFAULT now();'''
+        ALTER COLUMN foo_timestamp SET DEFAULT now();"""
         passes, words = passes_blacklist(sql)
         self.assertFalse(passes)
 
     def test_ddl_create(self):
-        sql = '''CREATE TABLE Persons (
+        sql = """CREATE TABLE Persons (
             PersonID int,
             LastName varchar(255),
             FirstName varchar(255),
             Address varchar(255),
             City varchar(255)
         );
-        '''
+        """
         passes, words = passes_blacklist(sql)
         self.assertFalse(passes)
 

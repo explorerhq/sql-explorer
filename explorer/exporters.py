@@ -13,7 +13,7 @@ from explorer import app_settings
 
 
 def get_exporter_class(format):
-    class_str = dict(getattr(app_settings, "EXPLORER_DATA_EXPORTERS"))[format]
+    class_str = dict(app_settings.EXPLORER_DATA_EXPORTERS)[format]
     return import_string(class_str)
 
 
@@ -61,7 +61,7 @@ class CSVExporter(BaseExporter):
         writer = csv.writer(csv_data, delimiter=delim)
         writer.writerow(res.headers)
         for row in res.data:
-            writer.writerow([s for s in row])
+            writer.writerow(row)
         return csv_data
 
 
@@ -115,10 +115,10 @@ class ExcelExporter(BaseExporter):
                 # xlsxwriter can't handle timezone-aware datetimes or
                 # UUIDs, so we help out here and just cast it to a
                 # string
-                if isinstance(data, datetime) or isinstance(data, uuid.UUID):
+                if isinstance(data, (datetime, uuid.UUID)):
                     data = str(data)
                 # JSON and Array fields
-                if isinstance(data, dict) or isinstance(data, list):
+                if isinstance(data, (dict, list)):
                     data = json.dumps(data)
                 ws.write(row, col, data)
                 col += 1
@@ -129,7 +129,7 @@ class ExcelExporter(BaseExporter):
         return output
 
     def _format_title(self):
-        # XLSX writer wont allow sheet names > 31 characters or that
+        # XLSX writer won't allow sheet names > 31 characters or that
         # contain invalid characters
         # https://github.com/jmcnamara/XlsxWriter/blob/master/xlsxwriter/
         # test/workbook/test_check_sheetname.py

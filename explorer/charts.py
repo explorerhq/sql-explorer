@@ -11,9 +11,10 @@ if app_settings.EXPLORER_CHARTS_ENABLED:
         import matplotlib.pyplot as plt
         import seaborn as sns
         from matplotlib.figure import Figure
-    except ImportError:
+    except ImportError as err:
         raise ImproperlyConfigured(
-            "If `EXPLORER_CHARTS_ENABLED` is enabled, `matplotlib` and `seaborn` must be installed.")
+            "If `EXPLORER_CHARTS_ENABLED` is enabled, `matplotlib` and `seaborn` must be installed."
+        ) from err
 
 from .models import QueryResult
 
@@ -59,8 +60,10 @@ def get_line_chart(result: QueryResult) -> Optional[str]:
     """
     if len(result.data) < 1:
         return None
-    numeric_columns = [c for c in range(1, len(result.data[0]))
-                       if all([isinstance(col[c], (int, float)) or col[c] is None for col in result.data])]
+    numeric_columns = [
+        c for c in range(1, len(result.data[0]))
+        if all([isinstance(col[c], (int, float)) or col[c] is None for col in result.data])
+    ]
     if len(numeric_columns) < 1:
         return None
     labels = [row[0] for row in result.data]

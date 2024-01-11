@@ -66,7 +66,7 @@ class TestQueryModel(TestCase):
         q = SimpleQueryFactory()
         self.assertEqual(q.get_run_count(), 0)
         expected = 4
-        for i in range(0, expected):
+        for _ in range(0, expected):
             q.log()
         self.assertEqual(q.get_run_count(), expected)
 
