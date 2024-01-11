@@ -16,11 +16,9 @@ class PermissionRequiredMixin:
     def get_permission_required(self):
         if self.permission_required is None:
             raise ImproperlyConfigured(
-                "{0} is missing the permission_required attribute. "
-                "Define {0}.permission_required, or override "
-                "{0}.get_permission_required().".format(
-                    self.__class__.__name__
-                )
+                f"{self.__class__.__name__} is missing the permission_required attribute. "
+                f"Define {self.__class__.__name__}.permission_required, or override "
+                f"{self.__class__.__name__}.get_permission_required()."
             )
         return self.permission_required
 
