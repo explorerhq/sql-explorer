@@ -105,9 +105,13 @@
                 <div class="btn-group" role="group">
                     {% if can_change %}
                         <button id="save_button" type="submit"
-                            class="btn btn-primary">
+                            class="btn btn-primary dropdown-toggle"
+                            data-bs-toggle="dropdown" aria-expanded="false">
                             {% trans 'Save & Run' %}
                         </button>
+                        <ul class="dropdown-menu" area-labelledby="save_button">
+                            <li><button class="dropdown-item" id="save_only_button">{% trans 'Save Only' %}</button></li>
+                        </ul>
                         {% export_buttons query %}
                         <button type="button" class="btn btn-outline-primary" id="show_schema_button">
                             {% trans "Show Schema" %}
