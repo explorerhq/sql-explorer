@@ -6,7 +6,7 @@
     queryId = "{{ query.id }}";
 </script>
 
-<div class="container row">
+<div class="container">
     <div id="query_area">
         {% if query %}
             {% query_favorite_button query.id is_favorite 'query_favorite_toggle query_favourite_detail'%}
@@ -71,13 +71,13 @@
             <div class ="accordion accordion-flush" id="sql_accordion">
                 <div class="accordion-item">
                     <div class="accordion-header" id="sql_accordion_header">
-                            <button class="accordion-button bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                                <label for="id_sql">SQL</label>
-                            </button>
+                        <button class="accordion-button bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                            <label for="id_sql">SQL</label>
+                        </button>
                     </div>
                 </div>
                 <div id="flush-collapseOne" class="accordion-collapse collapse{% if show_sql_by_default or not form.sql.value %} show{% endif %}" aria-labelledby="sql_accordion_header" data-bs-parent="#sql_accordion">
-                    <div class="accordion-body">
+                    <div>
                         <div class="row">
                             <textarea
                                 class="form-control" {% if not can_change %} disabled {% endif %} cols="40" id="id_sql"
@@ -88,20 +88,20 @@
                                 {% include 'explorer/params.html' %}
                             </div>
                         {% endif %}
-                    {% if query %}
-                        <div class="row text-end">
-                            <small>
-                                <a href="#" title="Open in playground" id="playground_button">
-                                    <i class="bi-code-square"></i>
-                                </a>
-                            </small>
-                        </div>
-                    {% endif %}
                     </div>
                 </div>
             </div>
 
             <div class="mt-3 text-center">
+                {% if query %}
+                    <div class="position-relative float-end">
+                        <small>
+                            <a href="#" title="Open in playground" id="playground_button">
+                                <i class="bi-code-square"></i>
+                            </a>
+                        </small>
+                    </div>
+                {% endif %}
                 <div class="btn-group" role="group">
                     {% if can_change %}
                         <button id="save_button" type="submit"
