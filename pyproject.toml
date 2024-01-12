@@ -43,6 +43,9 @@ ignore = [
 "explorer/schema.py" = [
   "C419",  # Unnecessary list comprehension.
 ]
+"explorer/tests/test_utils.py" = [
+  "C416",  # Unnecessary `list` comprehension (rewrite using `list()`)
+]
 "explorer/views/utils.py" = [
   "PLR0913",  # Too many arguments in function definition (8 > 5)
 ]

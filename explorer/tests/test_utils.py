@@ -270,4 +270,4 @@ class TestConnections(TestCase):
         from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION
         from explorer.connections import connections
         self.assertTrue(EXPLORER_DEFAULT_CONNECTION in connections)
-        self.assertNotEqual(len(connections), len(djcs))
+        self.assertNotEqual(len(connections), len([c for c in djcs]))
