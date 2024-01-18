@@ -104,12 +104,14 @@
                 {% endif %}
                 <div class="btn-group" role="group">
                     {% if can_change %}
-                        <button id="save_button" type="submit"
-                            class="btn btn-primary dropdown-toggle"
-                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <button id="save_button" type="submit" class="btn btn-primary">
                             {% trans 'Save & Run' %}
                         </button>
-                        <ul class="dropdown-menu" area-labelledby="save_button">
+                        <button id="save_button_dd" type="button"
+                            class="btn btn-primary dropdown-toggle btn-save-only"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        </button>
+                        <ul class="dropdown-menu" area-labelledby="save_button_dd">
                             <li><button class="dropdown-item" id="save_only_button">{% trans 'Save Only' %}</button></li>
                         </ul>
                         {% export_buttons query %}

@@ -93,3 +93,11 @@ div.sort {
 .query_favourite_detail {
     float: right;
 }
+
+.btn-save-only {
+    border-radius: 0px !important;
+}
+
+.dropdown-toggle::after{
+    margin-left: 0px !important;
+}
