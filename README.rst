@@ -60,7 +60,7 @@ Sql Explorer is MIT licensed, and pull requests are welcome.
 
 
 Inspirations & Similar Projects
-------------
+--------------------------------
 
 * `django-sql-dashboard <https://github.com/simonw/django-sql-dashboard>`_
 * Stack Exchange's `Data Explorer <http://data.stackexchange.com/stackoverflow/queries>`_
