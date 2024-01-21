@@ -3,7 +3,8 @@ name: Tests
 on:
   push:
     branches:
-    - master
+     - master
+     - support/3.x
   pull_request:
 
 concurrency:
