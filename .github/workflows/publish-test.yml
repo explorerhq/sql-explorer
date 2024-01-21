@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - support/3.x
 
 jobs:
   build-n-publish:
