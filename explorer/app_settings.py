@@ -11,112 +11,112 @@ from django.conf import settings
 # }
 # EXPLORER_DEFAULT_CONNECTION = 'my_important_database_readonly_connection'
 
-EXPLORER_CONNECTIONS = getattr(settings, 'EXPLORER_CONNECTIONS', {})
+EXPLORER_CONNECTIONS = getattr(settings, "EXPLORER_CONNECTIONS", {})
 EXPLORER_DEFAULT_CONNECTION = getattr(
-    settings, 'EXPLORER_DEFAULT_CONNECTION', None
+    settings, "EXPLORER_DEFAULT_CONNECTION", None
 )
 
 # Change the behavior of explorer
 EXPLORER_SQL_BLACKLIST = getattr(
-    settings, 'EXPLORER_SQL_BLACKLIST',
+    settings, "EXPLORER_SQL_BLACKLIST",
     (
         # DML
-        'COMMIT',
-        'DELETE',
-        'INSERT',
-        'MERGE',
-        'REPLACE',
-        'ROLLBACK',
-        'SET',
-        'START',
-        'UPDATE',
-        'UPSERT',
+        "COMMIT",
+        "DELETE",
+        "INSERT",
+        "MERGE",
+        "REPLACE",
+        "ROLLBACK",
+        "SET",
+        "START",
+        "UPDATE",
+        "UPSERT",
 
         # DDL
-        'ALTER',
-        'CREATE',
-        'DROP',
-        'RENAME',
-        'TRUNCATE',
+        "ALTER",
+        "CREATE",
+        "DROP",
+        "RENAME",
+        "TRUNCATE",
 
         # DCL
-        'GRANT',
-        'REVOKE',
+        "GRANT",
+        "REVOKE",
     )
 )
 
 
-EXPLORER_DEFAULT_ROWS = getattr(settings, 'EXPLORER_DEFAULT_ROWS', 1000)
+EXPLORER_DEFAULT_ROWS = getattr(settings, "EXPLORER_DEFAULT_ROWS", 1000)
 
 EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES = getattr(
     settings,
-    'EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES',
+    "EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES",
     (
-        'auth_',
-        'contenttypes_',
-        'sessions_',
-        'admin_'
+        "auth_",
+        "contenttypes_",
+        "sessions_",
+        "admin_"
     )
 )
 
 EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES = getattr(
     settings,
-    'EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES',
+    "EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES",
     None
 )
 EXPLORER_SCHEMA_INCLUDE_VIEWS = getattr(
     settings,
-    'EXPLORER_SCHEMA_INCLUDE_VIEWS',
+    "EXPLORER_SCHEMA_INCLUDE_VIEWS",
     False
 )
 
-EXPLORER_TRANSFORMS = getattr(settings, 'EXPLORER_TRANSFORMS', [])
+EXPLORER_TRANSFORMS = getattr(settings, "EXPLORER_TRANSFORMS", [])
 EXPLORER_PERMISSION_VIEW = getattr(
-    settings, 'EXPLORER_PERMISSION_VIEW', lambda r: r.user.is_staff
+    settings, "EXPLORER_PERMISSION_VIEW", lambda r: r.user.is_staff
 )
 EXPLORER_PERMISSION_CHANGE = getattr(
-    settings, 'EXPLORER_PERMISSION_CHANGE', lambda r: r.user.is_staff
+    settings, "EXPLORER_PERMISSION_CHANGE", lambda r: r.user.is_staff
 )
 EXPLORER_RECENT_QUERY_COUNT = getattr(
-    settings, 'EXPLORER_RECENT_QUERY_COUNT', 10
+    settings, "EXPLORER_RECENT_QUERY_COUNT", 10
 )
-EXPLORER_ASYNC_SCHEMA = getattr(settings, 'EXPLORER_ASYNC_SCHEMA', False)
+EXPLORER_ASYNC_SCHEMA = getattr(settings, "EXPLORER_ASYNC_SCHEMA", False)
 
 DEFAULT_EXPORTERS = [
-    ('csv', 'explorer.exporters.CSVExporter'),
-    ('json', 'explorer.exporters.JSONExporter'),
+    ("csv", "explorer.exporters.CSVExporter"),
+    ("json", "explorer.exporters.JSONExporter"),
 ]
 try:
     import xlsxwriter  # noqa
 
     DEFAULT_EXPORTERS.insert(
         1,
-        ('excel', 'explorer.exporters.ExcelExporter'),
+        ("excel", "explorer.exporters.ExcelExporter"),
     )
 except ImportError:
     pass
 
 EXPLORER_DATA_EXPORTERS = getattr(
-    settings, 'EXPLORER_DATA_EXPORTERS', DEFAULT_EXPORTERS
+    settings, "EXPLORER_DATA_EXPORTERS", DEFAULT_EXPORTERS
 )
 CSV_DELIMETER = getattr(settings, "EXPLORER_CSV_DELIMETER", ",")
 
 # API access
-EXPLORER_TOKEN = getattr(settings, 'EXPLORER_TOKEN', 'CHANGEME')
+EXPLORER_TOKEN = getattr(settings, "EXPLORER_TOKEN", "CHANGEME")
 
 # These are callable to aid testability by dodging the settings cache.
 # There is surely a better pattern for this, but this'll hold for now.
 EXPLORER_GET_USER_QUERY_VIEWS = lambda: getattr(  # noqa
-    settings, 'EXPLORER_USER_QUERY_VIEWS', {}
+    settings, "EXPLORER_USER_QUERY_VIEWS", {}
 )
 EXPLORER_TOKEN_AUTH_ENABLED = lambda: getattr(  # noqa
-    settings, 'EXPLORER_TOKEN_AUTH_ENABLED', False
+    settings, "EXPLORER_TOKEN_AUTH_ENABLED", False
 )
 EXPLORER_NO_PERMISSION_VIEW = lambda: locate(# noqa
     getattr(
         settings,
-        'EXPLORER_NO_PERMISSION_VIEW',
-        'explorer.views.auth.safe_login_view_wrapper',
+        "EXPLORER_NO_PERMISSION_VIEW",
+        "explorer.views.auth.safe_login_view_wrapper",
     ),
 )
 
@@ -128,12 +128,12 @@ S3_SECRET_KEY = getattr(settings, "EXPLORER_S3_SECRET_KEY", None)
 S3_BUCKET = getattr(settings, "EXPLORER_S3_BUCKET", None)
 S3_LINK_EXPIRATION: int = getattr(settings, "EXPLORER_S3_LINK_EXPIRATION", 3600)
 FROM_EMAIL = getattr(
-    settings, 'EXPLORER_FROM_EMAIL', 'django-sql-explorer@example.com'
+    settings, "EXPLORER_FROM_EMAIL", "django-sql-explorer@example.com"
 )
 S3_REGION = getattr(settings, "EXPLORER_S3_REGION", "us-east-1")
 S3_ENDPOINT_URL = getattr(settings, "EXPLORER_S3_ENDPOINT_URL", None)
-S3_DESTINATION = getattr(settings, "EXPLORER_S3_DESTINATION", '')
-S3_SIGNATURE_VERSION = getattr(settings, "EXPLORER_S3_SIGNATURE_VERSION", 'v2')
+S3_DESTINATION = getattr(settings, "EXPLORER_S3_DESTINATION", "")
+S3_SIGNATURE_VERSION = getattr(settings, "EXPLORER_S3_SIGNATURE_VERSION", "v2")
 
 UNSAFE_RENDERING = getattr(settings, "EXPLORER_UNSAFE_RENDERING", False)
 

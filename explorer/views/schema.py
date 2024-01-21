@@ -11,33 +11,33 @@ from explorer.views.auth import PermissionRequiredMixin
 
 class SchemaView(PermissionRequiredMixin, View):
 
-    permission_required = 'change_permission'
+    permission_required = "change_permission"
 
     @method_decorator(xframe_options_sameorigin)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        connection = kwargs.get('connection', '')
+        connection = kwargs.get("connection", "")
         if connection not in connections:
             raise Http404
         schema = schema_info(connection)
         if schema:
             return render(
                 request,
-                'explorer/schema.html',
-                {'schema': schema_info(connection)}
+                "explorer/schema.html",
+                {"schema": schema_info(connection)}
             )
         else:
-            return render(request, 'explorer/schema_building.html')
+            return render(request, "explorer/schema_building.html")
 
 
 class SchemaJsonView(PermissionRequiredMixin, View):
 
-    permission_required = 'change_permission'
+    permission_required = "change_permission"
 
     def get(self, request, *args, **kwargs):
-        connection = kwargs.get('connection', '')
+        connection = kwargs.get("connection", "")
         if connection not in connections:
             raise Http404
         return JsonResponse(schema_json_info(connection))

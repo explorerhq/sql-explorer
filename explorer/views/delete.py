@@ -9,6 +9,6 @@ from explorer.views.mixins import ExplorerContextMixin
 class DeleteQueryView(PermissionRequiredMixin, ExplorerContextMixin,
                       DeleteView):
 
-    permission_required = 'change_permission'
+    permission_required = "change_permission"
     model = Query
     success_url = reverse_lazy("explorer_index")

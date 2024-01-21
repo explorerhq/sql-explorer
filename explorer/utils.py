@@ -73,19 +73,19 @@ def extract_params(text):
     # Matching will result to ('name', 'label', 'default')
     return {
         p[0].lower(): {
-            'label': p[1],
-            'default': p[2]
+            "label": p[1],
+            "default": p[2]
         } for p in params if len(p) > 1
     }
 
 
 def safe_login_prompt(request):
     defaults = {
-        'template_name': 'admin/login.html',
-        'authentication_form': AuthenticationForm,
-        'extra_context': {
-            'title': 'Log in',
-            'app_path': request.get_full_path(),
+        "template_name": "admin/login.html",
+        "authentication_form": AuthenticationForm,
+        "extra_context": {
+            "title": "Log in",
+            "app_path": request.get_full_path(),
             REDIRECT_FIELD_NAME: request.get_full_path(),
         },
     }
@@ -112,12 +112,12 @@ def get_int_from_request(request, name, default):
 
 
 def get_params_from_request(request):
-    val = request.GET.get('params', None)
+    val = request.GET.get("params", None)
     try:
         d = {}
-        tuples = val.split('|')
+        tuples = val.split("|")
         for t in tuples:
-            res = t.split(':')
+            res = t.split(":")
             d[res[0]] = res[1]
         return d
     except Exception:
@@ -126,29 +126,29 @@ def get_params_from_request(request):
 
 def get_params_for_url(query):
     if query.params:
-        return '|'.join([f'{p}:{v}' for p, v in query.params.items()])
+        return "|".join([f"{p}:{v}" for p, v in query.params.items()])
 
 
 def url_get_rows(request):
     return get_int_from_request(
-        request, 'rows', app_settings.EXPLORER_DEFAULT_ROWS
+        request, "rows", app_settings.EXPLORER_DEFAULT_ROWS
     )
 
 
 def url_get_query_id(request):
-    return get_int_from_request(request, 'query_id', None)
+    return get_int_from_request(request, "query_id", None)
 
 
 def url_get_log_id(request):
-    return get_int_from_request(request, 'querylog_id', None)
+    return get_int_from_request(request, "querylog_id", None)
 
 
 def url_get_show(request):
-    return bool(get_int_from_request(request, 'show', 1))
+    return bool(get_int_from_request(request, "show", 1))
 
 
 def url_get_fullscreen(request):
-    return bool(get_int_from_request(request, 'fullscreen', 0))
+    return bool(get_int_from_request(request, "fullscreen", 0))
 
 
 def url_get_params(request):
@@ -160,13 +160,13 @@ def allowed_query_pks(user_id):
 
 
 def user_can_see_query(request, **kwargs):
-    if not request.user.is_anonymous and 'query_id' in kwargs:
-        return int(kwargs['query_id']) in allowed_query_pks(request.user.id)
+    if not request.user.is_anonymous and "query_id" in kwargs:
+        return int(kwargs["query_id"]) in allowed_query_pks(request.user.id)
     return False
 
 
 def fmt_sql(sql):
-    return sql_format(sql, reindent=True, keyword_case='upper')
+    return sql_format(sql, reindent=True, keyword_case="upper")
 
 
 def noop_decorator(f):
@@ -185,8 +185,8 @@ def get_valid_connection(alias=None):
 
     if alias not in connections:
         raise InvalidExplorerConnectionException(
-            f'Attempted to access connection {alias}, '
-            f'but that is not a registered Explorer connection.'
+            f"Attempted to access connection {alias}, "
+            f"but that is not a registered Explorer connection."
         )
     return connections[alias]
 
@@ -195,31 +195,31 @@ def get_s3_bucket():
     import boto3
     from botocore.client import Config
     kwargs = {
-        'aws_access_key_id': app_settings.S3_ACCESS_KEY,
-        'aws_secret_access_key': app_settings.S3_SECRET_KEY,
-        'region_name': app_settings.S3_REGION,
-        'config': Config(
+        "aws_access_key_id": app_settings.S3_ACCESS_KEY,
+        "aws_secret_access_key": app_settings.S3_SECRET_KEY,
+        "region_name": app_settings.S3_REGION,
+        "config": Config(
             signature_version=app_settings.S3_SIGNATURE_VERSION
         )
     }
     if app_settings.S3_ENDPOINT_URL:
-        kwargs['endpoint_url'] = app_settings.S3_ENDPOINT_URL
-    s3 = boto3.resource('s3', **kwargs)
+        kwargs["endpoint_url"] = app_settings.S3_ENDPOINT_URL
+    s3 = boto3.resource("s3", **kwargs)
     return s3.Bucket(name=app_settings.S3_BUCKET)
 
 
 def s3_upload(key, data):
     if app_settings.S3_DESTINATION:
-        key = '/'.join([app_settings.S3_DESTINATION, key])
+        key = "/".join([app_settings.S3_DESTINATION, key])
     bucket = get_s3_bucket()
-    bucket.upload_fileobj(data, key, ExtraArgs={'ContentType': "text/csv"})
+    bucket.upload_fileobj(data, key, ExtraArgs={"ContentType": "text/csv"})
     return s3_url(bucket, key)
 
 
 def s3_url(bucket, key):
     url = bucket.meta.client.generate_presigned_url(
-        ClientMethod='get_object',
-        Params={'Bucket': app_settings.S3_BUCKET, 'Key': key},
+        ClientMethod="get_object",
+        Params={"Bucket": app_settings.S3_BUCKET, "Key": key},
         ExpiresIn=app_settings.S3_LINK_EXPIRATION)
     return url
 

@@ -8,7 +8,7 @@ from explorer.views.export import _export
 
 class DownloadQueryView(PermissionRequiredMixin, View):
 
-    permission_required = 'view_permission'
+    permission_required = "view_permission"
 
     def get(self, request, query_id, *args, **kwargs):
         query = get_object_or_404(Query, pk=query_id)
@@ -17,12 +17,12 @@ class DownloadQueryView(PermissionRequiredMixin, View):
 
 class DownloadFromSqlView(PermissionRequiredMixin, View):
 
-    permission_required = 'view_permission'
+    permission_required = "view_permission"
 
     def post(self, request, *args, **kwargs):
-        sql = request.POST.get('sql', '')
-        connection = request.POST.get('connection', '')
-        query = Query(sql=sql, connection=connection, title='')
+        sql = request.POST.get("sql", "")
+        connection = request.POST.get("connection", "")
+        query = Query(sql=sql, connection=connection, title="")
         ql = query.log(request.user)
-        query.title = f'Playground-{ql.id}'
+        query.title = f"Playground-{ql.id}"
         return _export(request, query)

@@ -12,15 +12,15 @@ from explorer.views.mixins import ExplorerContextMixin
 
 
 class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
-    permission_required = 'view_permission_list'
+    permission_required = "view_permission_list"
     model = Query
 
     def recently_viewed(self):
         qll = QueryLog.objects.filter(
             run_by_user=self.request.user, query_id__isnull=False
         ).order_by(
-            '-run_at'
-        ).select_related('query')
+            "-run_at"
+        ).select_related("query")
 
         ret = []
         tracker = []
@@ -35,22 +35,22 @@ class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['object_list'] = self._build_queries_and_headers()
-        context['recent_queries'] = self.recently_viewed()
-        context['tasks_enabled'] = app_settings.ENABLE_TASKS
+        context["object_list"] = self._build_queries_and_headers()
+        context["recent_queries"] = self.recently_viewed()
+        context["tasks_enabled"] = app_settings.ENABLE_TASKS
         return context
 
     def get_queryset(self):
         if app_settings.EXPLORER_PERMISSION_VIEW(self.request):
             qs = (
                 Query.objects.prefetch_related(
-                    'created_by_user', 'querylog_set'
+                    "created_by_user", "querylog_set"
                 ).all()
             )
         else:
             qs = (
                 Query.objects.prefetch_related(
-                    'created_by_user', 'querylog_set'
+                    "created_by_user", "querylog_set"
                 ).filter(pk__in=allowed_query_pks(self.request.user.id))
             )
         return qs
@@ -84,37 +84,37 @@ class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
 
         dict_list = []
         rendered_headers = []
-        pattern = re.compile(r'[\W_]+')
+        pattern = re.compile(r"[\W_]+")
 
-        headers = Counter([q.title.split(' - ')[0] for q in self.object_list])
-        query_favorites_for_user = QueryFavorite.objects.filter(user_id=self.request.user.pk).values_list('query_id',
+        headers = Counter([q.title.split(" - ")[0] for q in self.object_list])
+        query_favorites_for_user = QueryFavorite.objects.filter(user_id=self.request.user.pk).values_list("query_id",
                                                                                                           flat=True)
 
         for q in self.object_list:
             model_dict = model_to_dict(q)
-            header = q.title.split(' - ')[0]
-            collapse_target = pattern.sub('', header)
+            header = q.title.split(" - ")[0]
+            collapse_target = pattern.sub("", header)
 
             if headers[header] > 1 and header not in rendered_headers:
                 dict_list.append({
-                    'title': header,
-                    'is_header': True,
-                    'is_in_category': False,
-                    'collapse_target': collapse_target,
-                    'count': headers[header]
+                    "title": header,
+                    "is_header": True,
+                    "is_in_category": False,
+                    "collapse_target": collapse_target,
+                    "count": headers[header]
                 })
                 rendered_headers.append(header)
 
             model_dict.update({
-                'is_in_category': headers[header] > 1,
-                'collapse_target': collapse_target,
-                'created_at': q.created_at,
-                'is_header': False,
-                'run_count': q.querylog_set.count(),
-                'ran_successfully': q.querylog_set.first() and q.querylog_set.first().success,
-                'created_by_user':
+                "is_in_category": headers[header] > 1,
+                "collapse_target": collapse_target,
+                "created_at": q.created_at,
+                "is_header": False,
+                "run_count": q.querylog_set.count(),
+                "ran_successfully": q.querylog_set.first() and q.querylog_set.first().success,
+                "created_by_user":
                     str(q.created_by_user) if q.created_by_user else None,
-                'is_favorite': q.id in query_favorites_for_user
+                "is_favorite": q.id in query_favorites_for_user
             })
             dict_list.append(model_dict)
         return dict_list
@@ -124,10 +124,10 @@ class ListQueryLogView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
     context_object_name = "recent_logs"
     model = QueryLog
     paginate_by = 20
-    permission_required = 'view_permission'
+    permission_required = "view_permission"
 
     def get_queryset(self):
-        kwargs = {'sql__isnull': False}
+        kwargs = {"sql__isnull": False}
         if url_get_query_id(self.request):
-            kwargs['query_id'] = url_get_query_id(self.request)
+            kwargs["query_id"] = url_get_query_id(self.request)
         return QueryLog.objects.filter(**kwargs).all()

@@ -8,15 +8,15 @@ class ExplorerContextMixin:
 
     def gen_ctx(self):
         return {
-            'can_view': app_settings.EXPLORER_PERMISSION_VIEW(
+            "can_view": app_settings.EXPLORER_PERMISSION_VIEW(
                 self.request
             ),
-            'can_change': app_settings.EXPLORER_PERMISSION_CHANGE(
+            "can_change": app_settings.EXPLORER_PERMISSION_CHANGE(
                 self.request
             ),
-            'csrf_cookie_name': settings.CSRF_COOKIE_NAME,
-            'csrf_cookie_httponly': settings.CSRF_COOKIE_HTTPONLY,
-            'view_name': self.request.resolver_match.view_name,
+            "csrf_cookie_name": settings.CSRF_COOKIE_NAME,
+            "csrf_cookie_httponly": settings.CSRF_COOKIE_HTTPONLY,
+            "view_name": self.request.resolver_match.view_name,
         }
 
     def get_context_data(self, **kwargs):

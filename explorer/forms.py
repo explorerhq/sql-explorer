@@ -18,7 +18,7 @@ class SqlField(CharField):
 
         passes_blacklist, failing_words = query.passes_blacklist()
 
-        error = MSG_FAILED_BLACKLIST % ', '.join(
+        error = MSG_FAILED_BLACKLIST % ", ".join(
             failing_words) if not passes_blacklist else None
 
         if error:
@@ -36,25 +36,25 @@ class QueryForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['connection'].widget.choices = self.connections
+        self.fields["connection"].widget.choices = self.connections
         if not self.instance.connection:
-            self.initial['connection'] = EXPLORER_DEFAULT_CONNECTION
-        self.fields['connection'].widget.attrs['class'] = 'form-select'
+            self.initial["connection"] = EXPLORER_DEFAULT_CONNECTION
+        self.fields["connection"].widget.attrs["class"] = "form-select"
 
     def clean(self):
-        if self.instance and self.data.get('created_by_user', None):
-            self.cleaned_data['created_by_user'] = \
+        if self.instance and self.data.get("created_by_user", None):
+            self.cleaned_data["created_by_user"] = \
                 self.instance.created_by_user
         return super().clean()
 
     @property
     def created_by_user_email(self):
         return self.instance.created_by_user.email if \
-            self.instance.created_by_user else '--'
+            self.instance.created_by_user else "--"
 
     @property
     def created_at_time(self):
-        return self.instance.created_at.strftime('%Y-%m-%d')
+        return self.instance.created_at.strftime("%Y-%m-%d")
 
     @property
     def connections(self):
@@ -62,4 +62,4 @@ class QueryForm(ModelForm):
 
     class Meta:
         model = Query
-        fields = ['title', 'sql', 'description', 'snapshot', 'connection']
+        fields = ["title", "sql", "description", "snapshot", "connection"]

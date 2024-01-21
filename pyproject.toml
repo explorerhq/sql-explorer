@@ -1,0 +1,72 @@
+[tool.ruff]
+# https://beta.ruff.rs/docs/configuration/
+line-length = 120
+select = [
+  "E",  # pycodestyle errors
+  "W",  # pycodestyle warnings
+  "F",  # pyflakes
+  "I",  # isort
+  "C",  # flake8-comprehensions
+  "B",  # flake8-bugbear
+  "Q", # flake8-quotes
+  "PLE", # pylint error
+  "PLR", # pylint refactor
+  "PLW", # pylint warning
+  "UP", # pyupgrade
+]
+
+extend-exclude = [
+  ".ruff_cache",
+  ".env",
+  ".venv",
+  "**migrations/**",
+]
+
+ignore = [
+  "I001",  # Import block is un-sorted or un-formatted (would be nice not to do this)
+]
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = [
+  "F401"  # unused-import
+]
+"explorer/charts.py" = [
+  "C419",  # Unnecessary list comprehension.
+  "PLR2004",  # Magic value used in comparison, consider replacing 2 with a constant variable
+]
+"explorer/exporters.py" = [
+  "PLW2901",  # `for` loop variable `data` overwritten by assignment target
+]
+"explorer/models.py" = [
+  "C417",  # Unnecessary `map` usage (rewrite using a generator expression)
+]
+"explorer/schema.py" = [
+  "C419",  # Unnecessary list comprehension.
+]
+"explorer/tests/test_utils.py" = [
+  "C416",  # Unnecessary `list` comprehension (rewrite using `list()`)
+]
+"explorer/views/utils.py" = [
+  "PLR0913",  # Too many arguments in function definition (8 > 5)
+]
+
+[tool.ruff.isort]
+combine-as-imports = true
+known-first-party = [
+  "explorer",
+]
+
+[tool.ruff.pyupgrade]
+# Preserve types, even if a file imports `from __future__ import annotations`.
+keep-runtime-typing = true
+
+[tool.coverage.run]
+branch = true
+parallel = true
+source = ["django_nh3", "tests"]
+
+[tool.coverage.paths]
+source = ["src", ".tox/py*/**/site-packages"]
+
+[tool.coverage.report]
+show_missing = true

@@ -6,9 +6,9 @@ def view_permission(request, **kwargs):
     return app_settings.EXPLORER_PERMISSION_VIEW(request)\
         or user_can_see_query(request, **kwargs)\
         or (app_settings.EXPLORER_TOKEN_AUTH_ENABLED()
-            and (request.headers.get('X-Api-Token') ==
+            and (request.headers.get("X-Api-Token") ==
                  app_settings.EXPLORER_TOKEN
-                 or request.GET.get('token') == app_settings.EXPLORER_TOKEN))
+                 or request.GET.get("token") == app_settings.EXPLORER_TOKEN))
 
 # Users who can only see some queries can still see the list.
 # Different than the above because it's not checking for any specific

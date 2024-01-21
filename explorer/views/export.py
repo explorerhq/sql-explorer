@@ -6,10 +6,10 @@ from explorer.utils import url_get_params
 
 
 def _export(request, query, download=True):
-    _fmt = request.GET.get('format', 'csv')
+    _fmt = request.GET.get("format", "csv")
     exporter_class = get_exporter_class(_fmt)
     query.params = url_get_params(request)
-    delim = request.GET.get('delim')
+    delim = request.GET.get("delim")
     exporter = exporter_class(query)
     try:
         output = exporter.get_output(delim=delim)
@@ -24,6 +24,6 @@ def _export(request, query, download=True):
         content_type=exporter.content_type
     )
     if download:
-        response['Content-Disposition'] = \
+        response["Content-Disposition"] = \
             f'attachment; filename="{exporter.get_filename()}"'
     return response

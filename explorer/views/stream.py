@@ -8,7 +8,7 @@ from explorer.views.export import _export
 
 class StreamQueryView(PermissionRequiredMixin, View):
 
-    permission_required = 'view_permission'
+    permission_required = "view_permission"
 
     def get(self, request, query_id, *args, **kwargs):
         query = get_object_or_404(Query, pk=query_id)

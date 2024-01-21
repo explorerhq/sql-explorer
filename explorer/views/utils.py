@@ -24,17 +24,17 @@ def query_viewmodel(request, query, title=None, form=None, message=None,
     has_valid_results = not error and res and run_query
 
     fullscreen_params = request.GET.copy()
-    if 'fullscreen' not in fullscreen_params:
+    if "fullscreen" not in fullscreen_params:
         fullscreen_params.update({
-            'fullscreen': 1
+            "fullscreen": 1
         })
-    if 'rows' not in fullscreen_params:
+    if "rows" not in fullscreen_params:
         fullscreen_params.update({
-            'rows': rows
+            "rows": rows
         })
-    if 'querylog_id' not in fullscreen_params and ql:
+    if "querylog_id" not in fullscreen_params and ql:
         fullscreen_params.update({
-            'querylog_id': ql.id
+            "querylog_id": ql.id
         })
 
     user = request.user
@@ -43,31 +43,31 @@ def query_viewmodel(request, query, title=None, form=None, message=None,
         is_favorite = QueryFavorite.objects.filter(user=user, query=query).exists()
 
     ret = {
-        'tasks_enabled': app_settings.ENABLE_TASKS,
-        'params': query.available_params_w_labels(),
-        'title': title,
-        'shared': query.shared,
-        'query': query,
-        'form': form,
-        'message': message,
-        'error': error,
-        'rows': rows,
-        'data': res.data[:rows] if has_valid_results else None,
-        'headers': res.headers if has_valid_results else None,
-        'total_rows': len(res.data) if has_valid_results else None,
-        'duration': res.duration if has_valid_results else None,
-        'has_stats':
+        "tasks_enabled": app_settings.ENABLE_TASKS,
+        "params": query.available_params_w_labels(),
+        "title": title,
+        "shared": query.shared,
+        "query": query,
+        "form": form,
+        "message": message,
+        "error": error,
+        "rows": rows,
+        "data": res.data[:rows] if has_valid_results else None,
+        "headers": res.headers if has_valid_results else None,
+        "total_rows": len(res.data) if has_valid_results else None,
+        "duration": res.duration if has_valid_results else None,
+        "has_stats":
             len([h for h in res.headers if h.summary])
             if has_valid_results else False,
-        'snapshots': query.snapshots if query.snapshot else [],
-        'ql_id': ql.id if ql else None,
-        'unsafe_rendering': app_settings.UNSAFE_RENDERING,
-        'fullscreen_params': fullscreen_params.urlencode(),
-        'charts_enabled': app_settings.EXPLORER_CHARTS_ENABLED,
-        'pie_chart_svg': get_pie_chart(res) if app_settings.EXPLORER_CHARTS_ENABLED and has_valid_results else None,
-        'line_chart_svg': get_line_chart(res) if app_settings.EXPLORER_CHARTS_ENABLED and has_valid_results else None,
-        'is_favorite': is_favorite,
-        'show_sql_by_default': app_settings.EXPLORER_SHOW_SQL_BY_DEFAULT,
-        'schema_json': schema_json_info(query.connection if query else None),
+        "snapshots": query.snapshots if query.snapshot else [],
+        "ql_id": ql.id if ql else None,
+        "unsafe_rendering": app_settings.UNSAFE_RENDERING,
+        "fullscreen_params": fullscreen_params.urlencode(),
+        "charts_enabled": app_settings.EXPLORER_CHARTS_ENABLED,
+        "pie_chart_svg": get_pie_chart(res) if app_settings.EXPLORER_CHARTS_ENABLED and has_valid_results else None,
+        "line_chart_svg": get_line_chart(res) if app_settings.EXPLORER_CHARTS_ENABLED and has_valid_results else None,
+        "is_favorite": is_favorite,
+        "show_sql_by_default": app_settings.EXPLORER_SHOW_SQL_BY_DEFAULT,
+        "schema_json": schema_json_info(query.connection if query else None),
     }
     return ret

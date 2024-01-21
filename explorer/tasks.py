@@ -27,25 +27,25 @@ else:
 @shared_task
 def execute_query(query_id, email_address):
     q = Query.objects.get(pk=query_id)
-    send_mail('[SQL Explorer] Your query is running...',
-              f'{q.title} is running and should be in your inbox soon!',
+    send_mail("[SQL Explorer] Your query is running...",
+              f"{q.title} is running and should be in your inbox soon!",
               app_settings.FROM_EMAIL,
               [email_address])
 
-    exporter = get_exporter_class('csv')(q)
-    random_part = ''.join(
+    exporter = get_exporter_class("csv")(q)
+    random_part = "".join(
         random.choice(
             string.ascii_uppercase + string.digits
         ) for _ in range(20)
     )
     try:
-        url = s3_upload(f'{random_part}.csv', convert_csv_to_bytesio(exporter))
+        url = s3_upload(f"{random_part}.csv", convert_csv_to_bytesio(exporter))
         subj = f'[SQL Explorer] Report "{q.title}" is ready'
-        msg = f'Download results:\n\r{url}'
+        msg = f"Download results:\n\r{url}"
     except Exception as e:
-        subj = f'[SQL Explorer] Error running report {q.title}'
-        msg = f'Error: {e}\nPlease contact an administrator'
-        logger.exception(f'{subj}: {e}')
+        subj = f"[SQL Explorer] Error running report {q.title}"
+        msg = f"Error: {e}\nPlease contact an administrator"
+        logger.exception(f"{subj}: {e}")
     send_mail(subj, msg, app_settings.FROM_EMAIL, [email_address])
 
 
@@ -54,7 +54,7 @@ def convert_csv_to_bytesio(csv_exporter):
     csv_file_io = csv_exporter.get_file_output()
     csv_file_io.seek(0)
     csv_data: str = csv_file_io.read()
-    bio = io.BytesIO(bytes(csv_data, 'utf-8'))
+    bio = io.BytesIO(bytes(csv_data, "utf-8"))
     return bio
 
 
@@ -63,10 +63,10 @@ def snapshot_query(query_id):
     try:
         logger.info(f"Starting snapshot for query {query_id}...")
         q = Query.objects.get(pk=query_id)
-        exporter = get_exporter_class('csv')(q)
-        k = 'query-{}/snap-{}.csv'.format(
+        exporter = get_exporter_class("csv")(q)
+        k = "query-{}/snap-{}.csv".format(
             q.id,
-            date.today().strftime('%Y%m%d-%H:%M:%S')
+            date.today().strftime("%Y%m%d-%H:%M:%S")
         )
         logger.info(f"Uploading snapshot for query {query_id} as {k}...")
         url = s3_upload(k, convert_csv_to_bytesio(exporter))
@@ -83,7 +83,7 @@ def snapshot_query(query_id):
 @shared_task
 def snapshot_queries():
     logger.info("Starting query snapshots...")
-    qs = Query.objects.filter(snapshot=True).values_list('id', flat=True)
+    qs = Query.objects.filter(snapshot=True).values_list("id", flat=True)
     logger.info(
         f"Found {len(qs)} queries to snapshot. Creating snapshot tasks..."
     )
@@ -98,10 +98,10 @@ def truncate_querylogs(days):
         run_at__lt=datetime.now() - timedelta(days=days)
     )
     logger.info(
-        f'Deleting {qs.count} QueryLog objects older than {days} days.'
+        f"Deleting {qs.count} QueryLog objects older than {days} days."
     )
     qs.delete()
-    logger.info('Done deleting QueryLog objects.')
+    logger.info("Done deleting QueryLog objects.")
 
 
 @shared_task
