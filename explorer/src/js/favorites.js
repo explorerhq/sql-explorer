@@ -30,7 +30,7 @@ export async function toggleFavorite() {
             }
         }
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Error: ', error);
         alert("error");
     }
 }
