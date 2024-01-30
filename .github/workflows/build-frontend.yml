@@ -1,0 +1,41 @@
+name: Build and Commit JS Bundle
+
+on:
+  push:
+    branches:
+      - build-js-action
+    paths:
+      - 'explorer/src/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Read .nvmrc
+        id: nvm
+        run: echo "NODE_VERSION=$(cat .nvmrc)" >> $GITHUB_ENV
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '${{ env.NODE_VERSION }}'
+
+      - name: Install Dependencies
+        run: |
+          npm install
+
+      - name: Build JS Bundle
+        run: |
+          npm run build
+
+      - name: Commit and Push
+        run: |
+          git config --global user.name 'Chris Clark'
+          git config --global user.email 'chris@untrod.com'
+          git add explorer/static/**
+          git commit -m "Automated front-end bundle build"
+          git push

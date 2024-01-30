@@ -3,8 +3,9 @@ import os
 
 SECRET_KEY = "shhh"
 DEBUG = True
-STATIC_URL = "/static/"
-VITE_DEV_MODE = True
+
+STATIC_URL = '/static/'
+VITE_DEV_MODE = False
 
 ALLOWED_HOSTS = ["0.0.0.0", "localhost", "127.0.0.1"]
 
