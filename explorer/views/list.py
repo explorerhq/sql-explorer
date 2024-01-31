@@ -38,6 +38,7 @@ class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
         context["object_list"] = self._build_queries_and_headers()
         context["recent_queries"] = self.recently_viewed()
         context["tasks_enabled"] = app_settings.ENABLE_TASKS
+        context["vite_dev_mode"] = app_settings.VITE_DEV_MODE
         return context
 
     def get_queryset(self):

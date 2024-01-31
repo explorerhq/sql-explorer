@@ -146,3 +146,4 @@ EXPLORER_SHOW_SQL_BY_DEFAULT = getattr(settings, "EXPLORER_SHOW_SQL_BY_DEFAULT",
 # If set to False will not autorun queries containing parameters when viewed
 # - user will need to run by clicking the Save & Run Button to execute
 EXPLORER_AUTORUN_QUERY_WITH_PARAMS = getattr(settings, "EXPLORER_AUTORUN_QUERY_WITH_PARAMS", True)
+VITE_DEV_MODE = getattr(settings, "VITE_DEV_MODE", False)

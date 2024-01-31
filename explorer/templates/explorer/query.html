@@ -6,7 +6,7 @@
     queryId = "{{ query.id }}";
 </script>
 
-<div class="container">
+<div class="container row">
     <div id="query_area">
         {% if query %}
             {% query_favorite_button query.id is_favorite 'query_favorite_toggle query_favourite_detail'%}
@@ -107,13 +107,9 @@
                         <button id="save_button" type="submit" class="btn btn-primary">
                             {% trans 'Save & Run' %}
                         </button>
-                        <button id="save_button_dd" type="button"
-                            class="btn btn-primary dropdown-toggle btn-save-only"
-                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <button class="btn btn-outline-primary" id="save_only_button">
+                            {% trans 'Save Only' %}
                         </button>
-                        <ul class="dropdown-menu" area-labelledby="save_button_dd">
-                            <li><button class="dropdown-item" id="save_only_button">{% trans 'Save Only' %}</button></li>
-                        </ul>
                         {% export_buttons query %}
                         <button type="button" class="btn btn-outline-primary" id="show_schema_button">
                             {% trans "Show Schema" %}
