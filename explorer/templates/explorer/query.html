@@ -6,131 +6,133 @@
     queryId = "{{ query.id }}";
 </script>
 
-<div class="container row">
-    <div id="query_area">
-        {% if query %}
-            {% query_favorite_button query.id is_favorite 'query_favorite_toggle query_favourite_detail'%}
-        {% endif %}
-        <h2>
+<div class="container">
+    <div class="row">
+        <div id="query_area">
             {% if query %}
-                {{ query.title }}
-            {% else %}
-                {% trans "New Query" %}
+                {% query_favorite_button query.id is_favorite 'query_favorite_toggle query_favourite_detail'%}
             {% endif %}
-        </h2>
-        {% if shared %}<small>&nbsp;&nbsp;shared</small>{% endif %}
-        {% if message %}
-            <div class="alert alert-info">{{ message }}</div>
-        {% endif %}
-        <div>
-            {% if query %}
-                <form action="{% url 'query_detail' query.id %}" method="post" id="editor">{% csrf_token %}
-            {% else %}
-                <form action="{% url 'query_create' %}" method="post" id="editor">{% csrf_token %}
-            {% endif %}
-            {% if error %}
-                <div class="alert alert-danger">{{ error|escape }}</div>
-            {% endif %}
-            {{ form.non_field_errors }}
-            <div class="my-3 form-floating">
-                {% if form.title.errors %}{% for error in form.title.errors %}
-                    <div class="alert alert-danger">{{ error|escape }}</div>
-                {% endfor %}{% endif %}
-                <input class="form-control" id="id_title" maxlength="255" name="title" type="text" {% if not can_change %}disabled{% endif %} value="{{ form.title.value|default_if_none:"" }}" />
-                <label for="id_title" class="form-label">{% trans "Title" %}</label>
-            </div>
-            {% if form.connections|length > 1 and can_change %}
-                <div class="mb-3 form-floating">
-                    {{ form.connection }}
-                    <label for="id_connection" class="form-label">{% trans "Connection" %}</label>
-                </div>
-            {% else %}
-                {# still need to submit the connection, just hide the UI element #}
-                <div class="hidden">
-                  {{ form.connection }}
-                </div>
-            {% endif %}
-            <div class="mb-3 form-floating">
-                {% if form.description.errors %}
-                    <div class="alert alert-danger">{{ form.description.errors }}</div>
+            <h2>
+                {% if query %}
+                    {{ query.title }}
+                {% else %}
+                    {% trans "New Query" %}
                 {% endif %}
-                <textarea
-                    id="id_description" class="form-control" cols="40" name="description"
-                    {% if not can_change %}disabled{% endif %} rows="2"
-                >{{ form.description.value|default_if_none:"" }}</textarea>
-                <label for="id_description" class="form-label">
-                    {% trans "Description"%}
-                </label>
-            </div>
-            <input type="hidden" id="id_created_by_user" name="created_by_user" value="{{ form.created_by_user_email }}" />
-            {% if form.sql.errors %}
-                {% for error in form.sql.errors %}
-                    <div class="alert alert-danger">{{ error|escape }}</div>
-                {% endfor %}
+            </h2>
+            {% if shared %}<small>&nbsp;&nbsp;shared</small>{% endif %}
+            {% if message %}
+                <div class="alert alert-info">{{ message }}</div>
             {% endif %}
-            <div class ="accordion accordion-flush" id="sql_accordion">
-                <div class="accordion-item">
-                    <div class="accordion-header" id="sql_accordion_header">
-                        <button class="accordion-button bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-                            <label for="id_sql">SQL</label>
-                        </button>
+            <div>
+                {% if query %}
+                    <form action="{% url 'query_detail' query.id %}" method="post" id="editor">{% csrf_token %}
+                {% else %}
+                    <form action="{% url 'query_create' %}" method="post" id="editor">{% csrf_token %}
+                {% endif %}
+                {% if error %}
+                    <div class="alert alert-danger">{{ error|escape }}</div>
+                {% endif %}
+                {{ form.non_field_errors }}
+                <div class="my-3 form-floating">
+                    {% if form.title.errors %}{% for error in form.title.errors %}
+                        <div class="alert alert-danger">{{ error|escape }}</div>
+                    {% endfor %}{% endif %}
+                    <input class="form-control" id="id_title" maxlength="255" name="title" type="text" {% if not can_change %}disabled{% endif %} value="{{ form.title.value|default_if_none:"" }}" />
+                    <label for="id_title" class="form-label">{% trans "Title" %}</label>
+                </div>
+                {% if form.connections|length > 1 and can_change %}
+                    <div class="mb-3 form-floating">
+                        {{ form.connection }}
+                        <label for="id_connection" class="form-label">{% trans "Connection" %}</label>
+                    </div>
+                {% else %}
+                    {# still need to submit the connection, just hide the UI element #}
+                    <div class="hidden">
+                      {{ form.connection }}
+                    </div>
+                {% endif %}
+                <div class="mb-3 form-floating">
+                    {% if form.description.errors %}
+                        <div class="alert alert-danger">{{ form.description.errors }}</div>
+                    {% endif %}
+                    <textarea
+                        id="id_description" class="form-control" cols="40" name="description"
+                        {% if not can_change %}disabled{% endif %} rows="2"
+                    >{{ form.description.value|default_if_none:"" }}</textarea>
+                    <label for="id_description" class="form-label">
+                        {% trans "Description"%}
+                    </label>
+                </div>
+                <input type="hidden" id="id_created_by_user" name="created_by_user" value="{{ form.created_by_user_email }}" />
+                {% if form.sql.errors %}
+                    {% for error in form.sql.errors %}
+                        <div class="alert alert-danger">{{ error|escape }}</div>
+                    {% endfor %}
+                {% endif %}
+                <div class ="accordion accordion-flush" id="sql_accordion">
+                    <div class="accordion-item">
+                        <div class="accordion-header" id="sql_accordion_header">
+                            <button class="accordion-button bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                                <label for="id_sql">SQL</label>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="flush-collapseOne" class="accordion-collapse collapse{% if show_sql_by_default or not form.sql.value %} show{% endif %}" aria-labelledby="sql_accordion_header" data-bs-parent="#sql_accordion">
+                        <div>
+                            <div class="row">
+                                <textarea
+                                    class="form-control" {% if not can_change %} disabled {% endif %} cols="40" id="id_sql"
+                                    name="sql" rows="20">{{ form.sql.value|default_if_none:"" }}</textarea>
+                            </div>
+                            {% if params %}
+                                <div class="row">
+                                    {% include 'explorer/params.html' %}
+                                </div>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
-                <div id="flush-collapseOne" class="accordion-collapse collapse{% if show_sql_by_default or not form.sql.value %} show{% endif %}" aria-labelledby="sql_accordion_header" data-bs-parent="#sql_accordion">
-                    <div>
-                        <div class="row">
-                            <textarea
-                                class="form-control" {% if not can_change %} disabled {% endif %} cols="40" id="id_sql"
-                                name="sql" rows="20">{{ form.sql.value|default_if_none:"" }}</textarea>
+
+                <div class="mt-3 text-center">
+                    {% if query %}
+                        <div class="position-relative float-end">
+                            <small>
+                                <a href="#" title="Open in playground" id="playground_button">
+                                    <i class="bi-code-square"></i>
+                                </a>
+                            </small>
                         </div>
-                        {% if params %}
-                            <div class="row">
-                                {% include 'explorer/params.html' %}
-                            </div>
+                    {% endif %}
+                    <div class="btn-group" role="group">
+                        {% if can_change %}
+                            <button id="save_button" type="submit" class="btn btn-primary">
+                                {% trans 'Save & Run' %}
+                            </button>
+                            <button class="btn btn-outline-primary" id="save_only_button">
+                                {% trans 'Save Only' %}
+                            </button>
+                            {% export_buttons query %}
+                            <button type="button" class="btn btn-outline-primary" id="show_schema_button">
+                                {% trans "Show Schema" %}
+                            </button>
+                            <button type="button" class="btn btn-outline-primary" id="hide_schema_button" style="display: none;">
+                                {% trans "Hide Schema" %}
+                            </button>
+                            <button type="button" class="btn btn-outline-primary" id="format_button">
+                                {% trans "Format" %}
+                            </button>
+                        {% else %}
+                            <button id="refresh_button" type="button" class="btn btn-default">{% trans 'Refresh' %}</button>
+                            {% export_buttons query %}
                         {% endif %}
                     </div>
                 </div>
+                </form>
             </div>
-
-            <div class="mt-3 text-center">
-                {% if query %}
-                    <div class="position-relative float-end">
-                        <small>
-                            <a href="#" title="Open in playground" id="playground_button">
-                                <i class="bi-code-square"></i>
-                            </a>
-                        </small>
-                    </div>
-                {% endif %}
-                <div class="btn-group" role="group">
-                    {% if can_change %}
-                        <button id="save_button" type="submit" class="btn btn-primary">
-                            {% trans 'Save & Run' %}
-                        </button>
-                        <button class="btn btn-outline-primary" id="save_only_button">
-                            {% trans 'Save Only' %}
-                        </button>
-                        {% export_buttons query %}
-                        <button type="button" class="btn btn-outline-primary" id="show_schema_button">
-                            {% trans "Show Schema" %}
-                        </button>
-                        <button type="button" class="btn btn-outline-primary" id="hide_schema_button" style="display: none;">
-                            {% trans "Hide Schema" %}
-                        </button>
-                        <button type="button" class="btn btn-outline-primary" id="format_button">
-                            {% trans "Format" %}
-                        </button>
-                    {% else %}
-                        <button id="refresh_button" type="button" class="btn btn-default">{% trans 'Refresh' %}</button>
-                        {% export_buttons query %}
-                    {% endif %}
-                </div>
-            </div>
-            </form>
         </div>
-    </div>
-    <div id="schema" style="display: none;">
-        <iframe src="" height="828px" frameBorder="0" id="schema_frame"></iframe>
+        <div id="schema" style="display: none;">
+            <iframe src="" height="828px" frameBorder="0" id="schema_frame"></iframe>
+        </div>
     </div>
 </div>
 

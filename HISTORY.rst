@@ -7,7 +7,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 `4.0`_ (2024-02-01)
 ---------------------
-* `#565`_: Front-end modernization. Vite, Boostrap 5, CodeMirror 6, etc.
+* `#565`_: Front-end modernization. Code completion via CodeMirror 6. Bootstrap5, etc. Vite-based build.
 * `#566`_: Django 5 support & tests
 * `#537`_: S3 signature version support
 * `#562`_: Visually show whether the last run was successful

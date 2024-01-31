@@ -42,35 +42,33 @@ npm run dev
 {% endif %}
 
 {% block sql_explorer_content_takeover %}
-        <nav class="navbar navbar-expand-lg navbar-light bg-light my-3">
-            <div class="container-xxl bd-gutter flex-wrap flex-lg-nowrap">
-                <a class="navbar-brand{% if view_name == 'explorer_index' %} btn btn-primary text-white{% endif %}"
-                   href="{% url 'explorer_index' %}">{% trans "Explorer Home" %}</a>
-                <ul class="nav nav-pills">
-                    {% if can_change %}
-                        <li class="nav-item">
-                            <a class="nav-link{% if not query and view_name == 'query_create' %} active{% endif %}"
-                               href="{% url 'query_create' %}">{% trans "New Query" %}</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link{% if not query and view_name == 'explorer_playground' %} active{% endif %}"
-                               href="{% url 'explorer_playground' %}"><i class="small me-1 bi-code-square"></i>{% trans "Playground" %}</a>
-                        </li>
-                    {% endif %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
+        <div class="container bd-gutter flex-wrap flex-lg-nowrap">
+            <a class="navbar-brand{% if view_name == 'explorer_index' %} btn btn-outline-light text-white{% endif %}"
+               href="{% url 'explorer_index' %}">{% trans "Explorer Home" %}</a>
+            <ul class="nav nav-pills">
+                {% if can_change %}
                     <li class="nav-item">
-                        <a class="nav-link{% if not query and view_name == 'explorer_logs' %} active{% endif %}"
-                           href="{% url 'explorer_logs' %}">{% trans "Logs" %}</a>
+                        <a class="nav-link{% if not query and view_name == 'query_create' %} active{% endif %}"
+                           href="{% url 'query_create' %}">{% trans "New Query" %}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link{% if not query and view_name == 'query_favorites' %} active{% endif %}"
-                           href="{% url 'query_favorites' %}"><i class="small me-1 bi-heart"></i>{% trans "Favorites" %}</a>
+                        <a class="nav-link{% if not query and view_name == 'explorer_playground' %} active{% endif %}"
+                           href="{% url 'explorer_playground' %}"><i class="small me-1 bi-code-square"></i>{% trans "Playground" %}</a>
                     </li>
-                </ul>
-            </div>
-        </nav>
-    <div class="container">
-        {% block sql_explorer_content %}{% endblock %}
-    </div>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link{% if not query and view_name == 'explorer_logs' %} active{% endif %}"
+                       href="{% url 'explorer_logs' %}">{% trans "Logs" %}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link{% if not query and view_name == 'query_favorites' %} active{% endif %}"
+                       href="{% url 'query_favorites' %}"><i class="small me-1 bi-heart"></i>{% trans "Favorites" %}</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+{% block sql_explorer_content %}{% endblock %}
 {% endblock %}
 {% block sql_explorer_footer %}
     <div class="container">
