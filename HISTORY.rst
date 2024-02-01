@@ -5,12 +5,13 @@ Change Log
 This document records all notable changes to `django-sql-explorer <https://github.com/chrisclark/django-sql-explorer>`_.
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
-`unreleased`_ changes
+`4.0.0.beta1`_ (2024-01-31)
 ---------------------
-* `#565`_: Front-end modernization. Vite, Boostrap 5, CodeMirror 6, etc.
+* `#565`_: Front-end modernization. Code completion via CodeMirror 6. Bootstrap5. Vite-based build
 * `#566`_: Django 5 support & tests
 * `#537`_: S3 signature version support
 * `#562`_: Visually show whether the last run was successful
+* `#571`_: Replace isort and flake8 with Ruff (linting)
 
 
 `3.2.1`_ (2023-07-13)

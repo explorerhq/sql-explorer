@@ -62,24 +62,26 @@
                                                          data-dir="asc"></i>{{ h }}</span></th>
                                         {% endfor %}
                                     </tr>
-                                    <tr class="stats-th">
-                                        <th class="counter"></th>
-                                        {% for h in headers %}
-                                            <th>
-                                                {% if h.summary %}
-                                                    <i class="stats-expand bi-calculator"></i>
-                                                    <table class="stats-wrapper table table-sm fw-normal small">
-                                                        {% for label, value in h.summary.stats.items %}
-                                                            <tr>
-                                                                <td>{{ label }}</td>
-                                                                <td>{{ value }}</td>
-                                                            </tr>
-                                                        {% endfor %}
-                                                    </table>
-                                                {% endif %}
-                                            </th>
-                                        {% endfor %}
-                                    </tr>
+                                    {% if has_stats %}
+                                        <tr class="stats-th">
+                                            <th class="counter"></th>
+                                            {% for h in headers %}
+                                                <th>
+                                                    {% if h.summary %}
+                                                        <i class="stats-expand bi-calculator"></i>
+                                                        <table class="stats-wrapper table table-sm fw-normal small">
+                                                            {% for label, value in h.summary.stats.items %}
+                                                                <tr>
+                                                                    <td>{{ label }}</td>
+                                                                    <td>{{ value }}</td>
+                                                                </tr>
+                                                            {% endfor %}
+                                                        </table>
+                                                    {% endif %}
+                                                </th>
+                                            {% endfor %}
+                                        </tr>
+                                    {% endif %}
                                 </thead>
                                 <tbody class="list">
                                     {% if data %}

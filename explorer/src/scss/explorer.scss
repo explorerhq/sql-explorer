@@ -3,6 +3,10 @@
     border: 1px solid silver
 }
 
+.cm-editor {
+    outline: none !important;
+}
+
 .cm-scroller {
     overflow: auto;
     min-height: 350px
@@ -95,9 +99,28 @@ div.sort {
 }
 
 .btn-save-only {
-    border-radius: 0px !important;
+    border-radius: 0 !important;
 }
 
-.dropdown-toggle::after{
-    margin-left: 0px !important;
+.vite-not-running-canary {
+    display: none;
+}
+
+.nav-link {
+    color: white;
+}
+
+.nav-link:hover, .nav-link:focus {
+    color: var(--bs-primary-bg-subtle);
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    color: var(--bs-nav-pills-link-active-color);
+    border: 1px solid var(--bs-secondary-bg);
+    background: none;
+}
+
+.navbar .navbar-brand:hover {
+    background: none;
+    color: var(--bs-primary-bg-subtle) !important;
 }

@@ -28,6 +28,14 @@ jobs:
         pip install
         build
         --user
+    - uses: actions/setup-node@v4
+      with:
+        node-version-file: '.nvmrc'
+    - name: Install dependencies
+      run: npm install
+    - name: Build client
+      run: npm run build
+
     - name: Build a binary wheel and a source tarball
       run: >-
         python -m

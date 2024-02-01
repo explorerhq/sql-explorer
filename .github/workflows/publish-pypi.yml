@@ -21,6 +21,14 @@ jobs:
       with:
         python-version: '3.12'
 
+    - uses: actions/setup-node@v4
+      with:
+        node-version-file: '.nvmrc'
+    - name: Install dependencies
+      run: npm install
+    - name: Build client
+      run: npm run build
+
     - name: Install pypa/build
       run: >-
         python -m
