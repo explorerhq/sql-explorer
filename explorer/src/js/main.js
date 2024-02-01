@@ -1,15 +1,9 @@
-import * as bootstrap from 'bootstrap'; // eslint-disable-line no-unused-vars
-import {ExplorerEditor} from "./explorer"
-import {setupQueryList} from "./query-list"
-import {setupSchema} from "./schema";
-
-
 const route_initializers = {
-    explorer_index: setupQueryList,
-    query_detail: () => new ExplorerEditor(queryId),
-    query_create: () => new ExplorerEditor('new'),
-    explorer_playground: () => new ExplorerEditor('new'),
-    explorer_schema: setupSchema
+    explorer_index: import('./query-list').then(({setupQueryList}) => setupQueryList),
+    query_detail: () => import('./explorer').then(({ExplorerEditor}) => new ExplorerEditor(queryId)),
+    query_create: () => import('./explorer').then(({ExplorerEditor}) => new ExplorerEditor(queryId)),
+    explorer_playground: () => import('./explorer').then(({ExplorerEditor}) => new ExplorerEditor(queryId)),
+    explorer_schema: import('./schema').then(({setupSchema}) => setupSchema),
 };
 
 document.addEventListener('DOMContentLoaded', function() {

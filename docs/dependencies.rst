@@ -32,13 +32,15 @@ Name                                                                    Version 
 - boto is required for snapshots
 - xlsxwriter is required for Excel export (csv still works fine without it)
 
-JavaScript
+JavaScript & CSS
+----------
 
 Please see package.json for the full list of JavaScript dependencies.
 
-Vite builds a single JS bundle for SQL Explorer. The bundle is larger than ideal, at ~600kb due primarily to CodeMirror and the pivot-table functionality (which, regrettably, requires jQuery UI for it's 'sortable' feature).
+Vite builds the JS and CSS bundles for SQL Explorer.
+The bundle for the SQL editor is fairly large at ~400kb, due primarily to CodeMirror. There is opportunity to reduce this by removing jQuery, which we hope to do in a future release.
 
-The bundle is distributed in the PyPi release (and will be found by collectstatic) or can be built via `npm run build`.
+The built front-end files are distributed in the PyPi release (and will be found by collectstatic). Instructions for building the front-end files are in :doc:`install.rst`.
 
 Tests
 -----

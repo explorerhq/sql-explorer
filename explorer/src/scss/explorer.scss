@@ -1,19 +1,15 @@
-.cm-wrap {
-    height: 350px;
-    border: 1px solid silver
-}
-
 .cm-editor {
     outline: none !important;
 }
 
 .cm-scroller {
     overflow: auto;
-    min-height: 350px
+    min-height: 400px;
+    max-height: 400px;
 }
 
 .cm-content, .cm-gutter {
-    min-height: 350px !important;
+    min-height: 400px !important;
 }
 
 .link-primary {
@@ -106,21 +102,23 @@ div.sort {
     display: none;
 }
 
-.nav-link {
-    color: white;
-}
+nav.navbar {
+    .nav-link {
+        color: white;
+    }
 
-.nav-link:hover, .nav-link:focus {
-    color: var(--bs-primary-bg-subtle);
-}
+    nav.nav-link:hover, .nav-link:focus {
+        color: var(--bs-primary-bg-subtle);
+    }
 
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-    color: var(--bs-nav-pills-link-active-color);
-    border: 1px solid var(--bs-secondary-bg);
-    background: none;
-}
+    .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+        color: var(--bs-nav-pills-link-active-color);
+        border: 1px solid var(--bs-secondary-bg);
+        background: none;
+    }
 
-.navbar .navbar-brand:hover {
-    background: none;
-    color: var(--bs-primary-bg-subtle) !important;
+    .nav-link:hover, .navbar-brand:hover {
+        background: none;
+        color: var(--bs-primary-bg-subtle) !important;
+    }
 }

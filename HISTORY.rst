@@ -5,7 +5,7 @@ Change Log
 This document records all notable changes to `django-sql-explorer <https://github.com/chrisclark/django-sql-explorer>`_.
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
-`4.0.0.beta1`_ (2024-01-31)
+`4.0b2`_ (2024-02-01)
 ---------------------
 * `#565`_: Front-end modernization. Code completion via CodeMirror 6. Bootstrap5. Vite-based build
 * `#566`_: Django 5 support & tests
