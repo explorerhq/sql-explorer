@@ -5,31 +5,34 @@ Change Log
 This document records all notable changes to `django-sql-explorer <https://github.com/chrisclark/django-sql-explorer>`_.
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
-`4.0b2`_ (2024-02-01)
----------------------
+`4.0.0.beta2`_ (2024-02-01)
+===========================
 * `#565`_: Front-end modernization. Code completion via CodeMirror 6. Bootstrap5. Vite-based build
 * `#566`_: Django 5 support & tests
 * `#537`_: S3 signature version support
 * `#562`_: Visually show whether the last run was successful
 * `#571`_: Replace isort and flake8 with Ruff (linting)
 
+`4.0.0.beta1`_ (2024-02-01)
+===========================
+* Yanked due to a packaging version issue
 
 `3.2.1`_ (2023-07-13)
----------------------
+=====================
 * `#539`_: Test for SET PASSWORD
 * `#544`_: Fix `User` primary key reference
 
 `3.2.0`_ (2023-05-17)
----------------------
+=====================
 * `#533`_: CSRF token httponly support + s3 destination for async results
 
 `3.1.1`_ (2023-02-27)
----------------------
+=====================
 * `#529`_: Added ``makemigrations --check`` pre-commit hook
 * `#528`_: Add missing migration
 
 `3.1.0`_ (2023-02-25)
----------------------
+=====================
 * `#520`_: Favorite queries
 * `#519`_: Add labels to params like ``$$paramName|label:defaultValue$$``
 * `#517`_: Pivot export
@@ -40,11 +43,11 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * `#521`_: ci: Adding django 4.2 to the test suite
 
 `3.0.1`_ (2022-12-16)
----------------------
+=====================
 * `#515`_: Fix for running without optional packages
 
 `3.0`_ (2022-12-15)
----------------------
+===================
 * Add support for Django >3.2 and drop support for <3.2
 * Add support for Python 3.9, 3.10 and 3.11 and drop support for <3.8
 * `#496`_: Document breakage of "Format" button due to ``CSRF_COOKIE_HTTPONLY`` (`#492`_)
@@ -58,7 +61,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * `#508`_: Conditionally import optional packages
 
 `2.5.0`_ (2022-10-09)
----------------------
+=====================
 * `#494`_: Fixes Security hole in blacklist for MySQL (`#490`_)
 * `#488`_: docs: Fix a few typos
 * `#481`_: feat: Add pie and line chart tabs to query result preview
@@ -66,44 +69,44 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 
 `2.4.2`_ (2022-08-30)
----------------------
+=====================
 * `#484`_: Added ``DEFAULT_AUTO_FIELD`` (Fix `#483`_)
 * `#475`_: Add ``SET`` to blacklisted keywords
 
 `2.4.1`_ (2022-03-10)
----------------------
+=====================
 * `#471`_: Fix extra white space in description and SQL fields.
 
 `2.4.0`_ (2022-02-10)
----------------------
+=====================
 * `#470`_: Upgrade JS/CSS versions.
 
 `2.3.0`_ (2021-07-24)
----------------------
+=====================
 * `#450`_: Added Russian translations.
 * `#449`_: Translates expression for duration
 
 `2.2.0`_ (2021-06-14)
----------------------
+=====================
 * Updated docs theme to `furo`_
 * `#445`_: Added ``EXPLORER_NO_PERMISSION_VIEW`` setting to allow override of the "no permission" view (Fix `#440`_)
 * `#444`_: Updated structure of the settings docs (Fix `#443`_)
 
 `2.1.3`_ (2021-05-14)
----------------------
+=====================
 * `#442`_: ``GET`` params passed to the fullscreen view (Fix `#433`_)
 * `#441`_: Include BOM in CSV export (Fix `#430`_)
 
 `2.1.2`_ (2021-01-19)
----------------------
+=====================
 * `#431`_: Fix for hidden SQL panel on a new query
 
 `2.1.1`_ (2021-01-19)
----------------------
+=====================
 Mistake in release
 
 `2.1.0`_ (2021-01-13)
----------------------
+=====================
 
 * **BREAKING CHANGE**: ``request`` object now passed to ``EXPLORER_PERMISSION_CHANGE`` and ``EXPLORER_PERMISSION_VIEW`` (`#417`_ to fix `#396`_)
 
@@ -123,7 +126,7 @@ Minor Changes
 
 
 `2.0.0`_ (2020-10-09)
----------------------
+=====================
 
 * **BREAKING CHANGE**: #403: Dropping support for EOL `Python 2.7 <https://www.python.org/doc/sunset-python-2/>`_ and `3.5 <https://pythoninsider.blogspot.com/2020/10/python-35-is-no-longer-supported.html>`_
 
@@ -152,7 +155,7 @@ Minor Changes
 
 
 `1.1.3`_ (2019-09-23)
----------------------
+=====================
 
 * `#347`_: URL-friendly parameter encoding
 * `#354`_: Updating dependency reference for Python 3 compatibility
@@ -169,7 +172,7 @@ Minor Changes
 
 
 `1.1.2`_ (2018-08-14)
----------------------
+=====================
 
 * Fix `#269`_
 * Fix bug when deleting query
@@ -187,13 +190,13 @@ Minor Changes
 
 
 `1.1.1`_ (2017-03-21)
----------------------
+=====================
 
 * Fix `#288`_ (incorrect import)
 
 
 `1.1.0`_ (2017-03-19)
----------------------
+=====================
 
 * **BREAKING CHANGE**: ``EXPLORER_DATA_EXPORTERS`` setting is now a list of tuples instead of a dictionary.
   This only affects you if you have customized this setting. This was to preserve ordering of the export buttons in the UI.
@@ -219,7 +222,7 @@ Minor Changes
 
 
 `1.0.0`_ (2016-06-16)
----------------------
+=====================
 
 * **BREAKING CHANGE**: Dropped support for Python 2.6. See ``.travis.yml`` for test matrix.
 * **BREAKING CHANGE**: The 'export' methods have all changed. Those these weren't originally designed to be external APIs,
@@ -242,12 +245,12 @@ Minor Changes
 * Loads of little bugfixes.
 
 `0.9.2`_ (2016-02-02)
----------------------
+=====================
 
 * Fixed readme issue (.1) and ``setup.py`` issue (.2)
 
 `0.9.1`_ (2016-02-01)
----------------------
+=====================
 
 Major changes
 
@@ -274,7 +277,7 @@ Minor (but awesome!) changes
 * Hide Celery-based features if tasks not enabled.
 
 `0.8.0`_ (2015-10-21)
----------------------
+=====================
 
 * Snapshots! Dump the csv results of a query to S3 on a regular schedule.
   More details in readme.rst under 'features'.
@@ -288,7 +291,7 @@ Minor (but awesome!) changes
   they will see only those queries on the listing page.
 
 `0.7.0`_ (2015-02-18)
----------------------
+=====================
 
 * Added search functionality to schema view and explorer view (using list.js).
 * Python 2.6 compatibility.
@@ -299,7 +302,7 @@ Minor (but awesome!) changes
 * Refactored front-end and pulled CSS and JS into dedicated files.
 
 `0.6.0`_ (2014-11-05)
----------------------
+=====================
 
 * Introduced Django 1.7 migrations. See readme.rst for info on how to run South migrations if you are not on Django 1.7 yet.
 * Upgraded front-end libraries to latest versions.
@@ -312,7 +315,7 @@ Minor (but awesome!) changes
 * Django 1.7 compatibility fix
 
 `0.5.1`_ (2014-09-02)
----------------------
+=====================
 
 Bugfixes
 
@@ -324,7 +327,7 @@ Bugfixes
 * Pseudo-folders for queries. Use "Foo * Ba1", "Foo * Bar2" for query names and the UI will build a little "Foo" pseudofolder for you in the query list.
 
 `0.5.0`_ (2014-06-06)
----------------------
+=====================
 
 * Query logs! Accessible via ``explorer/logs/``. You can look at previously executed queries (so you don't, for instance,
   lose that playground query you were working, or have to worry about mucking up a recorded query).
@@ -338,12 +341,12 @@ Bugfixes
 * Refactored params handling for extra safety in multi-threaded environments.
 
 `0.4.1`_ (2014-02-24)
----------------------
+=====================
 
 * Renaming template blocks to prevent conflicts
 
 `0.4`_ (2014-02-14 `Happy Valentine's Day!`)
---------------------------------------------
+============================================
 
 * Templatized columns for easy linking
 * Additional security config options for splitting create vs. view permissions
@@ -365,7 +368,7 @@ Bugfixes
 * Test coverage
 
 `0.1.1`_ (2013-12-31)
----------------------
+=====================
 
 Bug Fixes
 
@@ -377,130 +380,135 @@ Bug Fixes
 
 Initial Release
 
+.. _0.1: https://github.com/chrisclark/django-sql-explorer/tree/0.1
+.. _0.1.1: https://github.com/chrisclark/django-sql-explorer/compare/0.1...0.1.1
+.. _0.2: https://github.com/chrisclark/django-sql-explorer/compare/0.1.1...0.2
+.. _0.3: https://github.com/chrisclark/django-sql-explorer/compare/0.2...0.3
+.. _0.4: https://github.com/chrisclark/django-sql-explorer/compare/0.3...0.4
+.. _0.4.1: https://github.com/chrisclark/django-sql-explorer/compare/0.4...0.4.1
+.. _0.5.0: https://github.com/chrisclark/django-sql-explorer/compare/0.4.1...0.5.0
+.. _0.5.1: https://github.com/chrisclark/django-sql-explorer/compare/0.5.0...541148e7240e610f01dd0c260969c8d56e96a462
+.. _0.6.0: https://github.com/chrisclark/django-sql-explorer/compare/0.5.0...0.6.0
+.. _0.7.0: https://github.com/chrisclark/django-sql-explorer/compare/0.6.0...0.7.0
+.. _0.8.0: https://github.com/chrisclark/django-sql-explorer/compare/0.7.0...0.8.0
+.. _0.9.1: https://github.com/chrisclark/django-sql-explorer/compare/0.9.0...0.9.1
+.. _0.9.2: https://github.com/chrisclark/django-sql-explorer/compare/0.9.1...0.9.2
+.. _1.0.0: https://github.com/chrisclark/django-sql-explorer/compare/0.9.2...1.0.0
 
-.. _0.1: https://github.com/groveco/django-sql-explorer/tree/0.1
-.. _0.1.1: https://github.com/groveco/django-sql-explorer/compare/0.1...0.1.1
-.. _0.2: https://github.com/groveco/django-sql-explorer/compare/0.1.1...0.2
-.. _0.3: https://github.com/groveco/django-sql-explorer/compare/0.2...0.3
-.. _0.4: https://github.com/groveco/django-sql-explorer/compare/0.3...0.4
-.. _0.4.1: https://github.com/groveco/django-sql-explorer/compare/0.4...0.4.1
-.. _0.5.0: https://github.com/groveco/django-sql-explorer/compare/0.4.1...0.5.0
-.. _0.5.1: https://github.com/groveco/django-sql-explorer/compare/0.5.0...541148e7240e610f01dd0c260969c8d56e96a462
-.. _0.6.0: https://github.com/groveco/django-sql-explorer/compare/0.5.0...0.6.0
-.. _0.7.0: https://github.com/groveco/django-sql-explorer/compare/0.6.0...0.7.0
-.. _0.8.0: https://github.com/groveco/django-sql-explorer/compare/0.7.0...0.8.0
-.. _0.9.0: https://github.com/groveco/django-sql-explorer/compare/0.8.0...0.9.0
-.. _0.9.1: https://github.com/groveco/django-sql-explorer/compare/0.9.0...0.9.1
-.. _0.9.2: https://github.com/groveco/django-sql-explorer/compare/0.9.1...0.9.2
-.. _1.0.0: https://github.com/groveco/django-sql-explorer/compare/0.9.2...1.0.0
+.. _1.1.0: https://github.com/chrisclark/django-sql-explorer/compare/1.0.0...1.1.1
+.. _1.1.1: https://github.com/chrisclark/django-sql-explorer/compare/1.1.0...1.1.1
+.. _1.1.2: https://github.com/chrisclark/django-sql-explorer/compare/1.1.1...1.1.2
+.. _1.1.3: https://github.com/chrisclark/django-sql-explorer/compare/1.1.2...1.1.3
+.. _2.0.0: https://github.com/chrisclark/django-sql-explorer/compare/1.1.3...2.0
+.. _2.1.0: https://github.com/chrisclark/django-sql-explorer/compare/2.0...2.1.0
+.. _2.1.1: https://github.com/chrisclark/django-sql-explorer/compare/2.1.0...2.1.1
+.. _2.1.2: https://github.com/chrisclark/django-sql-explorer/compare/2.1.1...2.1.2
+.. _2.1.3: https://github.com/chrisclark/django-sql-explorer/compare/2.1.2...2.1.3
+.. _2.2.0: https://github.com/chrisclark/django-sql-explorer/compare/2.1.3...2.2.0
+.. _2.3.0: https://github.com/chrisclark/django-sql-explorer/compare/2.2.0...2.3.0
+.. _2.4.0: https://github.com/chrisclark/django-sql-explorer/compare/2.3.0...2.4.0
+.. _2.4.1: https://github.com/chrisclark/django-sql-explorer/compare/2.4.0...2.4.1
+.. _2.4.2: https://github.com/chrisclark/django-sql-explorer/compare/2.4.1...2.4.2
+.. _2.5.0: https://github.com/chrisclark/django-sql-explorer/compare/2.4.2...2.5.0
+.. _3.0: https://github.com/chrisclark/django-sql-explorer/compare/2.5.0...3.0
+.. _3.0.1: https://github.com/chrisclark/django-sql-explorer/compare/3.0...3.0.1
+.. _3.1.0: https://github.com/chrisclark/django-sql-explorer/compare/3.0.1...3.1.0
+.. _3.1.1: https://github.com/chrisclark/django-sql-explorer/compare/3.1.0...3.1.1
+.. _3.2.0: https://github.com/chrisclark/django-sql-explorer/compare/3.1.1...3.2.0
+.. _3.2.1: https://github.com/chrisclark/django-sql-explorer/compare/3.2.0...3.2.1
+.. _4.0.0.beta1: https://github.com/chrisclark/django-sql-explorer/compare/3.2.1...4.0.0.beta1
+.. _4.0.0.beta2: https://github.com/chrisclark/django-sql-explorer/compare/4.0.0.beta1...4.0.0.beta2
 
-.. _1.1.0: https://github.com/groveco/django-sql-explorer/compare/1.0.0...1.1.1
-.. _1.1.1: https://github.com/groveco/django-sql-explorer/compare/1.1.0...1.1.1
-.. _1.1.2: https://github.com/groveco/django-sql-explorer/compare/1.1.1...1.1.2
-.. _1.1.3: https://github.com/groveco/django-sql-explorer/compare/1.1.2...1.1.3
-.. _2.0.0: https://github.com/groveco/django-sql-explorer/compare/1.1.3...2.0
-.. _2.1.0: https://github.com/groveco/django-sql-explorer/compare/2.0...2.1.0
-.. _2.1.1: https://github.com/groveco/django-sql-explorer/compare/2.1.0...2.1.1
-.. _2.1.2: https://github.com/groveco/django-sql-explorer/compare/2.1.1...2.1.2
-.. _2.1.3: https://github.com/groveco/django-sql-explorer/compare/2.1.2...2.1.3
-.. _2.2.0: https://github.com/groveco/django-sql-explorer/compare/2.1.3...2.2.0
-.. _2.3.0: https://github.com/groveco/django-sql-explorer/compare/2.2.0...2.3.0
-.. _2.4.0: https://github.com/groveco/django-sql-explorer/compare/2.3.0...2.4.0
-.. _2.4.1: https://github.com/groveco/django-sql-explorer/compare/2.4.0...2.4.1
-.. _2.4.2: https://github.com/groveco/django-sql-explorer/compare/2.4.1...2.4.2
-.. _2.5.0: https://github.com/groveco/django-sql-explorer/compare/2.4.2...2.5.0
-.. _3.0: https://github.com/groveco/django-sql-explorer/compare/2.5.0...3.0
-.. _3.0.1: https://github.com/groveco/django-sql-explorer/compare/3.0...3.0.1
-.. _3.1.0: https://github.com/groveco/django-sql-explorer/compare/3.0.1...3.1.0
-.. _3.1.1: https://github.com/groveco/django-sql-explorer/compare/3.1.0...3.1.1
-.. _3.2.0: https://github.com/groveco/django-sql-explorer/compare/3.1.1...3.2.0
-.. _unreleased: https://github.com/groveco/django-sql-explorer/compare/3.2.0...master
+.. _#254: https://github.com/chrisclark/django-sql-explorer/pull/254
+.. _#334: https://github.com/chrisclark/django-sql-explorer/pull/334
+.. _#337: https://github.com/chrisclark/django-sql-explorer/pull/337
+.. _#345: https://github.com/chrisclark/django-sql-explorer/pull/345
+.. _#347: https://github.com/chrisclark/django-sql-explorer/pull/347
+.. _#354: https://github.com/chrisclark/django-sql-explorer/pull/354
+.. _#357: https://github.com/chrisclark/django-sql-explorer/pull/357
+.. _#359: https://github.com/chrisclark/django-sql-explorer/pull/359
+.. _#363: https://github.com/chrisclark/django-sql-explorer/pull/363
+.. _#366: https://github.com/chrisclark/django-sql-explorer/pull/366
+.. _#368: https://github.com/chrisclark/django-sql-explorer/pull/368
+.. _#370: https://github.com/chrisclark/django-sql-explorer/pull/370
+.. _#372: https://github.com/chrisclark/django-sql-explorer/pull/372
+.. _#382: https://github.com/chrisclark/django-sql-explorer/pull/382
+.. _#383: https://github.com/chrisclark/django-sql-explorer/pull/383
+.. _#385: https://github.com/chrisclark/django-sql-explorer/pull/385
+.. _#386: https://github.com/chrisclark/django-sql-explorer/pull/386
+.. _#387: https://github.com/chrisclark/django-sql-explorer/pull/387
+.. _#390: https://github.com/chrisclark/django-sql-explorer/pull/390
+.. _#393: https://github.com/chrisclark/django-sql-explorer/pull/393
+.. _#397: https://github.com/chrisclark/django-sql-explorer/pull/397
+.. _#404: https://github.com/chrisclark/django-sql-explorer/pull/404
+.. _#406: https://github.com/chrisclark/django-sql-explorer/pull/406
+.. _#408: https://github.com/chrisclark/django-sql-explorer/pull/408
+.. _#410: https://github.com/chrisclark/django-sql-explorer/pull/410
+.. _#413: https://github.com/chrisclark/django-sql-explorer/pull/413
+.. _#414: https://github.com/chrisclark/django-sql-explorer/pull/414
+.. _#416: https://github.com/chrisclark/django-sql-explorer/pull/416
+.. _#415: https://github.com/chrisclark/django-sql-explorer/pull/415
+.. _#417: https://github.com/chrisclark/django-sql-explorer/pull/417
+.. _#418: https://github.com/chrisclark/django-sql-explorer/pull/418
+.. _#420: https://github.com/chrisclark/django-sql-explorer/pull/420
+.. _#424: https://github.com/chrisclark/django-sql-explorer/pull/424
+.. _#425: https://github.com/chrisclark/django-sql-explorer/pull/425
+.. _#441: https://github.com/chrisclark/django-sql-explorer/pull/441
+.. _#442: https://github.com/chrisclark/django-sql-explorer/pull/442
+.. _#444: https://github.com/chrisclark/django-sql-explorer/pull/444
+.. _#445: https://github.com/chrisclark/django-sql-explorer/pull/445
+.. _#449: https://github.com/chrisclark/django-sql-explorer/pull/449
+.. _#450: https://github.com/chrisclark/django-sql-explorer/pull/450
+.. _#470: https://github.com/chrisclark/django-sql-explorer/pull/470
+.. _#471: https://github.com/chrisclark/django-sql-explorer/pull/471
+.. _#475: https://github.com/chrisclark/django-sql-explorer/pull/475
+.. _#478: https://github.com/chrisclark/django-sql-explorer/pull/478
+.. _#481: https://github.com/chrisclark/django-sql-explorer/pull/481
+.. _#484: https://github.com/chrisclark/django-sql-explorer/pull/484
+.. _#488: https://github.com/chrisclark/django-sql-explorer/pull/488
+.. _#494: https://github.com/chrisclark/django-sql-explorer/pull/494
+.. _#496: https://github.com/chrisclark/django-sql-explorer/pull/496
+.. _#497: https://github.com/chrisclark/django-sql-explorer/pull/497
+.. _#498: https://github.com/chrisclark/django-sql-explorer/pull/498
+.. _#500: https://github.com/chrisclark/django-sql-explorer/pull/500
+.. _#501: https://github.com/chrisclark/django-sql-explorer/pull/501
+.. _#504: https://github.com/chrisclark/django-sql-explorer/pull/504
+.. _#505: https://github.com/chrisclark/django-sql-explorer/pull/505
+.. _#506: https://github.com/chrisclark/django-sql-explorer/pull/506
+.. _#508: https://github.com/chrisclark/django-sql-explorer/pull/508
+.. _#515: https://github.com/chrisclark/django-sql-explorer/pull/515
+.. _#517: https://github.com/chrisclark/django-sql-explorer/pull/517
+.. _#519: https://github.com/chrisclark/django-sql-explorer/pull/519
+.. _#520: https://github.com/chrisclark/django-sql-explorer/pull/520
+.. _#521: https://github.com/chrisclark/django-sql-explorer/pull/521
+.. _#522: https://github.com/chrisclark/django-sql-explorer/pull/522
+.. _#523: https://github.com/chrisclark/django-sql-explorer/pull/523
+.. _#524: https://github.com/chrisclark/django-sql-explorer/pull/524
+.. _#528: https://github.com/chrisclark/django-sql-explorer/pull/528
+.. _#529: https://github.com/chrisclark/django-sql-explorer/pull/529
+.. _#533: https://github.com/chrisclark/django-sql-explorer/pull/533
+.. _#537: https://github.com/chrisclark/django-sql-explorer/pull/537
+.. _#539: https://github.com/chrisclark/django-sql-explorer/pull/539
+.. _#544: https://github.com/chrisclark/django-sql-explorer/pull/544
+.. _#562: https://github.com/chrisclark/django-sql-explorer/pull/562
+.. _#565: https://github.com/chrisclark/django-sql-explorer/pull/565
+.. _#566: https://github.com/chrisclark/django-sql-explorer/pull/566
+.. _#571: https://github.com/chrisclark/django-sql-explorer/pull/571
 
-.. _#254: https://github.com/groveco/django-sql-explorer/pull/254
-.. _#334: https://github.com/groveco/django-sql-explorer/pull/334
-.. _#337: https://github.com/groveco/django-sql-explorer/pull/337
-.. _#345: https://github.com/groveco/django-sql-explorer/pull/345
-.. _#347: https://github.com/groveco/django-sql-explorer/pull/347
-.. _#354: https://github.com/groveco/django-sql-explorer/pull/354
-.. _#357: https://github.com/groveco/django-sql-explorer/pull/357
-.. _#359: https://github.com/groveco/django-sql-explorer/pull/359
-.. _#363: https://github.com/groveco/django-sql-explorer/pull/363
-.. _#366: https://github.com/groveco/django-sql-explorer/pull/366
-.. _#368: https://github.com/groveco/django-sql-explorer/pull/368
-.. _#370: https://github.com/groveco/django-sql-explorer/pull/370
-.. _#372: https://github.com/groveco/django-sql-explorer/pull/372
-.. _#382: https://github.com/groveco/django-sql-explorer/pull/382
-.. _#383: https://github.com/groveco/django-sql-explorer/pull/383
-.. _#385: https://github.com/groveco/django-sql-explorer/pull/385
-.. _#386: https://github.com/groveco/django-sql-explorer/pull/386
-.. _#387: https://github.com/groveco/django-sql-explorer/pull/387
-.. _#390: https://github.com/groveco/django-sql-explorer/pull/390
-.. _#393: https://github.com/groveco/django-sql-explorer/pull/393
-.. _#397: https://github.com/groveco/django-sql-explorer/pull/397
-.. _#404: https://github.com/groveco/django-sql-explorer/pull/404
-.. _#406: https://github.com/groveco/django-sql-explorer/pull/406
-.. _#408: https://github.com/groveco/django-sql-explorer/pull/408
-.. _#410: https://github.com/groveco/django-sql-explorer/pull/410
-.. _#413: https://github.com/groveco/django-sql-explorer/pull/413
-.. _#414: https://github.com/groveco/django-sql-explorer/pull/414
-.. _#416: https://github.com/groveco/django-sql-explorer/pull/416
-.. _#415: https://github.com/groveco/django-sql-explorer/pull/415
-.. _#417: https://github.com/groveco/django-sql-explorer/pull/417
-.. _#418: https://github.com/groveco/django-sql-explorer/pull/418
-.. _#420: https://github.com/groveco/django-sql-explorer/pull/420
-.. _#424: https://github.com/groveco/django-sql-explorer/pull/424
-.. _#425: https://github.com/groveco/django-sql-explorer/pull/425
-.. _#441: https://github.com/groveco/django-sql-explorer/pull/441
-.. _#442: https://github.com/groveco/django-sql-explorer/pull/442
-.. _#444: https://github.com/groveco/django-sql-explorer/pull/444
-.. _#445: https://github.com/groveco/django-sql-explorer/pull/445
-.. _#449: https://github.com/groveco/django-sql-explorer/pull/449
-.. _#450: https://github.com/groveco/django-sql-explorer/pull/450
-.. _#470: https://github.com/groveco/django-sql-explorer/pull/470
-.. _#471: https://github.com/groveco/django-sql-explorer/pull/471
-.. _#475: https://github.com/groveco/django-sql-explorer/pull/475
-.. _#478: https://github.com/groveco/django-sql-explorer/pull/478
-.. _#481: https://github.com/groveco/django-sql-explorer/pull/481
-.. _#484: https://github.com/groveco/django-sql-explorer/pull/484
-.. _#488: https://github.com/groveco/django-sql-explorer/pull/488
-.. _#494: https://github.com/groveco/django-sql-explorer/pull/494
-.. _#496: https://github.com/groveco/django-sql-explorer/pull/496
-.. _#497: https://github.com/groveco/django-sql-explorer/pull/497
-.. _#498: https://github.com/groveco/django-sql-explorer/pull/498
-.. _#500: https://github.com/groveco/django-sql-explorer/pull/500
-.. _#501: https://github.com/groveco/django-sql-explorer/pull/501
-.. _#504: https://github.com/groveco/django-sql-explorer/pull/504
-.. _#505: https://github.com/groveco/django-sql-explorer/pull/505
-.. _#506: https://github.com/groveco/django-sql-explorer/pull/506
-.. _#508: https://github.com/groveco/django-sql-explorer/pull/508
-.. _#515: https://github.com/groveco/django-sql-explorer/pull/515
-.. _#517: https://github.com/groveco/django-sql-explorer/pull/517
-.. _#519: https://github.com/groveco/django-sql-explorer/pull/519
-.. _#520: https://github.com/groveco/django-sql-explorer/pull/520
-.. _#521: https://github.com/groveco/django-sql-explorer/pull/521
-.. _#522: https://github.com/groveco/django-sql-explorer/pull/522
-.. _#523: https://github.com/groveco/django-sql-explorer/pull/523
-.. _#524: https://github.com/groveco/django-sql-explorer/pull/524
-.. _#528: https://github.com/groveco/django-sql-explorer/pull/528
-.. _#529: https://github.com/groveco/django-sql-explorer/pull/529
-.. _#533: https://github.com/groveco/django-sql-explorer/pull/533
-.. _#539: https://github.com/groveco/django-sql-explorer/pull/539
-.. _#544: https://github.com/groveco/django-sql-explorer/pull/544
-
-.. _#269: https://github.com/groveco/django-sql-explorer/issues/269
-.. _#288: https://github.com/groveco/django-sql-explorer/issues/288
-.. _#341: https://github.com/groveco/django-sql-explorer/issues/341
-.. _#371: https://github.com/groveco/django-sql-explorer/issues/371
-.. _#396: https://github.com/groveco/django-sql-explorer/issues/396
-.. _#412: https://github.com/groveco/django-sql-explorer/issues/412
-.. _#430: https://github.com/groveco/django-sql-explorer/issues/430
-.. _#431: https://github.com/groveco/django-sql-explorer/issues/431
-.. _#433: https://github.com/groveco/django-sql-explorer/issues/433
-.. _#440: https://github.com/groveco/django-sql-explorer/issues/440
-.. _#443: https://github.com/groveco/django-sql-explorer/issues/443
-.. _#477: https://github.com/groveco/django-sql-explorer/issues/477
-.. _#483: https://github.com/groveco/django-sql-explorer/issues/483
-.. _#490: https://github.com/groveco/django-sql-explorer/issues/490
-.. _#492: https://github.com/groveco/django-sql-explorer/issues/492
+.. _#269: https://github.com/chrisclark/django-sql-explorer/issues/269
+.. _#288: https://github.com/chrisclark/django-sql-explorer/issues/288
+.. _#341: https://github.com/chrisclark/django-sql-explorer/issues/341
+.. _#371: https://github.com/chrisclark/django-sql-explorer/issues/371
+.. _#396: https://github.com/chrisclark/django-sql-explorer/issues/396
+.. _#412: https://github.com/chrisclark/django-sql-explorer/issues/412
+.. _#430: https://github.com/chrisclark/django-sql-explorer/issues/430
+.. _#431: https://github.com/chrisclark/django-sql-explorer/issues/431
+.. _#433: https://github.com/chrisclark/django-sql-explorer/issues/433
+.. _#440: https://github.com/chrisclark/django-sql-explorer/issues/440
+.. _#443: https://github.com/chrisclark/django-sql-explorer/issues/443
+.. _#477: https://github.com/chrisclark/django-sql-explorer/issues/477
+.. _#483: https://github.com/chrisclark/django-sql-explorer/issues/483
+.. _#490: https://github.com/chrisclark/django-sql-explorer/issues/490
+.. _#492: https://github.com/chrisclark/django-sql-explorer/issues/492
 
 .. _furo: https://github.com/pradyunsg/furo

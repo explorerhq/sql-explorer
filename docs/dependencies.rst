@@ -33,14 +33,14 @@ Name                                                                    Version 
 - xlsxwriter is required for Excel export (csv still works fine without it)
 
 JavaScript & CSS
-----------
+----------------
 
 Please see package.json for the full list of JavaScript dependencies.
 
 Vite builds the JS and CSS bundles for SQL Explorer.
 The bundle for the SQL editor is fairly large at ~400kb, due primarily to CodeMirror. There is opportunity to reduce this by removing jQuery, which we hope to do in a future release.
 
-The built front-end files are distributed in the PyPi release (and will be found by collectstatic). Instructions for building the front-end files are in :doc:`install.rst`.
+The built front-end files are distributed in the PyPi release (and will be found by collectstatic). Instructions for building the front-end files are in :doc:`install`.
 
 Tests
 -----

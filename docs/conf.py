@@ -40,6 +40,7 @@ master_doc = "index"
 extensions = [
     "sphinx_copybutton",
     "sphinxext.opengraph",
+    "sphinx.ext.autodoc",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
