@@ -346,13 +346,13 @@ class TestQueryDetailView(TestCase):
         conn = connections[c1_alias]
         c = conn.cursor()
         c.execute("CREATE TABLE IF NOT EXISTS animals (name text NOT NULL);")
-        c.execute("INSERT INTO animals ( name ) VALUES (\'peacock\')")
+        c.execute("INSERT INTO animals ( name ) VALUES ('peacock')")
 
         c2_alias = EXPLORER_CONNECTIONS["Another"]
         conn = connections[c2_alias]
         c = conn.cursor()
         c.execute("CREATE TABLE IF NOT EXISTS animals (name text NOT NULL);")
-        c.execute("INSERT INTO animals ( name ) VALUES (\'superchicken\')")
+        c.execute("INSERT INTO animals ( name ) VALUES ('superchicken')")
 
         query = SimpleQueryFactory(
             sql="select name from animals;", connection=c1_alias
@@ -585,13 +585,13 @@ class TestSQLDownloadViews(TestCase):
         conn = connections[c1_alias]
         c = conn.cursor()
         c.execute("CREATE TABLE IF NOT EXISTS animals (name text NOT NULL);")
-        c.execute("INSERT INTO animals ( name ) VALUES (\'peacock\')")
+        c.execute("INSERT INTO animals ( name ) VALUES ('peacock')")
 
         c2_alias = EXPLORER_CONNECTIONS["Another"]
         conn = connections[c2_alias]
         c = conn.cursor()
         c.execute("CREATE TABLE IF NOT EXISTS animals (name text NOT NULL);")
-        c.execute("INSERT INTO animals ( name ) VALUES (\'superchicken\')")
+        c.execute("INSERT INTO animals ( name ) VALUES ('superchicken')")
 
         url = reverse("download_sql") + "?format=csv"
 
