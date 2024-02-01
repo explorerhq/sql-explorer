@@ -1,8 +1,5 @@
-// v2.23.0 of https://github.com/nicolaskruchten/pivottable
-// Slightly modified to allow importing as a module vs. a global jQuery plugin
-// Still, regrettably, has a jquery-ui dependency.
+import Sortable from 'sortablejs';
 
-import './jquery-ui'
 
 let indexOf = [].indexOf || function (item) {
     for (var i = 0, l = this.length; i < l; i++) {
@@ -1682,16 +1679,19 @@ export function pivotJq($) {
                 };
             })(this);
             refresh();
-            this.find(".pvtAxisContainer").sortable({
-                update: function (e, ui) {
-                    if (ui.sender == null) {
-                        return refresh();
-                    }
-                },
-                connectWith: this.find(".pvtAxisContainer"),
-                items: 'li',
-                placeholder: 'pvtPlaceholder'
+
+            document.querySelectorAll('.pvtAxisContainer').forEach(function(el) {
+                Sortable.create(el, {
+                    group: 'pvtAxisContainer', // This allows for dragging between containers
+                    draggable: 'li', // Specifies that only <li> elements should be draggable
+                    animation: 150, // Animation speed
+                    ghostClass: 'pvtPlaceholder', // Class name for the drop placeholder
+                    onEnd: function (evt) {
+                        refresh();
+                    },
+                });
             });
+
         } catch (error) {
             e = error;
             if (typeof console !== "undefined" && console !== null) {

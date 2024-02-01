@@ -11,14 +11,9 @@ except ImportError:
 from explorer import get_version
 
 
-# Utility function to read the README file.
-# Used for the long_description.  It's nice, because now 1) we have a top level
-# README file and 2) it's easier to type in the README file than to put a raw
-# string in below ...
-
 name = "django-sql-explorer"
-version = get_version(True)
-release = get_version()
+version = get_version()
+release = get_version(True)
 
 
 def read(fname):
@@ -68,6 +63,7 @@ setup(
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
         "Topic :: Utilities",
+        "Framework :: Django :: 3.2",
         "Framework :: Django :: 4.2",
         "Framework :: Django :: 5.0",
         "Programming Language :: Python :: 3",
