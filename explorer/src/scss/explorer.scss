@@ -1,20 +1,15 @@
-.cm-wrap {
-    //max-height: 350px;
-    border: 1px solid silver;
-}
-
 .cm-editor {
     outline: none !important;
 }
 
 .cm-scroller {
     overflow: auto;
-    min-height: 350px;
-    //max-height: 350px;
+    min-height: 400px;
+    max-height: 400px;
 }
 
 .cm-content, .cm-gutter {
-    min-height: 350px !important;
+    min-height: 400px !important;
 }
 
 .link-primary {
