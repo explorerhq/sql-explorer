@@ -159,7 +159,7 @@ A dict granting view permissions on specific queries of the form
 
 .. code-block:: python
 
-   EXPLORER_GET_USER_QUERY_VIEWS = {userId:[queryId, ...], ...}
+   EXPLORER_GET_USER_QUERY_VIEWS = {userId: [queryId, ], }
 
 **Default Value:**
 

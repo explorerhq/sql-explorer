@@ -38,12 +38,14 @@ Snapshots
   .csv snapshot of the query results to S3. Configure the snapshot
   frequency via a celery cron task, e.g. for daily at 1am:
 
-.. code-block:: python
+..  code-block:: python
 
-   'explorer.tasks.snapshot_queries': {
-       'task': 'explorer.tasks.snapshot_queries',
-       'schedule': crontab(hour=1, minute=0)
-   }
+    app.conf.beat_schedule = {
+       'explorer.tasks.snapshot_queries': {
+           'task': 'explorer.tasks.snapshot_queries',
+           'schedule': crontab(hour=1, minute=0)
+       }
+    }
 
 - Requires celery, obviously. Also uses boto3. All
   of these deps are optional and can be installed with
@@ -93,8 +95,6 @@ Schema Helper
   enable this, make sure Celery is installed and configured, and
   set ``EXPLORER_ENABLE_TASKS`` and ``EXPLORER_ASYNC_SCHEMA`` to
   ``True``.
-
-.. _Template Columns:
 
 Template Columns
 ----------------
@@ -162,10 +162,12 @@ Query Logs
 
 .. code-block:: python
 
-   'explorer.tasks.truncate_querylogs': {
-       'task': 'explorer.tasks.truncate_querylogs',
-       'schedule': crontab(hour=1, minute=0),
-       'kwargs': {'days': 30}
+   app.conf.beat_schedule = {
+       'explorer.tasks.truncate_querylogs': {
+           'task': 'explorer.tasks.truncate_querylogs',
+           'schedule': crontab(hour=1, minute=0),
+           'kwargs': {'days': 30}
+       }
    }
 
 Multiple Connections
@@ -178,8 +180,6 @@ Multiple Connections
   to contain any Django schema, or be related to Django in any
   way. See connections.py for more documentation on
   multi-connection setup.
-
-.. _Power tips:
 
 Power tips
 ----------
