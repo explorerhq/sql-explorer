@@ -27,13 +27,11 @@ If you would also like to support downloading Excel files install with the depen
 
 Add to your ``INSTALLED_APPS``, located in the ``settings.py`` file in your project folder:
 
-.. code-block:: python
-   :emphasize-lines: 3
+..  code-block:: python
+    :emphasize-lines: 3
 
     INSTALLED_APPS = (
-        ...,
         'explorer',
-        ...
     )
 
 Configure your settings to something like:
@@ -54,15 +52,13 @@ Add the following to your urls.py (all Explorer URLs are restricted
 via the ``EXPLORER_PERMISSION_VIEW`` and ``EXPLORER_PERMISSION_CHANGE``
 settings. See Settings section below for further documentation.):
 
-.. code-block:: python
-   :emphasize-lines: 5
+..  code-block:: python
+    :emphasize-lines: 5
 
     from django.urls import path, include
 
     urlpatterns = [
-        ...
         path('explorer/', include('explorer.urls')),
-        ...
     ]
 
 If you want to quickly use django-sql-explorer with the existing default
