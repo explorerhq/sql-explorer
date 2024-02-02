@@ -38,7 +38,7 @@ Snapshots
   .csv snapshot of the query results to S3. Configure the snapshot
   frequency via a celery cron task, e.g. for daily at 1am:
 
-..  code-block:: python
+.. code-block:: python
 
     app.conf.beat_schedule = {
        'explorer.tasks.snapshot_queries': {
