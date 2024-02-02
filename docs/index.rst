@@ -8,7 +8,6 @@
 Django SQL Explorer
 ###################
 
-.. rstcheck: ignore-next-code-block
 .. include:: ../README.rst
 
 .. toctree::
