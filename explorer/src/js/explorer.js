@@ -38,7 +38,6 @@ export class ExplorerEditor {
         this.$rows = $("#rows");
         this.$form = $("form");
         this.$snapshotField = $("#id_snapshot");
-        this.$paramFields = this.$form.find(".param");
         this.docChanged = false;
 
         this.$submit = $("#refresh_play_button, #save_button");
@@ -66,11 +65,12 @@ export class ExplorerEditor {
     }
 
     getParams() {
-        var o = false;
-        if(this.$paramFields.length) {
+        let o = false;
+        const params = document.querySelectorAll("form .param");
+        if (params.length) {
             o = {};
-            this.$paramFields.each(function() {
-                o[$(this).data("param")] = $(this).val();
+            params.forEach((param) => {
+                o[param.dataset.param] = param.value;
             });
         }
         return o;
@@ -88,8 +88,10 @@ export class ExplorerEditor {
         const picked = (({ aggregatorName, rows, cols, rendererName, vals }) => ({ aggregatorName, rows, cols, rendererName, vals }))(state);
         const jsonString = JSON.stringify(picked);
         let bmark = btoa(jsonString);
-        let $el = $("#pivot-bookmark");
-        $el.attr("href", $el.data("baseurl") + "#" + bmark);
+        let el = document.getElementById("pivot-bookmark");
+        if(el) {
+            el.setAttribute("href", el.dataset.baseurl + "#" + bmark);
+        }
     }
 
     updateQueryString(key, value, url) {
@@ -147,10 +149,10 @@ export class ExplorerEditor {
     }
 
     showRows() {
-        var rows = this.$rows.val(),
-            $form = $("#editor");
-        $form.attr("action", this.updateQueryString("rows", rows, window.location.href));
-        $form.submit();
+        let rows = document.getElementById("rows").value;
+        let form = document.getElementById("editor");
+        form.setAttribute("action", this.updateQueryString("rows", rows, window.location.href));
+        form.submit();
     }
 
     showSchema(noAutofocus) {
