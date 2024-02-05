@@ -6,7 +6,6 @@ import { explorerSetup } from "./codemirror-config";
 import cookie from 'cookiejs';
 import List from 'list.js'
 
-import 'floatthead'
 import { getCsrfToken } from "./csrf";
 import { toggleFavorite } from "./favorites";
 
@@ -265,13 +264,11 @@ export class ExplorerEditor {
             e.preventDefault();
             $(".stats-expand").hide();
             $(".stats-wrapper").show();
-            this.$table.floatThead("reflow");
         }.bind(this));
 
         $("#counter-toggle").click(function(e) {
             e.preventDefault();
             $(".counter").toggle();
-            this.$table.floatThead("reflow");
         }.bind(this));
 
         $(".sort").click(function(e) {
@@ -303,10 +300,6 @@ export class ExplorerEditor {
             tableList.sort(t, { order: dir });
         }.bind(this));
 
-        $("#preview-tab-label").click(function() {
-            this.$table.floatThead("reflow");
-        }.bind(this));
-
         const tabEl = document.querySelector('button[data-bs-target="#nav-pivot"]')
         tabEl.addEventListener('shown.bs.tab', event => {
             import('./pivot-setup').then(({pivotSetup}) => pivotSetup($, this.$table));
@@ -316,14 +309,6 @@ export class ExplorerEditor {
         if (window.location.hash) {
             document.querySelector('#nav-pivot-tab').click();
         }
-
-        setTimeout(function() {
-            this.$table.floatThead({
-                scrollContainer: function() {
-                                    return this.$table.closest(".overflow-wrapper");
-                                }.bind(this)
-            });
-        }.bind(this), 1);
 
         this.$rows.change(function() { this.showRows(); }.bind(this));
         this.$rows.keyup(function(event) {

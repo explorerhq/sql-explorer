@@ -27,6 +27,8 @@
 
 .data-headers {
     background: white;
+    position: sticky;
+    top: 0px;
 }
 
 .log-sql {
@@ -59,8 +61,13 @@ td.name.indented {
     cursor: pointer;
 }
 
+.stats-th .counter{
+    border: 0px solid white;
+}
+
 .table>thead>tr>th.preview-header {
     white-space: nowrap;
+    border: 0px solid white;
 }
 
 div.sort {
