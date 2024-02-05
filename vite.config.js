@@ -21,16 +21,20 @@ export default {
   build: {
     outDir: resolve(__dirname, './explorer/static/explorer'),
     assetsDir: '',
-    manifest: true,
     emptyOutDir: true,
     target: 'es2015',
     rollupOptions: {
       input: {
         main: resolve(__dirname, '/explorer/src/js/main.js'),
-        styles: resolve(__dirname, '/explorer/src/scss/main.scss'),
+        // Some magic here; Vite always builds to styles.css, we named our entrypoint SCSS file the same thing
+        // so that in the base template HTML file we can include 'styles.scss', and rename just the extension
+        // in the vite template tag, and get both the dev and prod builds to work.
+        styles: resolve(__dirname, '/explorer/src/scss/styles.scss'),
       },
       output: {
-        chunkFileNames: undefined,
+        entryFileNames: `[name].js`,
+        chunkFileNames: `[name].js`,
+        assetFileNames: `[name].[ext]`
       },
     },
   },
