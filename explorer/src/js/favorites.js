@@ -1,9 +1,8 @@
 import {getCsrfToken} from "./csrf";
 
 export async function toggleFavorite() {
-    // Assuming this function is bound to an element, 'this' refers to that element
-    let queryId = this.dataset.id; // or this.getAttribute('data-id');
-    let favoriteUrl = this.dataset.url; // or this.getAttribute('data-url');
+    let queryId = this.dataset.id;
+    let favoriteUrl = this.dataset.url;
 
     try {
         let response = await fetch(favoriteUrl, {

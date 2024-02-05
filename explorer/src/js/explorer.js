@@ -6,12 +6,8 @@ import { explorerSetup } from "./codemirror-config";
 import cookie from 'cookiejs';
 import List from 'list.js'
 
-import 'floatthead'
 import { getCsrfToken } from "./csrf";
 import { toggleFavorite } from "./favorites";
-
-import {pivotJq} from "./pivot";
-import {csvFromTable} from "./table-to-csv";
 
 import {schemaCompletionSource, StandardSQL} from "@codemirror/lang-sql";
 import {StateEffect} from "@codemirror/state";
@@ -38,7 +34,6 @@ export class ExplorerEditor {
         this.$rows = $("#rows");
         this.$form = $("form");
         this.$snapshotField = $("#id_snapshot");
-        this.$paramFields = this.$form.find(".param");
         this.docChanged = false;
 
         this.$submit = $("#refresh_play_button, #save_button");
@@ -56,8 +51,6 @@ export class ExplorerEditor {
             this.docChanged = true;
         });
 
-        pivotJq($);
-
         this.bind();
 
         if (cookie.get("schema_sidebar_open") === 'true') {
@@ -66,11 +59,12 @@ export class ExplorerEditor {
     }
 
     getParams() {
-        var o = false;
-        if(this.$paramFields.length) {
+        let o = false;
+        const params = document.querySelectorAll("form .param");
+        if (params.length) {
             o = {};
-            this.$paramFields.each(function() {
-                o[$(this).data("param")] = $(this).val();
+            params.forEach((param) => {
+                o[param.dataset.param] = param.value;
             });
         }
         return o;
@@ -82,14 +76,6 @@ export class ExplorerEditor {
             args.push(key + ":" + params[key]);
         }
         return encodeURIComponent(args.join("|"));
-    }
-
-    savePivotState(state) {
-        const picked = (({ aggregatorName, rows, cols, rendererName, vals }) => ({ aggregatorName, rows, cols, rendererName, vals }))(state);
-        const jsonString = JSON.stringify(picked);
-        let bmark = btoa(jsonString);
-        let $el = $("#pivot-bookmark");
-        $el.attr("href", $el.data("baseurl") + "#" + bmark);
     }
 
     updateQueryString(key, value, url) {
@@ -125,32 +111,36 @@ export class ExplorerEditor {
         let sqlText = this.editor.state.doc.toString();
         let editor = this.editor;
 
-        $.ajax({
-            url: "../format/",
-            type: "POST",
+        var formData = new FormData();
+        formData.append('sql', sqlText); // Append the SQL text to the form data
+
+        // Make the fetch call
+        fetch("../format/", {
+            method: "POST",
             headers: {
+                // 'Content-Type': 'application/x-www-form-urlencoded', // Not needed when using FormData, as the browser sets it along with the boundary
                 'X-CSRFToken': getCsrfToken()
             },
-            data: {
-                sql: sqlText
-            },
-            success: function(data) {
-                editor.dispatch({
-                    changes: {
-                        from: 0,
-                        to: editor.state.doc.length,
-                        insert: data.formatted
-                    }
-                })
-            }.bind(this)
-        });
+            body: formData // Use the FormData object as the body
+        })
+        .then(response => response.json()) // Parse the JSON response
+        .then(data => {
+            editor.dispatch({
+                changes: {
+                    from: 0,
+                    to: editor.state.doc.length,
+                    insert: data.formatted
+                }
+            });
+        })
+        .catch(error => console.error('Error:', error));
     }
 
     showRows() {
-        var rows = this.$rows.val(),
-            $form = $("#editor");
-        $form.attr("action", this.updateQueryString("rows", rows, window.location.href));
-        $form.submit();
+        let rows = document.getElementById("rows").value;
+        let form = document.getElementById("editor");
+        form.setAttribute("action", this.updateQueryString("rows", rows, window.location.href));
+        form.submit();
     }
 
     showSchema(noAutofocus) {
@@ -173,43 +163,41 @@ export class ExplorerEditor {
         var schema$ = $("#schema");
         schema$.removeClass("col-3");
         schema$.hide();
-        $(this).hide();
+        $("#hide_schema_button").hide();
         $("#show_schema_button").show();
         cookie.set("schema_sidebar_open", 'false');
         return false;
     }
 
+    handleBeforeUnload = (event) => {
+        if (clientRoute === 'query_detail' && this.docChanged) {
+            const confirmationMessage = "You have unsaved changes to your query.";
+            event.returnValue = confirmationMessage;
+            return confirmationMessage;
+        }
+    };
+
     bind() {
 
-        $(window).on("beforeunload", function () {
-            // Only do this if changed-input is on the page and we"re not on the playground page.
-            if (clientRoute === 'query_detail' && this.docChanged) {
-                return "You have unsaved changes to your query.";
+        window.addEventListener("beforeunload", this.handleBeforeUnload)
+
+        document.addEventListener("submit", (event) => {
+            // Disable unsaved changes warning when submitting the editor form
+            if (event.target.id === "editor") {
+                window.removeEventListener("beforeunload", this.handleBeforeUnload);
             }
-        }.bind(this));
+        })
 
-        // Disable unsaved changes warning when submitting the editor form
-        $(document).on("submit", "#editor", function(event){
-            // disable warning
-            $(window).off("beforeunload");
-        });
+        // Define the beforeUnloadHandler function for easier add/remove
 
-        let button = document.querySelector("#button-excel");
-        if (button) {
-                button.addEventListener("click", e => {
-                let table = document.querySelector(".pvtTable");
-                if (typeof (table) != 'undefined' && table != null) {
-                    csvFromTable(table);
-                }
-            });
-        }
 
         document.querySelectorAll('.query_favorite_toggle').forEach(function(element) {
             element.addEventListener('click', toggleFavorite);
         });
 
-        $("#show_schema_button").click(this.showSchema);
-        $("#hide_schema_button").click(this.hideSchema);
+        document.getElementById('show_schema_button').addEventListener('click', this.showSchema.bind(this));
+        document.getElementById('hide_schema_button').addEventListener('click', this.hideSchema.bind(this));
+
 
         $("#format_button").click(function(e) {
             e.preventDefault();
@@ -284,79 +272,63 @@ export class ExplorerEditor {
             this.$form.attr("action", url);
         }.bind(this));
 
-        $(".stats-expand").click(function(e) {
-            e.preventDefault();
-            $(".stats-expand").hide();
-            $(".stats-wrapper").show();
-            this.$table.floatThead("reflow");
-        }.bind(this));
-
-        $("#counter-toggle").click(function(e) {
-            e.preventDefault();
-            $(".counter").toggle();
-            this.$table.floatThead("reflow");
-        }.bind(this));
-
-        $(".sort").click(function(e) {
-            var t = $(e.target).data("sort");
-            var dir = $(e.target).data("dir");
-            $(".sort").addClass("bi-chevron-expand");
-            $(".sort").removeClass("bi-chevron-down");
-            $(".sort").removeClass("bi-chevron-up");
-            if (dir === "asc"){
-                $(e.target).data("dir", "desc");
-                $(e.target).addClass("bi-chevron-up");
-                $(e.target).removeClass("bi-chevron-down");
-                $(e.target).removeClass("bi-chevron-expand");
-            } else {
-                $(e.target).data("dir", "asc");
-                $(e.target).addClass("bi-chevron-down");
-                $(e.target).removeClass("bi-chevron-up");
-                $(e.target).removeClass("bi-chevron-expand");
-            }
-            var vals = [];
-            var ct = 0;
-            while (ct < this.$table.find("th").length) {
-               vals.push(ct++);
-            }
-            var options = {
-                valueNames: vals
-            };
-            var tableList = new List("preview", options);
-            tableList.sort(t, { order: dir });
-        }.bind(this));
-
-        $("#preview-tab-label").click(function() {
-            this.$table.floatThead("reflow");
-        }.bind(this));
-
-        var pivotState = window.location.hash;
-        var navToPivot = false;
-        if (!pivotState) {
-            pivotState = {onRefresh: this.savePivotState};
-        } else {
-            try {
-                pivotState = JSON.parse(atob(pivotState.substr(1)));
-                pivotState["onRefresh"] = this.savePivotState;
-                navToPivot = true;
-            } catch(e) {
-                pivotState = {onRefresh: this.savePivotState};
-            }
-        }
-
-        $(".pivot-table").pivotUI(this.$table, pivotState);
-        if (navToPivot) {
-            let pivotEl = document.querySelector('#nav-pivot-tab')
-            pivotEl.click()
-        }
-
-        setTimeout(function() {
-            this.$table.floatThead({
-                scrollContainer: function() {
-                                    return this.$table.closest(".overflow-wrapper");
-                                }.bind(this)
+        document.querySelectorAll('.stats-expand').forEach(element => {
+            element.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.stats-expand').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('.stats-wrapper').forEach(el => el.style.display = '');
             });
-        }.bind(this), 1);
+        });
+
+        let counterToggle = document.getElementById('counter-toggle');
+        if (counterToggle) {
+            counterToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.counter').forEach(el => {
+                    el.style.display = el.style.display === 'none' ? '' : 'none';
+                });
+            });
+        }
+
+        // List.js setup for the preview pane to support sorting
+        let thElements = document.querySelector('#preview').querySelectorAll('th');
+        new List('preview', {
+            valueNames: Array.from(thElements, (_, index) => index)
+        });
+
+        document.querySelectorAll('.sort').forEach(sortButton => {
+            sortButton.addEventListener('click', function(e) {
+                const target = e.target;
+
+                // Reset icons on all sort buttons
+                document.querySelectorAll('.sort').forEach(btn => {
+                    btn.classList.add('bi-chevron-expand');
+                    btn.classList.remove('bi-chevron-down', 'bi-chevron-up');
+                });
+
+                if ( target.classList.contains('asc') ) {
+                    target.classList.replace('bi-chevron-expand', 'bi-chevron-up');
+                    target.classList.remove('bi-chevron-down');
+                } else {
+                    target.classList.replace('bi-chevron-expand', 'bi-chevron-down');
+                    target.classList.remove('bi-chevron-up');
+                }
+
+            }.bind(this));
+        });
+
+        const tabEl = document.querySelector('button[data-bs-target="#nav-pivot"]')
+        if (tabEl) {
+            tabEl.addEventListener('shown.bs.tab', event => {
+                import('./pivot-setup').then(({pivotSetup}) => pivotSetup($));
+            });
+        }
+
+        // Pretty hacky, but at the moment URL hashes are only used for storing pivot state, so this is a safe
+        // way of checking if we are following a link to a pivot table.
+        if (window.location.hash) {
+            document.querySelector('#nav-pivot-tab').click();
+        }
 
         this.$rows.change(function() { this.showRows(); }.bind(this));
         this.$rows.keyup(function(event) {

@@ -7,10 +7,11 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 `4.0.0.beta2`_ (2024-02-01)
 ===========================
+* Add support for Django 5.0. Drop support for Python < 3.10.
 * `#565`_: Front-end modernization. Code completion via CodeMirror 6. Bootstrap5. Vite-based build
 * `#566`_: Django 5 support & tests
 * `#537`_: S3 signature version support
-* `#562`_: Visually show whether the last run was successful
+* `#562`_: Record and show whether the last run of each query was successful
 * `#571`_: Replace isort and flake8 with Ruff (linting)
 
 `4.0.0.beta1`_ (2024-02-01)
