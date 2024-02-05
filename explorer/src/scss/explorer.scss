@@ -53,10 +53,6 @@ td.name.indented {
     padding-left: 30px;
 }
 
-.stats-wrapper {
-    display: none;
-}
-
 .stats-expand {
     cursor: pointer;
 }
@@ -84,7 +80,6 @@ div.sort {
 }
 
 .counter {
-    display: none;
     background-color: #ecf0f1;
     font-family: monospace;
 }

@@ -111,25 +111,29 @@ export class ExplorerEditor {
         let sqlText = this.editor.state.doc.toString();
         let editor = this.editor;
 
-        $.ajax({
-            url: "../format/",
-            type: "POST",
+        var formData = new FormData();
+        formData.append('sql', sqlText); // Append the SQL text to the form data
+
+        // Make the fetch call
+        fetch("../format/", {
+            method: "POST",
             headers: {
+                // 'Content-Type': 'application/x-www-form-urlencoded', // Not needed when using FormData, as the browser sets it along with the boundary
                 'X-CSRFToken': getCsrfToken()
             },
-            data: {
-                sql: sqlText
-            },
-            success: function(data) {
-                editor.dispatch({
-                    changes: {
-                        from: 0,
-                        to: editor.state.doc.length,
-                        insert: data.formatted
-                    }
-                })
-            }.bind(this)
-        });
+            body: formData // Use the FormData object as the body
+        })
+        .then(response => response.json()) // Parse the JSON response
+        .then(data => {
+            editor.dispatch({
+                changes: {
+                    from: 0,
+                    to: editor.state.doc.length,
+                    insert: data.formatted
+                }
+            });
+        })
+        .catch(error => console.error('Error:', error));
     }
 
     showRows() {
@@ -159,33 +163,41 @@ export class ExplorerEditor {
         var schema$ = $("#schema");
         schema$.removeClass("col-3");
         schema$.hide();
-        $(this).hide();
+        $("#hide_schema_button").hide();
         $("#show_schema_button").show();
         cookie.set("schema_sidebar_open", 'false');
         return false;
     }
 
+    handleBeforeUnload = (event) => {
+        if (clientRoute === 'query_detail' && this.docChanged) {
+            const confirmationMessage = "You have unsaved changes to your query.";
+            event.returnValue = confirmationMessage;
+            return confirmationMessage;
+        }
+    };
+
     bind() {
 
-        $(window).on("beforeunload", function () {
-            // Only do this if changed-input is on the page and we"re not on the playground page.
-            if (clientRoute === 'query_detail' && this.docChanged) {
-                return "You have unsaved changes to your query.";
-            }
-        }.bind(this));
+        window.addEventListener("beforeunload", this.handleBeforeUnload)
 
-        // Disable unsaved changes warning when submitting the editor form
-        $(document).on("submit", "#editor", function(event){
-            // disable warning
-            $(window).off("beforeunload");
-        });
+        document.addEventListener("submit", (event) => {
+            // Disable unsaved changes warning when submitting the editor form
+            if (event.target.id === "editor") {
+                window.removeEventListener("beforeunload", this.handleBeforeUnload);
+            }
+        })
+
+        // Define the beforeUnloadHandler function for easier add/remove
+
 
         document.querySelectorAll('.query_favorite_toggle').forEach(function(element) {
             element.addEventListener('click', toggleFavorite);
         });
 
-        $("#show_schema_button").click(this.showSchema);
-        $("#hide_schema_button").click(this.hideSchema);
+        document.getElementById('show_schema_button').addEventListener('click', this.showSchema.bind(this));
+        document.getElementById('hide_schema_button').addEventListener('click', this.hideSchema.bind(this));
+
 
         $("#format_button").click(function(e) {
             e.preventDefault();
@@ -260,50 +272,55 @@ export class ExplorerEditor {
             this.$form.attr("action", url);
         }.bind(this));
 
-        $(".stats-expand").click(function(e) {
-            e.preventDefault();
-            $(".stats-expand").hide();
-            $(".stats-wrapper").show();
-        }.bind(this));
+        document.querySelectorAll('.stats-expand').forEach(element => {
+            element.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.stats-expand').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('.stats-wrapper').forEach(el => el.style.display = '');
+            });
+        });
 
-        $("#counter-toggle").click(function(e) {
+        document.getElementById('counter-toggle').addEventListener('click', function(e) {
             e.preventDefault();
-            $(".counter").toggle();
-        }.bind(this));
+            document.querySelectorAll('.counter').forEach(el => {
+                el.style.display = el.style.display === 'none' ? '' : 'none';
+            });
+        });
 
-        $(".sort").click(function(e) {
-            var t = $(e.target).data("sort");
-            var dir = $(e.target).data("dir");
-            $(".sort").addClass("bi-chevron-expand");
-            $(".sort").removeClass("bi-chevron-down");
-            $(".sort").removeClass("bi-chevron-up");
-            if (dir === "asc"){
-                $(e.target).data("dir", "desc");
-                $(e.target).addClass("bi-chevron-up");
-                $(e.target).removeClass("bi-chevron-down");
-                $(e.target).removeClass("bi-chevron-expand");
-            } else {
-                $(e.target).data("dir", "asc");
-                $(e.target).addClass("bi-chevron-down");
-                $(e.target).removeClass("bi-chevron-up");
-                $(e.target).removeClass("bi-chevron-expand");
-            }
-            var vals = [];
-            var ct = 0;
-            while (ct < this.$table.find("th").length) {
-               vals.push(ct++);
-            }
-            var options = {
-                valueNames: vals
-            };
-            var tableList = new List("preview", options);
-            tableList.sort(t, { order: dir });
-        }.bind(this));
+        // List.js setup for the preview pane to support sorting
+        let thElements = document.querySelector('#preview').querySelectorAll('th');
+        new List('preview', {
+            valueNames: Array.from(thElements, (_, index) => index)
+        });
+
+        document.querySelectorAll('.sort').forEach(sortButton => {
+            sortButton.addEventListener('click', function(e) {
+                const target = e.target;
+
+                // Reset icons on all sort buttons
+                document.querySelectorAll('.sort').forEach(btn => {
+                    btn.classList.add('bi-chevron-expand');
+                    btn.classList.remove('bi-chevron-down', 'bi-chevron-up');
+                });
+
+                if ( target.classList.contains('asc') ) {
+                    target.classList.replace('bi-chevron-expand', 'bi-chevron-up');
+                    target.classList.remove('bi-chevron-down');
+                } else {
+                    target.classList.replace('bi-chevron-expand', 'bi-chevron-down');
+                    target.classList.remove('bi-chevron-up');
+                }
+
+            }.bind(this));
+        });
 
         const tabEl = document.querySelector('button[data-bs-target="#nav-pivot"]')
-        tabEl.addEventListener('shown.bs.tab', event => {
-            import('./pivot-setup').then(({pivotSetup}) => pivotSetup($, this.$table));
-        })
+        if (tabEl) {
+            tabEl.addEventListener('shown.bs.tab', event => {
+                import('./pivot-setup').then(({pivotSetup}) => pivotSetup($, this.$table));
+            });
+        }
+
         // Pretty hacky, but at the moment URL hashes are only used for storing pivot state, so this is a safe
         // way of checking if we are following a link to a pivot table.
         if (window.location.hash) {

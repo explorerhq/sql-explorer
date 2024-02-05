@@ -56,7 +56,7 @@
                             <table class="table table-striped table-hover" id="preview">
                                 <thead class="data-headers">
                                     <tr>
-                                        <th class="preview-header counter"></th>
+                                        <th class="preview-header counter" style="display: none;"></th>
                                         {% for h in headers %}
                                             <th class="preview-header"><span><i class="sort bi-chevron-expand pe-1" data-sort="{{ forloop.counter0 }}"
                                                          data-dir="asc"></i>{{ h }}</span></th>
@@ -64,12 +64,12 @@
                                     </tr>
                                     {% if has_stats %}
                                         <tr class="stats-th">
-                                            <th class="counter"></th>
+                                            <th class="counter" style="display: none;"></th>
                                             {% for h in headers %}
                                                 <th>
                                                     {% if h.summary %}
                                                         <i class="stats-expand bi-calculator"></i>
-                                                        <table class="stats-wrapper table table-sm fw-normal small">
+                                                        <table class="stats-wrapper table table-sm fw-normal small" style="display: none;">
                                                             {% for label, value in h.summary.stats.items %}
                                                                 <tr>
                                                                     <td>{{ label }}</td>
@@ -87,7 +87,7 @@
                                     {% if data %}
                                         {% for row in data %}
                                         <tr class="data-row">
-                                            <td class="counter">{{ forloop.counter0 }}</td>
+                                            <td class="counter" style="display: none;">{{ forloop.counter0 }}</td>
                                             {% for i in row %}
                                                 {% if unsafe_rendering %}
                                                     <td class="{{ forloop.counter0 }}">
