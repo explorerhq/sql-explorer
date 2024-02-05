@@ -1,21 +1,22 @@
 import {pivotJq} from "./pivot";
 import {csvFromTable} from "./table-to-csv";
-export function pivotSetup($, $table) {
+import $ from "jquery";
+export function pivotSetup($) {
 
-    let pivotState = window.location.hash;
-    if (!pivotState) {
-        pivotState = {onRefresh: savePivotState};
-    } else {
+    let pivotState = {};
+    if (window.location.hash) {
         try {
-            pivotState = JSON.parse(atob(pivotState.slice(1)));
-            pivotState["onRefresh"] = savePivotState;
+            pivotState = JSON.parse(atob(window.location.hash.slice(1)));
         } catch(e) {
-            pivotState = {onRefresh: savePivotState};
+            console.log(e);
         }
     }
+    pivotState["onRefresh"] = savePivotState;
 
     pivotJq($);
-    $(".pivot-table").pivotUI($table, pivotState);
+    let pivotInput = $("#preview").clone();
+    pivotInput.find("tr.stats-th").remove();
+    $(".pivot-table").pivotUI(pivotInput, pivotState);
 
     let csvButton = document.querySelector("#button-excel");
     if (csvButton) {

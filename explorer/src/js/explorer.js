@@ -280,12 +280,15 @@ export class ExplorerEditor {
             });
         });
 
-        document.getElementById('counter-toggle').addEventListener('click', function(e) {
-            e.preventDefault();
-            document.querySelectorAll('.counter').forEach(el => {
-                el.style.display = el.style.display === 'none' ? '' : 'none';
+        let counterToggle = document.getElementById('counter-toggle');
+        if (counterToggle) {
+            counterToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.counter').forEach(el => {
+                    el.style.display = el.style.display === 'none' ? '' : 'none';
+                });
             });
-        });
+        }
 
         // List.js setup for the preview pane to support sorting
         let thElements = document.querySelector('#preview').querySelectorAll('th');
@@ -317,7 +320,7 @@ export class ExplorerEditor {
         const tabEl = document.querySelector('button[data-bs-target="#nav-pivot"]')
         if (tabEl) {
             tabEl.addEventListener('shown.bs.tab', event => {
-                import('./pivot-setup').then(({pivotSetup}) => pivotSetup($, this.$table));
+                import('./pivot-setup').then(({pivotSetup}) => pivotSetup($));
             });
         }
 
