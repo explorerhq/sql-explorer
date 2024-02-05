@@ -10,9 +10,6 @@ import 'floatthead'
 import { getCsrfToken } from "./csrf";
 import { toggleFavorite } from "./favorites";
 
-import {pivotJq} from "./pivot";
-import {csvFromTable} from "./table-to-csv";
-
 import {schemaCompletionSource, StandardSQL} from "@codemirror/lang-sql";
 import {StateEffect} from "@codemirror/state";
 
@@ -55,8 +52,6 @@ export class ExplorerEditor {
             this.docChanged = true;
         });
 
-        pivotJq($);
-
         this.bind();
 
         if (cookie.get("schema_sidebar_open") === 'true') {
@@ -82,16 +77,6 @@ export class ExplorerEditor {
             args.push(key + ":" + params[key]);
         }
         return encodeURIComponent(args.join("|"));
-    }
-
-    savePivotState(state) {
-        const picked = (({ aggregatorName, rows, cols, rendererName, vals }) => ({ aggregatorName, rows, cols, rendererName, vals }))(state);
-        const jsonString = JSON.stringify(picked);
-        let bmark = btoa(jsonString);
-        let el = document.getElementById("pivot-bookmark");
-        if(el) {
-            el.setAttribute("href", el.dataset.baseurl + "#" + bmark);
-        }
     }
 
     updateQueryString(key, value, url) {
@@ -195,16 +180,6 @@ export class ExplorerEditor {
             // disable warning
             $(window).off("beforeunload");
         });
-
-        let button = document.querySelector("#button-excel");
-        if (button) {
-                button.addEventListener("click", e => {
-                let table = document.querySelector(".pvtTable");
-                if (typeof (table) != 'undefined' && table != null) {
-                    csvFromTable(table);
-                }
-            });
-        }
 
         document.querySelectorAll('.query_favorite_toggle').forEach(function(element) {
             element.addEventListener('click', toggleFavorite);
@@ -332,24 +307,14 @@ export class ExplorerEditor {
             this.$table.floatThead("reflow");
         }.bind(this));
 
-        var pivotState = window.location.hash;
-        var navToPivot = false;
-        if (!pivotState) {
-            pivotState = {onRefresh: this.savePivotState};
-        } else {
-            try {
-                pivotState = JSON.parse(atob(pivotState.substr(1)));
-                pivotState["onRefresh"] = this.savePivotState;
-                navToPivot = true;
-            } catch(e) {
-                pivotState = {onRefresh: this.savePivotState};
-            }
-        }
-
-        $(".pivot-table").pivotUI(this.$table, pivotState);
-        if (navToPivot) {
-            let pivotEl = document.querySelector('#nav-pivot-tab')
-            pivotEl.click()
+        const tabEl = document.querySelector('button[data-bs-target="#nav-pivot"]')
+        tabEl.addEventListener('shown.bs.tab', event => {
+            import('./pivot-setup').then(({pivotSetup}) => pivotSetup($, this.$table));
+        })
+        // Pretty hacky, but at the moment URL hashes are only used for storing pivot state, so this is a safe
+        // way of checking if we are following a link to a pivot table.
+        if (window.location.hash) {
+            document.querySelector('#nav-pivot-tab').click();
         }
 
         setTimeout(function() {

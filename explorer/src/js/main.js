@@ -8,6 +8,7 @@ necessary for each page. Concretely, this matters because the pages with SQL
 Editors require fairly heavy JS (CodeMirror).
 */
 
+import * as bootstrap from 'bootstrap'; // eslint-disable-line no-unused-vars
 
 const route_initializers = {
     explorer_index:      () => import('./query-list').then(({setupQueryList}) => setupQueryList()),
