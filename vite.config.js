@@ -21,7 +21,6 @@ export default {
   build: {
     outDir: resolve(__dirname, './explorer/static/explorer'),
     assetsDir: '',
-    manifest: true,
     emptyOutDir: true,
     target: 'es2015',
     rollupOptions: {
