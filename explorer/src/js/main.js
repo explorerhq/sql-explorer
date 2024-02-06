@@ -19,5 +19,7 @@ const route_initializers = {
 };
 
 document.addEventListener('DOMContentLoaded', function() {
-    route_initializers[clientRoute]();
+    if (route_initializers.hasOwnProperty(clientRoute)) {
+        route_initializers[clientRoute]();
+    }
 });
