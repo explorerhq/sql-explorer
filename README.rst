@@ -22,38 +22,52 @@ SQL Explorer
 SQL Explorer aims to make the flow of data between people fast,
 simple, and confusion-free. It is a Django-based application that you
 can add to an existing Django site, or use as a standalone business
-intelligence tool.
+intelligence tool. It will happily connect to any SQL database that
+`Django supports <https://docs.djangoproject.com/en/5.0/ref/databases/>`_.
 
 Quickly write and share SQL queries in a simple, usable SQL editor,
-preview the results in the browser, share links, download CSV, JSON,
-or Excel files (and even expose queries as API endpoints, if desired),
-and keep the information flowing!
-
-Comes with support for multiple connections, to many different SQL
-database types, a schema explorer, query history (e.g. lightweight
-version control), a basic security model, in-browser pivot tables, and
-more.
+view the results in the browser, and keep the information flowing!
 
 SQL Explorer values simplicity, intuitive use, unobtrusiveness,
-stability, and the principle of least surprise.
+stability, and the principle of least surprise. Sql Explorer is MIT
+licensed, and pull requests are welcome.
 
-Sql Explorer is MIT licensed, and pull requests are welcome.
+Some key features include:
 
-**A view of a query**
+- Support for multiple connections
+- Quick access to schema information to make querying easier
+- In-browser pivot tables (which can also be shared via URLs)
+- Ability to snapshot queries on a regular schedule, capturing changing
+  data
+- Query history and logs
+- Quick in-browser statistics, pivot tables, and scatter-plots (saving
+  a trip to Excel for simple analyses)
+- Basic code-completion in the SQL editor
+- Parameterized queries that automatically generate a friendly UI for
+  users who don't know SQL
+- A playground area for quickly running ad-hoc queries
+- Send query results via email
+- Saved queries can be exposed as a quick-n-dirty JSON API if desired
+- ...and more!
 
-.. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/2019_2.png
+Screenshots
+-----------
+
+**Writing a query and viewing the schema helper**
+
+.. image:: https://sql-explorer.s3.amazonaws.com/4.0-query-with-schema.png
 
 **Viewing all queries**
 
-.. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/2019_querylist.png
+.. image:: https://sql-explorer.s3.amazonaws.com/4.0-query-list.png
 
-**Quick access to DB schema info**
+**Query results rendered in browser**
 
-.. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/2019_3.png
+.. image:: https://sql-explorer.s3.amazonaws.com/4.0-query-results.png
 
-**Snapshot query results to S3 & download as csv**
+**Pivot in browser**
 
-.. image:: https://s3-us-west-1.amazonaws.com/django-sql-explorer/2019_snapshots.png
+.. image:: https://sql-explorer.s3.amazonaws.com/4.0-pivot.png
 
 Development
 ------------
