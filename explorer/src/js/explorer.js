@@ -188,9 +188,6 @@ export class ExplorerEditor {
             }
         })
 
-        // Define the beforeUnloadHandler function for easier add/remove
-
-
         document.querySelectorAll('.query_favorite_toggle').forEach(function(element) {
             element.addEventListener('click', toggleFavorite);
         });
@@ -291,10 +288,13 @@ export class ExplorerEditor {
         }
 
         // List.js setup for the preview pane to support sorting
-        let thElements = document.querySelector('#preview').querySelectorAll('th');
-        new List('preview', {
-            valueNames: Array.from(thElements, (_, index) => index)
-        });
+        let previewPane = document.querySelector('#preview');
+        if (previewPane) {
+            let thElements = previewPane.querySelectorAll('th');
+            new List('preview', {
+                valueNames: Array.from(thElements, (_, index) => index)
+            });
+        }
 
         document.querySelectorAll('.sort').forEach(sortButton => {
             sortButton.addEventListener('click', function(e) {
