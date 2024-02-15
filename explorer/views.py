@@ -157,6 +157,7 @@ def format_sql(request):
     return HttpResponse(json.dumps({"formatted": formatted}), content_type="application/json")
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class ListQueryView(ExplorerContextMixin, ListView):
 
     @method_decorator(view_permission_list)
@@ -226,6 +227,7 @@ class ListQueryView(ExplorerContextMixin, ListView):
     model = Query
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class ListQueryLogView(ExplorerContextMixin, ListView):
 
     @method_decorator(view_permission)
@@ -240,6 +242,7 @@ class ListQueryLogView(ExplorerContextMixin, ListView):
     paginate_by = 20
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class ListQueryChangeLogView(ExplorerContextMixin, ListView):
 
     @method_decorator(view_permission)
@@ -256,6 +259,7 @@ class ListQueryChangeLogView(ExplorerContextMixin, ListView):
     template_name = 'explorer/querychangelog_list.html'
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class CreateQueryView(ExplorerContextMixin, CreateView):
 
     @method_decorator(change_permission)
@@ -270,6 +274,7 @@ class CreateQueryView(ExplorerContextMixin, CreateView):
     template_name = 'explorer/query.html'
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class DeleteQueryView(ExplorerContextMixin, DeleteView):
 
     @method_decorator(change_permission)
@@ -280,6 +285,7 @@ class DeleteQueryView(ExplorerContextMixin, DeleteView):
     success_url = reverse_lazy("explorer_index")
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class PlayQueryView(ExplorerContextMixin, View):
 
     @method_decorator(change_permission)
@@ -317,6 +323,7 @@ class PlayQueryView(ExplorerContextMixin, View):
                                                     error=error))
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class QueryView(ExplorerContextMixin, View):
 
     @method_decorator(view_permission)
