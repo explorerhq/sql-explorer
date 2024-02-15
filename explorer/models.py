@@ -1,4 +1,6 @@
-from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection, get_s3_connection, get_connection_pii, get_connection_asyncapi_db, should_route_to_asyncapi_db, add_cutoff_date_to_requestlog_queries
+from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection, \
+    get_s3_connection, get_connection_pii, get_explorer_master_db_connection, get_connection_asyncapi_db, should_route_to_asyncapi_db, mask_string, \
+    is_pii_masked_for_user, mask_player_pii
 from future.utils import python_2_unicode_compatible
 from django.db import models, DatabaseError
 from time import time
@@ -11,6 +13,9 @@ import logging
 import re
 import json
 import six
+
+from explorer.constants import TYPE_CODE_FOR_JSON, TYPE_CODE_FOR_TEXT, PLAYER_PHONE_NUMBER_MASKING_TYPE_CODES, \
+    TYPE_CODE_FOR_CHAR
 
 MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist: %s"
 
@@ -54,24 +59,28 @@ class Query(models.Model):
     def final_sql(self):
         return swap_params(self.sql, self.available_params())
 
-    def execute_query_only(self, is_connection_type_pii=None):
-
-        return QueryResult(self.final_sql(),self.title,is_connection_type_pii)
+    def execute_query_only(self, is_connection_type_pii=None, executing_user=None, is_connection_for_explorer_master_db=False):
+        return QueryResult(self.final_sql(), self.title, is_connection_type_pii, executing_user if executing_user else self.created_by_user, is_connection_for_explorer_master_db)
 
     def execute_with_logging(self, executing_user):
         ql = self.log(executing_user)
-        ret = self.execute()
+        ret = self.execute(executing_user)
         ql.duration = ret.duration
         ql.save()
         return ret, ql
 
-    def execute(self):
-        ret = self.execute_query_only(False)
+    def execute(self, executing_user=None):
+        ret = self.execute_query_only(False, executing_user)
         ret.process()
         return ret
 
-    def execute_pii(self):
-        ret = self.execute_query_only(True)
+    def execute_pii(self, executing_user=None):
+        ret = self.execute_query_only(True, executing_user)
+        ret.process()
+        return ret
+
+    def execute_on_explorer_with_master_db(self, executing_user=None):
+        ret = self.execute_query_only(False, executing_user, is_connection_for_explorer_master_db=True)
         ret.process()
         return ret
 
@@ -147,23 +156,107 @@ class QueryChangeLog(models.Model):
 
 
 class QueryResult(object):
+    def get_type_code_and_column_indices_to_be_masked_dict(self):
+        """
+        Returns a dictionary of type code and column indices to be masked
+        Return type:
+        {
+            type_code: [column indices that match the type code]
+        }
+        Eg.
+        Say a table has three fields id, data, random_text. id is of type INT, data is of type JSON, and random_text is of type TEXT.
+        Then the return value will be:
+        {
+            TYPE_CODE_FOR_JSON: [1],
+            TYPE_CODE_FOR_TEXT: [2]
+        }
+        as 1 is the column index for JSON and 2 is the column index for TEXT
+        """
+        type_code_and_column_indices_to_be_masked_dict = {
+            TYPE_CODE_FOR_JSON: [],
+            TYPE_CODE_FOR_TEXT: []
+        }
+        phone_number_masking_indexes = []
 
-    def __init__(self, sql, title=None,is_connection_type_pii=None):
+        # Collect the indices for JSON and text columns
+        for index, column in enumerate(self._description):
+            if hasattr(column, "type_code") and column.type_code in type_code_and_column_indices_to_be_masked_dict:
+                type_code_and_column_indices_to_be_masked_dict[column.type_code].append(index)
+
+            # Masking for player phone numbers
+            if self.used_by_user and is_pii_masked_for_user(self.used_by_user) and hasattr(column, "type_code") and column.type_code in PLAYER_PHONE_NUMBER_MASKING_TYPE_CODES:
+                phone_number_masking_indexes.append(index)
+
+        # Masking for PII data in char fields if specific tables are used in SQL
+        if app_settings.TABLE_NAMES_FOR_PII_MASKING and phone_number_masking_indexes:
+            for table_name in app_settings.TABLE_NAMES_FOR_PII_MASKING:
+                if table_name in self.sql:
+                    type_code_and_column_indices_to_be_masked_dict[TYPE_CODE_FOR_CHAR] = phone_number_masking_indexes
+                    break
+
+        return type_code_and_column_indices_to_be_masked_dict
+
+    def get_masked_data(self, data, type_code):
+        """
+        Mask the data based on the type code.
+        """
+        if not data:
+            return data
+        if type_code == TYPE_CODE_FOR_JSON:
+            return json.dumps(mask_string(str(data)))
+        elif type_code == TYPE_CODE_FOR_TEXT:
+            return mask_string(data)
+        elif type_code in PLAYER_PHONE_NUMBER_MASKING_TYPE_CODES:
+            return mask_player_pii(data)
+        return data
+
+    def mask_pii_data(self, row, type_code_and_column_indices_to_be_masked_dict):
+        """
+        Mask the JSON and TEXT data types in the row.
+        """
+        modified_row = list(row)
+        for type_code, indices in type_code_and_column_indices_to_be_masked_dict.items():
+            for index in indices:
+                modified_row[index] = self.get_masked_data(modified_row[index], type_code)
+
+        return modified_row
+
+    def get_data_to_be_displayed(self, cursor):
+        """
+        If the connection type allows PII, then return the data as is.
+        If connection type does not allow PII, then mask JSON and TEXT data types and then return the data.
+        JSON and TEXT data types can be identified by the type_code attribute of the column.
+        """
+        if self.is_connection_type_pii:
+            return [list(r) for r in cursor.fetchall()]
+
+        type_code_and_column_indices_to_be_masked_dict = self.get_type_code_and_column_indices_to_be_masked_dict()
+        data_to_be_displayed = []
+
+        for row in cursor.fetchall():
+            modified_row = self.mask_pii_data(row, type_code_and_column_indices_to_be_masked_dict)
+            data_to_be_displayed.append(modified_row)
+
+        return data_to_be_displayed
+
+    def __init__(self, sql, title=None, is_connection_type_pii=None, used_by_user=None, is_connection_for_explorer_master_db=False):
 
         self.sql = sql
-        self.title=title
+        self.title = title
+        self.is_connection_for_explorer_master_db = is_connection_for_explorer_master_db
         if (is_connection_type_pii):
             self.is_connection_type_pii = is_connection_type_pii
         else:
             self.is_connection_type_pii = False
 
+        self.used_by_user = used_by_user
         cursor, duration = self.execute_query()
 
         self._description = cursor.description or []
-        self._data = [list(r) for r in cursor.fetchall()]
+
+        self._data = self.get_data_to_be_displayed(cursor)
 
         self.duration = duration
-
         cursor.close()
 
         self._headers = self._get_headers()
@@ -218,14 +311,15 @@ class QueryResult(object):
 
     def execute_query(self):
         # can change connectiion type here to use different role --> get_connection_pii()
-        route_to_asyncapi_db = should_route_to_asyncapi_db(self.sql)
         if (self.is_connection_type_pii):
             logger.info(
                 "pii-connection")
             conn = get_connection_pii()
-        elif route_to_asyncapi_db:
+        elif should_route_to_asyncapi_db(self.sql):
             logger.info("Route to Async API DB")
             conn = get_connection_asyncapi_db()
+        elif self.is_connection_for_explorer_master_db:
+            conn = get_explorer_master_db_connection()
         else:
             logger.info("non-pii-connection")
             conn = get_connection()
@@ -234,11 +328,7 @@ class QueryResult(object):
         start_time = time()
 
         try:
-            if route_to_asyncapi_db:
-                modified_sql = add_cutoff_date_to_requestlog_queries(self.sql)
-                cursor.execute(modified_sql)
-            else:
-                cursor.execute(self.sql)
+            cursor.execute(self.sql)
         except DatabaseError as e:
             cursor.close()
             if (re.search("permission denied for table", str(e)) and self.title != "Playground"):

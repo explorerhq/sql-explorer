@@ -14,8 +14,10 @@ import functools
 import sys
 import logging
 
-logger = logging.getLogger(__name__)
+from explorer.constants import PII_MASKING_PATTERN_REPLACEMENT_DICT, ALLOW_PHONE_NUMBER_MASKING_GROUP_ID, \
+    PATTERN_FOR_FINDING_EMAIL, PATTERN_FOR_FINDING_PHONE_NUMBER
 
+logger = logging.getLogger(__name__)
 
 PY3 = sys.version_info[0] == 3
 
@@ -27,14 +29,14 @@ else:
 EXPLORER_PARAM_TOKEN = "$$"
 
 REPLICATION_LAG_THRESHOLD_VALUE_IN_MINUTES = 3
-REQUEST_LOG_SQL_CUTOFF_DATE = "2023-06-01"
+
 
 # SQL Specific Things
 
 
 def passes_blacklist(sql):
     clean = functools.reduce(lambda sql, term: sql.upper().replace(term, ""), [
-                             t.upper() for t in app_settings.EXPLORER_SQL_WHITELIST], sql)
+        t.upper() for t in app_settings.EXPLORER_SQL_WHITELIST], sql)
     fails = [
         bl_word for bl_word in app_settings.EXPLORER_SQL_BLACKLIST if bl_word in clean.upper()]
     return not any(fails), fails
@@ -45,14 +47,27 @@ def get_connection():
     return connections[app_settings.EXPLORER_CONNECTION_NAME] if app_settings.EXPLORER_CONNECTION_NAME else connection
 
 
+def get_explorer_master_db_connection():
+    logger.info("get_explorer_master_db_connection successful")
+    return connections[
+        app_settings.EXPLORER_MASTER_DB_CONNECTION_NAME] if app_settings.EXPLORER_MASTER_DB_CONNECTION_NAME else connection
+
+
 def get_connection_pii():
     logger.info("explorer_pii_connection succesfull")
     return connections[app_settings.EXPLORER_CONNECTION_PII_NAME] if app_settings.EXPLORER_CONNECTION_PII_NAME else connection
 
 
+def get_master_db_connection():
+    logger.info("explorer_pii_connection succesfull")
+    return connections[
+        app_settings.EXPLORER_CONNECTION_PII_NAME] if app_settings.EXPLORER_CONNECTION_PII_NAME else connection
+
+
 def get_connection_asyncapi_db():
     logger.info("Connecting with async-api DB")
-    return connections[app_settings.EXPLORER_CONNECTION_ASYNC_API_DB_NAME] if app_settings.EXPLORER_CONNECTION_ASYNC_API_DB_NAME else connection
+    return connections[
+        app_settings.EXPLORER_CONNECTION_ASYNC_API_DB_NAME] if app_settings.EXPLORER_CONNECTION_ASYNC_API_DB_NAME else connection
 
 
 def schema_info():
@@ -144,14 +159,14 @@ def get_filename_for_title(title):
     return filename
 
 
-def build_stream_response(query, delim=None):
-    data = csv_report(query, delim).getvalue()
+def build_stream_response(query, delim=None, user=None):
+    data = csv_report(query, delim, user).getvalue()
     response = HttpResponse(data, content_type='text')
     return response
 
 
-def build_download_response(query, delim=None):
-    data = csv_report(query, delim).getvalue()
+def build_download_response(query, delim=None, user=None):
+    data = csv_report(query, delim, user).getvalue()
     response = HttpResponse(data, content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="%s.csv"' % (
         get_filename_for_title(query.title)
@@ -160,9 +175,9 @@ def build_download_response(query, delim=None):
     return response
 
 
-def csv_report(query, delim=None):
+def csv_report(query, delim=None, user=None):
     try:
-        res = query.execute_query_only()
+        res = query.execute_query_only(executing_user=user)
         return write_csv(res.headers, res.data, delim)
     except DatabaseError as e:
         return str(e)
@@ -301,78 +316,84 @@ def should_route_to_asyncapi_db(sql):
     return False
 
 
-def check_and_update_sql_using_query_clause(sql, cutoff_date, query_clause):
-    # Split the SQL statement at the query_clause
-    parts = sql.split(query_clause)
-    select_clause = parts[0].strip()
+def mask_string(string_to_masked):
+    """
+    Replace a string with a dictionary of regex patterns and replacements
+    Param 1: string that needs to be masked
 
-    # Check if clause is the last part of the SQL statement
-    if len(parts) > 1:
-        remaining_clause = query_clause + ' ' + parts[1].strip()
+    Eg.
+    Following is the PII_MASKING_PATTERN_REPLACEMENT_DICT as of now
+    {
+        r"(?:\+?\d{1,3}|0)?([6-9]\d{9})\b": "XXXXXXXXXXX", # For masking phone number
+        r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b": "XXX@XXX.com", # For masking email
+    }
+    It would mask the string:
+    'My number is +919191919191, their number is 9191919191, my email is abc@abc.com, their email is xyz@pq.in.'
+    to:
+    'My number is XXXXXXXXXXX, their number is XXXXXXXXXXX, my email is XXX@XXX.com, their email is XXX@XXX.com.'
+    and return it.
+    """
+
+    for pattern, replacement in PII_MASKING_PATTERN_REPLACEMENT_DICT.items():
+        string_to_masked = re.sub(pattern, replacement, string_to_masked)
+    return string_to_masked
+
+
+def get_masked_value(value: str):
+    """
+    This function will return the masked value depending upon the length of the value.
+    For eg.
+    1. value = None => masked_value = None
+    1. value = "son" => masked_value = "XXX"
+    2. value = "sunny" => masked_value = "sXXXy"
+    3. value = "my name is kunal" => masked_value = "myXXXXXXXXXXXal"
+    """
+
+    if not value:
+        return None
+
+    if len(value) <= 3:
+        return "".join("X" for _ in range(len(value)))
+    elif 4 <= len(value) <= 5:
+        return value[0] + "".join("X" for _ in range(len(value) - 2)) + value[-1]
     else:
-        remaining_clause = ''
-
-    # Add the "WHERE" clause with the cutoff date before the query_clause
-    modified_sql = '{} WHERE created_at >= \'{}\' {}'.format(select_clause, cutoff_date, remaining_clause)
-    return modified_sql
+        return value[:2] + "".join("X" for _ in range(len(value) - 2)) + value[-2:]
 
 
-def add_cutoff_date_to_sql_without_where_clause(sql, cutoff_date):
-    sql = sql.strip()
-    # Check if the SQL statement contains "GROUP BY", "ORDER BY", or "LIMIT" clauses
-    if 'GROUP BY' in sql:
-        return check_and_update_sql_using_query_clause(sql, cutoff_date, 'GROUP BY')
-    if 'ORDER BY' in sql:
-        return check_and_update_sql_using_query_clause(sql, cutoff_date, 'ORDER BY')
-    if 'LIMIT' in sql:
-        return check_and_update_sql_using_query_clause(sql, cutoff_date, 'LIMIT')
+def get_masked_email(email: str) -> str:
+    if not email or "@" not in email:
+        return email
 
-    # Add the "WHERE" clause with the cutoff date
-    modified_sql = '{} WHERE created_at >= \'{}\''.format(sql, cutoff_date)
-    return modified_sql
+    local_part, domain_part = email.split("@")
+    masked_local_part = get_masked_value(local_part)
+    return masked_local_part + "@" + "".join("X" for _ in range(len(domain_part)))
 
 
-def add_cutoff_date_to_requestlog_queries(sql):
-    cutoff_date = datetime.datetime.strptime(REQUEST_LOG_SQL_CUTOFF_DATE, "%Y-%m-%d")
+def get_masked_phone_number(phone_number: str) -> str:
+    if not phone_number or len(phone_number) < 10:
+        return phone_number
 
-    # Split the SQL statement into different parts
-    parts = fmt_sql(sql).split('WHERE')
-    modified_sql = ''
+    return "".join("X" for _ in range(len(phone_number) - 4)) + phone_number[-4:]
 
-    if len(parts) == 1:
-        # No WHERE clause, add cutoff date filter
-        modified_sql = add_cutoff_date_to_sql_without_where_clause(parts[0], cutoff_date)
-    else:
-        # SQL statement contains a WHERE clause
-        modified_sql = parts[0]
-        conditions = parts[1].strip().split(' ')
 
-        # Find the position of GROUP BY or ORDER BY clauses
-        group_by_index = -1
-        order_by_index = -1
-        limit_index = -1
+def mask_player_pii(data: str) -> str:
+    if not data:
+        return data
 
-        for i, condition in enumerate(conditions):
-            if condition == 'GROUP' and conditions[i + 1] == 'BY':
-                group_by_index = i
-            elif condition == 'ORDER' and conditions[i + 1] == 'BY':
-                order_by_index = i
-            elif condition == 'LIMIT':
-                limit_index = i
+    matched_phone_numbers = re.findall(PATTERN_FOR_FINDING_PHONE_NUMBER, data)
+    for phone_number in matched_phone_numbers:
+        data = data.replace(phone_number, get_masked_phone_number(phone_number))
 
-        # Determine the index before which the cutoff date filter should be added
-        filter_indices = list(filter(lambda x: x != -1, [group_by_index, order_by_index, limit_index]))
-        filter_index = min(filter_indices) if filter_indices else -1
+    matched_emails = re.findall(PATTERN_FOR_FINDING_EMAIL, data)
+    for email in matched_emails:
+        data = data.replace(email, get_masked_email(email))
 
-        if filter_index == -1:
-            # Add cutoff date filter after existing WHERE clause
-            modified_sql += " WHERE created_at >= '{}' AND {}".format(cutoff_date, parts[1])
-        else:
-            # Add cutoff date filter before GROUP BY, ORDER BY, or LIMIT clauses
-            modified_sql += " WHERE created_at >= '{}' {} {}".format(
-                cutoff_date,
-                'AND' if filter_index > 0 else '',
-                parts[1]
-            )
+    return data
 
-    return fmt_sql(modified_sql)
+
+def is_pii_masked_for_user(user):
+    """
+    Check if the user has permission to view masked phone numbers
+    """
+    user_group_ids = user.groups.all().values_list('id', flat=True)
+    return ALLOW_PHONE_NUMBER_MASKING_GROUP_ID not in user_group_ids

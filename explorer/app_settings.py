@@ -6,12 +6,15 @@ EXPLORER_CONNECTION_PII_NAME = getattr(
     settings, 'EXPLORER_CONNECTION_PII_NAME', None)
 EXPLORER_CONNECTION_ASYNC_API_DB_NAME = getattr(
     settings, 'EXPLORER_CONNECTION_ASYNC_API_DB_NAME', None)
+EXPLORER_MASTER_DB_CONNECTION_NAME = getattr(settings, 'EXPLORER_MASTER_DB_CONNECTION', None)
 
 # Change the behavior of explorer
 EXPLORER_SQL_BLACKLIST = getattr(settings, 'EXPLORER_SQL_BLACKLIST', ('ALTER', 'RENAME ', 'DROP', 'TRUNCATE',
                                  'INSERT INTO', 'UPDATE', 'REPLACE', 'DELETE', 'CREATE TABLE', 'SCHEMA', 'GRANT', 'OWNER TO'))
 EXPLORER_SQL_WHITELIST = getattr(
     settings, 'EXPLORER_SQL_WHITELIST', ('CREATED', 'DELETED', 'REGEXP_REPLACE'))
+TABLE_NAMES_FOR_PII_MASKING = getattr(
+    settings, 'TABLE_NAMES_FOR_PII_MASKING', None)
 EXPLORER_DEFAULT_ROWS = getattr(settings, 'EXPLORER_DEFAULT_ROWS', 1000)
 EXPLORER_SCHEMA_EXCLUDE_APPS = getattr(settings, 'EXPLORER_SCHEMA_EXCLUDE_APPS', (
     'django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions', 'django.contrib.admin'))

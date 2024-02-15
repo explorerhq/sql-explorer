@@ -1,3 +1,5 @@
+from django.views.decorators.csrf import csrf_exempt
+
 from explorer.tasks import execute_query
 import six
 import logging
@@ -21,26 +23,25 @@ from django.utils.translation import gettext_lazy as _
 from explorer.models import Query, QueryLog, QueryChangeLog, MSG_FAILED_BLACKLIST
 from explorer import app_settings
 from explorer.forms import QueryForm
-from explorer.utils import url_get_rows,\
-    url_get_query_id,\
-    url_get_log_id,\
-    schema_info,\
-    url_get_params,\
-    safe_admin_login_prompt,\
-    build_download_response,\
-    build_stream_response,\
-    user_can_see_query,\
-    fmt_sql,\
-    allowed_query_pks,\
-    url_get_show,\
-    compare_sql,\
+from explorer.utils import url_get_rows, \
+    url_get_query_id, \
+    url_get_log_id, \
+    schema_info, \
+    url_get_params, \
+    safe_admin_login_prompt, \
+    build_download_response, \
+    build_stream_response, \
+    user_can_see_query, \
+    fmt_sql, \
+    allowed_query_pks, \
+    url_get_show, \
+    compare_sql, \
     check_replication_lag
 
 try:
     from collections import Counter
 except:
     from counter import Counter
-
 
 import re
 import json
@@ -52,12 +53,13 @@ logger = logging.getLogger(__name__)
 def view_permission(f):
     @wraps(f)
     def wrap(request, *args, **kwargs):
-        if not app_settings.EXPLORER_PERMISSION_VIEW(request.user)\
-                and not user_can_see_query(request, kwargs)\
+        if not app_settings.EXPLORER_PERMISSION_VIEW(request.user) \
+                and not user_can_see_query(request, kwargs) \
                 and not (app_settings.EXPLORER_TOKEN_AUTH_ENABLED()
                          and request.META.get('HTTP_X_API_TOKEN') == app_settings.EXPLORER_TOKEN):
             return safe_admin_login_prompt(request)
         return f(request, *args, **kwargs)
+
     return wrap
 
 
@@ -67,10 +69,11 @@ def view_permission(f):
 def view_permission_list(f):
     @wraps(f)
     def wrap(request, *args, **kwargs):
-        if not app_settings.EXPLORER_PERMISSION_VIEW(request.user)\
+        if not app_settings.EXPLORER_PERMISSION_VIEW(request.user) \
                 and not allowed_query_pks(request.user.id):
             return safe_admin_login_prompt(request)
         return f(request, *args, **kwargs)
+
     return wrap
 
 
@@ -80,6 +83,7 @@ def change_permission(f):
         if not app_settings.EXPLORER_PERMISSION_CHANGE(request.user):
             return safe_admin_login_prompt(request)
         return f(request, *args, **kwargs)
+
     return wrap
 
 
@@ -125,14 +129,16 @@ def email_csv_query(request, query_id):
 def _csv_response(request, query_id, stream=False, delim=None):
     query = get_object_or_404(Query, pk=query_id)
     query.params = url_get_params(request)
-    return build_stream_response(query, delim) if stream else build_download_response(query, delim)
+    return build_stream_response(query, delim, user=request.user) if stream else build_download_response(query, delim,
+                                                                                                         user=request.user)
 
 
 @change_permission
 @require_POST
 def download_csv_from_sql(request):
     sql = request.POST.get('sql')
-    return build_download_response(Query(sql=sql, title="Playground", params=url_get_params(request)))
+    return build_download_response(Query(sql=sql, title="Playground", params=url_get_params(request)),
+                                   user=request.user)
 
 
 @change_permission
@@ -141,8 +147,11 @@ def schema(request):
     return render_to_response('explorer/schema.html', {'schema': schema_info()})
 
 
+@csrf_exempt
 @require_POST
 def format_sql(request):
+    if not (request.user.is_authenticated()):
+        return HttpResponse(status=403)
     sql = request.POST.get('sql', '')
     formatted = fmt_sql(sql)
     return HttpResponse(json.dumps({"formatted": formatted}), content_type="application/json")
@@ -303,7 +312,9 @@ class PlayQueryView(ExplorerContextMixin, View):
         return self.render_template('explorer/play.html', RequestContext(request, {'title': 'Playground'}))
 
     def render_with_sql(self, request, query, run_query=True, error=None):
-        return self.render_template('explorer/play.html', query_viewmodel(request, query, title="Playground", run_query=run_query, error=error))
+        return self.render_template('explorer/play.html',
+                                    query_viewmodel(request, query, title="Playground", run_query=run_query,
+                                                    error=error))
 
 
 class QueryView(ExplorerContextMixin, View):
@@ -357,7 +368,7 @@ class QueryView(ExplorerContextMixin, View):
                 query,
                 form=form,
                 run_query=False,
-                
+
                 error=ve.message
             )
         return self.render_template('explorer/query.html', vm)
@@ -406,5 +417,5 @@ def query_viewmodel(request, query, title=None, form=None, message=None, run_que
         'lag_exists': lag_exists,
         'replication_lag': replication_lag,
     }
-    )
+                         )
     return ret
