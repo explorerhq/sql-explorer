@@ -103,14 +103,12 @@ class ExplorerContextMixin(object):
         return render_to_response(template, ctx)
 
 
-@csrf_exempt
 @view_permission
 @require_GET
 def download_query(request, query_id):
     return _csv_response(request, query_id, False, delim=request.GET.get('delim', None))
 
 
-@csrf_exempt
 @view_permission
 @require_GET
 def view_csv_query(request, query_id):
@@ -128,7 +126,6 @@ def email_csv_query(request, query_id):
     return HttpResponse(status=403)
 
 
-@csrf_exempt
 def _csv_response(request, query_id, stream=False, delim=None):
     query = get_object_or_404(Query, pk=query_id)
     query.params = url_get_params(request)
@@ -145,7 +142,6 @@ def download_csv_from_sql(request):
                                    user=request.user)
 
 
-@csrf_exempt
 @change_permission
 @require_GET
 def schema(request):
