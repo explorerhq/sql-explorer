@@ -133,6 +133,7 @@ def _csv_response(request, query_id, stream=False, delim=None):
                                                                                                          user=request.user)
 
 
+@csrf_exempt
 @change_permission
 @require_POST
 def download_csv_from_sql(request):
