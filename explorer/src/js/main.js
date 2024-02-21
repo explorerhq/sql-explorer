@@ -12,13 +12,17 @@ import * as bootstrap from 'bootstrap'; // eslint-disable-line no-unused-vars
 
 const route_initializers = {
     explorer_index:      () => import('./query-list').then(({setupQueryList}) => setupQueryList()),
-    query_detail:        () => import('./explorer').then(({ExplorerEditor}) => new ExplorerEditor(queryId)),
+    query_detail:        () => import('./explorer').then(({ExplorerEditor}) => {
+        const queryId = document.getElementById('queryIdGlobal').value;
+        new ExplorerEditor(queryId);
+    }),
     query_create:        () => import('./explorer').then(({ExplorerEditor}) => new ExplorerEditor('new')),
     explorer_playground: () => import('./explorer').then(({ExplorerEditor}) => new ExplorerEditor('new')),
     explorer_schema:     () => import('./schema').then(({setupSchema}) => setupSchema()),
 };
 
 document.addEventListener('DOMContentLoaded', function() {
+    const clientRoute = document.getElementById('clientRoute').value;
     if (route_initializers.hasOwnProperty(clientRoute)) {
         route_initializers[clientRoute]();
     }

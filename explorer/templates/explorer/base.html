@@ -12,14 +12,12 @@
         {% vite_asset 'scss/styles.scss' %}
     {% endblock style %}
 
-    <script type="text/javascript">
-        csrfCookieName = "{% firstof csrf_cookie_name 'csrftoken' %}";
-        csrfCookieHttpOnly = "{% firstof csrf_cookie_httponly False %}" === "True";
-        clientRoute = "{{ request.resolver_match.url_name }}"
-    </script>
 </head>
 
 <body>
+    <input type="hidden" id="csrfCookieName" value="{% firstof csrf_cookie_name 'csrftoken' %}">
+    <input type="hidden" id="csrfCookieHttpOnly" value="{% firstof csrf_cookie_httponly False %}">
+    <input type="hidden" id="clientRoute" value="{{ request.resolver_match.url_name }}">
 {% if vite_dev_mode %}
     <div class="vite-not-running-canary" style="text-align:center;">
         <hr>
