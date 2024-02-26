@@ -2,9 +2,8 @@
 {% load explorer_tags i18n %}
 
 {% block sql_explorer_content %}
-<script type="text/javascript">
-    queryId = "{{ query.id }}";
-</script>
+
+<input type="hidden" id="queryIdGlobal" value="{{ query.id }}">
 
 <div class="container">
     <div class="row">
