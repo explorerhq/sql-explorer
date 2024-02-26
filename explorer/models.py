@@ -8,6 +8,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from explorer import app_settings
+from explorer.tracker import Stat, StatNames
 from explorer.utils import (
     extract_params, get_params_for_url, get_s3_bucket, get_valid_connection, passes_blacklist, s3_url,
     shared_dict_update, swap_params,
@@ -108,6 +109,8 @@ class Query(models.Model):
             raise e
         ql.duration = ret.duration
         ql.save()
+        Stat(StatNames.QUERY_RUN,
+             {"sql_len": len(ql.sql), "duration": ql.duration}).track()
         return ret, ql
 
     def execute(self):

@@ -319,7 +319,7 @@ The export buttons to use. Default includes Excel, so xlsxwriter from ``requirem
 
 
 Unsafe rendering
-*****************************
+****************
 
 Disable auto escaping for rendering values from the database. Be wary of XSS attacks if querying unknown data.
 
@@ -337,3 +337,13 @@ but a dotted path to a python view can be used
 .. code-block:: python
 
    EXPLORER_NO_PERMISSION_VIEW = 'explorer.views.auth.safe_login_view_wrapper'
+
+Anonymous Usage Stat Collection
+*******************************
+
+By default, anonymous usage statistics are collected. To disable this, set the following setting to False.
+You can see what is being collected in tracker.py.
+
+.. code-block:: python
+
+    EXPLORER_ENABLE_ANONYMOUS_STATS = False

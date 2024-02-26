@@ -97,8 +97,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
 ]
 
-CELERY_TASK_ALWAYS_EAGER = True
-
 # added to help debug tasks
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
@@ -110,6 +108,10 @@ EXPLORER_TRANSFORMS = (
 )
 
 EXPLORER_USER_QUERY_VIEWS = {}
-# variable set in github action - assumed to be string
-EXPLORER_TASKS_ENABLED = os.environ.get("ENABLE_TASKS") == "yes"
+
+# Tasks disabled by default, but if you have celery installed
+# make sure the broker URL is set correctly
+EXPLORER_TASKS_ENABLED = False
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+
 EXPLORER_S3_BUCKET = "thisismybucket.therearemanylikeit.butthisoneismine"

@@ -7,13 +7,15 @@ minimum.
 Python
 ------
 
-=========================================================== ======= ================
-Name                                                        Version License
-=========================================================== ======= ================
-`sqlparse <https://github.com/andialbrecht/sqlparse/>`_     0.4.0   BSD
-=========================================================== ======= ================
+============================================================ ======= ================
+Name                                                         Version License
+============================================================ ======= ================
+`sqlparse <https://github.com/andialbrecht/sqlparse/>`_      0.4.0   BSD
+`requests <https://requests.readthedocs.io/en/latest/>`_     2.2.0   Apache 2.0
+============================================================ ======= ================
 
 - sqlparse is used for SQL formatting
+- requests is used for anonymous usage tracking
 
 **Python - Optional Dependencies**
 
@@ -42,30 +44,3 @@ The bundle for the SQL editor is fairly large at ~400kb, due primarily to CodeMi
 
 The built front-end files are distributed in the PyPi release (and will be found by collectstatic). Instructions for building the front-end files are in :doc:`install`.
 
-Tests
------
-
-Factory Boy is needed if you'd like to run the tests, which can you do
-easily:
-
-``python manage.py test``
-
-and with coverage:
-
-``coverage run --source='.' manage.py test``
-
-then:
-
-``coverage report``
-
-...97%! Huzzah!
-
-Running Locally
----------------
-
-Included is a test_project that you can use to kick the tires. Just
-create a new virtualenv, cd into ``test_project`` and run ``start.sh`` (or
-walk through the steps yourself) to get a test instance of the app up
-and running.
-
-You can now navigate to 127.0.0.1:8000/ and begin exploring!

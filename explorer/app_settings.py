@@ -104,7 +104,7 @@ EXPLORER_GET_USER_QUERY_VIEWS = lambda: getattr(  # noqa
 EXPLORER_TOKEN_AUTH_ENABLED = lambda: getattr(  # noqa
     settings, "EXPLORER_TOKEN_AUTH_ENABLED", False
 )
-EXPLORER_NO_PERMISSION_VIEW = lambda: locate(# noqa
+EXPLORER_NO_PERMISSION_VIEW = lambda: locate(  # noqa
     getattr(
         settings,
         "EXPLORER_NO_PERMISSION_VIEW",
@@ -132,6 +132,9 @@ UNSAFE_RENDERING = getattr(settings, "EXPLORER_UNSAFE_RENDERING", False)
 EXPLORER_CHARTS_ENABLED = getattr(settings, "EXPLORER_CHARTS_ENABLED", False)
 
 EXPLORER_SHOW_SQL_BY_DEFAULT = getattr(settings, "EXPLORER_SHOW_SQL_BY_DEFAULT", True)
+
+EXPLORER_ENABLE_ANONYMOUS_STATS = getattr(settings, "EXPLORER_ENABLE_ANONYMOUS_STATS", True)
+EXPLORER_COLLECT_ENDPOINT_URL = "https://collect.sqlexplorer.io/stat"
 
 # If set to True will autorun queries when viewed which is the historical behavior
 # Default to True if not set in order to be backwards compatible
