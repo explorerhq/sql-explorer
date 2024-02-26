@@ -20,3 +20,4 @@ explorer/static/
 # Sphinx documentation
 docs/_build/
 .env
+tst

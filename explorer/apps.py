@@ -1,6 +1,7 @@
 from django.apps import AppConfig
 from django.core.exceptions import ImproperlyConfigured
 from django.db import connections as djcs
+from django.db.utils import OperationalError
 from django.utils.translation import gettext_lazy as _
 
 
@@ -11,9 +12,14 @@ class ExplorerAppConfig(AppConfig):
     default_auto_field = "django.db.models.AutoField"
 
     def ready(self):
-        from explorer.schema import build_async_schemas
         _validate_connections()
-        build_async_schemas()
+        queue_async_schemas()
+        track_summary_stats()
+
+
+def queue_async_schemas():
+    from explorer.schema import build_async_schemas
+    build_async_schemas()
 
 
 def _get_default():
@@ -42,3 +48,23 @@ def _validate_connections():
                 f"EXPLORER_CONNECTIONS contains ({name}, {conn_name}), "
                 f"but {conn_name} is not a valid Django DB connection."
             )
+
+
+def track_summary_stats():
+    from explorer.tracker import Stat, StatNames
+    from explorer.tracker import gather_summary_stats
+    from explorer.models import Query
+
+    # Test to see if migrations have been applied.
+    # If not, then we won't gather start-up stats (no need -- there's nothing interesting to report on)
+    # We can't use a post_migrate hook because in many cases the app will be starting
+    # and there won't be any migrations running! So the signal would never get called.
+    # Django doesn't actually have a way of running code on application initialization,
+    # so we are kinda faking it by doing this.
+    try:
+        Query.objects.first()
+    except OperationalError:
+        return
+    else:
+        payload = gather_summary_stats()
+        Stat(StatNames.STARTUP_STATS, payload).track()

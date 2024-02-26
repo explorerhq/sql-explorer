@@ -19,6 +19,8 @@ SQL Explorer
 
 `Documentation <https://django-sql-explorer.readthedocs.io/en/latest/>`_
 
+`Official Website <https://www.sqlexplorer.io/>`_
+
 SQL Explorer aims to make the flow of data between people fast,
 simple, and confusion-free. It is a Django-based application that you
 can add to an existing Django site, or use as a standalone business

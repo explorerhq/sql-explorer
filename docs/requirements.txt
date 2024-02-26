@@ -3,3 +3,4 @@ furo
 Sphinx>4
 sphinx-copybutton
 sphinxext-opengraph
+requests>=2.3
