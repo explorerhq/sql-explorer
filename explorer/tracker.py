@@ -54,7 +54,7 @@ class StatNames(SelfNamedEnum):
     STARTUP_STATS = auto()
 
 
-class Stat(object):
+class Stat:
 
     def __init__(self, name: StatNames, value):
         self.instanceId = instance_identifier()
