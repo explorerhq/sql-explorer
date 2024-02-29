@@ -110,7 +110,7 @@ class Query(models.Model):
         ql.duration = ret.duration
         ql.save()
         Stat(StatNames.QUERY_RUN,
-             {'sql_len': len(ql.sql), 'duration': ql.duration}).track()
+             {"sql_len": len(ql.sql), "duration": ql.duration}).track()
         return ret, ql
 
     def execute(self):

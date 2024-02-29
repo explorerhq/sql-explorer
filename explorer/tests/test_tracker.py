@@ -14,5 +14,5 @@ class TestTracker(TestCase):
 
     def test_gather_summary_stats(self):
         res = gather_summary_stats()
-        self.assertEqual(res['total_query_count'], 0)
-        self.assertEqual(res['default_database'], 'sqlite')
+        self.assertEqual(res["total_query_count"], 0)
+        self.assertEqual(res["default_database"], "sqlite")

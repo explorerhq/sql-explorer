@@ -12,14 +12,10 @@ class ExplorerAppConfig(AppConfig):
     default_auto_field = "django.db.models.AutoField"
 
     def ready(self):
+        from explorer.schema import build_async_schemas
         _validate_connections()
-        queue_async_schemas()
+        build_async_schemas()
         track_summary_stats()
-
-
-def queue_async_schemas():
-    from explorer.schema import build_async_schemas
-    build_async_schemas()
 
 
 def _get_default():

@@ -21,14 +21,16 @@ def _instance_identifier():
     import hashlib
     from django.db.migrations.recorder import MigrationRecorder
     from django.conf import settings
-    migration = MigrationRecorder.Migration.objects.all().order_by('applied').first()
-    ts = migration.applied.timestamp()
-    ts_bytes = str(ts).encode('utf-8')
-    s_bytes = settings.SECRET_KEY.encode('utf-8')
-    hashed_value = hashlib.sha256(ts_bytes + s_bytes).hexdigest()
+    try:
+        migration = MigrationRecorder.Migration.objects.all().order_by("applied").first()
+        ts = migration.applied.timestamp()
+        ts_bytes = str(ts).encode("utf-8")
+        s_bytes = settings.SECRET_KEY.encode("utf-8")
+        hashed_value = hashlib.sha256(ts_bytes + s_bytes).hexdigest()
 
-    return hashed_value
-
+        return hashed_value
+    except Exception as e:
+        return "unknown: %s" % e
 
 def instance_identifier():
     key = "explorer_instance_identifier"
@@ -67,7 +69,7 @@ class Stat(object):
             def _send():
                 requests.post(app_settings.EXPLORER_COLLECT_ENDPOINT_URL(),
                               data=data,
-                              headers={'Content-Type': 'application/json'})
+                              headers={"Content-Type": "application/json"})
 
             thread = threading.Thread(target=_send)
             thread.start()
@@ -81,23 +83,23 @@ def gather_summary_stats():
     from django.conf import settings
 
     ql_stats = QueryLog.objects.aggregate(
-        total_count=Count('*'),
-        unique_run_by_user_count=Count('run_by_user_id', distinct=True)
+        total_count=Count("*"),
+        unique_run_by_user_count=Count("run_by_user_id", distinct=True)
     )
 
     q_stats = Query.objects.aggregate(
-        total_count=Count('*'),
-        unique_connection_count=Count('connection', distinct=True)
+        total_count=Count("*"),
+        unique_connection_count=Count("connection", distinct=True)
     )
 
     return {
-        "total_log_count": ql_stats['total_count'],
-        "unique_run_by_user_count": ql_stats['unique_run_by_user_count'],
-        "total_query_count": q_stats['total_count'],
-        "unique_connection_count": q_stats['unique_connection_count'],
+        "total_log_count": ql_stats["total_count"],
+        "unique_run_by_user_count": ql_stats["unique_run_by_user_count"],
+        "total_query_count": q_stats["total_count"],
+        "unique_connection_count": q_stats["unique_connection_count"],
         "default_database": connection.vendor,
         "django_install_date":
-            MigrationRecorder.Migration.objects.all().order_by('applied').first().applied.timestamp(),
+            MigrationRecorder.Migration.objects.all().order_by("applied").first().applied.timestamp(),
         "debug": settings.DEBUG,
         "tasks_enabled": app_settings.ENABLE_TASKS,
     }

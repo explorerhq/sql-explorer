@@ -2,6 +2,7 @@ from pydoc import locate
 
 from django.conf import settings
 
+
 EXPLORER_CONNECTIONS = getattr(settings, "EXPLORER_CONNECTIONS", {})
 EXPLORER_DEFAULT_CONNECTION = getattr(
     settings, "EXPLORER_DEFAULT_CONNECTION", None
@@ -35,6 +36,7 @@ EXPLORER_SQL_BLACKLIST = getattr(
         "REVOKE",
     )
 )
+
 
 EXPLORER_DEFAULT_ROWS = getattr(settings, "EXPLORER_DEFAULT_ROWS", 1000)
 
@@ -132,9 +134,7 @@ EXPLORER_CHARTS_ENABLED = getattr(settings, "EXPLORER_CHARTS_ENABLED", False)
 EXPLORER_SHOW_SQL_BY_DEFAULT = getattr(settings, "EXPLORER_SHOW_SQL_BY_DEFAULT", True)
 
 EXPLORER_ENABLE_ANONYMOUS_STATS = getattr(settings, "EXPLORER_ENABLE_ANONYMOUS_STATS", True)
-EXPLORER_COLLECT_ENDPOINT_URL = lambda: getattr(  # noqa
-    settings, "EXPLORER_COLLECT_ENDPOINT_URL", "https://collect.sqlexplorer.io/stat"
-)
+EXPLORER_COLLECT_ENDPOINT_URL = "https://collect.sqlexplorer.io/stat"
 
 # If set to True will autorun queries when viewed which is the historical behavior
 # Default to True if not set in order to be backwards compatible
