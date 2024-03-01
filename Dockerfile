@@ -13,7 +13,7 @@ COPY requirements.txt /app/
 COPY optional-requirements.txt /app/
 
 # Install any needed packages specified in requirements.txt
-RUN pip install Django==1.9.13
+RUN pip install Django==1.11.17
 RUN pip install future==0.18.2
 RUN pip install -r requirements.txt
 RUN pip install -r optional-requirements.txt
