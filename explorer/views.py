@@ -316,7 +316,7 @@ class PlayQueryView(ExplorerContextMixin, View):
         return self.render_with_sql(request, query, run_query=run_query, error=error)
 
     def render(self, request):
-        return self.render_template('explorer/play.html', RequestContext(request, {'title': 'Playground'}))
+        return self.render_template('explorer/play.html', request , {'title': 'Playground'})
 
     def render_with_sql(self, request, query, run_query=True, error=None):
         return self.render_template('explorer/play.html',
