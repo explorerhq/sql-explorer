@@ -13,7 +13,7 @@ def read(fname):
 
 setup(
     name = "django-sql-explorer-squad",
-    version = 0.9.25,
+    version = "0.9.25",
     author = "Chris Clark",
     author_email = "chris@untrod.com",
     description = ("A pluggable app that allows users (admins) to execute SQL,"
