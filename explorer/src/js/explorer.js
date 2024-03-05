@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import { EditorView } from "codemirror";
-
 import { explorerSetup } from "./codemirror-config";
+import { setUpAssistant } from "./assistant";
 
 import cookie from 'cookiejs';
 import List from 'list.js'
@@ -29,6 +29,16 @@ function editorFromTextArea(textarea) {
 
 export class ExplorerEditor {
     constructor(queryId) {
+
+        const aa = document.getElementById('assistant_accordion');
+        const pa = document.getElementById('nav-preview');
+        if (aa) {
+            // Expand the assistant only if a new query is being created
+            // and no results are yet being shown
+            const expand = !pa && queryId === 'new';
+            setUpAssistant(expand);
+        }
+
         this.queryId = queryId;
         this.$table = $("#preview");
         this.$rows = $("#rows");
@@ -42,6 +52,8 @@ export class ExplorerEditor {
         }
 
         this.editor = editorFromTextArea(document.getElementById("id_sql"));
+
+        window.editor = this.editor;
 
         document.addEventListener('submitEventFromCM', (e) => {
             this.$submit.click();

@@ -64,6 +64,9 @@
                     </div>
                 </div>
                 <input type="hidden" value="{% trans 'Playground Query' %}" name="title" />
+                {% if assistant_enabled %}
+                    {% include 'explorer/assistant.html' %}
+                {% endif %}
             </form>
         </div>
         <div id="schema" style="display: none;">

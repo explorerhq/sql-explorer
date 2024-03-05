@@ -25,12 +25,17 @@ Security
 
 Easy to get started
 -------------------
-- Built on Django's ORM, so works with Postgresql, Mysql, and
-  Sqlite. And, between you and me, it works fine on RedShift as
-  well.
+- Built on Django's ORM, so works with MySQL, Postgres, Oracle,
+  SQLite, Snowflake, MS SQL Server, RedShift, and MariaDB.
 - Small number of dependencies.
 - Just want to get in and write some ad-hoc queries? Go nuts with
   the Playground area.
+
+SQL Assistant
+-------------
+- Built in integration with OpenAI (or the LLM of your choosing)
+  to quickly get help with your query, with relevant schema
+  automatically injected into the prompt.
 
 Snapshots
 ---------

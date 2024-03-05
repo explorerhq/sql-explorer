@@ -1,10 +1,10 @@
 @import "~bootstrap/scss/bootstrap";
 
-//$bootstrap-icons-font-file: "~bootstrap-icons/font/fonts/bootstrap-icons";
 $bootstrap-icons-font-dir: "../../../node_modules/bootstrap-icons/font/fonts";
 @import "~bootstrap-icons/font/bootstrap-icons.css";
 
 @import "variables";
 @import "explorer";
+@import "assistant";
 
 @import "pivot.css";

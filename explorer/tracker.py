@@ -56,6 +56,7 @@ class StatNames(SelfNamedEnum):
     QUERY_RUN = auto()
     QUERY_STREAM = auto()
     STARTUP_STATS = auto()
+    ASSISTANT_RUN = auto()
 
 
 class Stat:
@@ -109,7 +110,8 @@ def gather_summary_stats():
             "debug": settings.DEBUG,
             "tasks_enabled": app_settings.ENABLE_TASKS,
             "unsafe_rendering": app_settings.UNSAFE_RENDERING,
-            "transform_count": len(app_settings.EXPLORER_TRANSFORMS)
+            "transform_count": len(app_settings.EXPLORER_TRANSFORMS),
+            "assistant_enabled": app_settings.EXPLORER_AI_API_KEY is not None,
         }
     except Exception as e:
         return {"error": "error gathering stats: %s" % e}
