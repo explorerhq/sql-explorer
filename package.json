@@ -19,7 +19,7 @@
   "bugs": {
     "url": "https://github.com/chrisclark/django-sql-explorer/issues"
   },
-  "homepage": "https://github.com/chrisclark/django-sql-explorer#readme",
+  "homepage": "https://www.sqlexplorer.io",
   "dependencies": {
     "@codemirror/lang-sql": "^6.5.4",
     "@codemirror/language-data": "^6.3.1",

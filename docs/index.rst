@@ -16,6 +16,7 @@ Django SQL Explorer
 
    features.rst
    install.rst
+   development.rst
    settings.rst
    dependencies.rst
    history.rst

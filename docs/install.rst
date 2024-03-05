@@ -102,29 +102,10 @@ settings.py to enable these features.
 Installing From Source
 ----------------------
 
-If you are installing SQL Explorer from source (by cloning the repository),
-you may want to first look at simply running test_project/start.sh.
-
-If you want to install it into an existing project, you can do so by following
-the instructions above, and additionally building the front-end dependencies.
-
-After cloning, simply run:
-
-::
-
-    nvm install
-    nvm use
-    npm install
-    npm run build
-
-The front-end assets will be built and placed in the /static/ folder
-and collected properly by your Django installation during the `collect static`
-phase. Copy the /explorer directory into site-packages and you're ready to go.
-
-And frankly, as long as you have a reasonably modern version of Node and NPM
-installed, you can probably skip the nvm steps.
-
 Because the front-end assets must be built, installing SQL Explorer via pip
 from github is not supported. The package will be installed, but the front-end
 assets will be missing and will not be able to be built, as the necessary
 configuration files are not included when github builds the wheel for pip.
+
+To run from source, clone the repository and follow the :doc:`development`
+instructions.

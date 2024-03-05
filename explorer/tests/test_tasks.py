@@ -85,7 +85,7 @@ class TestTasks(TestCase):
     @unittest.skipIf(not app_settings.ENABLE_TASKS, "tasks not enabled")
     @patch("explorer.schema.build_schema_info")
     def test_build_schema_cache_async(self, mocked_build):
-        mocked_build.return_value = ["list_of_tuples"]
+        mocked_build.return_value = [("table", [("column", "Integer")]),]
         schema = build_schema_cache_async(CONN)
         assert mocked_build.called
-        self.assertEqual(schema, ["list_of_tuples"])
+        self.assertEqual(schema, [("table", [("column", "Integer")]),])

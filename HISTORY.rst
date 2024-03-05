@@ -5,7 +5,12 @@ Change Log
 This document records all notable changes to `django-sql-explorer <https://github.com/chrisclark/django-sql-explorer>`_.
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
-`4.0.0`_ (2024-02-06)
+`4.1.0`_ (TBD)
+===========================
+* Anonymous usage telemetry. Can be disabled by setting EXPLORER_ENABLE_ANONYMOUS_STATS to False
+* `#594`_: Eliminate <script> tags to prevent potential Content Security Policy issues
+
+`4.0.2`_ (2024-02-06)
 ===========================
 * Add support for Django 5.0. Drop support for Python < 3.10.
 * Basic code completion in the editor!

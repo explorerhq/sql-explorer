@@ -49,7 +49,7 @@ setup(
                  " view, and export the results."),
     license="MIT",
     keywords="django sql explorer reports reporting csv database query",
-    url="https://github.com/chrisclark/django-sql-explorer",
+    url="https://www.sqlexplorer.io",
     project_urls={
       "Changes": "https://django-sql-explorer.readthedocs.io/en/latest/history.html",
       "Documentation": "https://django-sql-explorer.readthedocs.io/en/latest/",
@@ -76,6 +76,7 @@ setup(
     install_requires=[
         "Django>=3.2",
         "sqlparse>=0.4.0",
+        "requests>=2.2",
     ],
     extras_require={
         "charts": [
