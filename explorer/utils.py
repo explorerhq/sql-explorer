@@ -307,7 +307,12 @@ def check_replication_lag():
 
 
 def should_route_to_asyncapi_db(sql):
-    request_log_tables = ["request_log_requestlog", "request_log_requestlogdata"]
+    request_log_tables = [
+        "request_log_requestlog", 
+        "request_log_requestlogdata", 
+        "temp_request_log_requestlog_customer", 
+        "temp_request_log_requestlogdata_customer",
+    ]
     pattern = r"\b(?:%s)\b" % "|".join(map(re.escape, request_log_tables))
     match = re.search(pattern, sql)
     if match:
