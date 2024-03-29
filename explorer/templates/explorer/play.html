@@ -30,8 +30,8 @@
         </br>
         <p>
             <b>Additional Note:</b> The request logs are now stored in two separate tables:
-            <b>request_log_requestlog</b> and <b>request_log_requestlogdata</b>. The request and response data
-            are stored in <b>pii_masked_request_data</b> and <b>pii_masked_response_data</b> columns respectively in the
+            <b>request_log_requestlog</b> and <b>request_log_requestlogdata</b>. The request data, response data and request headers
+            are stored in <b>pii_masked_request_data</b>, <b>pii_masked_response_data</b> and <b>pii_masked_request_headers</b>  columns respectively in the
             <b>request_log_requestlogdata</b> table. Please avoid using `select *` for these tables.
         </p>
         <form role="form" action="{% url "explorer_playground" %}" method="post" id="editor" class="playground-form">
