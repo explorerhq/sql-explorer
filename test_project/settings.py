@@ -115,3 +115,5 @@ EXPLORER_TASKS_ENABLED = False
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 
 EXPLORER_S3_BUCKET = "thisismybucket.therearemanylikeit.butthisoneismine"
+EXPLORER_AI_API_KEY = os.environ.get("AI_API_KEY")
+EXPLORER_ASSISTANT_BASE_URL = os.environ.get("AI_BASE_URL")

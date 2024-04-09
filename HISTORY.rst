@@ -7,6 +7,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 `4.1.0`_ (TBD)
 ===========================
+* SQL Assistant: Built in query help via OpenAI (or LLM of choice), with relevant schema
+  automatically injected into the prompt. Enable via setting EXPLORER_AI_API_KEY.
 * Anonymous usage telemetry. Can be disabled by setting EXPLORER_ENABLE_ANONYMOUS_STATS to False
 * `#594`_: Eliminate <script> tags to prevent potential Content Security Policy issues
 

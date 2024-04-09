@@ -84,6 +84,38 @@ And run the server:
 
 You can now browse to http://127.0.0.1:8000/explorer/ and get exploring!
 
+Note that Explorer expects STATIC_URL to be set appropriately. This isn't a problem
+with vanilla Django setups, but if you are using e.g. Django Storages with S3, you
+must set your STATIC_URL to point to your S3 bucket (e.g. s3_bucket_url + '/static/')
+
+AI SQL Assistant
+----------------
+To enable AI features, you must install the OpenAI SDK and Tiktoken library from
+requirements/optional.txt. By default the Assistant is configured to use OpenAI and
+the `gpt-4-0125-preview` model. To use those settings, set an OpenAI API token in
+your project's settings.py file:
+
+``EXPLORER_AI_API_KEY = 'your_openai_api_key'``
+
+Or, more likely:
+
+``EXPLORER_AI_API_KEY = os.environ.get("OPENAI_API_KEY")``
+
+If you would prefer to use a different provider and/or different model, you can
+also override the AI API URL root and default model. For example, this would configure
+the Assistant to use OpenRouter and Mixtral 8x7B Instruct:
+
+..  code-block:: python
+    :emphasize-lines: 5
+
+    EXPLORER_ASSISTANT_MODEL = {"name": "mistralai/mixtral-8x7b-instruct:nitro",
+                                "max_tokens": 32768})
+    EXPLORER_ASSISTANT_BASE_URL = "https://openrouter.ai/api/v1"
+    EXPLORER_AI_API_KEY = os.environ.get("OPENROUTER_API_KEY")
+
+Other Parameters
+----------------
+
 The default behavior when viewing a parameterized query is to autorun the associated
 SQL with the default parameter values. This may perform poorly and you may want
 a chance for your users to review the parameters before running. If so you may add

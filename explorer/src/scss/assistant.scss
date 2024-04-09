@@ -1,0 +1,35 @@
+#assistant_description_label {
+    white-space: pre-wrap;
+}
+
+#assistant_response pre {
+    position: relative;
+    background: antiquewhite;
+}
+
+#assistant_response .copy-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+}
+
+#additional_table_container {
+    overflow-y: auto;
+    max-height: 120px;
+}
+
+#assistant_input_parent {
+    max-height: 120px;
+    overflow: hidden;
+}
+
+#response_block::after {
+  content: "";
+  position: absolute;
+  top: -20px;
+  right: 10px;
+  border-width: 10px;
+  border-style: solid;
+  border-color: transparent transparent var(--bs-border-color) transparent;
+}

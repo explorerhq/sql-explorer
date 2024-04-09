@@ -1,0 +1,49 @@
+{% load i18n %}
+<div class ="accordion accordion-flush my-3 border" id="assistant_accordion">
+    <div class="accordion-item">
+        <div class="accordion-header" id="assistant_accordion_header">
+            <button class="accordion-button bg-light collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#assistant_collapse" aria-expanded="false" aria-controls="assistant_collapse">
+                <label for="id_assistant_input">SQL Assistant</label>
+            </button>
+        </div>
+    </div>
+    <div id="assistant_collapse" class="accordion-collapse collapse" aria-labelledby="assistant_accordion_header" data-bs-parent="#assistant_accordion">
+        <div class="accordion-body">
+            <div class="row assistant_input_parent">
+                <div class="mt-3 col-12" id="assistant_input_wrapper">
+                    <textarea
+                        class="form-control" id="id_assistant_input"
+                        name="sql_assistant" rows="3" placeholder="What do you need help with?"></textarea>
+                    <label for="id_assistant_input" class="form-label" id="id_assistant_input_label"></label>
+                </div>
+                <div id="additional_table_container" class="d-none col-3">
+                    <input id="search_assistant_tables" class="search" placeholder="{% trans "Search Tables" %}" />
+                    <label for="search_assistant_tables" class="d-none" id="search_assistant_tables_label">Search tables</label>
+                    <div id="table-list" class="list"></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                    <div class="form-check form-check-inline">
+                        <input type="checkbox" class="form-check-input" name="assistant-include-other-tables" id="include_other_tables" autocomplete="off">
+                        <label class="form-check-label" for="include_other_tables">Include Other Tables (<a class="small text-secondary" style="cursor: pointer;"
+                            data-bs-toggle="tooltip" data-bs-placement="top"
+                            data-bs-title="SQL Assistant builds a prompt with your query, your request, relevant schema (tables referenced in your query) and sample data from those tables. You can optionally include other tables (schema + data sample) that you'd like SQL Assistant to know about.">What is this?</a>)</label>
+                    </div>
+                </div>
+                <div class="col-6 text-end">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-primary" id="ask_assistant_btn">Ask Assistant</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div id="response_block" style="display: none" class="position-relative">
+                <div class="mt-3 p-2 pt-3 rounded-2 border bg-light" id="assistant_response"></div>
+            </div>
+        </div>
+    </div>
+</div>
+

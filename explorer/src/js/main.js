@@ -7,18 +7,15 @@ the page. The dynamic import() allows Vite to chunk the JS and only load what's
 necessary for each page. Concretely, this matters because the pages with SQL
 Editors require fairly heavy JS (CodeMirror).
 */
-
-import * as bootstrap from 'bootstrap'; // eslint-disable-line no-unused-vars
+import * as bootstrap from 'bootstrap';
 
 const route_initializers = {
     explorer_index:      () => import('./query-list').then(({setupQueryList}) => setupQueryList()),
-    query_detail:        () => import('./explorer').then(({ExplorerEditor}) => {
-        const queryId = document.getElementById('queryIdGlobal').value;
-        new ExplorerEditor(queryId);
-    }),
+    query_detail:        () => import('./explorer').then(({ExplorerEditor}) =>
+        new ExplorerEditor(document.getElementById('queryIdGlobal').value)),
     query_create:        () => import('./explorer').then(({ExplorerEditor}) => new ExplorerEditor('new')),
     explorer_playground: () => import('./explorer').then(({ExplorerEditor}) => new ExplorerEditor('new')),
-    explorer_schema:     () => import('./schema').then(({setupSchema}) => setupSchema()),
+    explorer_schema:     () => import('./schema').then(({setupSchema}) => setupSchema())
 };
 
 document.addEventListener('DOMContentLoaded', function() {

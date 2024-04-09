@@ -142,3 +142,12 @@ EXPLORER_COLLECT_ENDPOINT_URL = "https://collect.sqlexplorer.io/stat"
 # - user will need to run by clicking the Save & Run Button to execute
 EXPLORER_AUTORUN_QUERY_WITH_PARAMS = getattr(settings, "EXPLORER_AUTORUN_QUERY_WITH_PARAMS", True)
 VITE_DEV_MODE = getattr(settings, "VITE_DEV_MODE", False)
+
+
+# AI Assistant settings. Setting the first to an OpenAI key is the simplest way to enable the assistant
+EXPLORER_AI_API_KEY = getattr(settings, "EXPLORER_AI_API_KEY", None)
+EXPLORER_ASSISTANT_BASE_URL = getattr(settings, "EXPLORER_ASSISTANT_BASE_URL", "https://api.openai.com/v1")
+EXPLORER_ASSISTANT_MODEL = getattr(settings, "EXPLORER_ASSISTANT_MODEL",
+                                   # Return the model name and max_tokens it supports
+                                   {"name": "gpt-4-0125-preview",
+                                    "max_tokens": 128000})
