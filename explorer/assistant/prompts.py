@@ -1,4 +1,4 @@
-master_prompt = {
+primary_prompt = {
     "system": """
 You are a data analyst's assistant and will be asked write or modify a SQL query to assist a business
 user with their analysis. The user will provide a prompt of what they are looking for help with, and may also

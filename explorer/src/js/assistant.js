@@ -7,14 +7,6 @@ import List from "list.js";
 
 const spinner = "<div class=\"spinner-border text-primary\" role=\"status\"><span class=\"visually-hidden\">Loading...</span></div>";
 
-function getCheckedAssistantValue() {
-    const checkedRadio = document.querySelector('input[name="assistant-option"]:checked');
-    if (checkedRadio) {
-        return checkedRadio.id;
-    }
-    return null;
-}
-
 export function setUpAssistant(expand = false) {
 
     if(expand) {
@@ -56,6 +48,7 @@ export function setUpAssistant(expand = false) {
             div.appendChild(label);
             tableList.appendChild(div);
         });
+
         let options = {
             valueNames: ['form-check-label'],
         };
@@ -66,29 +59,25 @@ export function setUpAssistant(expand = false) {
         console.error('Error retrieving JSON schema:', error);
     });
 
-
     const checkbox = document.getElementById('include_other_tables');
     const additionalTableContainer = document.getElementById('additional_table_container');
     const assistantInputWrapper = document.getElementById('assistant_input_wrapper');
 
-    function updateLayout(checked) {
+    function showHideExtraTables(checked) {
         if (checked) {
-            // Checkbox is checked
-            additionalTableContainer.classList.remove('d-none'); // Show the container
+            additionalTableContainer.classList.remove('d-none');
             assistantInputWrapper.classList.remove('col-12');
-            assistantInputWrapper.classList.add('col-9'); // Adjust textarea width to 2/3
+            assistantInputWrapper.classList.add('col-9');
         } else {
-            // Checkbox is not checked
-            additionalTableContainer.classList.add('d-none'); // Hide the container
+            additionalTableContainer.classList.add('d-none');
             assistantInputWrapper.classList.remove('col-9');
-            assistantInputWrapper.classList.add('col-12'); // Adjust textarea width to full width
+            assistantInputWrapper.classList.add('col-12');
         }
     }
     checkbox.addEventListener('change', function() {
-        updateLayout(this.checked);
+        showHideExtraTables(this.checked);
     });
-    updateLayout(checkbox.checked);
-
+    showHideExtraTables(checkbox.checked);
 
     document.getElementById('ask_assistant_btn').addEventListener('click', function() {
 
@@ -116,7 +105,7 @@ export function setUpAssistant(expand = false) {
         })
         .then(response => {
             if (!response.ok) {
-            throw new Error('Network response was not ok');
+                throw new Error('Network response was not ok');
             }
             return response.json();
         })

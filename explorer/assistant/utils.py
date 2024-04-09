@@ -20,10 +20,8 @@ def openai_client():
     )
 
 
-def do_req(prompt, history=None):
-    if not history:
-        history = []
-    messages = history + [
+def do_req(prompt):
+    messages = [
         {"role": "system", "content": prompt["system"]},
         {"role": "user", "content": prompt["user"]},
     ]

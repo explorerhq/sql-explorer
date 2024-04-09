@@ -6,7 +6,7 @@ import json
 from explorer.tracker import Stat, StatNames
 from explorer.utils import get_valid_connection
 from explorer.assistant.models import PromptLog
-from explorer.assistant.prompts import master_prompt
+from explorer.assistant.prompts import primary_prompt
 from explorer.assistant.utils import (
     do_req, extract_response, tables_from_schema_info,
     get_table_names_from_query, sample_rows_from_tables,
@@ -25,7 +25,8 @@ def run_assistant(request_data, user):
     if sql:
         user_prompt += f"## Existing SQL ##\n\n{sql}\n\n"
 
-    included_tables = get_table_names_from_query(sql) + request_data.get("selected_tables", [])
+    extra_tables = request_data.get("selected_tables", [])
+    included_tables = get_table_names_from_query(sql) + extra_tables
     if included_tables:
         table_struct = tables_from_schema_info(request_data["connection"],
                                                included_tables)
@@ -39,7 +40,7 @@ def run_assistant(request_data, user):
 
     user_prompt += f"## User's Request to Assistant ##\n\n{request_data['assistant_request']}\n\n"
 
-    prompt = master_prompt
+    prompt = primary_prompt.copy()
     prompt["user"] = user_prompt
 
     start = timezone.now()
@@ -61,6 +62,7 @@ def run_assistant(request_data, user):
         pl.save()
         Stat(StatNames.ASSISTANT_RUN, {
             "included_table_count": len(included_tables),
+            "extra_table_count": len(extra_tables),
             "has_sql": bool(sql),
             "duration": pl.duration,
         }).track()
