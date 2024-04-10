@@ -23,7 +23,7 @@ sys.path.insert(0, os.path.abspath("."))
 # -- Project information -----------------------------------------------------
 current_year = datetime.datetime.now().year
 project = "Django SQL Explorer"
-copyright = f"2016-{current_year}, Chris Clark"
+copyright = f"2016-{current_year}, SQL Explorer"
 author = "Chris Clark"
 
 version = explorer.get_version(True)

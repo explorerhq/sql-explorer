@@ -347,3 +347,14 @@ You can see what is being collected in tracker.py.
 .. code-block:: python
 
     EXPLORER_ENABLE_ANONYMOUS_STATS = False
+
+AI Settings (SQL Assistant)
+***************************
+
+The following three settings control the SQL Assistant. More information is available in :doc:`install` instructions.
+
+.. code-block:: python
+
+    EXPLORER_AI_API_KEY = getattr(settings, "EXPLORER_AI_API_KEY", None)
+    EXPLORER_ASSISTANT_BASE_URL = getattr(settings, "EXPLORER_ASSISTANT_BASE_URL", "https://api.openai.com/v1")
+    EXPLORER_ASSISTANT_MODEL
