@@ -13,7 +13,7 @@
             </p>
             <form role="form" action="{% url 'explorer_playground' %}" method="post" id="editor" class="playground-form form-horizontal">{% csrf_token %}
                 {% if error %}
-                    <div class="alert alert-danger">{{ error|escape }}</div>
+                    <div class="alert alert-danger db-error">{{ error|escape }}</div>
                 {% endif %}
                 {{ form.non_field_errors }}
                 {% if form.connections|length > 1 and can_change %}
