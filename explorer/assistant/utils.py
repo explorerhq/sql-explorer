@@ -44,7 +44,7 @@ def tables_from_schema_info(connection, table_names):
 
 
 def sample_rows_from_tables(connection, table_names):
-    ret = ''
+    ret = ""
     for table_name in table_names:
         ret = f"SAMPLE FROM TABLE {table_name}:\n"
         ret = ret + format_rows_from_table(
