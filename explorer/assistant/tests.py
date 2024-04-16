@@ -88,3 +88,22 @@ class TestPromptContext(TestCase):
             ("snapshot", "BooleanField"),
             ("connection", "CharField")])]
         self.assertEqual(ret, expected)
+
+
+class TestAssistantUtils(TestCase):
+
+    def test_sample_rows_from_tables(self):
+        from explorer.assistant.utils import sample_rows_from_tables
+        SimpleQueryFactory(title="First Query")
+        SimpleQueryFactory(title="Second Query")
+        ret = sample_rows_from_tables(CONN, ["explorer_query"])
+        print(ret)
+        self.assertTrue("First Query" in ret)
+        self.assertTrue("Second Query" in ret)
+
+    def test_sample_rows_from_tables_no_tables(self):
+        from explorer.assistant.utils import sample_rows_from_tables
+        SimpleQueryFactory(title="First Query")
+        SimpleQueryFactory(title="Second Query")
+        ret = sample_rows_from_tables(CONN, [])
+        self.assertEqual(ret, "")

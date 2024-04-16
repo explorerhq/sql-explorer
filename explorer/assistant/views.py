@@ -18,8 +18,12 @@ def run_assistant(request_data, user):
 
     user_prompt = ""
 
-    db_vendor = get_valid_connection(request_data["connection"]).vendor
+    db_vendor = get_valid_connection(request_data.get("connection")).vendor
     user_prompt += f"## Database Vendor / SQL Flavor is {db_vendor}\n\n"
+
+    db_error = request_data.get("db_error")
+    if db_error:
+        user_prompt += f"## Query Error ##\n\n{db_error}\n\n"
 
     sql = request_data.get("sql")
     if sql:

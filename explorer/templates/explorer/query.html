@@ -29,7 +29,7 @@
                     <form action="{% url 'query_create' %}" method="post" id="editor">{% csrf_token %}
                 {% endif %}
                 {% if error %}
-                    <div class="alert alert-danger">{{ error|escape }}</div>
+                    <div class="alert alert-danger db-error">{{ error|escape }}</div>
                 {% endif %}
                 {{ form.non_field_errors }}
                 <div class="my-3 form-floating">

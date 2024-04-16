@@ -7,14 +7,29 @@ import List from "list.js";
 
 const spinner = "<div class=\"spinner-border text-primary\" role=\"status\"><span class=\"visually-hidden\">Loading...</span></div>";
 
+function getErrorMessage() {
+    const errorElement = document.querySelector('.alert-danger.db-error');
+    return errorElement ? errorElement.textContent.trim() : null;
+}
+
 export function setUpAssistant(expand = false) {
 
-    if(expand) {
+    const error = getErrorMessage();
+
+    if(expand || error) {
         const myCollapseElement = document.getElementById('assistant_collapse');
         const bsCollapse = new bootstrap.Collapse(myCollapseElement, {
           toggle: false
         });
         bsCollapse.show();
+        if(error) {
+            const textarea = document.getElementById('id_assistant_input');
+            textarea.value = "Please help me fix the error(s) in this query.";
+            const newDiv = document.createElement('div');
+            newDiv.textContent = 'Error messages are automatically included in the prompt. Just hit "Ask Assistant" and all relevant context will be injected to the LLM request.';  // Add any text or HTML content
+            newDiv.className = 'text-secondary small';
+            textarea.parentNode.insertBefore(newDiv, textarea.nextSibling);
+        }
     }
 
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
@@ -89,7 +104,8 @@ export function setUpAssistant(expand = false) {
             sql: window.editor?.state.doc.toString() ?? null,
             connection: document.getElementById("id_connection")?.value ?? null,
             assistant_request: document.getElementById("id_assistant_input")?.value ?? null,
-            selected_tables: selectedTables
+            selected_tables: selectedTables,
+            db_error: getErrorMessage()
         };
 
         document.getElementById("response_block").style.display = "block";
