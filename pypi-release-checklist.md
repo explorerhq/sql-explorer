@@ -3,8 +3,6 @@
 - [x] Make sure any new files are included in MANIFEST.in
 - [x] Update version number in `explorer/__init__.py`
 - [x] Update any package dependencies in `setup.py`
-- [x] Run `nvm install` and `nvm use`
-- [x] Run `npm install` and `npm run build`
 - [x] Commit the changes:
 ```
 git add .

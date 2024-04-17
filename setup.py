@@ -89,6 +89,10 @@ setup(
         ],
         "xls": [
             "xlsxwriter>=1.3.6"
+        ],
+        "assistant": [
+            "openai>=1.6.1",
+            "tiktoken>=0.6"
         ]
     },
     cmdclass={

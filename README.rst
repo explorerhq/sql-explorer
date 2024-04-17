@@ -30,14 +30,21 @@ intelligence tool. It will happily connect to any SQL database that
 Quickly write and share SQL queries in a simple, usable SQL editor,
 view the results in the browser, and keep the information flowing!
 
+Add an OpenAI (or other provider) API key and get an LLM-powered
+SQL assistant that can help write and debug queries. The assistant
+will automatically add relevant context and schema into the underlying
+LLM prompt.
+
 SQL Explorer values simplicity, intuitive use, unobtrusiveness,
-stability, and the principle of least surprise. Sql Explorer is MIT
+stability, and the principle of least surprise. The project is MIT
 licensed, and pull requests are welcome.
 
 Some key features include:
 
 - Support for multiple connections
+- AI-powered SQL assistant
 - Quick access to schema information to make querying easier
+  (including autocomplete)
 - In-browser pivot tables (which can also be shared via URLs)
 - Ability to snapshot queries on a regular schedule, capturing changing
   data
@@ -58,6 +65,10 @@ Screenshots
 **Writing a query and viewing the schema helper**
 
 .. image:: https://sql-explorer.s3.amazonaws.com/4.0-query-with-schema.png
+
+**Using the SQL Assistant**
+
+.. image:: https://sql-explorer.s3.amazonaws.com/4.1-sql-assistant.png
 
 **Viewing all queries**
 
