@@ -1,7 +1,7 @@
 # Anonymous usage stats
 # Opt-out by setting EXPLORER_ENABLE_ANONYMOUS_STATS = False in settings
 
-
+import logging
 import time
 import requests
 import json
@@ -13,6 +13,8 @@ from django.db import connection
 from django.db.models import Count
 from django.db.migrations.recorder import MigrationRecorder
 from django.conf import settings
+
+logger = logging.getLogger(__name__)
 
 
 def _instance_identifier():
@@ -77,9 +79,12 @@ class Stat:
 
 def _send(data):
     from explorer import app_settings
-    requests.post(app_settings.EXPLORER_COLLECT_ENDPOINT_URL,
-                  data=data,
-                  headers={"Content-Type": "application/json"})
+    try:
+        requests.post(app_settings.EXPLORER_COLLECT_ENDPOINT_URL,
+                      data=data,
+                      headers={"Content-Type": "application/json"})
+    except Exception as e:
+        logger.exception("Failed to send stats: %s" % e)
 
 
 def gather_summary_stats():

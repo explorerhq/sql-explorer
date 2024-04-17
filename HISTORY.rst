@@ -5,7 +5,7 @@ Change Log
 This document records all notable changes to `django-sql-explorer <https://github.com/chrisclark/django-sql-explorer>`_.
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
-`4.1.0b1`_ (2024-04-17)
+`4.1.0b2`_ (2024-04-17)
 ===========================
 * SQL Assistant: Built in query help via OpenAI (or LLM of choice), with relevant schema
   automatically injected into the prompt. Enable via setting EXPLORER_AI_API_KEY.

@@ -1,4 +1,3 @@
-import logging
 from explorer import app_settings
 from explorer.schema import schema_info
 from explorer.utils import get_valid_connection
@@ -30,7 +29,6 @@ def do_req(prompt):
       messages=messages
     )
     messages.append(resp.choices[0].message)
-    logging.info(f"Response: {messages}")
     return messages
 
 
