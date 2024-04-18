@@ -1,7 +1,6 @@
 #!/bin/bash
 
-pip install -r ../requirements/base.txt
-pip install -r ../requirements/optional.txt
+pip install -r ../requirements/dev.txt
 pip install django
 
 python ../manage.py migrate

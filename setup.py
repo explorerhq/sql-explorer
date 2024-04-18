@@ -16,8 +16,10 @@ version = get_version()
 release = get_version(True)
 
 
-def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+def requirements(fname):
+    path = os.path.join(os.path.dirname(__file__), "requirements", fname)
+    with open(path) as f:
+        return f.read().splitlines()
 
 
 if sys.argv[-1] == "build":
@@ -74,26 +76,13 @@ setup(
     ],
     python_requires=">=3.8",
     install_requires=[
-        "Django>=3.2",
-        "sqlparse>=0.4.0",
-        "requests>=2.2",
+        requirements("base.txt"),
     ],
     extras_require={
-        "charts": [
-            "matplotlib<4",
-            "seaborn<0.12"
-        ],
-        "snapshots": [
-            "boto3>=1.20.0",
-            "celery>=4.0"
-        ],
-        "xls": [
-            "xlsxwriter>=1.3.6"
-        ],
-        "assistant": [
-            "openai>=1.6.1",
-            "tiktoken>=0.6"
-        ]
+        "charts": requirements("extra/charts.txt"),
+        "snapshots": requirements("extra/snapshots.txt"),
+        "xls": requirements("extra/xls.txt"),
+        "assistant": requirements("extra/assistant.txt"),
     },
     cmdclass={
         "build_sphinx": BuildDoc,

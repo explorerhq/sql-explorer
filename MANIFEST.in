@@ -1,5 +1,6 @@
 recursive-include explorer *
 recursive-exclude * *.pyc __pycache__ .DS_Store
+recursive-include requirements *
 include package.json
 include vite.config.js
 include README.rst

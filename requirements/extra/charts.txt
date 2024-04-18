@@ -1,0 +1,2 @@
+matplotlib<4
+seaborn<0.12
