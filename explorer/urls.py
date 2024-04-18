@@ -6,7 +6,7 @@ from explorer.views import (
     StreamQueryView, format_sql,
 )
 
-from assistant.views import assistant_help
+from .assistant.views import assistant_help
 
 urlpatterns = [
     path(
