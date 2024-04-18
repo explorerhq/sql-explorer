@@ -1,7 +1,7 @@
 from django.apps import AppConfig
 from django.core.exceptions import ImproperlyConfigured
 from django.db import connections as djcs
-from django.db.utils import OperationalError
+from django.db.utils import DatabaseError
 from django.utils.translation import gettext_lazy as _
 
 
@@ -61,7 +61,7 @@ def track_summary_stats():
     # does, we're good to gather stats.
     try:
         Query.objects.first()
-    except OperationalError:
+    except DatabaseError:
         return
     else:
         payload = gather_summary_stats()
