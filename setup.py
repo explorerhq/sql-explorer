@@ -92,7 +92,8 @@ setup(
         ],
         "assistant": [
             "openai>=1.6.1",
-            "tiktoken>=0.6"
+            "tiktoken>=0.6",
+            "sql_metadata>=2.10"
         ]
     },
     cmdclass={
