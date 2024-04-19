@@ -111,7 +111,7 @@ export function setUpAssistant(expand = false) {
         document.getElementById("response_block").style.display = "block";
         document.getElementById("assistant_response").innerHTML = spinner;
 
-        fetch('/assistant/', {
+        fetch('../assistant/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
