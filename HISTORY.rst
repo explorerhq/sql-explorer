@@ -10,6 +10,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * SQL Assistant: Built in query help via OpenAI (or LLM of choice), with relevant schema
   automatically injected into the prompt. Enable by setting EXPLORER_AI_API_KEY.
 * Anonymous usage telemetry. Disable by setting EXPLORER_ENABLE_ANONYMOUS_STATS to False.
+* Refactor pip requirements to make 'extras' more robust and easier to manage.
 * `#592`_: Support user models with no email fields
 * `#594`_: Eliminate <script> tags to prevent potential Content Security Policy issues.
 
