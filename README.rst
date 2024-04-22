@@ -90,4 +90,4 @@ create a new virtualenv, cd into ``test_project`` and run ``start.sh`` (or
 walk through the steps yourself) to get a test instance of the app up
 and running.
 
-You can now navigate to 127.0.0.1:8000/ and begin exploring!
+You can now navigate to 127.0.0.1:8000/explorer/ and begin exploring!

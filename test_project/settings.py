@@ -42,7 +42,7 @@ EXPLORER_CONNECTIONS = {
 }
 EXPLORER_DEFAULT_CONNECTION = "default"
 
-ROOT_URLCONF = "explorer.tests.urls"
+ROOT_URLCONF = "test_project.urls"
 
 TEMPLATES = [
     {
