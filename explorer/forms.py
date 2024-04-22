@@ -42,15 +42,11 @@ class QueryForm(ModelForm):
         self.fields["connection"].widget.attrs["class"] = "form-select"
 
     def clean(self):
-        if self.instance and self.data.get("created_by_user", None):
+        # Don't overwrite created_by_user
+        if self.instance and self.instance.created_by_user:
             self.cleaned_data["created_by_user"] = \
                 self.instance.created_by_user
         return super().clean()
-
-    @property
-    def created_by_user_email(self):
-        return self.instance.created_by_user.email if \
-            self.instance.created_by_user else "--"
 
     @property
     def created_at_time(self):
