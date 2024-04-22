@@ -5,8 +5,6 @@ import * as bootstrap from 'bootstrap';
 import $ from "jquery";
 import List from "list.js";
 
-const spinner = "<div class=\"spinner-border text-primary\" role=\"status\"><span class=\"visually-hidden\">Loading...</span></div>";
-
 function getErrorMessage() {
     const errorElement = document.querySelector('.alert-danger.db-error');
     return errorElement ? errorElement.textContent.trim() : null;
@@ -23,12 +21,7 @@ export function setUpAssistant(expand = false) {
         });
         bsCollapse.show();
         if(error) {
-            const textarea = document.getElementById('id_assistant_input');
-            textarea.value = "Please help me fix the error(s) in this query.";
-            const newDiv = document.createElement('div');
-            newDiv.textContent = 'Error messages are automatically included in the prompt. Just hit "Ask Assistant" and all relevant context will be injected to the LLM request.';  // Add any text or HTML content
-            newDiv.className = 'text-secondary small';
-            textarea.parentNode.insertBefore(newDiv, textarea.nextSibling);
+            document.getElementById('id_error_help_message').classList.remove('d-none');
         }
     }
 
@@ -108,8 +101,8 @@ export function setUpAssistant(expand = false) {
             db_error: getErrorMessage()
         };
 
-        document.getElementById("response_block").style.display = "block";
-        document.getElementById("assistant_response").innerHTML = spinner;
+        document.getElementById("response_block").classList.remove('d-none');
+        document.getElementById("assistant_spinner").classList.remove('d-none');
 
         fetch('../assistant/', {
             method: 'POST',
@@ -127,7 +120,6 @@ export function setUpAssistant(expand = false) {
         })
         .then(data => {
             const output = DOMPurify.sanitize(marked.parse(data.message));
-            document.getElementById("response_block").style.display = "block";
             document.getElementById("assistant_response").innerHTML = output;
             setUpCopyButtons();
         })
