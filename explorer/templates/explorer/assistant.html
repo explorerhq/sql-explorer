@@ -12,9 +12,12 @@
             <div class="row assistant_input_parent">
                 <div class="mt-3 col-12" id="assistant_input_wrapper">
                     <textarea
-                        class="form-control" id="id_assistant_input"
+                        class="form-control mb-4" id="id_assistant_input"
                         name="sql_assistant" rows="3" placeholder="What do you need help with?"></textarea>
-                    <label for="id_assistant_input" class="form-label" id="id_assistant_input_label"></label>
+                    <label for="id_assistant_input" class="form-label d-none" id="id_assistant_input_label">Assistant prompt</label>
+                    <div id="id_error_help_message" class="d-none text-secondary small">
+                        Hit "Ask Assistant" to try and fix the issue. The assistant is automatically aware of error messages & context.
+                    </div>
                 </div>
                 <div id="additional_table_container" class="d-none col-3">
                     <input id="search_assistant_tables" class="search" placeholder="{% trans "Search Tables" %}" />
@@ -29,7 +32,7 @@
                         <input type="checkbox" class="form-check-input" name="assistant-include-other-tables" id="include_other_tables" autocomplete="off">
                         <label class="form-check-label" for="include_other_tables">Include Other Tables (<a class="small text-secondary" style="cursor: pointer;"
                             data-bs-toggle="tooltip" data-bs-placement="top"
-                            data-bs-title="SQL Assistant builds a prompt with your query, your request, relevant schema (tables referenced in your query) and sample data from those tables. You can optionally include other tables (schema + data sample) that you'd like SQL Assistant to know about.">What is this?</a>)</label>
+                            data-bs-title="SQL Assistant builds a prompt with your query, your request, relevant schema (tables referenced in your query) and sample data from those tables. You can optionally include other tables (schema + data sample) that you'd like SQL Assistant to know about.">?</a>)</label>
                     </div>
                 </div>
                 <div class="col-6 text-end">
@@ -40,8 +43,13 @@
             </div>
 
 
-            <div id="response_block" style="display: none" class="position-relative">
-                <div class="mt-3 p-2 pt-3 rounded-2 border bg-light" id="assistant_response"></div>
+            <div id="response_block" class="position-relative d-none">
+                <div class="mt-3 p-2 pt-4 rounded-2 border bg-light">
+                    <div id="assistant_response"></div>
+                    <p class="spinner-border text-primary d-none" id="assistant_spinner" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </p>
+                </div>
             </div>
         </div>
     </div>

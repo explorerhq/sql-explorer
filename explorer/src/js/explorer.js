@@ -40,7 +40,6 @@ export class ExplorerEditor {
         }
 
         this.queryId = queryId;
-        this.$table = $("#preview");
         this.$rows = $("#rows");
         this.$form = $("form");
         this.$snapshotField = $("#id_snapshot");

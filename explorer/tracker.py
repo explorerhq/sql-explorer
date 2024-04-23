@@ -14,6 +14,8 @@ from django.db.models import Count
 from django.db.migrations.recorder import MigrationRecorder
 from django.conf import settings
 
+import explorer
+
 logger = logging.getLogger(__name__)
 
 
@@ -84,7 +86,7 @@ def _send(data):
                       data=data,
                       headers={"Content-Type": "application/json"})
     except Exception as e:
-        logger.exception("Failed to send stats: %s" % e)
+        logger.warning("Failed to send stats: %s" % e)
 
 
 def gather_summary_stats():
@@ -117,6 +119,7 @@ def gather_summary_stats():
             "unsafe_rendering": app_settings.UNSAFE_RENDERING,
             "transform_count": len(app_settings.EXPLORER_TRANSFORMS),
             "assistant_enabled": app_settings.EXPLORER_AI_API_KEY is not None,
+            "version": explorer.get_version()
         }
     except Exception as e:
         return {"error": "error gathering stats: %s" % e}

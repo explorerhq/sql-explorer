@@ -5,11 +5,13 @@ import * as bootstrap from 'bootstrap';
 import $ from "jquery";
 import List from "list.js";
 
-const spinner = "<div class=\"spinner-border text-primary\" role=\"status\"><span class=\"visually-hidden\">Loading...</span></div>";
-
 function getErrorMessage() {
     const errorElement = document.querySelector('.alert-danger.db-error');
     return errorElement ? errorElement.textContent.trim() : null;
+}
+
+function assistantSearchFocus() {
+    document.getElementById("search_assistant_tables").focus();
 }
 
 export function setUpAssistant(expand = false) {
@@ -23,12 +25,7 @@ export function setUpAssistant(expand = false) {
         });
         bsCollapse.show();
         if(error) {
-            const textarea = document.getElementById('id_assistant_input');
-            textarea.value = "Please help me fix the error(s) in this query.";
-            const newDiv = document.createElement('div');
-            newDiv.textContent = 'Error messages are automatically included in the prompt. Just hit "Ask Assistant" and all relevant context will be injected to the LLM request.';  // Add any text or HTML content
-            newDiv.className = 'text-secondary small';
-            textarea.parentNode.insertBefore(newDiv, textarea.nextSibling);
+            document.getElementById('id_error_help_message').classList.remove('d-none');
         }
     }
 
@@ -83,6 +80,7 @@ export function setUpAssistant(expand = false) {
             additionalTableContainer.classList.remove('d-none');
             assistantInputWrapper.classList.remove('col-12');
             assistantInputWrapper.classList.add('col-9');
+            assistantSearchFocus();
         } else {
             additionalTableContainer.classList.add('d-none');
             assistantInputWrapper.classList.remove('col-9');
@@ -94,46 +92,56 @@ export function setUpAssistant(expand = false) {
     });
     showHideExtraTables(checkbox.checked);
 
-    document.getElementById('ask_assistant_btn').addEventListener('click', function() {
+    document.getElementById('id_assistant_input').addEventListener('keydown', function(event) {
+        if ((event.ctrlKey || event.metaKey) && (event.key === 'Enter')) {
+            event.preventDefault();
+            submitAssistantAsk();
+        }
+    });
 
-        const selectedTables = Array.from(
-            document.querySelectorAll('.table-checkbox:checked')
-        ).map(cb => cb.value);
+    document.getElementById('ask_assistant_btn').addEventListener('click', submitAssistantAsk);
+}
 
-        const data = {
-            sql: window.editor?.state.doc.toString() ?? null,
-            connection: document.getElementById("id_connection")?.value ?? null,
-            assistant_request: document.getElementById("id_assistant_input")?.value ?? null,
-            selected_tables: selectedTables,
-            db_error: getErrorMessage()
-        };
+function submitAssistantAsk() {
 
-        document.getElementById("response_block").style.display = "block";
-        document.getElementById("assistant_response").innerHTML = spinner;
+    const selectedTables = Array.from(
+        document.querySelectorAll('.table-checkbox:checked')
+    ).map(cb => cb.value);
 
-        fetch('../assistant/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCsrfToken()
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            const output = DOMPurify.sanitize(marked.parse(data.message));
-            document.getElementById("response_block").style.display = "block";
-            document.getElementById("assistant_response").innerHTML = output;
-            setUpCopyButtons();
-        })
-            .catch(error => {
-            console.error('Error:', error);
-        });
+    const data = {
+        sql: window.editor?.state.doc.toString() ?? null,
+        connection: document.getElementById("id_connection")?.value ?? null,
+        assistant_request: document.getElementById("id_assistant_input")?.value ?? null,
+        selected_tables: selectedTables,
+        db_error: getErrorMessage()
+    };
+
+    document.getElementById("assistant_response").innerHTML = '';
+    document.getElementById("response_block").classList.remove('d-none');
+    document.getElementById("assistant_spinner").classList.remove('d-none');
+
+    fetch('../assistant/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfToken()
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        const output = DOMPurify.sanitize(marked.parse(data.message));
+        document.getElementById("assistant_response").innerHTML = output;
+        document.getElementById("assistant_spinner").classList.add('d-none');
+        setUpCopyButtons();
+    })
+        .catch(error => {
+        console.error('Error:', error);
     });
 }
 
