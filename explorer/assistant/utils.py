@@ -1,18 +1,15 @@
 from explorer import app_settings
 from explorer.schema import schema_info
 from explorer.utils import get_valid_connection
-from sql_metadata import Parser
 from django.db.utils import OperationalError
 
-if app_settings.EXPLORER_AI_API_KEY:
-    import tiktoken
-    from openai import OpenAI
 
 OPENAI_MODEL = app_settings.EXPLORER_ASSISTANT_MODEL["name"]
 ROW_SAMPLE_SIZE = 2
 
 
 def openai_client():
+    from openai import OpenAI
     return OpenAI(
         api_key=app_settings.EXPLORER_AI_API_KEY,
         base_url=app_settings.EXPLORER_ASSISTANT_BASE_URL
@@ -73,6 +70,7 @@ def format_rows_from_table(rows):
 
 
 def get_table_names_from_query(sql):
+    from sql_metadata import Parser
     if sql:
         try:
             parsed = Parser(sql)
@@ -84,6 +82,7 @@ def get_table_names_from_query(sql):
 
 def num_tokens_from_string(string: str) -> int:
     """Returns the number of tokens in a text string."""
+    import tiktoken
     encoding = tiktoken.encoding_for_model(OPENAI_MODEL)
     num_tokens = len(encoding.encode(string))
     return num_tokens

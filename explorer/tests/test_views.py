@@ -548,7 +548,7 @@ class TestCSVFromSQL(TestCase):
         self.assertEqual("text/csv", resp["content-type"])
         ql = QueryLog.objects.first()
         self.assertIn(
-            'filename="Playground-%s.csv"' % ql.id,
+            f'filename="Playground-{ql.id}.csv"',
             resp["Content-Disposition"]
         )
 

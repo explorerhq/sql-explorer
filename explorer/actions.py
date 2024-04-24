@@ -33,10 +33,11 @@ def _package(queries):
     is_one = len(queries) == 1
     name_root = lambda n: f"attachment; filename={n}"  # noqa
     ret["content_type"] = (is_one and "text/csv") or "application/zip"
-
+    formatted = queries[0].title.replace(",", "")
+    day = date.today()
     ret["filename"] = (
-        is_one and name_root("%s.csv" % queries[0].title.replace(",", ""))
-    ) or name_root("Report_%s.zip" % date.today())
+        is_one and name_root(f"{formatted}.csv")
+    ) or name_root(f"Report_{day}.zip")
 
     ret["data"] = (
         is_one and CSVExporter(queries[0]).get_output()

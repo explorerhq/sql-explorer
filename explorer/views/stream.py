@@ -4,7 +4,7 @@ from django.views import View
 from explorer.models import Query
 from explorer.views.auth import PermissionRequiredMixin
 from explorer.views.export import _export
-from explorer.tracker import Stat, StatNames
+from explorer.telemetry import Stat, StatNames
 
 
 class StreamQueryView(PermissionRequiredMixin, View):

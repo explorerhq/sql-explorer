@@ -338,11 +338,11 @@ but a dotted path to a python view can be used
 
    EXPLORER_NO_PERMISSION_VIEW = 'explorer.views.auth.safe_login_view_wrapper'
 
-Anonymous Usage Stat Collection
-*******************************
+Anonymous Telemetry Collection
+******************************
 
 By default, anonymous usage statistics are collected. To disable this, set the following setting to False.
-You can see what is being collected in tracker.py.
+You can see what is being collected in telemetry.py.
 
 .. code-block:: python
 
