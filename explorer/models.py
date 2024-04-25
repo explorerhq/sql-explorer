@@ -1,5 +1,6 @@
 import logging
 from time import time
+import uuid
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -8,7 +9,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from explorer import app_settings
-from explorer.tracker import Stat, StatNames
+from explorer.telemetry import Stat, StatNames
 from explorer.utils import (
     extract_params, get_params_for_url, get_s3_bucket, get_valid_connection, passes_blacklist, s3_url,
     shared_dict_update, swap_params,
@@ -393,3 +394,50 @@ class ColumnSummary:
 
     def __str__(self):
         return str(self._header)
+
+
+class ExplorerValueManager(models.Manager):
+
+    def get_uuid(self):
+        # If blank or non-existing, generates a new UUID
+        uuid_obj, created = self.get_or_create(
+            key=ExplorerValue.INSTALL_UUID,
+            defaults={"value": str(uuid.uuid4())}
+        )
+        if created or uuid_obj.value is None:
+            uuid_obj.value = str(uuid.uuid4())
+            uuid_obj.save()
+        return uuid_obj.value
+
+    def get_startup_last_send(self):
+        # Stored as a Unix timestamp
+        try:
+            timestamp = self.get(key=ExplorerValue.STARTUP_METRIC_LAST_SEND).value
+            if timestamp:
+                return float(timestamp)
+            return None
+        except ExplorerValue.DoesNotExist:
+            return None
+
+    def set_startup_last_send(self, ts):
+        obj, created = self.get_or_create(
+            key=ExplorerValue.STARTUP_METRIC_LAST_SEND,
+            defaults={"value": str(ts)}
+        )
+        if not created:
+            obj.value = str(ts)
+            obj.save()
+
+
+class ExplorerValue(models.Model):
+    INSTALL_UUID = "UUID"
+    STARTUP_METRIC_LAST_SEND = "SMLS"
+    EXPLORER_SETTINGS_CHOICES = [
+        (INSTALL_UUID, "Install Unique ID"),
+        (STARTUP_METRIC_LAST_SEND, "Startup metric last send"),
+    ]
+
+    key = models.CharField(max_length=5, choices=EXPLORER_SETTINGS_CHOICES)
+    value = models.TextField(null=True, blank=True)
+
+    objects = ExplorerValueManager()

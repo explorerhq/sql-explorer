@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 import json
 
-from explorer.tracker import Stat, StatNames
+from explorer.telemetry import Stat, StatNames
 from explorer.utils import get_valid_connection
 from explorer.assistant.models import PromptLog
 from explorer.assistant.prompts import primary_prompt
