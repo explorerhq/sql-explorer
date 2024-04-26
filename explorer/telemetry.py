@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 def instance_identifier():
     from explorer.models import ExplorerValue
-    key = "explorer_instance_identifier"
+    key = "explorer_instance_uuid"
     r = cache.get(key)
     if not r:
         r = ExplorerValue.objects.get_uuid()

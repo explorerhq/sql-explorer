@@ -10,10 +10,6 @@ function getErrorMessage() {
     return errorElement ? errorElement.textContent.trim() : null;
 }
 
-function assistantSearchFocus() {
-    document.getElementById("search_assistant_tables").focus();
-}
-
 export function setUpAssistant(expand = false) {
 
     const error = getErrorMessage();
@@ -70,27 +66,6 @@ export function setUpAssistant(expand = false) {
     .catch(error => {
         console.error('Error retrieving JSON schema:', error);
     });
-
-    const checkbox = document.getElementById('include_other_tables');
-    const additionalTableContainer = document.getElementById('additional_table_container');
-    const assistantInputWrapper = document.getElementById('assistant_input_wrapper');
-
-    function showHideExtraTables(checked) {
-        if (checked) {
-            additionalTableContainer.classList.remove('d-none');
-            assistantInputWrapper.classList.remove('col-12');
-            assistantInputWrapper.classList.add('col-9');
-            assistantSearchFocus();
-        } else {
-            additionalTableContainer.classList.add('d-none');
-            assistantInputWrapper.classList.remove('col-9');
-            assistantInputWrapper.classList.add('col-12');
-        }
-    }
-    checkbox.addEventListener('change', function() {
-        showHideExtraTables(this.checked);
-    });
-    showHideExtraTables(checkbox.checked);
 
     document.getElementById('id_assistant_input').addEventListener('keydown', function(event) {
         if ((event.ctrlKey || event.metaKey) && (event.key === 'Enter')) {

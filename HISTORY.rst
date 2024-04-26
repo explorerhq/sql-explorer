@@ -5,13 +5,13 @@ Change Log
 This document records all notable changes to `django-sql-explorer <https://github.com/chrisclark/django-sql-explorer>`_.
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
-`4.2.0b1`_ (2024-04-25)
+`4.2.0`_ (2024-04-26)
 ===========================
 * `#609`_: Tracking should be opt-in and not use the SECRET_KEY
 * `#610`_: Import error (sql_metadata) with 4.1 version
 * `#612`_: Accessing the database during app initialization
 * Regex-injection vulnerability
-* Better anonymization for telemetry
+* Improved assistant UI
 
 `4.1.0`_ (2024-04-23)
 ===========================
