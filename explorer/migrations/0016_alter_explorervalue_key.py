@@ -7,7 +7,7 @@ def insert_assistant_prompt(apps, schema_editor):
 
     ExplorerValue = apps.get_model('explorer', 'ExplorerValue')
     ExplorerValue.objects.create(
-        key=ExplorerValue.ASSISTANT_SYSTEM_PROMPT,
+        key="ASP",
         value="""You are a data analyst's assistant and will be asked write or modify a SQL query to assist a business
 user with their analysis. The user will provide a prompt of what they are looking for help with, and may also
 provide SQL they have written so far, relevant table schema, and sample rows from the tables they are querying.

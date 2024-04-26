@@ -45,7 +45,7 @@ def run_assistant(request_data, user):
     user_prompt += f"## User's Request to Assistant ##\n\n{request_data['assistant_request']}\n\n"
 
     prompt = {
-        "system": ExplorerValue.objects.get_item(ExplorerValue.ASSISTANT_SYSTEM_PROMPT),
+        "system": ExplorerValue.objects.get_item(ExplorerValue.ASSISTANT_SYSTEM_PROMPT).value,
         "user": user_prompt
     }
 

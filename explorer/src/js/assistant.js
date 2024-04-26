@@ -113,6 +113,21 @@ function submitAssistantAsk() {
         const output = DOMPurify.sanitize(marked.parse(data.message));
         document.getElementById("assistant_response").innerHTML = output;
         document.getElementById("assistant_spinner").classList.add('d-none');
+
+        // If there is exactly one code block in the response and the SQL editor is empty
+        // then copy the code directly into the editor
+        const preElements = document.querySelectorAll('#assistant_response pre');
+        if (preElements.length === 1) {
+            if (window.editor?.state.doc.toString().trim() === "") {
+                window.editor.dispatch({
+                    changes: {
+                        from: 0,
+                        insert: preElements[0].textContent
+                    }
+                });
+            }
+        }
+
         setUpCopyButtons();
     })
         .catch(error => {
