@@ -5,8 +5,8 @@ import json
 
 from explorer.telemetry import Stat, StatNames
 from explorer.utils import get_valid_connection
+from explorer.models import ExplorerValue
 from explorer.assistant.models import PromptLog
-from explorer.assistant.prompts import primary_prompt
 from explorer.assistant.utils import (
     do_req, extract_response, tables_from_schema_info,
     get_table_names_from_query, sample_rows_from_tables,
@@ -44,8 +44,10 @@ def run_assistant(request_data, user):
 
     user_prompt += f"## User's Request to Assistant ##\n\n{request_data['assistant_request']}\n\n"
 
-    prompt = primary_prompt.copy()
-    prompt["user"] = user_prompt
+    prompt = {
+        "system": ExplorerValue.objects.get_item(ExplorerValue.ASSISTANT_SYSTEM_PROMPT),
+        "user": user_prompt
+    }
 
     start = timezone.now()
     pl = PromptLog(
