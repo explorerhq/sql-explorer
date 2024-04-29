@@ -125,7 +125,7 @@ class QueryLog(models.Model):
     query = models.ForeignKey(
         Query, null=True, blank=True, on_delete=models.SET_NULL)
     run_by_user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, null=True, blank=True)
+        settings.AUTH_USER_MODEL, null=True, blank=True,on_delete=models.SET_NULL)
     run_at = models.DateTimeField(auto_now_add=True)
     duration = models.FloatField(blank=True, null=True)  # milliseconds
 
@@ -144,7 +144,7 @@ class QueryChangeLog(models.Model):
     query = models.ForeignKey(
         Query, null=True, blank=True, on_delete=models.SET_NULL)
     run_by_user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, null=True, blank=True)
+        settings.AUTH_USER_MODEL, null=True, blank=True,on_delete=models.SET_NULL)
     run_at = models.DateTimeField(auto_now_add=True)
 
     @property
