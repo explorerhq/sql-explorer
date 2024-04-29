@@ -4,7 +4,7 @@ from explorer.utils import passes_blacklist, swap_params, extract_params, shared
 from future.utils import python_2_unicode_compatible
 from django.db import models, DatabaseError
 from time import time
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.messages import constants as messages_constants
