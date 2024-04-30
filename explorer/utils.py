@@ -87,33 +87,40 @@ def schema_info():
     """
 
     from django.apps import apps
+    import logging
+
+    logger = logging.getLogger(__name__)
 
     ret = []
 
     for label, app in apps.app_configs.items():
         if app.name not in app_settings.EXPLORER_SCHEMA_EXCLUDE_APPS:
             for model_name, model in apps.get_app_config(label).models.items():
-                friendly_model = "%s -> %s" % (app.name,
-                                               model._meta.object_name)
+                friendly_model = "%s -> %s" % (app.name, model._meta.object_name)
                 ret.append((
                     friendly_model,
                     model._meta.db_table,
                     [_format_field(f) for f in model._meta.fields]
                 ))
 
-                # Do the same thing for many_to_many fields. These don't show up in the field list of the model
-                # because they are stored as separate "through" relations and have their own tables
-                ret += [
-                    (
-                        friendly_model,
-                        m2m.remote_field.through._meta.db_table,
-                        [
-                            _format_field(f)
-                            for f in m2m.remote_field.through._meta.fields
-                        ],
+                try:
+                    # Loop over Many-to-Many relationships
+                    for m2m in model._meta.many_to_many:
+                        through_model = m2m.remote_field.through
+                        ret.append(
+                            (
+                                friendly_model,
+                                through_model._meta.db_table,
+                                [
+                                    _format_field(f)
+                                    for f in through_model._meta.fields
+                                ],
+                            )
+                        )
+                except Exception as e:
+                    logger.error(
+                        "Error while processing Many-to-Many relationships: %s" % e
                     )
-                    for m2m in model._meta.many_to_many
-                ]
 
     return sorted(ret, key=lambda t: t[1])
 
