@@ -132,14 +132,10 @@ class Query(models.Model):
         return reverse("query_detail", kwargs={"query_id": self.id})
 
     def log(self, user=None):
-        
-        if user is not None:
+
+        if user:
             # In Django<1.10, is_anonymous was a method.
-            try:
-                is_anonymous = user.is_anonymous()
-            except TypeError:
-                is_anonymous = user.is_anonymous
-            if is_anonymous:
+            if user.is_anonymous:
                 user = None
         ql = QueryLog(
             sql=self.final_sql(),
@@ -148,6 +144,7 @@ class Query(models.Model):
         )
         ql.save()
         return ql
+
 
     @property
     def shared(self):
