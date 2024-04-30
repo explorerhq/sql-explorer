@@ -29,7 +29,7 @@ class Query(models.Model):
     sql = models.TextField()
     description = models.TextField(null=True, blank=True)
     created_by_user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, null=True, blank=True,on_delete=models.SET_NULL)
+        settings.AUTH_USER_MODEL, null=True, blank=True,on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     last_run_date = models.DateTimeField(auto_now=True)
     snapshot = models.BooleanField(
@@ -125,7 +125,7 @@ class QueryLog(models.Model):
     query = models.ForeignKey(
         Query, null=True, blank=True, on_delete=models.SET_NULL)
     run_by_user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, null=True, blank=True,on_delete=models.SET_NULL)
+        settings.AUTH_USER_MODEL, null=True, blank=True,on_delete=models.CASCADE)
     run_at = models.DateTimeField(auto_now_add=True)
     duration = models.FloatField(blank=True, null=True)  # milliseconds
 
@@ -144,7 +144,7 @@ class QueryChangeLog(models.Model):
     query = models.ForeignKey(
         Query, null=True, blank=True, on_delete=models.SET_NULL)
     run_by_user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, null=True, blank=True,on_delete=models.SET_NULL)
+        settings.AUTH_USER_MODEL, null=True, blank=True,on_delete=models.CASCADE)
     run_at = models.DateTimeField(auto_now_add=True)
 
     @property
