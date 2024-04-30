@@ -67,7 +67,7 @@
                         <div class="alert alert-danger">{{ error|escape }}</div>
                     {% endfor %}
                 {% endif %}
-                <div class ="accordion accordion-flush" id="sql_accordion" style="position: relative;">
+                <div class ="accordion accordion-flush" id="sql_accordion">
                     <div class="accordion-item">
                         <div class="accordion-header" id="sql_accordion_header">
                             <button class="accordion-button bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
@@ -77,7 +77,7 @@
                     </div>
                     <div id="flush-collapseOne" class="accordion-collapse collapse{% if show_sql_by_default or not form.sql.value %} show{% endif %}" aria-labelledby="sql_accordion_header" data-bs-parent="#sql_accordion">
                         <div>
-                            <div class="row">
+                            <div class="row" id="sql_editor_container">
                                 <textarea
                                     class="form-control" {% if not can_change %} disabled {% endif %} cols="40" id="id_sql"
                                     name="sql" rows="20">{{ form.sql.value|default_if_none:"" }}</textarea>

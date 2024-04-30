@@ -44,17 +44,12 @@ function displaySchemaTooltip(editor, content) {
         tooltip.style.padding = '5px';
         tooltip.style.borderRadius = '4px';
         tooltip.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
-        document.getElementById('sql_accordion').appendChild(tooltip);
+        document.getElementById('sql_editor_container').appendChild(tooltip);
     }
 
     tooltip.textContent = content;
     tooltip.style.display = 'block';
 
-    return {
-        destroy: () => {
-            document.body.removeChild(tooltip);
-        }
-    };
 }
 
 function fetchAndShowSchema(view) {
@@ -67,8 +62,7 @@ function fetchAndShowSchema(view) {
         const conn = document.querySelector('#id_connection').value;
         SchemaSvc.get(conn).then(schema => {
             const formattedSchema = JSON.stringify(schema[tableName], null, 2);
-            const tooltip = displaySchemaTooltip(view, formattedSchema);
-            setTimeout(() => tooltip.destroy(), 20000); // Hide after 20 seconds
+            displaySchemaTooltip(view, formattedSchema);
         });
     }
     return true;
