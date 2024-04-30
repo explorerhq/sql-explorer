@@ -2,8 +2,8 @@ import {getCsrfToken} from "./csrf";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
 import * as bootstrap from 'bootstrap';
-import $ from "jquery";
 import List from "list.js";
+import { SchemaSvc } from "./schemaService"
 
 function getErrorMessage() {
     const errorElement = document.querySelector('.alert-danger.db-error');
@@ -28,12 +28,9 @@ export function setUpAssistant(expand = false) {
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
-    fetch('../schema.json/' + $("#id_connection").val())
-    .then(response => {
-        return response.json();
-    })
-    .then(data => {
-        const keys = Object.keys(data);
+    const conn = document.querySelector('#id_connection').value;
+    SchemaSvc.get(conn).then(schema => {
+        const keys = Object.keys(schema);
         const tableList = document.getElementById('table-list');
         tableList.innerHTML = '';
 

@@ -11,6 +11,7 @@ import { toggleFavorite } from "./favorites";
 
 import {schemaCompletionSource, StandardSQL} from "@codemirror/lang-sql";
 import {StateEffect} from "@codemirror/state";
+import {SchemaSvc} from "./schemaService";
 
 
 function editorFromTextArea(textarea) {
@@ -345,23 +346,17 @@ export class ExplorerEditor {
         this.$rows.keyup(function(event) {
             if(event.keyCode === 13){ this.showRows(); }
         }.bind(this));
+        const conn = document.querySelector('#id_connection').value;
 
-        fetch('../schema.json/' + $("#id_connection").val())
-            .then(response => {
-                return response.json();
-            })
-            .then(data => {
-                this.editor.dispatch({
-                    effects: StateEffect.appendConfig.of(
-                        StandardSQL.language.data.of({
-                          autocomplete: schemaCompletionSource({schema: data})
-                        })
-                    )
-                })
-                return data;
-            })
-            .catch(error => {
-                console.error('Error retrieving JSON schema:', error);
+        SchemaSvc.get(conn).then(schema => {
+            this.editor.dispatch({
+                effects: StateEffect.appendConfig.of(
+                    StandardSQL.language.data.of({
+                      autocomplete: schemaCompletionSource({schema: schema})
+                    })
+                )
             });
+        });
+
     }
 }

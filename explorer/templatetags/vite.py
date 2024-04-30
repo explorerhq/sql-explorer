@@ -3,7 +3,7 @@ import os
 from django import template
 from django.conf import settings
 from django.utils.safestring import mark_safe
-from explorer import app_settings
+from explorer import app_settings, get_version
 
 register = template.Library()
 
@@ -24,6 +24,7 @@ def get_css_link(file: str) -> str:
 
 def get_script(file: str) -> str:
     if app_settings.VITE_DEV_MODE is False:
+        file = file.replace(".js", f".{get_version()}.js")
         return mark_safe(f'<script type="module" src="{VITE_OUTPUT_DIR}{file}"></script>')
     else:
         base_url = f"http://{VITE_SERVER_HOST}:{VITE_SERVER_PORT}/{VITE_DEV_DIR}"

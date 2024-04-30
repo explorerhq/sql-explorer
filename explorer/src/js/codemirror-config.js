@@ -12,12 +12,85 @@ import {autocompletion, completionKeymap, closeBrackets, closeBracketsKeymap, ac
 import {lintKeymap} from "@codemirror/lint"
 import { Prec } from "@codemirror/state";
 import {sql} from "@codemirror/lang-sql";
+import { SchemaSvc } from "./schemaService"
 
 let updateListenerExtension = EditorView.updateListener.of((update) => {
   if (update.docChanged) {
     document.dispatchEvent(new CustomEvent('docChanged', {}));
   }
 });
+
+const hideTooltipOnEsc = EditorView.domEventHandlers({
+    keydown(event, view) {
+        if (event.code === 'Escape') {
+            const tooltip = document.querySelector('#schema-tooltip');
+            if (tooltip) tooltip.style.display = 'none';
+            return true;
+        }
+        return false;
+    }
+});
+
+function displaySchemaTooltip(editor, content) {
+    let tooltip = document.getElementById('schema-tooltip');
+    if (!tooltip) {
+        tooltip = document.createElement('div');
+        tooltip.id = 'schema-tooltip';
+        tooltip.style.position = 'absolute';
+        tooltip.style.bottom = '1rem';
+        tooltip.style.zIndex = 1000;
+        tooltip.style.backgroundColor = 'white';
+        tooltip.style.border = '1px solid black';
+        tooltip.style.padding = '5px';
+        tooltip.style.borderRadius = '4px';
+        tooltip.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+        document.getElementById('sql_accordion').appendChild(tooltip);
+    }
+
+    tooltip.textContent = content;
+    tooltip.style.display = 'block';
+
+    return {
+        destroy: () => {
+            document.body.removeChild(tooltip);
+        }
+    };
+}
+
+function fetchAndShowSchema(view) {
+    const { state } = view;
+    const pos = state.selection.main.head;
+    const wordRange = state.wordAt(pos);
+
+    if (wordRange) {
+        const tableName = state.doc.sliceString(wordRange.from, wordRange.to);
+        const conn = document.querySelector('#id_connection').value;
+        SchemaSvc.get(conn).then(schema => {
+            const formattedSchema = JSON.stringify(schema[tableName], null, 2);
+            const tooltip = displaySchemaTooltip(view, formattedSchema);
+            setTimeout(() => tooltip.destroy(), 20000); // Hide after 20 seconds
+        });
+    }
+    return true;
+}
+
+const schemaKeymap = [
+    {
+        key: "Ctrl-S",
+        mac: "Cmd-S",
+        run: (editor) => {
+            fetchAndShowSchema(editor);
+            return true;
+        }
+    },
+    {
+        key: "Cmd-S",
+        run: (editor) => {
+            fetchAndShowSchema(editor);
+            return true;
+        }
+    }
+];
 
 const submitEventFromCM = new CustomEvent('submitEventFromCM', {});
 const submitKeymapArr = [
@@ -47,9 +120,7 @@ const autocompleteKeymap = [{key: "Tab", run: acceptCompletion}]
 
 
 export const explorerSetup = (() => [
-    sql({
-        //schema: window.schema_json
-    }),
+    sql({}),
     lineNumbers(),
     highlightActiveLineGutter(),
     highlightSpecialChars(),
@@ -66,6 +137,7 @@ export const explorerSetup = (() => [
     highlightSelectionMatches(),
     submitKeymap,
     updateListenerExtension,
+    hideTooltipOnEsc,
     keymap.of([
         ...closeBracketsKeymap,
         ...defaultKeymap,
@@ -74,6 +146,7 @@ export const explorerSetup = (() => [
         ...foldKeymap,
         ...completionKeymap,
         ...lintKeymap,
-        ...autocompleteKeymap
+        ...autocompleteKeymap,
+        ...schemaKeymap
     ])
 ])()
