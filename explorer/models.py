@@ -1,6 +1,18 @@
-from explorer.utils import passes_blacklist, swap_params, extract_params, shared_dict_update, get_connection, \
-    get_s3_connection, get_connection_pii, get_explorer_master_db_connection, get_connection_asyncapi_db, should_route_to_asyncapi_db, mask_string, \
-    is_pii_masked_for_user, mask_player_pii
+from explorer.utils import (
+    passes_blacklist,
+    swap_params,
+    extract_params,
+    shared_dict_update,
+    get_connection,
+    get_s3_connection,
+    get_connection_pii,
+    get_explorer_master_db_connection,
+    get_connection_asyncapi_db,
+    should_route_to_asyncapi_db,
+    mask_string,
+    is_pii_masked_for_user,
+    mask_player_pii,
+)
 from future.utils import python_2_unicode_compatible
 from django.db import models, DatabaseError
 from time import time
@@ -14,8 +26,12 @@ import re
 import json
 import six
 
-from explorer.constants import TYPE_CODE_FOR_JSON, TYPE_CODE_FOR_TEXT, PLAYER_PHONE_NUMBER_MASKING_TYPE_CODES, \
-    TYPE_CODE_FOR_CHAR
+from explorer.constants import (
+    TYPE_CODE_FOR_JSON,
+    TYPE_CODE_FOR_TEXT,
+    PLAYER_PHONE_NUMBER_MASKING_TYPE_CODES,
+    TYPE_CODE_FOR_CHAR,
+)
 
 MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist: %s"
 
@@ -29,20 +45,22 @@ class Query(models.Model):
     sql = models.TextField()
     description = models.TextField(null=True, blank=True)
     created_by_user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, null=True, blank=True,on_delete=models.CASCADE)
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     last_run_date = models.DateTimeField(auto_now=True)
     snapshot = models.BooleanField(
-        default=False, help_text="Include in snapshot task (if enabled)")
+        default=False, help_text="Include in snapshot task (if enabled)"
+    )
 
     def __init__(self, *args, **kwargs):
-        self.params = kwargs.get('params')
-        kwargs.pop('params', None)
+        self.params = kwargs.get("params")
+        kwargs.pop("params", None)
         super(Query, self).__init__(*args, **kwargs)
 
     class Meta:
-        ordering = ['title']
-        verbose_name_plural = 'Queries'
+        ordering = ["title"]
+        verbose_name_plural = "Queries"
 
     def __str__(self):
         return self.title
@@ -51,7 +69,7 @@ class Query(models.Model):
         return self.querylog_set.count()
 
     def avg_duration(self):
-        return self.querylog_set.aggregate(models.Avg('duration'))['duration__avg']
+        return self.querylog_set.aggregate(models.Avg("duration"))["duration__avg"]
 
     def passes_blacklist(self):
         return passes_blacklist(self.final_sql())
@@ -59,8 +77,19 @@ class Query(models.Model):
     def final_sql(self):
         return swap_params(self.sql, self.available_params())
 
-    def execute_query_only(self, is_connection_type_pii=None, executing_user=None, is_connection_for_explorer_master_db=False):
-        return QueryResult(self.final_sql(), self.title, is_connection_type_pii, executing_user if executing_user else self.created_by_user, is_connection_for_explorer_master_db)
+    def execute_query_only(
+        self,
+        is_connection_type_pii=None,
+        executing_user=None,
+        is_connection_for_explorer_master_db=False,
+    ):
+        return QueryResult(
+            self.final_sql(),
+            self.title,
+            is_connection_type_pii,
+            executing_user if executing_user else self.created_by_user,
+            is_connection_for_explorer_master_db,
+        )
 
     def execute_with_logging(self, executing_user):
         ql = self.log(executing_user)
@@ -80,7 +109,9 @@ class Query(models.Model):
         return ret
 
     def execute_on_explorer_with_master_db(self, executing_user=None):
-        ret = self.execute_query_only(False, executing_user, is_connection_for_explorer_master_db=True)
+        ret = self.execute_query_only(
+            False, executing_user, is_connection_for_explorer_master_db=True
+        )
         ret.process()
         return ret
 
@@ -98,10 +129,11 @@ class Query(models.Model):
         return p
 
     def get_absolute_url(self):
-        return reverse("query_detail", kwargs={'query_id': self.id})
+        return reverse("query_detail", kwargs={"query_id": self.id})
 
     def log(self, user=None):
-        if user:
+        
+        if user is not None:
             # In Django<1.10, is_anonymous was a method.
             try:
                 is_anonymous = user.is_anonymous()
@@ -109,29 +141,35 @@ class Query(models.Model):
                 is_anonymous = user.is_anonymous
             if is_anonymous:
                 user = None
-        ql = QueryLog(sql=self.final_sql(), query_id=self.id, run_by_user=user, connection=self.connection)
+        ql = QueryLog(
+            sql=self.final_sql(),
+            query_id=self.id,
+            run_by_user=user,
+        )
         ql.save()
         return ql
 
     @property
     def shared(self):
-        return self.id in set(sum(app_settings.EXPLORER_GET_USER_QUERY_VIEWS().values(), []))
+        return self.id in set(
+            sum(app_settings.EXPLORER_GET_USER_QUERY_VIEWS().values(), [])
+        )
 
     @property
     def snapshots(self):
         if app_settings.ENABLE_TASKS:
             conn = get_s3_connection()
-            res = conn.list('query-%s.snap-' % self.id)
-            return sorted(res, key=lambda s: s['last_modified'])
+            res = conn.list("query-%s.snap-" % self.id)
+            return sorted(res, key=lambda s: s["last_modified"])
 
 
 class QueryLog(models.Model):
 
     sql = models.TextField(null=True, blank=True)
-    query = models.ForeignKey(
-        Query, null=True, blank=True, on_delete=models.SET_NULL)
+    query = models.ForeignKey(Query, null=True, blank=True, on_delete=models.SET_NULL)
     run_by_user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, null=True, blank=True,on_delete=models.CASCADE)
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE
+    )
     run_at = models.DateTimeField(auto_now_add=True)
     duration = models.FloatField(blank=True, null=True)  # milliseconds
 
@@ -140,17 +178,17 @@ class QueryLog(models.Model):
         return self.query_id is None
 
     class Meta:
-        ordering = ['-run_at']
+        ordering = ["-run_at"]
 
 
 class QueryChangeLog(models.Model):
 
     old_sql = models.TextField(null=True, blank=True)
     new_sql = models.TextField(null=True, blank=True)
-    query = models.ForeignKey(
-        Query, null=True, blank=True, on_delete=models.SET_NULL)
+    query = models.ForeignKey(Query, null=True, blank=True, on_delete=models.SET_NULL)
     run_by_user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, null=True, blank=True,on_delete=models.CASCADE)
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.CASCADE
+    )
     run_at = models.DateTimeField(auto_now_add=True)
 
     @property
@@ -158,7 +196,7 @@ class QueryChangeLog(models.Model):
         return self.query_id is None
 
     class Meta:
-        ordering = ['-run_at']
+        ordering = ["-run_at"]
 
 
 class QueryResult(object):
@@ -180,24 +218,36 @@ class QueryResult(object):
         """
         type_code_and_column_indices_to_be_masked_dict = {
             TYPE_CODE_FOR_JSON: [],
-            TYPE_CODE_FOR_TEXT: []
+            TYPE_CODE_FOR_TEXT: [],
         }
         phone_number_masking_indexes = []
 
         # Collect the indices for JSON and text columns
         for index, column in enumerate(self._description):
-            if hasattr(column, "type_code") and column.type_code in type_code_and_column_indices_to_be_masked_dict:
-                type_code_and_column_indices_to_be_masked_dict[column.type_code].append(index)
+            if (
+                hasattr(column, "type_code")
+                and column.type_code in type_code_and_column_indices_to_be_masked_dict
+            ):
+                type_code_and_column_indices_to_be_masked_dict[column.type_code].append(
+                    index
+                )
 
             # Masking for player phone numbers
-            if self.used_by_user and is_pii_masked_for_user(self.used_by_user) and hasattr(column, "type_code") and column.type_code in PLAYER_PHONE_NUMBER_MASKING_TYPE_CODES:
+            if (
+                self.used_by_user
+                and is_pii_masked_for_user(self.used_by_user)
+                and hasattr(column, "type_code")
+                and column.type_code in PLAYER_PHONE_NUMBER_MASKING_TYPE_CODES
+            ):
                 phone_number_masking_indexes.append(index)
 
         # Masking for PII data in char fields if specific tables are used in SQL
         if app_settings.TABLE_NAMES_FOR_PII_MASKING and phone_number_masking_indexes:
             for table_name in app_settings.TABLE_NAMES_FOR_PII_MASKING:
                 if table_name in self.sql:
-                    type_code_and_column_indices_to_be_masked_dict[TYPE_CODE_FOR_CHAR] = phone_number_masking_indexes
+                    type_code_and_column_indices_to_be_masked_dict[
+                        TYPE_CODE_FOR_CHAR
+                    ] = phone_number_masking_indexes
                     break
 
         return type_code_and_column_indices_to_be_masked_dict
@@ -221,9 +271,14 @@ class QueryResult(object):
         Mask the JSON and TEXT data types in the row.
         """
         modified_row = list(row)
-        for type_code, indices in type_code_and_column_indices_to_be_masked_dict.items():
+        for (
+            type_code,
+            indices,
+        ) in type_code_and_column_indices_to_be_masked_dict.items():
             for index in indices:
-                modified_row[index] = self.get_masked_data(modified_row[index], type_code)
+                modified_row[index] = self.get_masked_data(
+                    modified_row[index], type_code
+                )
 
         return modified_row
 
@@ -236,21 +291,32 @@ class QueryResult(object):
         if self.is_connection_type_pii:
             return [list(r) for r in cursor.fetchall()]
 
-        type_code_and_column_indices_to_be_masked_dict = self.get_type_code_and_column_indices_to_be_masked_dict()
+        type_code_and_column_indices_to_be_masked_dict = (
+            self.get_type_code_and_column_indices_to_be_masked_dict()
+        )
         data_to_be_displayed = []
 
         for row in cursor.fetchall():
-            modified_row = self.mask_pii_data(row, type_code_and_column_indices_to_be_masked_dict)
+            modified_row = self.mask_pii_data(
+                row, type_code_and_column_indices_to_be_masked_dict
+            )
             data_to_be_displayed.append(modified_row)
 
         return data_to_be_displayed
 
-    def __init__(self, sql, title=None, is_connection_type_pii=None, used_by_user=None, is_connection_for_explorer_master_db=False):
+    def __init__(
+        self,
+        sql,
+        title=None,
+        is_connection_type_pii=None,
+        used_by_user=None,
+        is_connection_for_explorer_master_db=False,
+    ):
 
         self.sql = sql
         self.title = title
         self.is_connection_for_explorer_master_db = is_connection_for_explorer_master_db
-        if (is_connection_type_pii):
+        if is_connection_type_pii:
             self.is_connection_type_pii = is_connection_type_pii
         else:
             self.is_connection_type_pii = False
@@ -277,20 +343,38 @@ class QueryResult(object):
         return self._headers or []
 
     def _get_headers(self):
-        return [ColumnHeader(d[0]) for d in self._description] if self._description else [ColumnHeader('--')]
+        return (
+            [ColumnHeader(d[0]) for d in self._description]
+            if self._description
+            else [ColumnHeader("--")]
+        )
 
     def _get_numerics(self):
         conn = get_connection()
         if hasattr(conn.Database, "NUMBER"):
-            return [ix for ix, c in enumerate(self._description) if hasattr(c, 'type_code') and c.type_code in conn.Database.NUMBER.values]
+            return [
+                ix
+                for ix, c in enumerate(self._description)
+                if hasattr(c, "type_code")
+                and c.type_code in conn.Database.NUMBER.values
+            ]
         elif self.data:
             d = self.data[0]
-            return [ix for ix, _ in enumerate(self._description) if not isinstance(d[ix], six.string_types) and six.text_type(d[ix]).isnumeric()]
+            return [
+                ix
+                for ix, _ in enumerate(self._description)
+                if not isinstance(d[ix], six.string_types)
+                and six.text_type(d[ix]).isnumeric()
+            ]
         return []
 
     def _get_transforms(self):
         transforms = dict(app_settings.EXPLORER_TRANSFORMS)
-        return [(ix, transforms[str(h)]) for ix, h in enumerate(self.headers) if str(h) in transforms.keys()]
+        return [
+            (ix, transforms[str(h)])
+            for ix, h in enumerate(self.headers)
+            if str(h) in transforms.keys()
+        ]
 
     def column(self, ix):
         return [r[ix] for r in self.data]
@@ -301,8 +385,9 @@ class QueryResult(object):
         self.process_columns()
         self.process_rows()
 
-        logger.info("Explorer test Query Processing took %sms." %
-                    ((time() - start_time) * 1000))
+        logger.info(
+            "Explorer test Query Processing took %sms." % ((time() - start_time) * 1000)
+        )
 
     def process_columns(self):
         for ix in self._get_numerics():
@@ -317,9 +402,8 @@ class QueryResult(object):
 
     def execute_query(self):
         # can change connectiion type here to use different role --> get_connection_pii()
-        if (self.is_connection_type_pii):
-            logger.info(
-                "pii-connection")
+        if self.is_connection_type_pii:
+            logger.info("pii-connection")
             conn = get_connection_pii()
         elif should_route_to_asyncapi_db(self.sql):
             logger.info("Route to Async API DB")
@@ -337,10 +421,14 @@ class QueryResult(object):
             cursor.execute(self.sql)
         except DatabaseError as e:
             cursor.close()
-            if (re.search("permission denied for table", str(e)) and self.title != "Playground"):
+            if (
+                re.search("permission denied for table", str(e))
+                and self.title != "Playground"
+            ):
 
                 raise DatabaseError(
-                    "Query saved but unable to execute it because "+str(e))
+                    "Query saved but unable to execute it because " + str(e)
+                )
             else:
                 raise e
 
@@ -372,8 +460,9 @@ class ColumnStat(object):
         self.handles_null = handles_null
 
     def __call__(self, coldata):
-        self.value = round(float(self.statfn(coldata)),
-                           self.precision) if coldata else 0
+        self.value = (
+            round(float(self.statfn(coldata)), self.precision) if coldata else 0
+        )
 
     def __unicode__(self):
         return self.label
@@ -391,8 +480,12 @@ class ColumnSummary(object):
             ColumnStat("Avg", lambda x: float(sum(x)) / float(len(x))),
             ColumnStat("Min", min),
             ColumnStat("Max", max),
-            ColumnStat("NUL", lambda x: int(
-                sum(map(lambda y: 1 if y is None else 0, x))), 0, True)
+            ColumnStat(
+                "NUL",
+                lambda x: int(sum(map(lambda y: 1 if y is None else 0, x))),
+                0,
+                True,
+            ),
         ]
         without_nulls = list(map(lambda x: 0 if x is None else x, col))
 
