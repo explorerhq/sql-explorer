@@ -12,7 +12,7 @@ from django.views.generic import ListView
 from django.views.generic.edit import CreateView, DeleteView
 from django.views.decorators.http import require_POST, require_GET
 from django.utils.decorators import method_decorator
-from django.urls import reverse
+from django.urls import reverse_lazy
 from django.forms.models import model_to_dict
 from django.http import HttpResponse
 from django.db import DatabaseError
