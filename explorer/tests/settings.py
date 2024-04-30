@@ -48,7 +48,7 @@ AUTHENTICATION_BACKENDS = (
 
 STATIC_URL = '/static/'
 
-MIDDLEWARE_CLASSES = ('django.contrib.sessions.middleware.SessionMiddleware',
+MIDDLEWARE = ('django.contrib.sessions.middleware.SessionMiddleware',
                       'django.contrib.auth.middleware.AuthenticationMiddleware')
 
 EXPLORER_USER_QUERY_VIEWS = {}
