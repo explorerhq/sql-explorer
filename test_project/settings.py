@@ -46,7 +46,7 @@ EXPLORER_CONNECTIONS = {
     # 'MySQL': 'mysql',
     "SQLite": "default",
     "Another": "alt",
-    "Northwinds": "northwinds"
+    # "Northwinds": "northwinds"
 }
 EXPLORER_DEFAULT_CONNECTION = "default"
 
