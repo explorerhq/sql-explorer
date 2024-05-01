@@ -14,6 +14,24 @@ import {StateEffect} from "@codemirror/state";
 import {SchemaSvc} from "./schemaService";
 
 
+function updateSchema() {
+
+    const conn = document.querySelector('#id_connection').value;
+
+    SchemaSvc.get(conn).then(schema => {
+        window.editor.dispatch({
+            effects: StateEffect.appendConfig.of(
+                StandardSQL.language.data.of({
+                  autocomplete: schemaCompletionSource({schema: schema})
+                })
+            )
+        });
+    });
+
+    $("#schema_frame").attr("src", "../schema/" + conn);
+}
+
+
 function editorFromTextArea(textarea) {
     let view = new EditorView({
         doc: textarea.value,
@@ -156,7 +174,6 @@ export class ExplorerEditor {
     }
 
     showSchema(noAutofocus) {
-        $("#schema_frame").attr("src", "../schema/" + $("#id_connection").val());
         if (noAutofocus === true) {
             $("#schema_frame").addClass("no-autofocus");
         }
@@ -346,17 +363,10 @@ export class ExplorerEditor {
         this.$rows.keyup(function(event) {
             if(event.keyCode === 13){ this.showRows(); }
         }.bind(this));
-        const conn = document.querySelector('#id_connection').value;
 
-        SchemaSvc.get(conn).then(schema => {
-            this.editor.dispatch({
-                effects: StateEffect.appendConfig.of(
-                    StandardSQL.language.data.of({
-                      autocomplete: schemaCompletionSource({schema: schema})
-                    })
-                )
-            });
-        });
-
+        // Set up schema autocomplete in the editor. When the connection changes, load new schema.
+        const connEl = document.querySelector('#id_connection');
+        connEl.addEventListener('change', updateSchema);
+        updateSchema();
     }
 }

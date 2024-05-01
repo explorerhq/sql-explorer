@@ -61,7 +61,12 @@ function fetchAndShowSchema(view) {
         const tableName = state.doc.sliceString(wordRange.from, wordRange.to);
         const conn = document.querySelector('#id_connection').value;
         SchemaSvc.get(conn).then(schema => {
-            const formattedSchema = JSON.stringify(schema[tableName], null, 2);
+            let formattedSchema;
+            if (schema.hasOwnProperty(tableName)) {
+                formattedSchema = JSON.stringify(schema[tableName], null, 2);
+            } else {
+                formattedSchema = `Table '${tableName}' not found in schema for connection '${conn}'`;
+            }
             displaySchemaTooltip(view, formattedSchema);
         });
     }

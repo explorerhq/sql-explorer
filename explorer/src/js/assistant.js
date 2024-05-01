@@ -10,24 +10,7 @@ function getErrorMessage() {
     return errorElement ? errorElement.textContent.trim() : null;
 }
 
-export function setUpAssistant(expand = false) {
-
-    const error = getErrorMessage();
-
-    if(expand || error) {
-        const myCollapseElement = document.getElementById('assistant_collapse');
-        const bsCollapse = new bootstrap.Collapse(myCollapseElement, {
-          toggle: false
-        });
-        bsCollapse.show();
-        if(error) {
-            document.getElementById('id_error_help_message').classList.remove('d-none');
-        }
-    }
-
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-
+function setupTableList() {
     const conn = document.querySelector('#id_connection').value;
     SchemaSvc.get(conn).then(schema => {
         const keys = Object.keys(schema);
@@ -63,6 +46,29 @@ export function setUpAssistant(expand = false) {
     .catch(error => {
         console.error('Error retrieving JSON schema:', error);
     });
+}
+
+export function setUpAssistant(expand = false) {
+
+    const connEl = document.querySelector('#id_connection');
+    connEl.addEventListener('change', setupTableList);
+    setupTableList();
+
+    const error = getErrorMessage();
+
+    if(expand || error) {
+        const myCollapseElement = document.getElementById('assistant_collapse');
+        const bsCollapse = new bootstrap.Collapse(myCollapseElement, {
+          toggle: false
+        });
+        bsCollapse.show();
+        if(error) {
+            document.getElementById('id_error_help_message').classList.remove('d-none');
+        }
+    }
+
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
     document.getElementById('id_assistant_input').addEventListener('keydown', function(event) {
         if ((event.ctrlKey || event.metaKey) && (event.key === 'Enter')) {
