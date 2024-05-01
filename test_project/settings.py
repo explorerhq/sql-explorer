@@ -25,13 +25,13 @@ DATABASES = {
             "NAME": "tmp2"
         }
     },
-    "northwinds": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": "northwind.db",
-        "TEST": {
-            "NAME": "tmp3"
-        }
-    },
+    # "northwinds": {
+    #     "ENGINE": "django.db.backends.sqlite3",
+    #     "NAME": "northwind.db",
+    #     "TEST": {
+    #         "NAME": "tmp3"
+    #     }
+    # },
     "not_registered": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": "tmp4",
