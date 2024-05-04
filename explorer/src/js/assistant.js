@@ -120,15 +120,13 @@ function submitAssistantAsk() {
         // If there is exactly one code block in the response and the SQL editor is empty
         // then copy the code directly into the editor
         const preElements = document.querySelectorAll('#assistant_response pre');
-        if (preElements.length === 1) {
-            if (window.editor?.state.doc.toString().trim() === "") {
-                window.editor.dispatch({
-                    changes: {
-                        from: 0,
-                        insert: preElements[0].textContent
-                    }
-                });
-            }
+        if (preElements.length === 1 && window.editor?.state.doc.toString().trim() === "") {
+            window.editor.dispatch({
+                changes: {
+                    from: 0,
+                    insert: preElements[0].textContent
+                }
+            });
         }
 
         setUpCopyButtons();
