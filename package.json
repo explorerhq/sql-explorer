@@ -2,9 +2,9 @@
   "name": "django-sql-explorer",
   "description": "Django SQL Explorer",
   "scripts": {
-    "dev": "npx vite --config vite.config.js",
-    "build": "npx vite build --config vite.config.js",
-    "preview": "npx vite preview --config vite.config.js"
+    "dev": "export APP_VERSION=$(python -c 'from explorer import __version__; print(__version__)') && npx vite --config vite.config.js",
+    "build": "export APP_VERSION=$(python -c 'from explorer import __version__; print(__version__)') && npx vite build --config vite.config.js",
+    "preview": "export APP_VERSION=$(python -c 'from explorer import __version__; print(__version__)') && npx vite preview --config vite.config.js"
   },
   "devDependencies": {
     "sass": "~1.69.0",

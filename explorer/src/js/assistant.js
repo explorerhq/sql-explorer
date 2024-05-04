@@ -2,38 +2,18 @@ import {getCsrfToken} from "./csrf";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
 import * as bootstrap from 'bootstrap';
-import $ from "jquery";
 import List from "list.js";
+import { SchemaSvc } from "./schemaService"
 
 function getErrorMessage() {
     const errorElement = document.querySelector('.alert-danger.db-error');
     return errorElement ? errorElement.textContent.trim() : null;
 }
 
-export function setUpAssistant(expand = false) {
-
-    const error = getErrorMessage();
-
-    if(expand || error) {
-        const myCollapseElement = document.getElementById('assistant_collapse');
-        const bsCollapse = new bootstrap.Collapse(myCollapseElement, {
-          toggle: false
-        });
-        bsCollapse.show();
-        if(error) {
-            document.getElementById('id_error_help_message').classList.remove('d-none');
-        }
-    }
-
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-
-    fetch('../schema.json/' + $("#id_connection").val())
-    .then(response => {
-        return response.json();
-    })
-    .then(data => {
-        const keys = Object.keys(data);
+function setupTableList() {
+    const conn = document.querySelector('#id_connection').value;
+    SchemaSvc.get(conn).then(schema => {
+        const keys = Object.keys(schema);
         const tableList = document.getElementById('table-list');
         tableList.innerHTML = '';
 
@@ -66,6 +46,29 @@ export function setUpAssistant(expand = false) {
     .catch(error => {
         console.error('Error retrieving JSON schema:', error);
     });
+}
+
+export function setUpAssistant(expand = false) {
+
+    const connEl = document.querySelector('#id_connection');
+    connEl.addEventListener('change', setupTableList);
+    setupTableList();
+
+    const error = getErrorMessage();
+
+    if(expand || error) {
+        const myCollapseElement = document.getElementById('assistant_collapse');
+        const bsCollapse = new bootstrap.Collapse(myCollapseElement, {
+          toggle: false
+        });
+        bsCollapse.show();
+        if(error) {
+            document.getElementById('id_error_help_message').classList.remove('d-none');
+        }
+    }
+
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
     document.getElementById('id_assistant_input').addEventListener('keydown', function(event) {
         if ((event.ctrlKey || event.metaKey) && (event.key === 'Enter')) {
@@ -113,6 +116,19 @@ function submitAssistantAsk() {
         const output = DOMPurify.sanitize(marked.parse(data.message));
         document.getElementById("assistant_response").innerHTML = output;
         document.getElementById("assistant_spinner").classList.add('d-none');
+
+        // If there is exactly one code block in the response and the SQL editor is empty
+        // then copy the code directly into the editor
+        const preElements = document.querySelectorAll('#assistant_response pre');
+        if (preElements.length === 1 && window.editor?.state.doc.toString().trim() === "") {
+            window.editor.dispatch({
+                changes: {
+                    from: 0,
+                    insert: preElements[0].textContent
+                }
+            });
+        }
+
         setUpCopyButtons();
     })
         .catch(error => {

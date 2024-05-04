@@ -77,10 +77,11 @@
                     </div>
                     <div id="flush-collapseOne" class="accordion-collapse collapse{% if show_sql_by_default or not form.sql.value %} show{% endif %}" aria-labelledby="sql_accordion_header" data-bs-parent="#sql_accordion">
                         <div>
-                            <div class="row">
+                            <div class="row" id="sql_editor_container">
                                 <textarea
                                     class="form-control" {% if not can_change %} disabled {% endif %} cols="40" id="id_sql"
                                     name="sql" rows="20">{{ form.sql.value|default_if_none:"" }}</textarea>
+                                <div id="schema_tooltip" class="d-none"></div>
                             </div>
                             {% if params %}
                                 <div class="row">

@@ -25,20 +25,19 @@ DATABASES = {
             "NAME": "tmp2"
         }
     },
-    "not_registered": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": "tmp3",
-        "TEST": {
-            "NAME": "tmp3"
-        }
-    }
+    # "northwinds": {
+    #     "ENGINE": "django.db.backends.sqlite3",
+    #     "NAME": "northwind.db",
+    #     "TEST": {
+    #         "NAME": "tmp3"
+    #     }
+    # },
 }
 
 EXPLORER_CONNECTIONS = {
-    # 'Postgres': 'postgres',
-    # 'MySQL': 'mysql',
     "SQLite": "default",
-    "Another": "alt"
+    "Another": "alt",
+    #"Northwinds": "northwinds"
 }
 EXPLORER_DEFAULT_CONNECTION = "default"
 

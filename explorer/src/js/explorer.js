@@ -11,6 +11,25 @@ import { toggleFavorite } from "./favorites";
 
 import {schemaCompletionSource, StandardSQL} from "@codemirror/lang-sql";
 import {StateEffect} from "@codemirror/state";
+import {SchemaSvc} from "./schemaService";
+
+
+function updateSchema() {
+
+    const conn = document.querySelector('#id_connection').value;
+
+    SchemaSvc.get(conn).then(schema => {
+        window.editor.dispatch({
+            effects: StateEffect.appendConfig.of(
+                StandardSQL.language.data.of({
+                  autocomplete: schemaCompletionSource({schema: schema})
+                })
+            )
+        });
+    });
+
+    $("#schema_frame").attr("src", `../schema/{conn}`);
+}
 
 
 function editorFromTextArea(textarea) {
@@ -155,7 +174,6 @@ export class ExplorerEditor {
     }
 
     showSchema(noAutofocus) {
-        $("#schema_frame").attr("src", "../schema/" + $("#id_connection").val());
         if (noAutofocus === true) {
             $("#schema_frame").addClass("no-autofocus");
         }
@@ -346,22 +364,9 @@ export class ExplorerEditor {
             if(event.keyCode === 13){ this.showRows(); }
         }.bind(this));
 
-        fetch('../schema.json/' + $("#id_connection").val())
-            .then(response => {
-                return response.json();
-            })
-            .then(data => {
-                this.editor.dispatch({
-                    effects: StateEffect.appendConfig.of(
-                        StandardSQL.language.data.of({
-                          autocomplete: schemaCompletionSource({schema: data})
-                        })
-                    )
-                })
-                return data;
-            })
-            .catch(error => {
-                console.error('Error retrieving JSON schema:', error);
-            });
+        // Set up schema autocomplete in the editor. When the connection changes, load new schema.
+        const connEl = document.querySelector('#id_connection');
+        connEl.addEventListener('change', updateSchema);
+        updateSchema();
     }
 }

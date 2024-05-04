@@ -7,7 +7,12 @@
 ```
 git add .
 git commit -m "Release 1.0.0"
+git tag -a "1.0.0"
+git push
+git push --tags
 ```
+
+- Be sure to test the built JS source by running `npm run build` and setting `VITE_DEV_MODE = False` in settings.py
 
 - [x] Build & test the source distribution:
 ```

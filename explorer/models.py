@@ -428,16 +428,21 @@ class ExplorerValueManager(models.Manager):
             obj.value = str(ts)
             obj.save()
 
+    def get_item(self, key):
+        return self.filter(key=key).first()
+
 
 class ExplorerValue(models.Model):
     INSTALL_UUID = "UUID"
     STARTUP_METRIC_LAST_SEND = "SMLS"
+    ASSISTANT_SYSTEM_PROMPT = "ASP"
     EXPLORER_SETTINGS_CHOICES = [
         (INSTALL_UUID, "Install Unique ID"),
         (STARTUP_METRIC_LAST_SEND, "Startup metric last send"),
+        (ASSISTANT_SYSTEM_PROMPT, "System prompt for SQL Assistant")
     ]
 
-    key = models.CharField(max_length=5, choices=EXPLORER_SETTINGS_CHOICES)
+    key = models.CharField(max_length=5, choices=EXPLORER_SETTINGS_CHOICES, unique=True)
     value = models.TextField(null=True, blank=True)
 
     objects = ExplorerValueManager()

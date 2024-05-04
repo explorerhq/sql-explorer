@@ -32,8 +32,8 @@ export default {
         styles: resolve(__dirname, '/explorer/src/scss/styles.scss'),
       },
       output: {
-        entryFileNames: `[name].js`,
-        chunkFileNames: `[name].js`,
+        entryFileNames: `[name].${process.env.APP_VERSION}.js`,
+        chunkFileNames: `[name].${process.env.APP_VERSION}.js`,
         assetFileNames: `[name].[ext]`
       },
     },

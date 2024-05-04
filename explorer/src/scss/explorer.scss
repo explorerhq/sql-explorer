@@ -128,3 +128,18 @@ nav.navbar {
 .dropdown-toggle::after {
     margin-left: 0 !important;
 }
+
+#sql_editor_container {
+    position: relative;
+}
+
+#schema_tooltip {
+    position: absolute;
+    bottom: 1rem;
+    z-index: 1000;
+    background-color: white;
+    border: 1px solid black;
+    padding: 5px;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
