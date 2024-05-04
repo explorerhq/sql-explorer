@@ -5,6 +5,14 @@ Change Log
 This document records all notable changes to `django-sql-explorer <https://github.com/chrisclark/django-sql-explorer>`_.
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+`vNext`_ (unreleased)
+===========================
+* Keyboard shortcut to show schema hints (cmd+S / ctrl+S -- note that is a capital "S" so the full kbd commands is cmd+shift+s)
+* DB-managed LLM prompts (editable in django admin)
+* Versioned .js bundles (for cache busting)
+* Automatically populate assistant responses that contain code into the editor
+* `#616`_: Update schema/assistant tables/autocomplete on connection drop-down change
+
 `4.2.0`_ (2024-04-26)
 ===========================
 * `#609`_: Tracking should be opt-in and not use the SECRET_KEY
