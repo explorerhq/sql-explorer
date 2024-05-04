@@ -23,8 +23,11 @@ let updateListenerExtension = EditorView.updateListener.of((update) => {
 const hideTooltipOnEsc = EditorView.domEventHandlers({
     keydown(event, view) {
         if (event.code === 'Escape') {
-            const tooltip = document.querySelector('#schema-tooltip');
-            if (tooltip) tooltip.style.display = 'none';
+            const tooltip = document.getElementById('schema_tooltip');
+            if (tooltip) {
+                tooltip.classList.add('d-none');
+                tooltip.classList.remove('d-block');
+            }
             return true;
         }
         return false;
@@ -32,24 +35,12 @@ const hideTooltipOnEsc = EditorView.domEventHandlers({
 });
 
 function displaySchemaTooltip(editor, content) {
-    let tooltip = document.getElementById('schema-tooltip');
-    if (!tooltip) {
-        tooltip = document.createElement('div');
-        tooltip.id = 'schema-tooltip';
-        tooltip.style.position = 'absolute';
-        tooltip.style.bottom = '1rem';
-        tooltip.style.zIndex = 1000;
-        tooltip.style.backgroundColor = 'white';
-        tooltip.style.border = '1px solid black';
-        tooltip.style.padding = '5px';
-        tooltip.style.borderRadius = '4px';
-        tooltip.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
-        document.getElementById('sql_editor_container').appendChild(tooltip);
+    let tooltip = document.getElementById('schema_tooltip');
+    if (tooltip) {
+        tooltip.classList.remove('d-none');
+        tooltip.classList.add('d-block');
+        tooltip.textContent = content;
     }
-
-    tooltip.textContent = content;
-    tooltip.style.display = 'block';
-
 }
 
 function fetchAndShowSchema(view) {
