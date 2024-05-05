@@ -28,7 +28,7 @@ function updateSchema() {
         });
     });
 
-    $("#schema_frame").attr("src", `../schema/{conn}`);
+    $("#schema_frame").attr("src", `../schema/${conn}`);
 }
 
 
