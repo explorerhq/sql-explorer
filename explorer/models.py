@@ -9,7 +9,8 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from explorer import app_settings
-from explorer.assistant import models as assistant_models
+# import the models so that the migration tooling knows the assistant models are part of the explorer app
+from explorer.assistant import models as assistant_models  # noqa
 from explorer.telemetry import Stat, StatNames
 from explorer.utils import (
     extract_params, get_params_for_url, get_s3_bucket, get_valid_connection, passes_blacklist, s3_url,
