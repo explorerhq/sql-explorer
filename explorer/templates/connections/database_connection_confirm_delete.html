@@ -1,0 +1,12 @@
+{% extends 'explorer/base.html' %}
+{% block sql_explorer_content %}
+<div class="container mt-5">
+    <h2>Delete Database Connection</h2>
+    <p>Are you sure you want to delete "{{ object }}"?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a href="{% url 'explorer_connections' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

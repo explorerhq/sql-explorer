@@ -14,7 +14,12 @@ class ExplorerContextMixin:
             "can_change": app_settings.EXPLORER_PERMISSION_CHANGE(
                 self.request
             ),
-            "assistant_enabled": app_settings.EXPLORER_AI_API_KEY is not None,
+            "can_manage_connections": app_settings.EXPLORER_PERMISSION_CONNECTIONS(
+                self.request
+            ),
+            "assistant_enabled": app_settings.has_assistant(),
+            "db_connections_enabled": app_settings.db_connections_enabled(),
+            "s3_enabled": app_settings.S3_BUCKET is not None,
             "csrf_cookie_name": settings.CSRF_COOKIE_NAME,
             "csrf_token_in_dom": settings.CSRF_COOKIE_HTTPONLY or settings.CSRF_USE_SESSIONS,
             "view_name": self.request.resolver_match.view_name,

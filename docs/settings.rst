@@ -357,4 +357,13 @@ The following three settings control the SQL Assistant. More information is avai
 
     EXPLORER_AI_API_KEY = getattr(settings, "EXPLORER_AI_API_KEY", None)
     EXPLORER_ASSISTANT_BASE_URL = getattr(settings, "EXPLORER_ASSISTANT_BASE_URL", "https://api.openai.com/v1")
-    EXPLORER_ASSISTANT_MODEL
+    EXPLORER_ASSISTANT_MODEL = getattr(settings, "EXPLORER_ASSISTANT_MODEL",
+                                   # Return the model name and max_tokens it supports
+                                   {"name": "gpt-4o",
+                                    "max_tokens": 128000})
+
+
+User-Configured DB Connections
+******************************
+Set `EXPLORER_DB_CONNECTIONS_ENABLED` to `True` to enable DB connections to get configured in the browser (e.g. not
+just in settings.py). This also allows uploading of CSV or SQLite files for instant querying.

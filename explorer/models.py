@@ -17,6 +17,9 @@ from explorer.utils import (
     shared_dict_update, swap_params,
 )
 
+# Issue #618. All models must be imported so that Django understands how to manage migrations for the app
+from explorer.ee.db_connections.models import DatabaseConnection  # noqa
+from explorer.assistant.models import PromptLog  # noqa
 
 MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist: %s"
 
@@ -65,6 +68,10 @@ class Query(models.Model):
 
     def get_run_count(self):
         return self.querylog_set.count()
+
+    def last_run_log(self):
+        ql = self.querylog_set.first()
+        return ql or QueryLog(success=True, run_at=self.created_at)
 
     def avg_duration_display(self):
         d = self.avg_duration()
@@ -441,7 +448,7 @@ class ExplorerValue(models.Model):
     EXPLORER_SETTINGS_CHOICES = [
         (INSTALL_UUID, "Install Unique ID"),
         (STARTUP_METRIC_LAST_SEND, "Startup metric last send"),
-        (ASSISTANT_SYSTEM_PROMPT, "System prompt for SQL Assistant")
+        (ASSISTANT_SYSTEM_PROMPT, "System prompt for SQL Assistant"),
     ]
 
     key = models.CharField(max_length=5, choices=EXPLORER_SETTINGS_CHOICES, unique=True)

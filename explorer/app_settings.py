@@ -69,8 +69,11 @@ EXPLORER_PERMISSION_VIEW = getattr(
 EXPLORER_PERMISSION_CHANGE = getattr(
     settings, "EXPLORER_PERMISSION_CHANGE", lambda r: r.user.is_staff
 )
+EXPLORER_PERMISSION_CONNECTIONS = getattr(
+    settings, "EXPLORER_PERMISSION_CONNECTIONS", lambda r: r.user.is_staff
+)
 EXPLORER_RECENT_QUERY_COUNT = getattr(
-    settings, "EXPLORER_RECENT_QUERY_COUNT", 10
+    settings, "EXPLORER_RECENT_QUERY_COUNT", 5
 )
 EXPLORER_ASYNC_SCHEMA = getattr(settings, "EXPLORER_ASYNC_SCHEMA", False)
 
@@ -125,7 +128,7 @@ FROM_EMAIL = getattr(
 S3_REGION = getattr(settings, "EXPLORER_S3_REGION", "us-east-1")
 S3_ENDPOINT_URL = getattr(settings, "EXPLORER_S3_ENDPOINT_URL", None)
 S3_DESTINATION = getattr(settings, "EXPLORER_S3_DESTINATION", "")
-S3_SIGNATURE_VERSION = getattr(settings, "EXPLORER_S3_SIGNATURE_VERSION", "v2")
+S3_SIGNATURE_VERSION = getattr(settings, "EXPLORER_S3_SIGNATURE_VERSION", "v4")
 
 UNSAFE_RENDERING = getattr(settings, "EXPLORER_UNSAFE_RENDERING", False)
 
@@ -146,8 +149,18 @@ VITE_DEV_MODE = getattr(settings, "VITE_DEV_MODE", False)
 
 # AI Assistant settings. Setting the first to an OpenAI key is the simplest way to enable the assistant
 EXPLORER_AI_API_KEY = getattr(settings, "EXPLORER_AI_API_KEY", None)
+
 EXPLORER_ASSISTANT_BASE_URL = getattr(settings, "EXPLORER_ASSISTANT_BASE_URL", "https://api.openai.com/v1")
 EXPLORER_ASSISTANT_MODEL = getattr(settings, "EXPLORER_ASSISTANT_MODEL",
                                    # Return the model name and max_tokens it supports
-                                   {"name": "gpt-4-0125-preview",
+                                   {"name": "gpt-4o",
                                     "max_tokens": 128000})
+
+EXPLORER_DB_CONNECTIONS_ENABLED = getattr(settings, "EXPLORER_DB_CONNECTIONS_ENABLED", False)
+EXPLORER_PRUNE_LOCAL_UPLOAD_COPY_DAYS_INACTIVITY = getattr(settings,
+                                                           "EXPLORER_PRUNE_LOCAL_UPLOAD_COPY_DAYS_INACTIVITY", 7)
+# 500mb default max
+EXPLORER_MAX_UPLOAD_SIZE = getattr(settings, "EXPLORER_MAX_UPLOAD_SIZE", 500 * 1024 * 1024)
+
+def has_assistant(): return EXPLORER_AI_API_KEY is not None
+def db_connections_enabled(): return EXPLORER_DB_CONNECTIONS_ENABLED

@@ -10,7 +10,6 @@ from .query_favorite import QueryFavoritesView, QueryFavoriteView
 from .schema import SchemaJsonView, SchemaView
 from .stream import StreamQueryView
 
-
 __all__ = [
     "CreateQueryView",
     "DeleteQueryView",

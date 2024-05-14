@@ -28,8 +28,9 @@ def _get_explorer_connections():
 
 def _validate_connections():
 
-    # Validate connections
-    if _get_default() not in _get_explorer_connections().values():
+    # Validate connections, when using settings.EXPLORER_CONNECTIONS
+    # Skip if none are configured, as the app will use user-configured connections (DatabaseConnection models)
+    if _get_explorer_connections().values() and _get_default() not in _get_explorer_connections().values():
         raise ImproperlyConfigured(
             f"EXPLORER_DEFAULT_CONNECTION is {_get_default()}, "
             f"but that alias is not present in the values of "

@@ -3,7 +3,7 @@ import { marked } from "marked";
 import DOMPurify from "dompurify";
 import * as bootstrap from 'bootstrap';
 import List from "list.js";
-import { SchemaSvc } from "./schemaService"
+import { SchemaSvc, getConnElement } from "./schemaService"
 
 function getErrorMessage() {
     const errorElement = document.querySelector('.alert-danger.db-error');
@@ -11,8 +11,7 @@ function getErrorMessage() {
 }
 
 function setupTableList() {
-    const conn = document.querySelector('#id_connection').value;
-    SchemaSvc.get(conn).then(schema => {
+    SchemaSvc.get().then(schema => {
         const keys = Object.keys(schema);
         const tableList = document.getElementById('table-list');
         tableList.innerHTML = '';
@@ -42,6 +41,23 @@ function setupTableList() {
         };
 
         new List('additional_table_container', options);
+
+        const selectAllButton = document.getElementById('select_all_button');
+        const checkboxes = document.querySelectorAll('.table-checkbox');
+
+        let selectState = 'all';
+
+        selectAllButton.innerHTML = 'Select All';
+
+        selectAllButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            const isSelectingAll = selectState === 'all';
+            checkboxes.forEach((checkbox) => {
+                checkbox.checked = isSelectingAll;
+            });
+            selectState = isSelectingAll ? 'none' : 'all';
+            selectAllButton.innerHTML = isSelectingAll ? 'Deselect All' : 'Select All';
+        });
     })
     .catch(error => {
         console.error('Error retrieving JSON schema:', error);
@@ -50,8 +66,7 @@ function setupTableList() {
 
 export function setUpAssistant(expand = false) {
 
-    const connEl = document.querySelector('#id_connection');
-    connEl.addEventListener('change', setupTableList);
+    getConnElement().addEventListener('change', setupTableList);
     setupTableList();
 
     const error = getErrorMessage();
@@ -127,6 +142,13 @@ function submitAssistantAsk() {
                     insert: preElements[0].textContent
                 }
             });
+        }
+
+        // Similarly, if there is no description, copy the prompt into the description
+        const prompt = document.getElementById("id_assistant_input")?.value;
+        const description = document.getElementById("id_description");
+        if (description?.value === "") {
+            description.value = prompt;
         }
 
         setUpCopyButtons();

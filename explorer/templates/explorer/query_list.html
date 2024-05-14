@@ -7,7 +7,7 @@
         <div class="container">
             <h3>
                 {% blocktrans trimmed with qlen=recent_queries|length %}
-                    Your {{qlen}} Most Recently Run
+                    Recently Run by You
                 {% endblocktrans %}
             </h3>
             <table class="table table-striped">
@@ -49,10 +49,13 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>{% trans "Query" %}</th>
-                    <th>{% trans "Created" %}</th>
+                    <th><i class="sort bi-chevron-expand pe-1" data-sort="sort-name"
+                                                         data-dir="asc"></i>{% trans "Query" %}</th>
+                    <th><i class="sort bi-chevron-expand pe-1" data-sort="sort-created"
+                                                         data-dir="asc"></i>{% trans "Created" %}</th>
                     {% if tasks_enabled %}
-                        <th>{% trans "Email" %}</th>
+                        <th><i class="sort bi-chevron-expand pe-1" data-sort="{{ forloop.counter0 }}"
+                                                         data-dir="asc"></i>{% trans "Email" %}</th>
                     {% endif %}
                     <th>{% trans "CSV" %}</th>
                     {% if can_change %}
@@ -60,8 +63,12 @@
                         <th>{% trans "Delete" %}</th>
                     {% endif %}
                     <th>{% trans "Favorite" %}</th>
-                    <th>{% trans "Ran Successfully" %}</th>
-                    <th>{% trans "Run Count" %}</th>
+                    <th><i class="sort bi-chevron-expand pe-1" data-sort="sort-last-run"
+                                                         data-dir="asc"></i>{% trans "Last Run" %}</th>
+                    <th><i class="sort bi-chevron-expand pe-1" data-sort="sort-run-count"
+                                                         data-dir="asc"></i>{% trans "Run Count" %}</th>
+                    <th><i class="sort bi-chevron-expand pe-1" data-sort="sort-connection"
+                                                         data-dir="asc"></i>{% trans "Connection" %}</th>
                 </tr>
             </thead>
             <tbody class="list">
@@ -76,10 +83,10 @@
                                 </strong>
                             </td>
                         {% else %}
-                            <td class="name{% if object.is_in_category %} indented{% endif %}">
+                            <td class="sort-name{% if object.is_in_category %} indented{% endif %}">
                                 <a href="{% url 'query_detail' object.id %}">{{ object.title }}</a>
                             </td>
-                            <td>{{ object.created_at|date:"SHORT_DATE_FORMAT" }}
+                            <td class="sort-created">{{ object.created_at|date:"m/d/y" }}
                                 {% if object.created_by_user %}
                                     {% blocktrans trimmed with cuser=object.created_by_user %}
                                         by {{cuser}}
@@ -101,7 +108,7 @@
                             {% if can_change %}
                                 <td>
                                     <a href="{% url 'explorer_playground' %}?query_id={{ object.id }}">
-                                        <i class="bi-code-square"></i>
+                                        <i class="bi-arrow-up-right-square"></i>
                                     </a>
                                 </td>
                                 <td>
@@ -111,13 +118,15 @@
                                 </td>
                             {% endif %}
                             <td> {% query_favorite_button object.id object.is_favorite 'query_favorite_toggle' %}</td>
-                            <td>{% if object.ran_successfully %}
-                                    <i class="bi-check-circle" style="color: green;"></i>
+                            <td class="sort-last-run">{% if object.ran_successfully %}
+                                    <i class="bi-check-circle pe-2 text-success"></i>
                                 {% elif object.ran_successfully is not None %}
-                                    <i class="bi-slash-circle" style="color: red;"></i>
+                                    <i class="bi-slash-circle pe-2 text-danger"></i>
                                 {% endif %}
+                                {{ object.last_run_at|date:"m/d/y" }}
                             </td>
-                            <td>{{ object.run_count }}</td>
+                            <td class="sort-run-count">{{ object.run_count }}</td>
+                            <td class="sort-connection">{{ object.connection }}</td>
                         {% endif %}
                     </tr>
                 {% endfor %}

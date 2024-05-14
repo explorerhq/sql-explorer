@@ -50,8 +50,7 @@ function fetchAndShowSchema(view) {
 
     if (wordRange) {
         const tableName = state.doc.sliceString(wordRange.from, wordRange.to);
-        const conn = document.querySelector('#id_connection').value;
-        SchemaSvc.get(conn).then(schema => {
+        SchemaSvc.get().then(schema => {
             let formattedSchema;
             if (schema.hasOwnProperty(tableName)) {
                 formattedSchema = JSON.stringify(schema[tableName], null, 2);

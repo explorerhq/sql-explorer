@@ -1,0 +1,43 @@
+{% extends "explorer/base.html" %}
+{% load explorer_tags i18n %}
+
+{% block sql_explorer_content %}
+<div class="container">
+    <h3>Connections</h3>
+    <div class="mt-3">
+        <a href="{% url 'explorer_connection_create' %}" class="btn btn-primary mb-3">Add New Connection</a>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Alias</th>
+                    <th>Name</th>
+                    <th>Engine</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for connection in object_list %}
+                <tr>
+                    <td>
+                        {% if connection.id %}
+                            <a href="{% url 'explorer_connection_detail' connection.pk %}">{{ connection.alias }}</a>
+                        {% else %}
+                            {{ connection.alias }}
+                        {% endif %}
+                    </td>
+                    <td>{{ connection.name }}</td>
+                    <td>{{ connection.get_engine_display }}</td>
+                    <td>
+                        <a href="../play/?connection={{ connection.alias }}" class="px-2"><i class="bi-arrow-up-right-square small me-1"></i>Query</a>
+                        {% if connection.id %}
+                            <a href="{% url 'explorer_connection_update' connection.pk %}" class="px-2"><i class="bi-pencil-square"></i></a>
+                            <a href="{% url 'explorer_connection_delete' connection.pk %}"><i class="bi-trash"></i></a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

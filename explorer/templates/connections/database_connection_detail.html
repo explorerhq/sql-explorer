@@ -1,0 +1,39 @@
+{% extends "explorer/base.html" %}
+{% block sql_explorer_content %}
+<div class="container mt-5">
+    <h2>Connection Details</h2>
+    <table class="table table-bordered">
+        <tr>
+            <th>Alias</th>
+            <td>{{ object.alias }}</td>
+        </tr>
+        <tr>
+            <th>Name</th>
+            <td>{{ object.name }}</td>
+        </tr>
+        <tr>
+            <th>Engine</th>
+            <td>{{ object.get_engine_display }}</td>
+        </tr>
+        {% if not object.is_upload %}
+        <tr>
+            <th>User</th>
+            <td>{{ object.user }}</td>
+        </tr>
+        <tr>
+            <th>Host</th>
+            <td>{{ object.host }}</td>
+        </tr>
+        <tr>
+            <th>Port</th>
+            <td>{{ object.port }}</td>
+        </tr>
+        {% endif %}
+    </table>
+    {% if not object.is_upload %}
+        <a href="{% url 'explorer_connection_update' object.pk %}" class="btn btn-warning">Edit</a>
+    {% else %}
+        <span class="text-info-emphasis">The source of this connection is an uploaded file.</span>
+    {% endif %}
+</div>
+{% endblock %}

@@ -25,23 +25,17 @@ DATABASES = {
             "NAME": "tmp2"
         }
     },
-    # "northwinds": {
-    #     "ENGINE": "django.db.backends.sqlite3",
-    #     "NAME": "northwind.db",
-    #     "TEST": {
-    #         "NAME": "tmp3"
-    #     }
-    # },
 }
 
 EXPLORER_CONNECTIONS = {
     "SQLite": "default",
     "Another": "alt",
-    #"Northwinds": "northwinds"
 }
 EXPLORER_DEFAULT_CONNECTION = "default"
 
 ROOT_URLCONF = "test_project.urls"
+
+PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
 
 TEMPLATES = [
     {
@@ -111,8 +105,11 @@ EXPLORER_USER_QUERY_VIEWS = {}
 # Tasks disabled by default, but if you have celery installed
 # make sure the broker URL is set correctly
 EXPLORER_TASKS_ENABLED = False
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
 
-EXPLORER_S3_BUCKET = "thisismybucket.therearemanylikeit.butthisoneismine"
+EXPLORER_S3_BUCKET = os.environ.get("EXPLORER_S3_BUCKET")
+EXPLORER_S3_ACCESS_KEY = os.environ.get("EXPLORER_S3_ACCESS_KEY")
+EXPLORER_S3_SECRET_KEY = os.environ.get("EXPLORER_S3_SECRET_KEY")
 EXPLORER_AI_API_KEY = os.environ.get("AI_API_KEY")
 EXPLORER_ASSISTANT_BASE_URL = os.environ.get("AI_BASE_URL")
+EXPLORER_DB_CONNECTIONS_ENABLED = True

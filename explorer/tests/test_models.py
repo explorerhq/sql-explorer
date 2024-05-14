@@ -7,7 +7,7 @@ from django.test import TestCase
 
 from explorer import app_settings
 from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
-from explorer.models import ColumnHeader, ColumnSummary, Query, QueryLog, QueryResult
+from explorer.models import ColumnHeader, ColumnSummary, Query, QueryLog, QueryResult, DatabaseConnection
 from explorer.tests.factories import SimpleQueryFactory
 
 
@@ -220,3 +220,19 @@ class TestColumnSummary(TestCase):
     def test_empty_data(self):
         res = ColumnSummary("foo", [])
         self.assertEqual(res.stats, {"Min": 0, "Max": 0, "Avg": 0, "Sum": 0,  "NUL": 0})
+
+
+class TestDatabaseConnection(TestCase):
+
+    def test_cant_create_a_connection_with_conflicting_name(self):
+        thrown = False
+        try:
+            DatabaseConnection.objects.create(name="default")
+        except ValidationError:
+            thrown = True
+        self.assertTrue(thrown)
+
+    def test_create_db_connection_from_django_connection(self):
+        c = DatabaseConnection.from_django_connection(app_settings.EXPLORER_DEFAULT_CONNECTION)
+        self.assertEqual(c.name, "tst1")
+        self.assertEqual(c.alias, "default")

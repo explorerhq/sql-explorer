@@ -1,0 +1,23 @@
+{% extends 'explorer/base.html' %}
+{% block sql_explorer_content %}
+<div class="container mt-5">
+    <h2>{% if object %}Edit{% else %}Create New{% endif %} Connection</h2>
+    <form method="post" id="db-connection-form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">{% if object %}Update{% else %}Add{% endif %} Connection</button>
+        <a href="{% url 'explorer_connections' %}" class="btn btn-secondary">Cancel</a>
+        <button type="button" class="btn btn-info" id="test-connection-btn">Test Connection</button>
+    </form>
+    {% if not object and s3_enabled %}
+        <div class="pt-5">
+            <h4>...or upload a SQLite DB or CSV File</h4>
+            <p>CSV files will get parsed and typed automatically. SQLite databases must <i>not</i> be password protected.</p>
+            <div id="drop-area" class="p-5 mb-4 bg-light border rounded" style="cursor: pointer">
+                <p class="lead mb-0">Drag and drop .csv or SQLite .db or <strong>click to upload</strong>.</p>
+                <input type="file" id="fileElem" style="display:none" accept=".db,.csv">
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

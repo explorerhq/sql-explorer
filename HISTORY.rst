@@ -5,6 +5,21 @@ Change Log
 This document records all notable changes to `django-sql-explorer <https://github.com/chrisclark/django-sql-explorer>`_.
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+`4.4.0b1`_ (2024-06-02)
+===========================
+
+* Manage DB connections via the UI (and/or Django Admin)
+* Upload CSV or SQLite DBs directly, to create additional connections.
+  This functionality has additional dependencies which can be installed with
+  the 'uploads' extra (e.g. pip install django-sql-explorer[uploads])
+* The above functionality is managed by a new license, restricting the
+  ability of 3rd parties resell SQL Explorer (commercial usage is absolutely
+  still permitted).
+* Query List home page is sortable.
+* Select all / deselect all with AI assistant
+* Assistant tests run reliably in CI/CD
+
+
 `4.3.0`_ (2024-05-27)
 ===========================
 

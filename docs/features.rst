@@ -3,19 +3,16 @@ Features
 
 Security
 --------
-- Let's not kid ourselves - this tool is all about giving people
-  access to running SQL in production. So if that makes you
-  nervous (**and it should**) - you've been warned. Explorer makes an
-  effort to not allow terrible things to happen, but be careful!
-  It's recommended you setup read-only roles for each of your database
+- It's recommended you setup read-only roles for each of your database
   connections and only use these particular connections for your queries through the
-  ``EXPLORER_CONNECTIONS`` setting.
-- Explorer supports two different permission checks for users of
+  ``EXPLORER_CONNECTIONS`` setting -- or set up userland connections via DatabaseConnections in
+  the Django admin, or the SQL Explorer front-end.
+- SQL Explorer supports two different permission checks for users of
   the tool. Users passing the ``EXPLORER_PERMISSION_CHANGE`` test can
   create, edit, delete, and execute queries. Users who do not pass
   this test but pass the ``EXPLORER_PERMISSION_VIEW`` test can only
   execute queries. Other users cannot access any part of
-  Explorer. Both permission groups are set to is_staff by default
+  SQL Explorer. Both permission groups are set to is_staff by default
   and can be overridden in your settings file.
 - Enforces a SQL blacklist so destructive queries don't get
   executed (delete, drop, alter, update etc). This is not
@@ -37,19 +34,25 @@ SQL Assistant
   to quickly get help with your query, with relevant schema
   automatically injected into the prompt.
 
+Configurable Connections
+------------------------
+- Configure connections via the settings.py file, or via the SQL Explorer UI.
+- Supports drag-and-drop uploading of CSV files or SQLite databases for instant SQL access to your data.
+
 Snapshots
 ---------
 - Tick the 'snapshot' box on a query, and Explorer will upload a
   .csv snapshot of the query results to S3. Configure the snapshot
-  frequency via a celery cron task, e.g. for daily at 1am:
+  frequency via a celery cron task, e.g. for daily at 1am
+  (see test_project/celery_config.py for an example of this, along with test_project/__init__.py):
 
 .. code-block:: python
 
     app.conf.beat_schedule = {
-       'explorer.tasks.snapshot_queries': {
-           'task': 'explorer.tasks.snapshot_queries',
-           'schedule': crontab(hour=1, minute=0)
-       }
+       "explorer.tasks.snapshot_queries": {
+            "task": "explorer.tasks.snapshot_queries",
+            "schedule": crontab(hour="1", minute="0")
+        },
     }
 
 - Requires celery, obviously. Also uses boto3. All
@@ -64,6 +67,7 @@ Email query results
 - Click the email icon in the query listing view, enter an email
   address, and the query results (zipped .csv) will be sent to you
   asynchronously. Very handy for long-running queries.
+- You must also have the setting ``EXPLORER_TASKS_ENABLED`` enabled.
 
 Parameterized Queries
 ---------------------
@@ -168,10 +172,10 @@ Query Logs
 .. code-block:: python
 
    app.conf.beat_schedule = {
-       'explorer.tasks.truncate_querylogs': {
-           'task': 'explorer.tasks.truncate_querylogs',
-           'schedule': crontab(hour=1, minute=0),
-           'kwargs': {'days': 30}
+       "explorer.tasks.truncate_querylogs": {
+           "task": "explorer.tasks.truncate_querylogs",
+           "schedule": crontab(hour="1", minute="10"),
+           "kwargs": {"days": 30}
        }
    }
 

@@ -1,6 +1,8 @@
 const schemaCache = {};
 
-const fetchSchema = async (conn) => {
+const fetchSchema = async () => {
+
+    const conn = getConnElement().value;
 
     if (schemaCache[conn]) {
         return schemaCache[conn];
@@ -23,3 +25,7 @@ const fetchSchema = async (conn) => {
 export const SchemaSvc = {
     get: fetchSchema
 };
+
+export function getConnElement() {
+    return document.querySelector('#id_connection');
+}

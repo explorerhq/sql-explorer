@@ -1,12 +1,12 @@
 from django.urls import path
 
+from explorer.ee.urls import ee_urls
 from explorer.views import (
     CreateQueryView, DeleteQueryView, DownloadFromSqlView, DownloadQueryView, EmailCsvQueryView, ListQueryLogView,
     ListQueryView, PlayQueryView, QueryFavoritesView, QueryFavoriteView, QueryView, SchemaJsonView, SchemaView,
-    StreamQueryView, format_sql,
+    StreamQueryView, format_sql
 )
-
-from .assistant.views import assistant_help
+from explorer.assistant.views import AssistantHelpView
 
 urlpatterns = [
     path(
@@ -43,5 +43,7 @@ urlpatterns = [
     path("favorites/", QueryFavoritesView.as_view(), name="query_favorites"),
     path("favorite/<int:query_id>", QueryFavoriteView.as_view(), name="query_favorite"),
     path("", ListQueryView.as_view(), name="explorer_index"),
-    path("assistant/", assistant_help, name="assistant"),
+    path("assistant/", AssistantHelpView.as_view(), name="assistant"),
 ]
+
+urlpatterns += ee_urls

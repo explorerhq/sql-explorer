@@ -106,13 +106,15 @@ class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
                 })
                 rendered_headers.append(header)
 
+            lrl = q.last_run_log()
             model_dict.update({
                 "is_in_category": headers[header] > 1,
                 "collapse_target": collapse_target,
                 "created_at": q.created_at,
                 "is_header": False,
                 "run_count": q.querylog_set.count(),
-                "ran_successfully": q.querylog_set.first() and q.querylog_set.first().success,
+                "ran_successfully": lrl.success,
+                "last_run_at": lrl.run_at,
                 "created_by_user":
                     str(q.created_by_user) if q.created_by_user else None,
                 "is_favorite": q.id in query_favorites_for_user
