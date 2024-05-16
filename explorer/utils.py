@@ -1,5 +1,5 @@
 from django.contrib.auth import REDIRECT_FIELD_NAME
-from django.contrib.auth.views import login
+from django.contrib.auth import login
 from django.contrib.admin.forms import AdminAuthenticationForm
 import datetime
 import sqlparse
