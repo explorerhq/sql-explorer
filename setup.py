@@ -43,7 +43,6 @@ setup(
         'six>=1.10.0',
         # custom deps
         'ago==0.0.93',
-        'future==0.18.2' # py2/3 compatible libraries
     ],
     include_package_data=True,
     zip_safe = False,
