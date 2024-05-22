@@ -16,7 +16,7 @@
 
 <body>
     <input type="hidden" id="csrfCookieName" value="{% firstof csrf_cookie_name 'csrftoken' %}">
-    <input type="hidden" id="csrfCookieHttpOnly" value="{% firstof csrf_cookie_httponly False %}">
+    <input type="hidden" id="csrfTokenInDOM" value="{% firstof csrf_token_in_dom False %}">
     <input type="hidden" id="clientRoute" value="{{ request.resolver_match.url_name }}">
 {% if vite_dev_mode %}
     <div class="vite-not-running-canary" style="text-align:center;">

@@ -16,7 +16,7 @@ class ExplorerContextMixin:
             ),
             "assistant_enabled": app_settings.EXPLORER_AI_API_KEY is not None,
             "csrf_cookie_name": settings.CSRF_COOKIE_NAME,
-            "csrf_cookie_httponly": settings.CSRF_COOKIE_HTTPONLY,
+            "csrf_token_in_dom": settings.CSRF_COOKIE_HTTPONLY or settings.CSRF_USE_SESSIONS,
             "view_name": self.request.resolver_match.view_name,
         }
 
