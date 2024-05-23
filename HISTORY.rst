@@ -445,7 +445,10 @@ Initial Release
 .. _3.2.0: https://github.com/chrisclark/django-sql-explorer/compare/3.1.1...3.2.0
 .. _3.2.1: https://github.com/chrisclark/django-sql-explorer/compare/3.2.0...3.2.1
 .. _4.0.0.beta1: https://github.com/chrisclark/django-sql-explorer/compare/3.2.1...4.0.0.beta1
-.. _4.0.0.beta2: https://github.com/chrisclark/django-sql-explorer/compare/4.0.0.beta1...4.0.0.beta2
+.. _4.0.2: https://github.com/chrisclark/django-sql-explorer/compare/4.0.0...4.0.2
+.. _4.1.0: https://github.com/chrisclark/django-sql-explorer/compare/4.0.2...4.1.0
+.. _4.2.0: https://github.com/chrisclark/django-sql-explorer/compare/4.1.0...4.2.0
+.. _vNext: https://github.com/chrisclark/django-sql-explorer/compare/4.2.0...master
 
 .. _#254: https://github.com/chrisclark/django-sql-explorer/pull/254
 .. _#334: https://github.com/chrisclark/django-sql-explorer/pull/334
@@ -522,6 +525,8 @@ Initial Release
 .. _#565: https://github.com/chrisclark/django-sql-explorer/pull/565
 .. _#566: https://github.com/chrisclark/django-sql-explorer/pull/566
 .. _#571: https://github.com/chrisclark/django-sql-explorer/pull/571
+.. _#594: https://github.com/chrisclark/django-sql-explorer/pull/594
+
 
 .. _#269: https://github.com/chrisclark/django-sql-explorer/issues/269
 .. _#288: https://github.com/chrisclark/django-sql-explorer/issues/288
@@ -538,5 +543,10 @@ Initial Release
 .. _#483: https://github.com/chrisclark/django-sql-explorer/issues/483
 .. _#490: https://github.com/chrisclark/django-sql-explorer/issues/490
 .. _#492: https://github.com/chrisclark/django-sql-explorer/issues/492
+.. _#592: https://github.com/chrisclark/django-sql-explorer/issues/592
+.. _#609: https://github.com/chrisclark/django-sql-explorer/issues/609
+.. _#610: https://github.com/chrisclark/django-sql-explorer/issues/610
+.. _#612: https://github.com/chrisclark/django-sql-explorer/issues/612
+.. _#616: https://github.com/chrisclark/django-sql-explorer/issues/616
 
 .. _furo: https://github.com/pradyunsg/furo
