@@ -7,11 +7,15 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 `vNext`_ (unreleased)
 ===========================
-* Keyboard shortcut to show schema hints (cmd+S / ctrl+S -- note that is a capital "S" so the full kbd commands is cmd+shift+s)
+
+* Keyboard shortcut to show schema hints (cmd+S / ctrl+S -- note that is a capital
+  "S" so the full kbd commands is cmd+shift+s)
 * DB-managed LLM prompts (editable in django admin)
 * Versioned .js bundles (for cache busting)
 * Automatically populate assistant responses that contain code into the editor
 * `#616`_: Update schema/assistant tables/autocomplete on connection drop-down change
+* `#618`_: Import models so that migrations are properly understood by Django
+* `#619`_: Get CSRF from DOM (instead of cookie) if CSRF_USE_SESSIONS is set
 
 `4.2.0`_ (2024-04-26)
 ===========================
