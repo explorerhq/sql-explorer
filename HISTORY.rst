@@ -5,7 +5,7 @@ Change Log
 This document records all notable changes to `django-sql-explorer <https://github.com/chrisclark/django-sql-explorer>`_.
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
-`vNext`_ (unreleased)
+`4.3.0`_ (2024-05-27)
 ===========================
 
 * Keyboard shortcut to show schema hints (cmd+S / ctrl+S -- note that is a capital
@@ -552,5 +552,7 @@ Initial Release
 .. _#610: https://github.com/chrisclark/django-sql-explorer/issues/610
 .. _#612: https://github.com/chrisclark/django-sql-explorer/issues/612
 .. _#616: https://github.com/chrisclark/django-sql-explorer/issues/616
+.. _#618: https://github.com/chrisclark/django-sql-explorer/issues/618
+.. _#619: https://github.com/chrisclark/django-sql-explorer/issues/619
 
 .. _furo: https://github.com/pradyunsg/furo
