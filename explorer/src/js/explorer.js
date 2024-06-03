@@ -11,14 +11,11 @@ import { toggleFavorite } from "./favorites";
 
 import {schemaCompletionSource, StandardSQL} from "@codemirror/lang-sql";
 import {StateEffect} from "@codemirror/state";
-import {SchemaSvc} from "./schemaService";
+import {getConnElement, SchemaSvc} from "./schemaService";
 
 
 function updateSchema() {
-
-    const conn = document.querySelector('#id_connection').value;
-
-    SchemaSvc.get(conn).then(schema => {
+    SchemaSvc.get().then(schema => {
         window.editor.dispatch({
             effects: StateEffect.appendConfig.of(
                 StandardSQL.language.data.of({
@@ -28,7 +25,7 @@ function updateSchema() {
         });
     });
 
-    $("#schema_frame").attr("src", `../schema/${conn}`);
+    $("#schema_frame").attr("src", `../schema/${getConnElement().value}`);
 }
 
 
@@ -46,8 +43,23 @@ function editorFromTextArea(textarea) {
     return view
 }
 
+
+function selectConnection() {
+    var urlParams = new URLSearchParams(window.location.search);
+    var connectionId = urlParams.get('connection');
+
+    if (connectionId) {
+        var connectionSelect = document.getElementById('id_connection');
+        if (connectionSelect) {
+            connectionSelect.value = connectionId;
+        }
+    }
+}
+
 export class ExplorerEditor {
     constructor(queryId) {
+
+        selectConnection();
 
         const aa = document.getElementById('assistant_accordion');
         const pa = document.getElementById('nav-preview');
@@ -365,8 +377,7 @@ export class ExplorerEditor {
         }.bind(this));
 
         // Set up schema autocomplete in the editor. When the connection changes, load new schema.
-        const connEl = document.querySelector('#id_connection');
-        connEl.addEventListener('change', updateSchema);
+        getConnElement().addEventListener('change', updateSchema);
         updateSchema();
     }
 }

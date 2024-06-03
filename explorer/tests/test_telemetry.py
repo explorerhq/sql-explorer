@@ -7,6 +7,9 @@ from datetime import datetime
 
 class TestTelemetry(TestCase):
 
+    def setUp(self):
+        cache.delete("last_stat_sent_time")
+
     def test_instance_identifier(self):
         v = instance_identifier()
         self.assertEqual(len(v), 36)
@@ -26,6 +29,8 @@ class TestTelemetry(TestCase):
         mocked_app_settings.EXPLORER_ENABLE_ANONYMOUS_STATS = True
         mocked_app_settings.UNSAFE_RENDERING = True
         mocked_app_settings.EXPLORER_CHARTS_ENABLED = True
+        mocked_app_settings.has_assistant = MagicMock(return_value=True)
+        mocked_app_settings.db_connections_enabled = MagicMock(return_value=True)
         mocked_app_settings.ENABLE_TASKS = True
         s1 = Stat(StatNames.QUERY_RUN, {"foo": "bar"})
         s2 = Stat(StatNames.QUERY_RUN, {"mux": "qux"})
@@ -43,6 +48,14 @@ class TestTelemetry(TestCase):
         cache.clear()
         s3.track()
         self.assertEqual(mocked_thread.call_count, 3)
+
+    @patch("explorer.telemetry.threading.Thread")
+    @patch("explorer.app_settings")
+    def test_stats_not_sent_if_disabled(self, mocked_app_settings, mocked_thread):
+        mocked_app_settings.EXPLORER_ENABLE_ANONYMOUS_STATS = False
+        s1 = Stat(StatNames.QUERY_RUN, {"foo": "bar"})
+        s1.track()
+        self.assertEqual(mocked_thread.call_count, 0)
 
     @patch("explorer.telemetry.MigrationRecorder.Migration.objects.filter")
     def test_get_install_quarter_with_no_migrations(self, mock_filter):

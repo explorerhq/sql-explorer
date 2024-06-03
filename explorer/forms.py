@@ -1,7 +1,7 @@
 from django.forms import BooleanField, CharField, ModelForm, ValidationError
 from django.forms.widgets import CheckboxInput, Select
 
-from explorer.app_settings import EXPLORER_CONNECTIONS, EXPLORER_DEFAULT_CONNECTION
+from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION
 from explorer.models import MSG_FAILED_BLACKLIST, Query
 
 
@@ -54,7 +54,8 @@ class QueryForm(ModelForm):
 
     @property
     def connections(self):
-        return [(v, k) for k, v in EXPLORER_CONNECTIONS.items()]
+        from explorer.connections import connections
+        return [(c, c) for c in connections()]
 
     class Meta:
         model = Query

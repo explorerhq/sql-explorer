@@ -1,6 +1,11 @@
-The MIT License (MIT)
+* All content that resides under the "explorer/ee/" directory of this repository is licensed under the license defined
+in "explorer/ee/LICENSE".
 
-Copyright (c) 2013 Chris Clark, ePantry LLC
+* Content outside of the above mentioned directory is provided under the "MIT" license as defined below.
+
+** The MIT License (MIT) **
+
+Copyright (c) 2024, SQL Explorer, Inc
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

@@ -48,16 +48,22 @@ npm run dev
                 {% if can_change %}
                     <li class="nav-item">
                         <a class="nav-link{% if not query and view_name == 'query_create' %} active{% endif %}"
-                           href="{% url 'query_create' %}">{% trans "New Query" %}</a>
+                           href="{% url 'query_create' %}"><i class="small me-1 bi-plus-circle"></i>{% trans "New Query" %}</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link{% if not query and view_name == 'explorer_playground' %} active{% endif %}"
-                           href="{% url 'explorer_playground' %}"><i class="small me-1 bi-code-square"></i>{% trans "Playground" %}</a>
+                           href="{% url 'explorer_playground' %}"><i class="small me-1 bi-arrow-up-right-square"></i>{% trans "Playground" %}</a>
                     </li>
+                    {% if db_connections_enabled and can_manage_connections %}
+                        <li class="nav-item">
+                            <a class="nav-link{% if view_name == 'db_connections' %} active{% endif %}"
+                               href="{% url 'explorer_connections' %}"><i class="small me-1 bi-globe"></i>{% trans "Connections" %}</a>
+                        </li>
+                    {% endif %}
                 {% endif %}
                 <li class="nav-item">
                     <a class="nav-link{% if not query and view_name == 'explorer_logs' %} active{% endif %}"
-                       href="{% url 'explorer_logs' %}">{% trans "Logs" %}</a>
+                       href="{% url 'explorer_logs' %}"><i class="small me-1 bi-card-list"></i>{% trans "Logs" %}</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link{% if not query and view_name == 'query_favorites' %} active{% endif %}"

@@ -22,4 +22,7 @@ docs/_build/
 .env
 tst
 tst2
+user_dbs/*
 tmp2
+chinook.sqlite
+model_data.json

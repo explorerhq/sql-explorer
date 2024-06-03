@@ -1,0 +1,21 @@
+** Additional License for "explorer/ee/" Directory **
+
+All content that resides under the "explorer/ee/" directory of this repository is provided under the MIT License,
+except that the following additional rights are reserved:
+
+** "Commons Clause" License Condition v1.0 **
+
+The Software may not be used as part of any commercial offering or service, such as hosting, service, or consulting
+offerings. For purposes of the foregoing, "commercial offering" means the provision of the Software to third parties
+for a fee or other consideration, including without limitation, providing the Software as part of a managed service,
+as part of a platform as a service, or providing it to third parties on a software as a service basis.
+
+This restriction does not apply to non-commercial use by any individual, nor does it prevent such individual from
+providing services to third parties using the Software.
+
+** Exceptions **
+
+SQL Explorer, Inc. may grant a Commercial License Agreement to provide exceptions to the "Commons Clause" License
+Condition. If you wish to obtain such a license, please contact SQL Explorer, Inc. at support@sqlexplorer.io. No
+exception is granted implicitly or explicitly without a written and signed Commercial License Agreement from SQL
+Explorer, Inc.

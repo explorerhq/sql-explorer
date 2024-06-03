@@ -72,6 +72,7 @@ class Stat:
 
     def track(self):
         from explorer import app_settings
+
         if not app_settings.EXPLORER_ENABLE_ANONYMOUS_STATS:
             return
 
@@ -119,6 +120,7 @@ def _gather_summary_stats():
 
     from explorer import app_settings
     from explorer.models import Query, QueryLog
+    from explorer.ee.db_connections.models import DatabaseConnection
     import explorer
 
     try:
@@ -144,7 +146,8 @@ def _gather_summary_stats():
             "tasks_enabled": app_settings.ENABLE_TASKS,
             "unsafe_rendering": app_settings.UNSAFE_RENDERING,
             "transform_count": len(app_settings.EXPLORER_TRANSFORMS),
-            "assistant_enabled": app_settings.EXPLORER_AI_API_KEY is not None,
+            "assistant_enabled": app_settings.has_assistant(),
+            "user_dbs": DatabaseConnection.objects.count(),
             "version": explorer.get_version(),
             "charts_enabled": app_settings.EXPLORER_CHARTS_ENABLED
         }

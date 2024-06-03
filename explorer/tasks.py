@@ -1,6 +1,7 @@
 import io
 import random
 import string
+import os
 from datetime import date, datetime, timedelta
 
 from django.core.cache import cache
@@ -9,6 +10,7 @@ from django.core.mail import send_mail
 from explorer import app_settings
 from explorer.exporters import get_exporter_class
 from explorer.models import Query, QueryLog
+from explorer.ee.db_connections.models import DatabaseConnection
 
 
 if app_settings.ENABLE_TASKS:
@@ -114,3 +116,15 @@ def build_schema_cache_async(connection_alias):
     cache.set(connection_schema_json_cache_key(connection_alias),
               transform_to_json_schema(ret))
     return ret
+
+
+@shared_task
+def remove_unused_sqlite_dbs():
+    uploaded_dbs = DatabaseConnection.objects.filter(engine=DatabaseConnection.SQLITE,
+                                                     host__isnull=False)
+    for db in uploaded_dbs:
+        if os.path.exists(db.local_name):
+            recent_run = QueryLog.objects.filter(connection=db.alias).first()
+            days = app_settings.EXPLORER_PRUNE_LOCAL_UPLOAD_COPY_DAYS_INACTIVITY
+            if recent_run and (datetime.now() - timedelta(days=days)) > recent_run.run_at:
+                os.remove(db.local_name)

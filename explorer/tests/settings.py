@@ -5,13 +5,14 @@ EXPLORER_TASKS_ENABLED = False  # set to true to test async tasks
 EXPLORER_AI_API_KEY = None  # set to any value to enable assistant
 CELERY_BROKER_URL = "redis://localhost:6379/0"
 CELERY_TASK_ALWAYS_EAGER = True
+TEST_MODE = True
 
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": "tst",
+        "NAME": "tst1",
         "TEST": {
-            "NAME": "tst"
+            "NAME": "tst1"
         }
     },
     "alt": {

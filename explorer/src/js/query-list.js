@@ -16,7 +16,7 @@ export function setupQueryList() {
     });
 
     let options = {
-        valueNames: ['name'],
+        valueNames: ['sort-name', 'sort-created', 'sort-created', 'sort-last-run', 'sort-run-count', 'sort-connection'],
         handlers: {'updated': [searchFocus]}
     };
     new List('queries', options);

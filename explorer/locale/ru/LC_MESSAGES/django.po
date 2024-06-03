@@ -211,7 +211,7 @@ msgstr "Вы уверены в удалении «%(title)s»?"
 
 #: explorer/templates/explorer/query_list.html:15
 #, python-format
-msgid "Your %(qlen)s Most Recently Run"
+msgid "Recently Run by You"
 msgstr "Ваши последние запуски запросов, их %(qlen)s"
 
 #: explorer/templates/explorer/query_list.html:23

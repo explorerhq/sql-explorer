@@ -23,3 +23,7 @@ def view_permission_list(request):
 
 def change_permission(request, *args, **kwargs):
     return app_settings.EXPLORER_PERMISSION_CHANGE(request)
+
+
+def connections_permission(request, **kwargs):
+    return app_settings.EXPLORER_PERMISSION_CONNECTIONS(request)

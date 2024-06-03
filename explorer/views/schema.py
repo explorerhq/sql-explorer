@@ -19,7 +19,7 @@ class SchemaView(PermissionRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         connection = kwargs.get("connection", "")
-        if connection not in connections:
+        if connection not in connections():
             raise Http404
         schema = schema_info(connection)
         if schema:
@@ -38,6 +38,6 @@ class SchemaJsonView(PermissionRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         connection = kwargs.get("connection", "")
-        if connection not in connections:
+        if connection not in connections():
             raise Http404
         return JsonResponse(schema_json_info(connection))

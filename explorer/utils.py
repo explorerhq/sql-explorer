@@ -182,30 +182,47 @@ def get_valid_connection(alias=None):
     from explorer.connections import connections
 
     if not alias:
-        return connections[app_settings.EXPLORER_DEFAULT_CONNECTION]
+        return connections()[app_settings.EXPLORER_DEFAULT_CONNECTION]
 
-    if alias not in connections:
+    if alias not in connections():
         raise InvalidExplorerConnectionException(
             f"Attempted to access connection {alias}, "
             f"but that is not a registered Explorer connection."
         )
-    return connections[alias]
+    return connections()[alias]
+
+
+def delete_from_s3(s3_path):
+    s3_bucket = get_s3_bucket()
+    s3_bucket.delete_objects(
+        Delete={
+            "Objects": [
+                {"Key": s3_path}
+            ]
+        }
+    )
 
 
 def get_s3_bucket():
     import boto3
     from botocore.client import Config
+
+    config = Config(
+        signature_version=app_settings.S3_SIGNATURE_VERSION,
+        region_name=app_settings.S3_REGION
+    )
+
     kwargs = {
         "aws_access_key_id": app_settings.S3_ACCESS_KEY,
         "aws_secret_access_key": app_settings.S3_SECRET_KEY,
-        "region_name": app_settings.S3_REGION,
-        "config": Config(
-            signature_version=app_settings.S3_SIGNATURE_VERSION
-        )
+        "config": config
     }
+
     if app_settings.S3_ENDPOINT_URL:
         kwargs["endpoint_url"] = app_settings.S3_ENDPOINT_URL
+
     s3 = boto3.resource("s3", **kwargs)
+
     return s3.Bucket(name=app_settings.S3_BUCKET)
 
 

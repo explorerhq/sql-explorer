@@ -1,3 +1,5 @@
 Django>=3.2
 sqlparse>=0.4.0
 requests>=2.2
+django-cryptography @ git+https://github.com/saurav-codes/django-cryptography.git@ac210338dd2c84a410452e0b8e18ddee43f1920f
+cryptography>=42.0

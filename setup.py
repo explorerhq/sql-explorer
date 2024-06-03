@@ -83,6 +83,7 @@ setup(
         "snapshots": requirements("extra/snapshots.txt"),
         "xls": requirements("extra/xls.txt"),
         "assistant": requirements("extra/assistant.txt"),
+        "uploads": requirements("extra/uploads.txt"),
     },
     cmdclass={
         "build_sphinx": BuildDoc,

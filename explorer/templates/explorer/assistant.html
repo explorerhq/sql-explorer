@@ -21,10 +21,12 @@
                 </div>
                 <div id="additional_table_container" class="col-4">
                     <input id="search_assistant_tables" class="search" placeholder="{% trans "Search Tables" %}" />
+                    <button id="select_all_button" class="btn btn-primary btn-sm">Select All</button>
                     <a class="small text-secondary" style="cursor: pointer; text-decoration: none;"
                         data-bs-toggle="tooltip" data-bs-placement="top"
                         data-bs-title="SQL Assistant builds a prompt with your query, your request, relevant schema (tables referenced in your query) and sample data from those tables. You can optionally include other tables (schema + data sample) that you'd like SQL Assistant to know about.">(?)</a>
                     <label for="search_assistant_tables" class="d-none" id="search_assistant_tables_label">Search tables</label>
+                    
                     <div id="table-list" class="list"></div>
                 </div>
             </div>
