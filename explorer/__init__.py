@@ -3,7 +3,7 @@ __version_info__ = {
     "minor": 4,
     "patch": 0,
     "releaselevel": "beta",
-    "serial": 1
+    "serial": 3
 }
 
 
