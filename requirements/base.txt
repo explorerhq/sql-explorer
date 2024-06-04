@@ -1,5 +1,5 @@
 Django>=3.2
 sqlparse>=0.4.0
 requests>=2.2
-django-cryptography-django5==2.1
+django-cryptography-django5==2.2
 cryptography>=42.0
