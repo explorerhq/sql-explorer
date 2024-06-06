@@ -5,7 +5,7 @@ from explorer.app_settings import (
     EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES, EXPLORER_SCHEMA_INCLUDE_VIEWS,
 )
 from explorer.tasks import build_schema_cache_async
-from explorer.utils import get_valid_connection
+from explorer.utils import get_valid_connection, InvalidExplorerConnectionException
 
 
 # These wrappers make it easy to mock and test
@@ -53,7 +53,10 @@ def schema_json_info(connection_alias):
     ret = cache.get(key)
     if ret:
         return ret
-    si = schema_info(connection_alias) or []
+    try:
+        si = schema_info(connection_alias) or []
+    except InvalidExplorerConnectionException:
+        return []
     json_schema = transform_to_json_schema(si)
     cache.set(key, json_schema)
     return json_schema

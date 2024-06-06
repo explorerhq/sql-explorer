@@ -3,6 +3,8 @@ import { getCsrfToken } from "./csrf";
 export function setupUploads() {
     var dropArea = document.getElementById('drop-area');
     var fileElem = document.getElementById('fileElem');
+    var progressBar = document.getElementById('progress-bar');
+    var uploadStatus = document.getElementById('upload-status');
 
     if (dropArea) {
         dropArea.onclick = function() {
@@ -10,17 +12,17 @@ export function setupUploads() {
         };
 
         dropArea.addEventListener('dragover', function(e) {
-            e.preventDefault(); // Prevent default behavior (Prevent file from being opened)
-            dropArea.classList.add('bg-info'); // Optional: add a style when dragging over
+            e.preventDefault();
+            dropArea.classList.add('bg-info');
         });
 
         dropArea.addEventListener('dragleave', function(e) {
-            dropArea.classList.remove('bg-info'); // Optional: remove style when not dragging over
+            dropArea.classList.remove('bg-info');
         });
 
         dropArea.addEventListener('drop', function(e) {
             e.preventDefault();
-            dropArea.classList.remove('bg-info'); // Optional: remove style after dropping
+            dropArea.classList.remove('bg-info');
 
             let files = e.dataTransfer.files;
             if (files.length) {
@@ -35,8 +37,6 @@ export function setupUploads() {
         };
     }
 
-
-
     function handleFiles(file) {
         uploadFile(file);
     }
@@ -45,17 +45,35 @@ export function setupUploads() {
         let formData = new FormData();
         formData.append('file', file);
 
-        fetch("../upload/", {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': getCsrfToken()
-            },
-            body: formData
-        }).then(response => response.json())
-        .then(() => {
-            window.location.reload();
-        })
-        .catch(error => console.error('Error:', error));
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', '../upload/', true);
+        xhr.setRequestHeader('X-CSRFToken', getCsrfToken());
+
+        xhr.upload.onprogress = function(event) {
+            if (event.lengthComputable) {
+                let percentComplete = (event.loaded / event.total) * 100;
+                progressBar.style.width = percentComplete + '%';
+                progressBar.setAttribute('aria-valuenow', percentComplete);
+                progressBar.innerHTML = percentComplete.toFixed(0) + '%';
+                if (percentComplete > 99) {
+                    uploadStatus.innerHTML = "Upload complete. Parsing and saving to S3...";
+                }
+            }
+        };
+
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                window.location.href = "../";
+            } else {
+                console.error('Error:', xhr.statusText);
+            }
+        };
+
+        xhr.onerror = function() {
+            console.error('Error:', xhr.statusText);
+        };
+
+        xhr.send(formData);
     }
 
     document.getElementById("test-connection-btn").addEventListener("click", function() {
@@ -79,5 +97,4 @@ export function setupUploads() {
         })
         .catch(error => console.error("Error:", error));
     });
-
 }

@@ -7,6 +7,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% trans "SQL Explorer" %}{% if query %} - {{ query.title }}{% elif title %} - {{ title }}{% endif %}</title>
+    <link rel="icon" type="image/svg+xml" href="{% vite_asset 'images/logo.svg' %}">
 
     {% block style %}
         {% vite_asset 'scss/styles.scss' %}
@@ -42,8 +43,11 @@ npm run dev
 {% block sql_explorer_content_takeover %}
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
         <div class="container bd-gutter flex-wrap flex-lg-nowrap">
-            <a class="navbar-brand{% if view_name == 'explorer_index' %} btn btn-outline-light text-white{% endif %}"
-               href="{% url 'explorer_index' %}">{% trans "Explorer Home" %}</a>
+            <a class="navbar-brand{% if view_name == 'explorer_index' %} btn text-white{% endif %} d-flex align-items-center"
+                href="{% url 'explorer_index' %}">
+                <img src="{% vite_asset 'images/logo.svg' %}" alt="Logo" class="me-2 logo-image" >
+                {% trans "SQL Explorer" %}
+            </a>
             <ul class="nav nav-pills">
                 {% if can_change %}
                     <li class="nav-item">
@@ -56,7 +60,7 @@ npm run dev
                     </li>
                     {% if db_connections_enabled and can_manage_connections %}
                         <li class="nav-item">
-                            <a class="nav-link{% if view_name == 'db_connections' %} active{% endif %}"
+                            <a class="nav-link{% if view_name == 'explorer_connections' %} active{% endif %}"
                                href="{% url 'explorer_connections' %}"><i class="small me-1 bi-globe"></i>{% trans "Connections" %}</a>
                         </li>
                     {% endif %}

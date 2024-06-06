@@ -924,7 +924,8 @@ class UploadDbViewTest(TestCase):
 
             self.assertEqual(response.status_code, 200)
             self.assertJSONEqual(response.content, {"success": True})
-            self.assertTrue(DatabaseConnection.objects.filter(alias="test.db").exists())
+            print(DatabaseConnection.objects.first().alias)
+            self.assertTrue(DatabaseConnection.objects.filter(alias=f"test_{self.user.id}.db").exists())
             mock_upload_sqlite.assert_called_once()
             mock_csv_to_typed_df.assert_called_once()
 

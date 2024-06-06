@@ -14,8 +14,12 @@
             <h4>...or upload a SQLite DB or CSV File</h4>
             <p>CSV files will get parsed and typed automatically. SQLite databases must <i>not</i> be password protected.</p>
             <div id="drop-area" class="p-5 mb-4 bg-light border rounded" style="cursor: pointer">
-                <p class="lead mb-0">Drag and drop .csv or SQLite .db or <strong>click to upload</strong>.</p>
-                <input type="file" id="fileElem" style="display:none" accept=".db,.csv">
+                <p class="lead mb-0">Drag and drop .csv or SQLite .db/.sqlite or <strong>click to upload</strong>.</p>
+                <input type="file" id="fileElem" style="display:none" accept=".db,.csv,.sqlite">
+                <div class="progress mt-3" style="height: 20px;">
+                    <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                </div>
+                <p id="upload-status" class="mt-2"></p>
             </div>
         </div>
     {% endif %}

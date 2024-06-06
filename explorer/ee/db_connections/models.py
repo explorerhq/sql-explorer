@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
+from explorer.ee.db_connections.utils import user_dbs_local_dir
 
 from django_cryptography.fields import encrypt
 
@@ -41,7 +42,7 @@ class DatabaseConnection(models.Model):
     @property
     def local_name(self):
         if self.is_upload:
-            return os.path.normpath(os.path.join(os.getcwd(), f"user_dbs/{self.name}"))
+            return os.path.join(user_dbs_local_dir(), self.name)
 
     @classmethod
     def from_django_connection(cls, connection_alias):

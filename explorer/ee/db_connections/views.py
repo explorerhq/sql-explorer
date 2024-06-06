@@ -49,7 +49,7 @@ class UploadDbView(PermissionRequiredMixin, View):
             except Exception as e:  # noqa
                 return JsonResponse({"error": "Error while uploading file."}, status=400)
 
-            create_connection_for_uploaded_sqlite(f_name, s3_path)
+            create_connection_for_uploaded_sqlite(f_name, request.user.id, s3_path)
             return JsonResponse({"success": True})
         else:
             return JsonResponse({"error": "No file provided"}, status=400)

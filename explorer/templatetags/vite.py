@@ -31,13 +31,26 @@ def get_script(file: str) -> str:
     return mark_safe(f'<script type="module" src="{base_url}{file}"></script>')
 
 
+def get_asset(file: str) -> str:
+    if app_settings.VITE_DEV_MODE is False:
+        return mark_safe(f"{VITE_OUTPUT_DIR}{file}")
+    else:
+        return mark_safe(f"http://{VITE_SERVER_HOST}:{VITE_SERVER_PORT}/{VITE_DEV_DIR}{file}")
+
+
 @register.simple_tag
 def vite_asset(filename: str):
-    if app_settings.VITE_DEV_MODE is False:
-        filename = os.path.basename(filename)
     if str(filename).endswith("scss"):
+        if app_settings.VITE_DEV_MODE is False:
+            filename = os.path.basename(filename)
         return get_css_link(filename)
-    return get_script(filename)
+    if str(filename).endswith("js"):
+        if app_settings.VITE_DEV_MODE is False:
+            filename = os.path.basename(filename)
+        return get_script(filename)
+
+    # Non js/scss assets respect directory structure so don't need to do the filename rewrite
+    return get_asset(filename)
 
 
 @register.simple_tag

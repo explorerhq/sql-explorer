@@ -10,6 +10,7 @@ from explorer.forms import QueryForm
 from explorer.models import MSG_FAILED_BLACKLIST, Query, QueryLog
 from explorer.utils import (
     url_get_fullscreen, url_get_log_id, url_get_params, url_get_query_id, url_get_rows, url_get_show,
+    InvalidExplorerConnectionException
 )
 from explorer.views.auth import PermissionRequiredMixin
 from explorer.views.mixins import ExplorerContextMixin
@@ -95,13 +96,22 @@ class QueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
         params = query.available_params()
         if not app_settings.EXPLORER_AUTORUN_QUERY_WITH_PARAMS and params:
             show = False
-        vm = query_viewmodel(
-            request,
-            query,
-            form=form,
-            run_query=show,
-            rows=rows
-        )
+        try:
+            vm = query_viewmodel(
+                request,
+                query,
+                form=form,
+                run_query=show,
+                rows=rows
+            )
+        except InvalidExplorerConnectionException as e:
+            vm = query_viewmodel(
+                request,
+                query,
+                form=form,
+                run_query=False,
+                error=str(e)
+            )
         fullscreen = url_get_fullscreen(request)
         template = "fullscreen" if fullscreen else "query"
         return self.render_template(

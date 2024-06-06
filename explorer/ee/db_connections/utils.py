@@ -10,17 +10,26 @@ import sqlite3
 import io
 
 
-# TODO deal with uploading the same file / conflicting file again
+# Uploading the same filename twice (from the same user) will overwrite the 'old' DB on S3
 def upload_sqlite(db_bytes, path):
     from explorer.utils import get_s3_bucket
     bucket = get_s3_bucket()
     bucket.put_object(Key=path, Body=db_bytes, ServerSideEncryption="AES256")
 
 
-def create_connection_for_uploaded_sqlite(filename, s3_path):
+# Aliases have the user_id appended to them so that if two users upload files with the same name
+# they don't step on one another. Without this, the *files* would get uploaded separately (because
+# the DBs go into user-specific folders on s3), but the *aliases* would be the same. So one user
+# could (innocently) upload a file with the same name, and any existing queries would be suddenly pointing
+# to this new database connection. Oops!
+# TODO: In the future, queries should probably be FK'ed to the ID of the connection, rather than simply
+#       storing the alias of the connection as a string.
+def create_connection_for_uploaded_sqlite(filename, user_id, s3_path):
     from explorer.models import DatabaseConnection
+    base, ext = os.path.splitext(filename)
+    filename = f"{base}_{user_id}{ext}"
     return DatabaseConnection.objects.create(
-        alias=filename,
+        alias=f"{filename}",
         engine=DatabaseConnection.SQLITE,
         name=filename,
         host=s3_path
@@ -39,6 +48,13 @@ def get_sqlite_for_connection(explorer_connection):
     explorer_connection.host = None
     explorer_connection.name = local_name
     return explorer_connection
+
+
+def user_dbs_local_dir():
+    d = os.path.normpath(os.path.join(os.getcwd(), "user_dbs"))
+    if not os.path.exists(d):
+        os.makedirs(d)
+    return d
 
 
 def create_django_style_connection(explorer_connection):

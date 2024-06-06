@@ -236,3 +236,23 @@ class TestDatabaseConnection(TestCase):
         c = DatabaseConnection.from_django_connection(app_settings.EXPLORER_DEFAULT_CONNECTION)
         self.assertEqual(c.name, "tst1")
         self.assertEqual(c.alias, "default")
+
+    @patch("os.makedirs")
+    @patch("os.path.exists", return_value=False)
+    @patch("os.getcwd", return_value="/mocked/path")
+    def test_local_name_calls_user_dbs_local_dir(self, mock_getcwd, mock_exists, mock_makedirs):
+        connection = DatabaseConnection(
+            alias="test",
+            engine=DatabaseConnection.SQLITE,
+            name="test_db.sqlite3",
+            host="some-s3-bucket",
+        )
+
+        local_name = connection.local_name
+        expected_path = "/mocked/path/user_dbs/test_db.sqlite3"
+
+        # Check if the local_name property returns the correct path
+        self.assertEqual(local_name, expected_path)
+
+        # Ensure os.makedirs was called once since the directory does not exist
+        mock_makedirs.assert_called_once_with("/mocked/path/user_dbs")
