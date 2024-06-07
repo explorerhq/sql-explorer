@@ -1,7 +1,15 @@
 import { resolve } from 'path';
+import { defineConfig } from 'vite';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 
-export default {
-  plugins: [],
+export default defineConfig({
+  plugins: [
+      viteStaticCopy({
+        targets: [
+          { src: 'explorer/src/images/*', dest: 'images' },
+        ]
+    })
+  ],
   root: resolve(__dirname, './'),
   base: '',
   server: {
@@ -25,7 +33,7 @@ export default {
     target: 'es2015',
     rollupOptions: {
       input: {
-        main: resolve(__dirname, '/explorer/src/js/main.js'),
+        main: resolve(__dirname, './explorer/src/js/main.js'),
         // Some magic here; Vite always builds to styles.css, we named our entrypoint SCSS file the same thing
         // so that in the base template HTML file we can include 'styles.scss', and rename just the extension
         // in the vite template tag, and get both the dev and prod builds to work.
@@ -38,4 +46,4 @@ export default {
       },
     },
   },
-};
+});

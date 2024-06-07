@@ -1,3 +1,7 @@
+a {
+    text-decoration: none;
+}
+
 .cm-editor {
     outline: none !important;
 }
@@ -142,4 +146,8 @@ nav.navbar {
     padding: 5px;
     border-radius: 4px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.logo-image {
+    height: 2rem;
 }
