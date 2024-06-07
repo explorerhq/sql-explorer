@@ -5,7 +5,7 @@ Change Log
 This document records all notable changes to `django-sql-explorer <https://github.com/chrisclark/django-sql-explorer>`_.
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
-`4.4.0b1`_ (2024-06-02)
+`5.0.0b1`_ (2024-06-07)
 ===========================
 
 * Manage DB connections via the UI (and/or Django Admin)
@@ -18,6 +18,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * Query List home page is sortable.
 * Select all / deselect all with AI assistant
 * Assistant tests run reliably in CI/CD
+* Introduced some branding and styling improvements
 
 
 `4.3.0`_ (2024-05-27)
