@@ -9,7 +9,7 @@
         <a href="{% url 'explorer_connections' %}" class="btn btn-secondary">Cancel</a>
         <button type="button" class="btn btn-info" id="test-connection-btn">Test Connection</button>
     </form>
-    {% if not object and s3_enabled %}
+    {% if not object and user_uploads_enabled %}
         <div class="pt-5">
             <h4>...or upload a SQLite DB or CSV File</h4>
             <p>CSV files will get parsed and typed automatically. SQLite databases must <i>not</i> be password protected.</p>

@@ -2,7 +2,6 @@ from django.db import DatabaseError
 from django.db.utils import load_backend
 import os
 
-import locale
 from dateutil import parser
 
 import pandas as pd
@@ -112,12 +111,25 @@ MAX_TYPING_SAMPLE_SIZE = 10000
 SHORTEST_PLAUSIBLE_DATE_STRING = 5
 
 
+def atof_custom(value):
+    # Remove any thousands separators and convert the decimal point
+    if "," in value and "." in value:
+        if value.index(",") < value.index("."):
+            # 0,000.00 format
+            value = value.replace(",", "")
+        else:
+            # 0.000,00 format
+            value = value.replace(".", "").replace(",", ".")
+    elif "," in value:
+        # No decimal point, only thousands separator
+        value = value.replace(",", "")
+    return float(value)
+
 def csv_to_typed_df(csv_bytes, delimiter=",", has_headers=True):  # noqa
     try:
 
         csv_file = io.BytesIO(csv_bytes)
         df = pd.read_csv(csv_file, sep=delimiter, header=0 if has_headers else None)
-        locale.setlocale(locale.LC_NUMERIC, "en_US.UTF-8")
 
         for column in df.columns:
             values = df[column].dropna().unique()
@@ -130,7 +142,7 @@ def csv_to_typed_df(csv_bytes, delimiter=",", has_headers=True):  # noqa
 
             for value in values:
                 try:
-                    float_val = locale.atof(str(value))
+                    float_val = atof_custom(str(value))
                     if float_val == int(float_val):
                         continue  # This is effectively an integer
                     else:
@@ -163,12 +175,12 @@ def csv_to_typed_df(csv_bytes, delimiter=",", has_headers=True):  # noqa
             if is_date:
                 df[column] = pd.to_datetime(df[column], errors="coerce", utc=True)
             elif is_integer:
-                df[column] = df[column].apply(lambda x: int(locale.atof(str(x))) if pd.notna(x) else x)
+                df[column] = df[column].apply(lambda x: int(atof_custom(str(x))) if pd.notna(x) else x)
                 # If there are NaN / blank values, the column will be converted to float
                 # Convert it back to integer
                 df[column] = df[column].astype("Int64")
             elif is_float:
-                df[column] = df[column].apply(lambda x: locale.atof(str(x)) if pd.notna(x) else x)
+                df[column] = df[column].apply(lambda x: atof_custom(str(x)) if pd.notna(x) else x)
             else:
                 inferred_type = pd.api.types.infer_dtype(values)
                 if inferred_type == "integer":
