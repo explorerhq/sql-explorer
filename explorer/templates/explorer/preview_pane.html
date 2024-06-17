@@ -59,7 +59,7 @@
                                         <th class="preview-header counter" style="display: none;"></th>
                                         {% for h in headers %}
                                             <th class="preview-header"><span><i class="sort bi-chevron-expand pe-1" data-sort="{{ forloop.counter0 }}"
-                                                         data-dir="asc"></i>{{ h }}</span></th>
+                                                         data-dir="asc"></i>{{ h }}{% if h.summary %}<i class="stats-expand bi-calculator text-info ps-1"></i>{% endif %}</span></th>
                                         {% endfor %}
                                     </tr>
                                     {% if has_stats %}
@@ -68,11 +68,10 @@
                                             {% for h in headers %}
                                                 <th>
                                                     {% if h.summary %}
-                                                        <i class="stats-expand bi-calculator"></i>
                                                         <table class="stats-wrapper table table-sm fw-normal small" style="display: none;">
                                                             {% for label, value in h.summary.stats.items %}
                                                                 <tr>
-                                                                    <td>{{ label }}</td>
+                                                                    <td class="text-info">{{ label }}</td>
                                                                     <td>{{ value }}</td>
                                                                 </tr>
                                                             {% endfor %}

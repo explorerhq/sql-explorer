@@ -157,10 +157,22 @@ EXPLORER_ASSISTANT_MODEL = getattr(settings, "EXPLORER_ASSISTANT_MODEL",
                                     "max_tokens": 128000})
 
 EXPLORER_DB_CONNECTIONS_ENABLED = getattr(settings, "EXPLORER_DB_CONNECTIONS_ENABLED", False)
+EXPLORER_USER_UPLOADS_ENABLED = getattr(settings, "EXPLORER_USER_UPLOADS_ENABLED", False)
 EXPLORER_PRUNE_LOCAL_UPLOAD_COPY_DAYS_INACTIVITY = getattr(settings,
                                                            "EXPLORER_PRUNE_LOCAL_UPLOAD_COPY_DAYS_INACTIVITY", 7)
 # 500mb default max
 EXPLORER_MAX_UPLOAD_SIZE = getattr(settings, "EXPLORER_MAX_UPLOAD_SIZE", 500 * 1024 * 1024)
 
-def has_assistant(): return EXPLORER_AI_API_KEY is not None
-def db_connections_enabled(): return EXPLORER_DB_CONNECTIONS_ENABLED
+
+def has_assistant():
+    return EXPLORER_AI_API_KEY is not None
+
+
+def db_connections_enabled():
+    return EXPLORER_DB_CONNECTIONS_ENABLED
+
+
+def user_uploads_enabled():
+    return (EXPLORER_USER_UPLOADS_ENABLED and
+            EXPLORER_DB_CONNECTIONS_ENABLED and
+            S3_BUCKET is not None)

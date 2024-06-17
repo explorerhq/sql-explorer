@@ -7,7 +7,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% trans "SQL Explorer" %}{% if query %} - {{ query.title }}{% elif title %} - {{ title }}{% endif %}</title>
-    <link rel="icon" type="image/svg+xml" href="{% vite_asset 'images/logo.svg' %}">
+    <link rel="icon" type="image/svg+xml" href="{% vite_asset 'images/logo.png' %}">
 
     {% block style %}
         {% vite_asset 'scss/styles.scss' %}
@@ -41,11 +41,11 @@ npm run dev
 {% endif %}
 
 {% block sql_explorer_content_takeover %}
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
+    <nav class="navbar navbar-expand-lg navbar-dark mb-3">
         <div class="container bd-gutter flex-wrap flex-lg-nowrap">
-            <a class="navbar-brand{% if view_name == 'explorer_index' %} btn text-white{% endif %} d-flex align-items-center"
+            <a class="navbar-brand d-flex align-items-center"
                 href="{% url 'explorer_index' %}">
-                <img src="{% vite_asset 'images/logo.svg' %}" alt="Logo" class="me-2 logo-image" >
+                <img src="{% vite_asset 'images/logo-main.svg' %}" alt="Logo" class="me-2 logo-image" >
                 {% trans "SQL Explorer" %}
             </a>
             <ul class="nav nav-pills">

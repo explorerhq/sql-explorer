@@ -4,7 +4,7 @@ import os
 SECRET_KEY = "shhh"
 DEBUG = True
 STATIC_URL = "/static/"
-VITE_DEV_MODE = False
+VITE_DEV_MODE = True
 
 ALLOWED_HOSTS = ["0.0.0.0", "localhost", "127.0.0.1"]
 
@@ -113,3 +113,4 @@ EXPLORER_S3_SECRET_KEY = os.environ.get("EXPLORER_S3_SECRET_KEY")
 EXPLORER_AI_API_KEY = os.environ.get("AI_API_KEY")
 EXPLORER_ASSISTANT_BASE_URL = os.environ.get("AI_BASE_URL")
 EXPLORER_DB_CONNECTIONS_ENABLED = True
+EXPLORER_USER_UPLOADS_ENABLED = True

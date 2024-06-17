@@ -19,7 +19,7 @@ class ExplorerContextMixin:
             ),
             "assistant_enabled": app_settings.has_assistant(),
             "db_connections_enabled": app_settings.db_connections_enabled(),
-            "s3_enabled": app_settings.S3_BUCKET is not None,
+            "user_uploads_enabled": app_settings.user_uploads_enabled(),
             "csrf_cookie_name": settings.CSRF_COOKIE_NAME,
             "csrf_token_in_dom": settings.CSRF_COOKIE_HTTPONLY or settings.CSRF_USE_SESSIONS,
             "view_name": self.request.resolver_match.view_name,
