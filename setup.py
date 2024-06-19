@@ -55,7 +55,7 @@ setup(
     project_urls={
       "Changes": "https://django-sql-explorer.readthedocs.io/en/latest/history.html",
       "Documentation": "https://django-sql-explorer.readthedocs.io/en/latest/",
-      "Issues": "https://github.com/chrisclark/django-sql-explorer/issues"
+      "Issues": "https://github.com/explorerhq/django-sql-explorer/issues"
     },
     packages=["explorer"],
     long_description=long_description,

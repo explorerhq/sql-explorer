@@ -66,23 +66,27 @@ Screenshots
 
 **Writing a query and viewing the schema helper**
 
-.. image:: https://sql-explorer.s3.amazonaws.com/4.0-query-with-schema.png
+.. image:: https://sql-explorer.s3.amazonaws.com/5.0-query-with-schema.png
 
-**Using the SQL Assistant**
+**Using the SQL AI Assistant**
 
-.. image:: https://sql-explorer.s3.amazonaws.com/4.1-sql-assistant.png
+.. image:: https://sql-explorer.s3.amazonaws.com/5.0-assistant.png
 
 **Viewing all queries**
 
-.. image:: https://sql-explorer.s3.amazonaws.com/4.0-query-list.png
+.. image:: https://sql-explorer.s3.amazonaws.com/5.0-query-list.png
 
-**Query results rendered in browser**
+**Query results w/ stats summary**
 
-.. image:: https://sql-explorer.s3.amazonaws.com/4.0-query-results.png
+.. image:: https://sql-explorer.s3.amazonaws.com/5.0-query-results.png
 
 **Pivot in browser**
 
-.. image:: https://sql-explorer.s3.amazonaws.com/4.0-pivot.png
+.. image:: https://sql-explorer.s3.amazonaws.com/5.0-pivot.png
+
+**View logs**
+
+.. image:: https://sql-explorer.s3.amazonaws.com/5.0-querylogs.png
 
 Development
 ------------
