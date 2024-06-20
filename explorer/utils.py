@@ -212,11 +212,13 @@ def get_s3_bucket():
         region_name=app_settings.S3_REGION
     )
 
-    kwargs = {
-        "aws_access_key_id": app_settings.S3_ACCESS_KEY,
-        "aws_secret_access_key": app_settings.S3_SECRET_KEY,
-        "config": config
-    }
+    kwargs = {"config": config}
+
+    # If these are set, use them. Otherwise, boto will use its built-in mechanisms
+    # to provide authentication.
+    if app_settings.S3_ACCESS_KEY and app_settings.S3_SECRET_KEY:
+        kwargs["aws_access_key_id"] = app_settings.S3_ACCESS_KEY
+        kwargs["aws_secret_access_key"] = app_settings.S3_SECRET_KEY
 
     if app_settings.S3_ENDPOINT_URL:
         kwargs["endpoint_url"] = app_settings.S3_ENDPOINT_URL

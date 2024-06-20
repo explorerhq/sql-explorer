@@ -2,6 +2,9 @@
 {% block sql_explorer_content %}
 <div class="container mt-5">
     <h2>{% if object %}Edit{% else %}Create New{% endif %} Connection</h2>
+{% if object.is_upload %}
+    <span class="text-danger">The source of this connection is an uploaded file. In all likelihood you should not be editing it.</span>
+{% endif %}
     <form method="post" id="db-connection-form">
         {% csrf_token %}
         {{ form.as_p }}

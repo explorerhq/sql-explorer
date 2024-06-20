@@ -30,10 +30,6 @@
         </tr>
         {% endif %}
     </table>
-    {% if not object.is_upload %}
-        <a href="{% url 'explorer_connection_update' object.pk %}" class="btn btn-warning">Edit</a>
-    {% else %}
-        <span class="text-info-emphasis">The source of this connection is an uploaded file.</span>
-    {% endif %}
+    <a href="{% url 'explorer_connection_update' object.pk %}" class="btn btn-info">Edit</a>
 </div>
 {% endblock %}

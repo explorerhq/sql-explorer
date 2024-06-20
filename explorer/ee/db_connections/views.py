@@ -1,3 +1,4 @@
+import logging
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.views import View
 from django.http import JsonResponse
@@ -20,6 +21,9 @@ from explorer.views.mixins import ExplorerContextMixin
 from explorer.ee.db_connections.utils import create_django_style_connection
 
 
+logger = logging.getLogger(__name__)
+
+
 class UploadDbView(PermissionRequiredMixin, View):
 
     permission_required = "connections_permission"
@@ -39,6 +43,7 @@ class UploadDbView(PermissionRequiredMixin, View):
                 try:
                     f_bytes = pandas_to_sqlite(df)
                 except Exception as e:  # noqa
+                    logger.exception(f"Exception while parsing file {f_name}: {e}")
                     return JsonResponse({"error": "Error while parsing the file."}, status=400)
 
                 f_name = f_name.replace("csv", "db")
@@ -47,6 +52,7 @@ class UploadDbView(PermissionRequiredMixin, View):
                 s3_path = f"user_dbs/user_{request.user.id}/{f_name}"
                 upload_sqlite(f_bytes, s3_path)
             except Exception as e:  # noqa
+                logger.exception(f"Exception while uploading file {f_name}: {e}")
                 return JsonResponse({"error": "Error while uploading file."}, status=400)
 
             create_connection_for_uploaded_sqlite(f_name, request.user.id, s3_path)
