@@ -5,6 +5,11 @@
 # or to provide custom queries or build logic.
 name: "CodeQL"
 
+permissions:
+  actions: read
+  contents: read
+  security-events: write
+
 on:
   push:
     branches:
