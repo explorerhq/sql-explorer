@@ -14,10 +14,10 @@ Installing From Source
 If you are installing SQL Explorer from source (by cloning the repository),
 you may want to first look at simply running test_project/start.sh.
 
-If you want to install into an existing project, you can do so by following
-the install instructions, and then additionally building the front-end dependencies.
-
-After cloning, simply run:
+If you want to install SQL Explorer from source, into an existing project,
+you can do so by cloning the repository and following the usual
+:doc:`development` instructions, and then additionally building the front-end
+dependencies:
 
 ::
 
@@ -33,8 +33,7 @@ phase. Copy the /explorer directory into site-packages and you're ready to go.
 Tests
 -----
 
-Factory Boy is needed if you'd like to run the tests, which can you do
-easily:
+Factory Boy is needed if you'd like to run the tests. They can be run with:
 
 ``python manage.py test --settings=tests.settings``
 

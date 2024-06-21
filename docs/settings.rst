@@ -367,3 +367,14 @@ User-Configured DB Connections
 ******************************
 Set `EXPLORER_DB_CONNECTIONS_ENABLED` to `True` to enable DB connections to get configured in the browser (e.g. not
 just in settings.py). This also allows uploading of CSV or SQLite files for instant querying.
+
+
+User Uploads
+************
+With `EXPLORER_DB_CONNECTIONS_ENABLED` set to `True`, you can also set `EXPLORER_USER_UPLOADS_ENABLED` to allow users
+to upload their own CSV and SQLite files directly to explorer as new connections.
+
+Go to connections->Add New and scroll down to see the upload interface. The uploaded files are limited in size by the
+`EXPLORER_MAX_UPLOAD_SIZE` setting which is set to 500mb by default (500 * 1024 * 1024). SQLite files (in either .db or
+.sqlite) will simple appear as connections. CSV files get run through a parser that infers the type of each field.
+

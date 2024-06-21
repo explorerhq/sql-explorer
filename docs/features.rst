@@ -1,43 +1,19 @@
 Features
 ========
 
-Security
---------
-- It's recommended you setup read-only roles for each of your database
-  connections and only use these particular connections for your queries through the
-  ``EXPLORER_CONNECTIONS`` setting -- or set up userland connections via DatabaseConnections in
-  the Django admin, or the SQL Explorer front-end.
-- SQL Explorer supports two different permission checks for users of
-  the tool. Users passing the ``EXPLORER_PERMISSION_CHANGE`` test can
-  create, edit, delete, and execute queries. Users who do not pass
-  this test but pass the ``EXPLORER_PERMISSION_VIEW`` test can only
-  execute queries. Other users cannot access any part of
-  SQL Explorer. Both permission groups are set to is_staff by default
-  and can be overridden in your settings file.
-- Enforces a SQL blacklist so destructive queries don't get
-  executed (delete, drop, alter, update etc). This is not
-  a substitute for using a readonly connection -- but is better
-  than nothing for certain use cases where a readonly connection
-  may not be available.
-
 Easy to get started
 -------------------
 - Built on Django's ORM, so works with MySQL, Postgres, Oracle,
   SQLite, Snowflake, MS SQL Server, RedShift, and MariaDB.
 - Small number of dependencies.
-- Just want to get in and write some ad-hoc queries? Go nuts with
-  the Playground area.
+- MIT licensed (except for functionality in the /ee/ directory,
+  which is still free for commercial use, but can't be resold).
 
 SQL Assistant
 -------------
 - Built in integration with OpenAI (or the LLM of your choosing)
   to quickly get help with your query, with relevant schema
-  automatically injected into the prompt.
-
-Configurable Connections
-------------------------
-- Configure connections via the settings.py file, or via the SQL Explorer UI.
-- Supports drag-and-drop uploading of CSV files or SQLite databases for instant SQL access to your data.
+  automatically injected into the prompt. Simple, effective.
 
 Snapshots
 ---------
@@ -189,6 +165,9 @@ Multiple Connections
   to contain any Django schema, or be related to Django in any
   way. See connections.py for more documentation on
   multi-connection setup.
+- SQL Explorer also supports user-provided connections in the form
+  of standard database connection details, or uploading CSV or SQLite
+  files. See the 'User uploads' section of :doc:`settings`.
 
 Power tips
 ----------
@@ -230,3 +209,27 @@ You can also pass the token with a query parameter like this:
 .. code-block:: console
 
    curl https://www.your-site.com/explorer/<QUERY_ID>/stream?format=csv&token=<TOKEN>
+
+
+Security
+--------
+- It's recommended you setup read-only roles for each of your database
+  connections and only use these particular connections for your queries
+  through the ``EXPLORER_CONNECTIONS`` setting -- or set up userland
+  connections via DatabaseConnections in the Django admin, or the SQL
+  Explorer front-end.
+- SQL Explorer supports three different permission checks for users of
+  the tool. Users passing the ``EXPLORER_PERMISSION_CHANGE`` test can
+  create, edit, delete, and execute queries. Users who do not pass
+  this test but pass the ``EXPLORER_PERMISSION_VIEW`` test can only
+  execute queries. Other users cannot access any part of
+  SQL Explorer. Both permission groups are set to is_staff by default
+  and can be overridden in your settings file. Lastly, the permission
+  ``EXPLORER_PERMISSION_CONNECTIONS`` controls which users can manage
+  connections via the UI (if enabled). This is also set to is_staff by
+  default.
+- Enforces a SQL blacklist so destructive queries don't get
+  executed (delete, drop, alter, update etc). This is not
+  a substitute for using a readonly connection -- but is better
+  than nothing for certain use cases where a readonly connection
+  may not be available.
