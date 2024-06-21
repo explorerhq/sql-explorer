@@ -5,7 +5,7 @@ Change Log
 This document records all notable changes to `django-sql-explorer <https://github.com/explorerhq/django-sql-explorer>`_.
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
-`5.0.b2`_ (2024-06-17)
+`5.0.b3`_ (2024-06-20)
 ===========================
 
 * Manage DB connections via the UI (and/or Django Admin). Set EXPLORER_DB_CONNECTIONS_ENABLED

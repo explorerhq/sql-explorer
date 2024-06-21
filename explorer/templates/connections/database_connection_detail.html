@@ -15,14 +15,14 @@
             <th>Engine</th>
             <td>{{ object.get_engine_display }}</td>
         </tr>
+        <tr>
+            <th>Host</th>
+            <td>{{ object.host }}</td>
+        </tr>
         {% if not object.is_upload %}
         <tr>
             <th>User</th>
             <td>{{ object.user }}</td>
-        </tr>
-        <tr>
-            <th>Host</th>
-            <td>{{ object.host }}</td>
         </tr>
         <tr>
             <th>Port</th>
@@ -30,6 +30,10 @@
         </tr>
         {% endif %}
     </table>
-    <a href="{% url 'explorer_connection_update' object.pk %}" class="btn btn-info">Edit</a>
+    {% if object.is_upload %}
+        <span class="text-info-emphasis">The source of this connection is an uploaded file.</span>
+    {% endif %}
+    <a href="{% url 'explorer_connection_update' object.pk %}" class="btn btn-warning">Edit</a>
+    
 </div>
 {% endblock %}
