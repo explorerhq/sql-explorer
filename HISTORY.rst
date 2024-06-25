@@ -5,7 +5,7 @@ Change Log
 This document records all notable changes to `django-sql-explorer <https://github.com/explorerhq/django-sql-explorer>`_.
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
-`5.0.b3`_ (2024-06-20)
+`5.0.0`_ (2024-06-25)
 ===========================
 
 * Manage DB connections via the UI (and/or Django Admin). Set EXPLORER_DB_CONNECTIONS_ENABLED
@@ -470,7 +470,8 @@ Initial Release
 .. _4.0.2: https://github.com/explorerhq/django-sql-explorer/compare/4.0.0...4.0.2
 .. _4.1.0: https://github.com/explorerhq/django-sql-explorer/compare/4.0.2...4.1.0
 .. _4.2.0: https://github.com/explorerhq/django-sql-explorer/compare/4.1.0...4.2.0
-.. _vNext: https://github.com/explorerhq/django-sql-explorer/compare/4.2.0...master
+.. _4.3.0: https://github.com/explorerhq/django-sql-explorer/compare/4.2.0...4.3.0
+.. _5.0.0: https://github.com/explorerhq/django-sql-explorer/compare/4.2.0...5.0.0
 
 .. _#254: https://github.com/explorerhq/django-sql-explorer/pull/254
 .. _#334: https://github.com/explorerhq/django-sql-explorer/pull/334
