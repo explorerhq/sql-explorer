@@ -1,6 +1,9 @@
 from django.test import TestCase
+from unittest import skipIf
 from django.core.files.uploadedfile import SimpleUploadedFile
-import pandas as pd
+from explorer.app_settings import EXPLORER_USER_UPLOADS_ENABLED
+if EXPLORER_USER_UPLOADS_ENABLED:
+    import pandas as pd
 import os
 import sqlite3
 from explorer.models import DatabaseConnection
@@ -25,6 +28,7 @@ def _get_csv(csv_name):
     return csv_bytes
 
 
+@skipIf(not EXPLORER_USER_UPLOADS_ENABLED, "User uploads not enabled")
 class TestCsvToTypedDf(TestCase):
 
     def test_mixed_types(self):
@@ -61,6 +65,7 @@ class TestCsvToTypedDf(TestCase):
         self.assertTrue(pd.api.types.is_datetime64_ns_dtype(df["Dates"]))
 
 
+@skipIf(not EXPLORER_USER_UPLOADS_ENABLED, "User uploads not enabled")
 class TestSQLiteConnection(TestCase):
 
     @patch("explorer.utils.get_s3_bucket")
@@ -139,6 +144,7 @@ class TestDjangoStyleConnection(TestCase):
         mock_backend.DatabaseWrapper.assert_called_once()
 
 
+@skipIf(not EXPLORER_USER_UPLOADS_ENABLED, "User uploads not enabled")
 class TestPandasToSQLite(TestCase):
 
     def test_pandas_to_sqlite(self):

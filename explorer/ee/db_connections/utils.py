@@ -4,7 +4,6 @@ import os
 
 from dateutil import parser
 
-import pandas as pd
 import sqlite3
 import io
 
@@ -126,6 +125,7 @@ def atof_custom(value):
     return float(value)
 
 def csv_to_typed_df(csv_bytes, delimiter=",", has_headers=True):  # noqa
+    import pandas as pd
     try:
 
         csv_file = io.BytesIO(csv_bytes)
