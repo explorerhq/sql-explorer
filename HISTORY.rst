@@ -5,6 +5,10 @@ Change Log
 This document records all notable changes to `django-sql-explorer <https://github.com/explorerhq/django-sql-explorer>`_.
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+`5.0.1`_ (2024-06-26)
+===========================
+* `#631`_: Pandas is only required if EXPLORER_USER_UPLOADS_ENABLED is True
+
 `5.0.0`_ (2024-06-25)
 ===========================
 
@@ -471,7 +475,9 @@ Initial Release
 .. _4.1.0: https://github.com/explorerhq/django-sql-explorer/compare/4.0.2...4.1.0
 .. _4.2.0: https://github.com/explorerhq/django-sql-explorer/compare/4.1.0...4.2.0
 .. _4.3.0: https://github.com/explorerhq/django-sql-explorer/compare/4.2.0...4.3.0
-.. _5.0.0: https://github.com/explorerhq/django-sql-explorer/compare/4.2.0...5.0.0
+.. _5.0.0: https://github.com/explorerhq/django-sql-explorer/compare/4.3.0...5.0.0
+.. _5.0.1: https://github.com/explorerhq/django-sql-explorer/compare/5.0.0...5.0.1
+
 
 .. _#254: https://github.com/explorerhq/django-sql-explorer/pull/254
 .. _#334: https://github.com/explorerhq/django-sql-explorer/pull/334
@@ -573,5 +579,6 @@ Initial Release
 .. _#616: https://github.com/explorerhq/django-sql-explorer/issues/616
 .. _#618: https://github.com/explorerhq/django-sql-explorer/issues/618
 .. _#619: https://github.com/explorerhq/django-sql-explorer/issues/619
+.. _#631: https://github.com/explorerhq/django-sql-explorer/issues/631
 
 .. _furo: https://github.com/pradyunsg/furo
