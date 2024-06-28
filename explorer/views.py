@@ -5,7 +5,7 @@ import six
 import logging
 
 from django.http.response import HttpResponseRedirect
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext
 from django.views.generic.base import View
 from django.views.generic import ListView
@@ -100,7 +100,7 @@ class ExplorerContextMixin(object):
 
     def render_template(self, template, ctx):
         ctx.update(self.gen_ctx())
-        return render_to_response(template, ctx)
+        return render(self.request, template, ctx)
 
 
 @view_permission
@@ -145,7 +145,7 @@ def download_csv_from_sql(request):
 @change_permission
 @require_GET
 def schema(request):
-    return render_to_response('explorer/schema.html', {'schema': schema_info()})
+    return render(request, 'explorer/schema.html', {'schema': schema_info()})
 
 
 @csrf_exempt
