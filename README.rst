@@ -23,6 +23,12 @@ SQL Explorer
 
 * `Website <https://www.sqlexplorer.io/>`_
 
+.. |inline-image| image:: https://sql-explorer.s3.amazonaws.com/video-thumbnail.png
+   :target: https://sql-explorer.s3.amazonaws.com/Sql+Explorer+5.mp4
+   :height: 10em
+
+* Demo video: |inline-image|
+
 SQL Explorer aims to make the flow of data between people fast,
 simple, and confusion-free. It is a Django-based application that you
 can add to an existing Django site, or use as a standalone business
