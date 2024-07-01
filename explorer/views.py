@@ -151,7 +151,7 @@ def schema(request):
 @csrf_exempt
 @require_POST
 def format_sql(request):
-    if not (request.user.is_authenticated()):
+    if not request.user.is_authenticated:
         return HttpResponse(status=403)
     sql = request.POST.get('sql', '')
     formatted = fmt_sql(sql)
