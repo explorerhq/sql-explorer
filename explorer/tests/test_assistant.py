@@ -1,5 +1,7 @@
 from explorer.tests.factories import SimpleQueryFactory, QueryLogFactory
 from unittest.mock import patch, Mock, MagicMock
+import unittest
+from explorer import app_settings
 
 import json
 from django.test import TestCase
@@ -10,6 +12,7 @@ from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
 from explorer.assistant.utils import sample_rows_from_table, ROW_SAMPLE_SIZE, build_prompt
 
 
+@unittest.skipIf(not app_settings.has_assistant(), "assistant not enabled")
 class TestAssistantViews(TestCase):
 
     def setUp(self):
@@ -43,6 +46,7 @@ class TestAssistantViews(TestCase):
         self.assertEqual(json.loads(resp.content)["message"], "smart computer")
 
 
+@unittest.skipIf(not app_settings.has_assistant(), "assistant not enabled")
 class TestBuildPrompt(TestCase):
 
     @patch("explorer.assistant.utils.sample_rows_from_tables", return_value="sample data")
@@ -145,6 +149,7 @@ class TestBuildPrompt(TestCase):
         self.assertEqual(result["system"], "system prompt")
 
 
+@unittest.skipIf(not app_settings.has_assistant(), "assistant not enabled")
 class TestPromptContext(TestCase):
 
     def test_retrieves_sample_rows(self):
@@ -263,6 +268,7 @@ class TestPromptContext(TestCase):
         self.assertEqual(ret, expected)
 
 
+@unittest.skipIf(not app_settings.has_assistant(), "assistant not enabled")
 class TestAssistantUtils(TestCase):
 
     def test_sample_rows_from_tables(self):

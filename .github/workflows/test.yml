@@ -85,7 +85,6 @@ jobs:
           python -m coverage report
 
       - name: Upload HTML report
-        if: ${{ failure() }}
         uses: actions/upload-artifact@v4
         with:
           name: html-report

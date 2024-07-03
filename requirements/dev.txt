@@ -3,7 +3,8 @@
 -r ./extra/charts.txt
 -r ./extra/snapshots.txt
 -r ./extra/xls.txt
+-r ./tests.txt
 
-importlib-metadata<5.0; python_version <= '3.7'
-coverage
-factory-boy>=3.1.0
+# The Celery broker that test_project uses. Not required if not using async tasks, or if you have
+# a Celery config that uses a different broker.
+redis>=5.0
