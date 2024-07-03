@@ -21,6 +21,7 @@ export function pivotSetup($) {
     let csvButton = document.querySelector("#button-excel");
     if (csvButton) {
         csvButton.addEventListener("click", e => {
+            e.preventDefault();
             let table = document.querySelector(".pvtTable");
             if (typeof (table) != 'undefined' && table != null) {
                 csvFromTable(table);
