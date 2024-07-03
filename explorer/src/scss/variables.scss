@@ -17,3 +17,13 @@ $font-size-base: .8rem;
     --bs-btn-color: white !important;
 }
 
+$card-border-radius: 0;
+$card-spacer-x: 0;
+.card-header {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+}
+
+.card {
+    border-top: 0 !important;
+}

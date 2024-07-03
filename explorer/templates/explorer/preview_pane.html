@@ -1,9 +1,9 @@
 {% load i18n %}
 
 {% if headers %}
-<div class="container">
+<div class="container mt-4">
     <nav>
-        <div class="nav nav-tabs mb-3" role="tablist" id="nav-tab">
+        <div class="nav nav-tabs" role="tablist" id="nav-tab">
             <button class="nav-link active" id="nav-preview-tab" data-bs-toggle="tab" data-bs-target="#nav-preview" type="button" role="tab" area-controls="nav-preview" aria-selected="true">{% trans "Preview" %}</button>
             {% if query.id and query.snapshot %}
                 <button class="nav-link" id="nav-snapshots-tab" data-bs-toggle="tab" data-bs-target="#nav-snapshots" type="button" role="tab" area-controls="nav-snapshots" aria-selected="false">{% trans "Snapshots" %}</button>
@@ -129,17 +129,23 @@
 
         {% if data %}
             <div class="tab-pane" id="nav-pivot" role="tabpanel" area-labelledby="nav-pivot-tab">
-                <button id="button-excel">{% trans "Download as CSV" %}</button>
-                <small>
-                    <a id="pivot-bookmark"
+            <div class="card p-3">
+                <ul class="nav justify-content-end">
+                    <li class="nav-item">
+                        <a id="pivot-bookmark" class="nav-link"
                        data-baseurl="{% url 'explorer_playground' %}?querylog_id={{ ql_id }}"
                        href="#">
-                        <i class="bi-link"></i>
+                        <i class="bi-link"></i> Link to this
                     </a>
-                </small>
+                    </li>
+                    <li class="nav-item">
+                        <a id="button-excel" class="nav-link" href="#"><i class="bi-download"></i> Download CSV</a>
+                     </li>
+                </ul>
                 <div class="overflow-wrapper">
                     <div class="pivot-table"></div>
                 </div>
+            </div>
             </div>
             {% if charts_enabled %}
                 <div class="tab-pane" id="nav-piechart" role="tabpanel" area-labelledby="nav-piechart-tab">

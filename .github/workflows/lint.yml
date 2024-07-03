@@ -14,4 +14,4 @@ jobs:
     - run: python -Im pip install --user ruff
 
     - name: Run ruff
-      run: ruff --output-format=github explorer
+      run: ruff check --output-format=github explorer
