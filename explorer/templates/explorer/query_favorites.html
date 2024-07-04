@@ -3,11 +3,11 @@
 
 {% block sql_explorer_content %}
     <div class="container">
-        <h3>{% trans "Favorite Queries" %}</h3>
+        <h3>{% translate "Favorite Queries" %}</h3>
         <table class="table table-striped query-list">
             <thead>
             <tr>
-                <th>{% trans "Query" %}</th>
+                <th>{% translate "Query" %}</th>
             </tr>
             </thead>
 
@@ -22,7 +22,7 @@
                 {% empty %}
                 <tr>
                     <th>
-                        {% trans "No favorite queries added yet." %}
+                        {% translate "No favorite queries added yet." %}
                     </th>
                 </tr>
             {% endfor %}

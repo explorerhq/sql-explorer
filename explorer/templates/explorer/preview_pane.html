@@ -4,15 +4,15 @@
 <div class="container mt-4">
     <nav>
         <div class="nav nav-tabs" role="tablist" id="nav-tab">
-            <button class="nav-link active" id="nav-preview-tab" data-bs-toggle="tab" data-bs-target="#nav-preview" type="button" role="tab" area-controls="nav-preview" aria-selected="true">{% trans "Preview" %}</button>
+            <button class="nav-link active" id="nav-preview-tab" data-bs-toggle="tab" data-bs-target="#nav-preview" type="button" role="tab" area-controls="nav-preview" aria-selected="true">{% translate "Preview" %}</button>
             {% if query.id and query.snapshot %}
-                <button class="nav-link" id="nav-snapshots-tab" data-bs-toggle="tab" data-bs-target="#nav-snapshots" type="button" role="tab" area-controls="nav-snapshots" aria-selected="false">{% trans "Snapshots" %}</button>
+                <button class="nav-link" id="nav-snapshots-tab" data-bs-toggle="tab" data-bs-target="#nav-snapshots" type="button" role="tab" area-controls="nav-snapshots" aria-selected="false">{% translate "Snapshots" %}</button>
             {% endif %}
             {% if data %}
-                <button class="nav-link" id="nav-pivot-tab" data-bs-toggle="tab" data-bs-target="#nav-pivot" type="button" role="tab" area-controls="nav-pivot" aria-selected="false">{% trans "Pivot" %}</button>
+                <button class="nav-link" id="nav-pivot-tab" data-bs-toggle="tab" data-bs-target="#nav-pivot" type="button" role="tab" area-controls="nav-pivot" aria-selected="false">{% translate "Pivot" %}</button>
                 {% if charts_enabled %}
-                    <button class="nav-link" id="nav-piechart-tab" data-bs-toggle="tab" data-bs-target="#nav-piechart" type="button" role="tab" area-controls="nav-piechart" aria-selected="false">{% trans "Pie Chart" %}</button>
-                    <button class="nav-link" id="nav-linechart-tab" data-bs-toggle="tab" data-bs-target="#nav-linechart" type="button" role="tab" area-controls="nav-linechart" aria-selected="false">{% trans "Line Chart" %}</button>
+                    <button class="nav-link" id="nav-piechart-tab" data-bs-toggle="tab" data-bs-target="#nav-piechart" type="button" role="tab" area-controls="nav-piechart" aria-selected="false">{% translate "Pie Chart" %}</button>
+                    <button class="nav-link" id="nav-linechart-tab" data-bs-toggle="tab" data-bs-target="#nav-linechart" type="button" role="tab" area-controls="nav-linechart" aria-selected="false">{% translate "Line Chart" %}</button>
                 {% endif %}
             {% endif %}
         </div>
@@ -34,11 +34,11 @@
                             <div class="col text-end">
                                 <span class="me-1">
                                     {% if rows > total_rows %}
-                                        {% trans "Showing" %}&nbsp;
+                                        {% translate "Showing" %}&nbsp;
                                         <input class="rows-input" type="text" name="rows" id="rows"
                                                value="{{ total_rows }}"/>
                                     {% else %}
-                                        {% trans "First" %}&nbsp;
+                                        {% translate "First" %}&nbsp;
                                         <input class="rows-input" type="text" name="rows" id="rows"
                                                value="{{ rows }}"/>
                                     {% endif %}
@@ -101,7 +101,7 @@
                                     {% else %}
                                         <tr class="text-center">
                                             <td colspan="{{ headers|length }}">
-                                                {% trans "Empty Resultset" %}
+                                                {% translate "Empty Resultset" %}
                                             </td>
                                         </tr>
                                     {% endif %}

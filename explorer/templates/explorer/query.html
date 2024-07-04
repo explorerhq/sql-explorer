@@ -15,7 +15,7 @@
                 {% if query %}
                     {{ query.title }}
                 {% else %}
-                    {% trans "New Query" %}
+                    {% translate "New Query" %}
                 {% endif %}
             </h2>
             {% if shared %}<small>&nbsp;&nbsp;shared</small>{% endif %}
@@ -37,12 +37,12 @@
                         <div class="alert alert-danger">{{ error|escape }}</div>
                     {% endfor %}{% endif %}
                     <input class="form-control" id="id_title" maxlength="255" name="title" type="text" {% if not can_change %}disabled{% endif %} value="{{ form.title.value|default_if_none:"" }}" />
-                    <label for="id_title" class="form-label">{% trans "Title" %}</label>
+                    <label for="id_title" class="form-label">{% translate "Title" %}</label>
                 </div>
                 {% if form.connections|length > 1 and can_change %}
                     <div class="mb-3 form-floating">
                         {{ form.connection }}
-                        <label for="id_connection" class="form-label">{% trans "Connection" %}</label>
+                        <label for="id_connection" class="form-label">{% translate "Connection" %}</label>
                     </div>
                 {% else %}
                     {# still need to submit the connection, just hide the UI element #}
@@ -59,7 +59,7 @@
                         {% if not can_change %}disabled{% endif %} rows="2"
                     >{{ form.description.value|default_if_none:"" }}</textarea>
                     <label for="id_description" class="form-label">
-                        {% trans "Description"%}
+                        {% translate "Description"%}
                     </label>
                 </div>
                 {% if form.sql.errors %}
@@ -105,23 +105,23 @@
                     <div class="btn-group" role="group">
                         {% if can_change %}
                             <button id="save_button" type="submit" class="btn btn-primary">
-                                {% trans 'Save & Run' %}
+                                {% translate 'Save & Run' %}
                             </button>
                             <button class="btn btn-outline-primary" id="save_only_button">
-                                {% trans 'Save Only' %}
+                                {% translate 'Save Only' %}
                             </button>
                             {% export_buttons query %}
                             <button type="button" class="btn btn-outline-primary" id="show_schema_button">
-                                {% trans "Show Schema" %}
+                                {% translate "Show Schema" %}
                             </button>
                             <button type="button" class="btn btn-outline-primary" id="hide_schema_button" style="display: none;">
-                                {% trans "Hide Schema" %}
+                                {% translate "Hide Schema" %}
                             </button>
                             <button type="button" class="btn btn-outline-primary" id="format_button">
-                                {% trans "Format" %}
+                                {% translate "Format" %}
                             </button>
                         {% else %}
-                            <button id="refresh_button" type="button" class="btn btn-default">{% trans 'Refresh' %}</button>
+                            <button id="refresh_button" type="button" class="btn btn-default">{% translate 'Refresh' %}</button>
                             {% export_buttons query %}
                         {% endif %}
                     </div>
@@ -145,10 +145,10 @@
         {% blocktrans trimmed with avg_duration_display=query.avg_duration_display cuser=query.created_by_user created=form.created_at_time %}
             Avg. execution: {{ avg_duration_display }}ms. Query created by {{ cuser }} on {{ created }}.
         {% endblocktrans %}
-        {% if query %}<a href="{% url 'explorer_logs' %}?query_id={{ query.id }}"> {% trans "History" %}</a>{% endif %}
+        {% if query %}<a href="{% url 'explorer_logs' %}?query_id={{ query.id }}"> {% translate "History" %}</a>{% endif %}
     {% endif %}
 </div>
 <div class="container mt-1 text-end small">
-    {% if query and can_change and tasks_enabled %}{{ form.snapshot }} {% trans "Snapshot" %}{% endif %}
+    {% if query and can_change and tasks_enabled %}{{ form.snapshot }} {% translate "Snapshot" %}{% endif %}
 </div>
 {% endblock %}

@@ -13,8 +13,8 @@
             <table class="table table-striped table-borderless">
                 <thead>
                     <tr>
-                        <th>{% trans "Query" %}</th>
-                        <th>{% trans "Last Run" %}</th>
+                        <th>{% translate "Query" %}</th>
+                        <th>{% translate "Last Run" %}</th>
                         <th class="text-center">CSV</th>
                     </tr>
                 </thead>
@@ -40,35 +40,35 @@
     <div id="queries" class="container">
         <div class="row">
             <div class="col">
-                <h3>{% trans "All Queries" %}</h3>
+                <h3>{% translate "All Queries" %}</h3>
             </div>
             <div class="col text-end">
-                <input class="search" placeholder="{% trans 'Search' %}" style="">
+                <input class="search" placeholder="{% translate 'Search' %}" style="">
             </div>
         </div>
         <table class="table table-striped table-borderless">
             <thead>
                 <tr>
                     <th><i class="sort bi-chevron-expand pe-1" data-sort="sort-name"
-                                                         data-dir="asc"></i>{% trans "Query" %}</th>
+                                                         data-dir="asc"></i>{% translate "Query" %}</th>
                     <th><i class="sort bi-chevron-expand pe-1" data-sort="sort-created"
-                                                         data-dir="asc"></i>{% trans "Created" %}</th>
+                                                         data-dir="asc"></i>{% translate "Created" %}</th>
                     {% if tasks_enabled %}
                         <th><i class="sort bi-chevron-expand pe-1" data-sort="{{ forloop.counter0 }}"
-                                                         data-dir="asc"></i>{% trans "Email" %}</th>
+                                                         data-dir="asc"></i>{% translate "Email" %}</th>
                     {% endif %}
-                    <th>{% trans "CSV" %}</th>
+                    <th>{% translate "CSV" %}</th>
                     {% if can_change %}
-                        <th>{% trans "Play" %}</th>
-                        <th>{% trans "Delete" %}</th>
+                        <th>{% translate "Play" %}</th>
+                        <th>{% translate "Delete" %}</th>
                     {% endif %}
-                    <th>{% trans "Favorite" %}</th>
+                    <th>{% translate "Favorite" %}</th>
                     <th><i class="sort bi-chevron-expand pe-1" data-sort="sort-last-run"
-                                                         data-dir="asc"></i>{% trans "Last Run" %}</th>
+                                                         data-dir="asc"></i>{% translate "Last Run" %}</th>
                     <th><i class="sort bi-chevron-expand pe-1" data-sort="sort-run-count"
-                                                         data-dir="asc"></i>{% trans "Run Count" %}</th>
+                                                         data-dir="asc"></i>{% translate "Run Count" %}</th>
                     <th><i class="sort bi-chevron-expand pe-1" data-sort="sort-connection"
-                                                         data-dir="asc"></i>{% trans "Connection" %}</th>
+                                                         data-dir="asc"></i>{% translate "Connection" %}</th>
                 </tr>
             </thead>
             <tbody class="list">
@@ -144,14 +144,14 @@
                 <div class="modal-body">
                     <div class="input-group">
                         <input type="email" autofocus="true" name="email" id="emailCsvInput" class="form-control" placeholder="Email" />
-                        <label for="emailCsvInput" style="display: none" aria-hidden="true">{% trans 'Email' %}</label>
+                        <label for="emailCsvInput" style="display: none" aria-hidden="true">{% translate 'Email' %}</label>
                         <span class="input-group-btn">
                             <button id="btnSubmitCsvEmail" type="button" class="btn btn-primary">Send</button>
                         </span>
                     </div>
                     <div class="mt-3">
                         <div class="alert alert-success" style="display: none;" role="alert" id="email-success-msg">
-                            {% trans 'Email will be sent when query completes' %}
+                            {% translate 'Email will be sent when query completes' %}
                         </div>
                         <div class="alert alert-danger" style="display: none;" role="alert" id="email-error-msg">
                         </div>

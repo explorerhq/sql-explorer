@@ -7,12 +7,12 @@
         <table class="table table-striped query-list">
             <thead>
                 <tr>
-                    <th>{% trans "Run At" %}</th>
-                    <th>{% trans "Run By" %}</th>
-                    <th>{% trans "Duration" %}</th>
+                    <th>{% translate "Run At" %}</th>
+                    <th>{% translate "Run By" %}</th>
+                    <th>{% translate "Duration" %}</th>
                     <th class="sql">SQL</th>
-                    <th>{% trans "Query ID" %}</th>
-                    <th>{% trans "Playground" %}</th>
+                    <th>{% translate "Query ID" %}</th>
+                    <th>{% translate "Playground" %}</th>
                 </tr>
             </thead>
             <tbody>
@@ -30,14 +30,14 @@
                                     {% endblocktrans %}
                                 </a>
                             {% elif object.is_playground %}
-                                {% trans "Playground" %}
+                                {% translate "Playground" %}
                             {% else %}
                                 --
                             {% endif %}
                         </td>
                         <td>
                             <a href="{% url "explorer_playground" %}?querylog_id={{ object.id }}">
-                                {% trans "Open" %}
+                                {% translate "Open" %}
                             </a>
                         </td>
                     </tr>
