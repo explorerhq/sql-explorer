@@ -5,7 +5,7 @@
     <div class="container">
         <form method="post">{% csrf_token %}
             <div class="alert alert-info">
-                {% blocktrans trimmed with title=object.title %}
+                {% blocktranslate trimmed with title=object.title %}
                     Are you sure you want to delete "{{ title }}"?
                 {% endblocktrans %}
             </div>

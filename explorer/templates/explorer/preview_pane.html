@@ -27,7 +27,7 @@
                                 {% if data %}
                                     <a title="Show row numbers" id="counter-toggle" href="#"><i class="bi-hash"></i></a>&nbsp
                                 {% endif %}
-                                {% blocktrans trimmed with duration=duration|floatformat:2 %}
+                                {% blocktranslate trimmed with duration=duration|floatformat:2 %}
                                     Execution time: {{ duration }} ms
                                 {% endblocktrans %}
                             </div>
@@ -42,7 +42,7 @@
                                         <input class="rows-input" type="text" name="rows" id="rows"
                                                value="{{ rows }}"/>
                                     {% endif %}
-                                    {% blocktrans %}of {{ total_rows }} total rows.{% endblocktrans %}
+                                    {% blocktranslate %}of {{ total_rows }} total rows.{% endblocktrans %}
                                 </span>
                                 <a id="fullscreen" href="./?{{ fullscreen_params }}" target="_blank"
                                    title="Fullscreen results">
@@ -156,11 +156,11 @@
                             </div>
                         {% else %}
                             <div style="margin: 6em;">
-                                <p>{% blocktrans %}
+                                <p>{% blocktranslate %}
                                     This query result table is not formatted in a way
                                     which could be displayed as a pie chart.
                                 {% endblocktrans %}</p>
-                                <p>{% blocktrans %}
+                                <p>{% blocktranslate %}
                                     Query results can be displayed as a pie chart as follows:
                                     each row represents one sector of the pie;
                                     the first column will be used as a label
@@ -168,7 +168,7 @@
                                     Thus the second column must be of a numeric type.
                                     Rows which contain <code>NULL</code>s will be ignored.
                                 {% endblocktrans %}</p>
-                                <p>{% blocktrans %}
+                                <p>{% blocktranslate %}
                                     Use this sample query to see it in action:
                                 {% endblocktrans %}</p>
                                 <pre>
@@ -190,17 +190,17 @@
                                 </div>
                             {% else %}
                                 <div style="margin: 6em;">
-                                    <p>{% blocktrans %}
+                                    <p>{% blocktranslate %}
                                         This query result table is not formatted in a way
                                         which could be displayed as a line chart.
                                     {% endblocktrans %}</p>
-                                    <p>{% blocktrans %}
+                                    <p>{% blocktranslate %}
                                         Query results can be displayed as a line chart as follows:
                                         the first column represents the values on the x-axis (e.g. dates).
                                         All other numeric columns represent one line on the chart.
                                         Other columns will be ignored.
                                     {% endblocktrans %}</p>
-                                    <p>{% blocktrans %}
+                                    <p>{% blocktranslate %}
                                         Use this sample query to see it in action:
                                     {% endblocktrans %}</p>
                                     <pre>

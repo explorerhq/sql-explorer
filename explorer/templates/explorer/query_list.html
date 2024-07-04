@@ -6,7 +6,7 @@
     {% if recent_queries|length > 0 %}
         <div class="container">
             <h3>
-                {% blocktrans trimmed with qlen=recent_queries|length %}
+                {% blocktranslate trimmed with qlen=recent_queries|length %}
                     Recently Run by You
                 {% endblocktrans %}
             </h3>
@@ -88,7 +88,7 @@
                             </td>
                             <td class="sort-created">{{ object.created_at|date:"m/d/y" }}
                                 {% if object.created_by_user %}
-                                    {% blocktrans trimmed with cuser=object.created_by_user %}
+                                    {% blocktranslate trimmed with cuser=object.created_by_user %}
                                         by {{cuser}}
                                     {% endblocktrans %}
                                 {% endif %}

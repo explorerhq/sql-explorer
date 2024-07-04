@@ -142,7 +142,7 @@
 
 <div class="container mt-1 text-end small">
     {% if query.avg_duration %}
-        {% blocktrans trimmed with avg_duration_display=query.avg_duration_display cuser=query.created_by_user created=form.created_at_time %}
+        {% blocktranslate trimmed with avg_duration_display=query.avg_duration_display cuser=query.created_by_user created=form.created_at_time %}
             Avg. execution: {{ avg_duration_display }}ms. Query created by {{ cuser }} on {{ created }}.
         {% endblocktrans %}
         {% if query %}<a href="{% url 'explorer_logs' %}?query_id={{ query.id }}"> {% translate "History" %}</a>{% endif %}
