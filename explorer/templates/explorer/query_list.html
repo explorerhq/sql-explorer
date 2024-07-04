@@ -8,7 +8,7 @@
             <h3>
                 {% blocktranslate trimmed with qlen=recent_queries|length %}
                     Recently Run by You
-                {% endblocktrans %}
+                {% endblocktranslate %}
             </h3>
             <table class="table table-striped table-borderless">
                 <thead>
@@ -90,7 +90,7 @@
                                 {% if object.created_by_user %}
                                     {% blocktranslate trimmed with cuser=object.created_by_user %}
                                         by {{cuser}}
-                                    {% endblocktrans %}
+                                    {% endblocktranslate %}
                                 {% endif %}
                             </td>
                             {% if tasks_enabled %}

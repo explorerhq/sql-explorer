@@ -9,7 +9,7 @@
             <p>
                 {% blocktranslate trimmed %}
                     The playground is for experimenting and writing ad-hoc queries. By default, nothing you do here will be saved.
-                {% endblocktrans %}
+                {% endblocktranslate %}
             </p>
             <form role="form" action="{% url 'explorer_playground' %}" method="post" id="editor" class="playground-form form-horizontal">{% csrf_token %}
                 {% if error %}

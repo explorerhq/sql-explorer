@@ -29,7 +29,7 @@
                                 {% endif %}
                                 {% blocktranslate trimmed with duration=duration|floatformat:2 %}
                                     Execution time: {{ duration }} ms
-                                {% endblocktrans %}
+                                {% endblocktranslate %}
                             </div>
                             <div class="col text-end">
                                 <span class="me-1">
@@ -42,7 +42,7 @@
                                         <input class="rows-input" type="text" name="rows" id="rows"
                                                value="{{ rows }}"/>
                                     {% endif %}
-                                    {% blocktranslate %}of {{ total_rows }} total rows.{% endblocktrans %}
+                                    {% blocktranslate %}of {{ total_rows }} total rows.{% endblocktranslate %}
                                 </span>
                                 <a id="fullscreen" href="./?{{ fullscreen_params }}" target="_blank"
                                    title="Fullscreen results">
@@ -159,7 +159,7 @@
                                 <p>{% blocktranslate %}
                                     This query result table is not formatted in a way
                                     which could be displayed as a pie chart.
-                                {% endblocktrans %}</p>
+                                {% endblocktranslate %}</p>
                                 <p>{% blocktranslate %}
                                     Query results can be displayed as a pie chart as follows:
                                     each row represents one sector of the pie;
@@ -167,10 +167,10 @@
                                     while the second column is used to determine the size of the sector.
                                     Thus the second column must be of a numeric type.
                                     Rows which contain <code>NULL</code>s will be ignored.
-                                {% endblocktrans %}</p>
+                                {% endblocktranslate %}</p>
                                 <p>{% blocktranslate %}
                                     Use this sample query to see it in action:
-                                {% endblocktrans %}</p>
+                                {% endblocktranslate %}</p>
                                 <pre>
     SELECT *
     FROM (VALUES ('apple', 7),
@@ -193,16 +193,16 @@
                                     <p>{% blocktranslate %}
                                         This query result table is not formatted in a way
                                         which could be displayed as a line chart.
-                                    {% endblocktrans %}</p>
+                                    {% endblocktranslate %}</p>
                                     <p>{% blocktranslate %}
                                         Query results can be displayed as a line chart as follows:
                                         the first column represents the values on the x-axis (e.g. dates).
                                         All other numeric columns represent one line on the chart.
                                         Other columns will be ignored.
-                                    {% endblocktrans %}</p>
+                                    {% endblocktranslate %}</p>
                                     <p>{% blocktranslate %}
                                         Use this sample query to see it in action:
-                                    {% endblocktrans %}</p>
+                                    {% endblocktranslate %}</p>
                                     <pre>
     SELECT *
     FROM (VALUES ('2019-01-01'::date, 500,550,530),

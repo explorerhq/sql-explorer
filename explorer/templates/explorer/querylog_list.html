@@ -3,7 +3,7 @@
 
 {% block sql_explorer_content %}
     <div class="container">
-        <h3>{% blocktranslate with pagenum=page_obj.number %}Recent Query Logs - Page {{pagenum}}{% endblocktrans %}</h3>
+        <h3>{% blocktranslate with pagenum=page_obj.number %}Recent Query Logs - Page {{pagenum}}{% endblocktranslate %}</h3>
         <table class="table table-striped query-list">
             <thead>
                 <tr>
@@ -27,7 +27,7 @@
                                 <a href="{% url "query_detail" object.query_id %}">
                                     {% blocktranslate trimmed with query_id=object.query_id %}
                                         Query {{ query_id }}
-                                    {% endblocktrans %}
+                                    {% endblocktranslate %}
                                 </a>
                             {% elif object.is_playground %}
                                 {% translate "Playground" %}
@@ -53,7 +53,7 @@
                     <span class="page-current">
                         {% blocktranslate trimmed with pnum=page_obj.number anum=page_obj.paginator.num_pages %}
                             Page {{ pnum }} of {{ anum }}
-                        {% endblocktrans %}
+                        {% endblocktranslate %}
                     </span>
                     {% if page_obj.has_next %}
                         <a href="?page={{ page_obj.next_page_number }}"><i class="bi-arrow-right-square"></i></a>
