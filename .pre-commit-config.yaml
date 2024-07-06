@@ -12,13 +12,13 @@ default_language_version:
 
 repos:
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.15.0
+    rev: v3.16.0
     hooks:
       - id: pyupgrade
         args: ["--py38-plus"]
 
   - repo: https://github.com/adamchainz/django-upgrade
-    rev: "1.15.0"
+    rev: "1.19.0"
     hooks:
       - id: django-upgrade
         args: [--target-version, "3.2"]
@@ -29,13 +29,13 @@ repos:
       - id: yesqa
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v4.6.0
     hooks:
       - id: check-merge-conflict
       - id: mixed-line-ending
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.1.11"
+    rev: "v0.5.0"
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
