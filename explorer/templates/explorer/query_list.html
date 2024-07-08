@@ -5,11 +5,7 @@
     <div style="display: none">{% csrf_token %}</div>
     {% if recent_queries|length > 0 %}
         <div class="container">
-            <h3>
-                {% blocktranslate trimmed with qlen=recent_queries|length %}
-                    Recently Run by You
-                {% endblocktranslate %}
-            </h3>
+            <h3>{% translate "Recently Run by You" %}</h3>
             <table class="table table-striped table-borderless">
                 <thead>
                     <tr>
