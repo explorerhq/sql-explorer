@@ -11,7 +11,5 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - run: python -Im pip install --user ruff
-
     - name: Run ruff
-      run: ruff check --output-format=github explorer
+      run: pipx run ruff check --output-format=github explorer
