@@ -368,6 +368,15 @@ User-Configured DB Connections
 Set `EXPLORER_DB_CONNECTIONS_ENABLED` to `True` to enable DB connections to get configured in the browser (e.g. not
 just in settings.py). This also allows uploading of CSV or SQLite files for instant querying.
 
+If you are using a database driver that requires information beyond the basic alias/db name/user/password/host/port,
+you can add arbitrary connection data in the 'extras' field. Provide a JSON object and it will get merged into the
+final Django-style connection dictionary object. For example, for postgres, you could put this in the extras field:
+
+.. code-block:: python
+    {'OPTIONS': {'server_side_binding': true}}
+
+Which would enable this (obscure) postgres feature. Neato! Note this must be valid JSON.
+
 
 User Uploads
 ************

@@ -1,6 +1,7 @@
 from django.db import DatabaseError
 from django.db.utils import load_backend
 import os
+import json
 
 import sqlite3
 import io
@@ -73,6 +74,11 @@ def create_django_style_connection(explorer_connection):
         "AUTOCOMMIT": True,
         "ATOMIC_REQUESTS": False,
     }
+
+    if explorer_connection.extras:
+        extras_dict = json.loads(explorer_connection.extras) if isinstance(explorer_connection.extras,
+                                                                           str) else explorer_connection.extras
+        connection_settings.update(extras_dict)
 
     try:
         backend = load_backend(explorer_connection.engine)
