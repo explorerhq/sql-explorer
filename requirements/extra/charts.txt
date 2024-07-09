@@ -1,2 +1,1 @@
-matplotlib<4
-seaborn<0.12
+matplotlib>=3.9

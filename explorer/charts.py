@@ -1,63 +1,24 @@
 from io import BytesIO
 from typing import Iterable, Optional
-
-from django.core.exceptions import ImproperlyConfigured
-
-from explorer import app_settings
-
-
-if app_settings.EXPLORER_CHARTS_ENABLED:
-    try:
-        import matplotlib.pyplot as plt
-        import seaborn as sns
-        from matplotlib.figure import Figure
-    except ImportError as err:
-        raise ImproperlyConfigured(
-            "If `EXPLORER_CHARTS_ENABLED` is enabled, `matplotlib` and `seaborn` must be installed."
-        ) from err
-
 from .models import QueryResult
 
+BAR_WIDTH = 0.2
 
-def get_pie_chart(result: QueryResult) -> Optional[str]:
+
+def get_chart(result: QueryResult, chart_type: str) -> Optional[str]:
+    import matplotlib.pyplot as plt
     """
-    Return a pie chart in SVG format if the result table adheres to the expected format.
-
-    A pie chart is rendered if
-    * there is at least on row of in the result table
-    * the result table has at least two columns
-    * the second column is of a numeric type
-
-    The first column is used as labels for the pie sectors.
-    The second column is used to determine the size of the sectors
-    (hence the requirement of it being numeric).
-    All other columns are ignored.
+        Return a line or bar chart in SVG format if the result table adheres to the expected format.
+        A line chart is rendered if
+        * there is at least on row of in the result table
+        * there is at least one numeric column (the first column (with index 0) does not count)
+        The first column is used as x-axis labels.
+        All other numeric columns represent a line on the chart.
+        The name of the column is used as the name of the line in the legend.
+        Not numeric columns (except the first on) are ignored.
     """
-    if len(result.data) < 1 or len(result.data[0]) < 2:
-        return None
-    not_none_rows = [row for row in result.data if row[0] is not None and row[1] is not None]
-    labels = [row[0] for row in not_none_rows]
-    values = [row[1] for row in not_none_rows]
-    if not is_numeric(values):
-        return None
-    fig, ax = plt.subplots(figsize=(4.5, 4.5))
-    ax.pie(values, labels=labels)
-    return get_svg(fig)
-
-
-def get_line_chart(result: QueryResult) -> Optional[str]:
-    """
-    Return a line chart in SVG format if the result table adheres to the expected format.
-
-    A line chart is rendered if
-    * there is at least on row of in the result table
-    * there is at least one numeric column (the first column (with index 0) does not count)
-
-    The first column is used as x-axis labels.
-    All other numeric columns represent a line on the chart.
-    The name of the column is used as the name of the line in the legend.
-    Not numeric columns (except the first on) are ignored.
-    """
+    if chart_type not in ("bar", "line"):
+        return
     if len(result.data) < 1:
         return None
     numeric_columns = [
@@ -68,20 +29,33 @@ def get_line_chart(result: QueryResult) -> Optional[str]:
         return None
     labels = [row[0] for row in result.data]
     fig, ax = plt.subplots(figsize=(10, 3.8))
-    for col_num in numeric_columns:
-        sns.lineplot(ax=ax,
-                     x=labels,
-                     y=[row[col_num] for row in result.data],
-                     label=result.headers[col_num])
+    bars = []
+    bar_positions = []
+    for idx, col_num in enumerate(numeric_columns):
+        if chart_type == "bar":
+            values = [row[col_num] for row in result.data]
+            bar_container = ax.bar([x + idx * BAR_WIDTH
+                                    for x in range(len(labels))], values, BAR_WIDTH, label=result.headers[col_num])
+            bars.append(bar_container)
+            bar_positions.append([(rect.get_x(), rect.get_height()) for rect in bar_container])
+        if chart_type == "line":
+            ax.plot(labels, [row[col_num] for row in result.data], label=result.headers[col_num])
+
     ax.set_xlabel(result.headers[0])
-    # Rotate x-axis labels by 20 degrees to reduce overlap
+
+    if chart_type == "bar":
+        ax.set_xticks([x + BAR_WIDTH * (len(numeric_columns) / 2 - 0.5) for x in range(len(labels))])
+        ax.set_xticklabels(labels)
+
+    ax.legend()
     for label in ax.get_xticklabels():
-        label.set_rotation(20)
+        label.set_rotation(20)  # makes labels fit better
         label.set_ha("right")
-    return get_svg(fig)
+    svg_str = get_svg(fig)
+    return svg_str
 
 
-def get_svg(fig: "Figure") -> str:
+def get_svg(fig) -> str:
     buffer = BytesIO()
     fig.savefig(buffer, format="svg")
     buffer.seek(0)
@@ -91,7 +65,4 @@ def get_svg(fig: "Figure") -> str:
 
 
 def is_numeric(column: Iterable) -> bool:
-    """
-    Indicate if all the values in the given column are numeric or None.
-    """
     return all([isinstance(value, (int, float)) or value is None for value in column])

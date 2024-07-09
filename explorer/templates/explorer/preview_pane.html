@@ -10,9 +10,9 @@
             {% endif %}
             {% if data %}
                 <button class="nav-link" id="nav-pivot-tab" data-bs-toggle="tab" data-bs-target="#nav-pivot" type="button" role="tab" area-controls="nav-pivot" aria-selected="false">{% translate "Pivot" %}</button>
-                {% if charts_enabled %}
-                    <button class="nav-link" id="nav-piechart-tab" data-bs-toggle="tab" data-bs-target="#nav-piechart" type="button" role="tab" area-controls="nav-piechart" aria-selected="false">{% translate "Pie Chart" %}</button>
+                {% if charts_enabled and line_chart_svg %}
                     <button class="nav-link" id="nav-linechart-tab" data-bs-toggle="tab" data-bs-target="#nav-linechart" type="button" role="tab" area-controls="nav-linechart" aria-selected="false">{% translate "Line Chart" %}</button>
+                    <button class="nav-link" id="nav-barchart-tab" data-bs-toggle="tab" data-bs-target="#nav-barchart" type="button" role="tab" area-controls="nav-barchart" aria-selected="false">{% translate "Bar Chart" %}</button>
                 {% endif %}
             {% endif %}
         </div>
@@ -129,89 +129,37 @@
 
         {% if data %}
             <div class="tab-pane" id="nav-pivot" role="tabpanel" area-labelledby="nav-pivot-tab">
-            <div class="card p-3">
-                <ul class="nav justify-content-end">
-                    <li class="nav-item">
-                        <a id="pivot-bookmark" class="nav-link"
-                       data-baseurl="{% url 'explorer_playground' %}?querylog_id={{ ql_id }}"
-                       href="#">
-                        <i class="bi-link"></i> Link to this
-                    </a>
-                    </li>
-                    <li class="nav-item">
-                        <a id="button-excel" class="nav-link" href="#"><i class="bi-download"></i> Download CSV</a>
-                     </li>
-                </ul>
-                <div class="overflow-wrapper">
-                    <div class="pivot-table"></div>
-                </div>
-            </div>
-            </div>
-            {% if charts_enabled %}
-                <div class="tab-pane" id="nav-piechart" role="tabpanel" area-labelledby="nav-piechart-tab">
+                <div class="card p-3">
+                    <ul class="nav justify-content-end">
+                        <li class="nav-item">
+                            <a id="pivot-bookmark" class="nav-link"
+                           data-baseurl="{% url 'explorer_playground' %}?querylog_id={{ ql_id }}"
+                           href="#">
+                            <i class="bi-link"></i> Link to this
+                        </a>
+                        </li>
+                        <li class="nav-item">
+                            <a id="button-excel" class="nav-link" href="#"><i class="bi-download"></i> Download CSV</a>
+                         </li>
+                    </ul>
                     <div class="overflow-wrapper">
-                        {% if pie_chart_svg %}
-                            <div style="margin: 2em;">
-                                {{ pie_chart_svg | safe }}
-                            </div>
-                        {% else %}
-                            <div style="margin: 6em;">
-                                <p>{% blocktranslate trimmed %}
-                                    This query result table is not formatted in a way
-                                    which could be displayed as a pie chart.
-                                {% endblocktranslate %}</p>
-                                <p>{% blocktranslate trimmed %}
-                                    Query results can be displayed as a pie chart as follows:
-                                    each row represents one sector of the pie;
-                                    the first column will be used as a label
-                                    while the second column is used to determine the size of the sector.
-                                    Thus the second column must be of a numeric type.
-                                    Rows which contain <code>NULL</code>s will be ignored.
-                                {% endblocktranslate %}</p>
-                                <p>{% blocktranslate trimmed %}
-                                    Use this sample query to see it in action:
-                                {% endblocktranslate %}</p>
-                                <pre>
-    SELECT *
-    FROM (VALUES ('apple', 7),
-                 ('orange', 8),
-                 ('grape', 9),
-                 ('peppermint', 1))
-        AS fruit_salad_proportions;</pre>
-                                </div>
-                            {% endif %}
-                        </div>
+                        <div class="pivot-table"></div>
+                    </div>
                 </div>
+            </div>
+            {% if charts_enabled and line_chart_svg %}
                 <div class="tab-pane" id="nav-linechart" role="tabpanel" area-labelledby="nav-linechart-tab">
                     <div class="overflow-wrapper">
-                            {% if line_chart_svg %}
-                                <div style="margin: 2em;">
-                                    {{ line_chart_svg | safe }}
-                                </div>
-                            {% else %}
-                                <div style="margin: 6em;">
-                                    <p>{% blocktranslate trimmed %}
-                                        This query result table is not formatted in a way
-                                        which could be displayed as a line chart.
-                                    {% endblocktranslate %}</p>
-                                    <p>{% blocktranslate trimmed %}
-                                        Query results can be displayed as a line chart as follows:
-                                        the first column represents the values on the x-axis (e.g. dates).
-                                        All other numeric columns represent one line on the chart.
-                                        Other columns will be ignored.
-                                    {% endblocktranslate %}</p>
-                                    <p>{% blocktranslate trimmed %}
-                                        Use this sample query to see it in action:
-                                    {% endblocktranslate %}</p>
-                                    <pre>
-    SELECT *
-    FROM (VALUES ('2019-01-01'::date, 500,550,530),
-                 ('2020-01-01'::date, 530, 580, 570),
-                 ('2021-01-01'::date, 580, 590, 670),
-                 ('2022-01-01'::date, 700, 620, 780))
-        AS fruit_salad_proportions(date, generosity, joy, happiness);</pre>
-                                </div>
-                            {% endif %}
+                        <div style="margin: 2em;">
+                            {{ line_chart_svg | safe }}
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="nav-barchart" role="tabpanel" area-labelledby="nav-barchart-tab">
+                    <div class="overflow-wrapper">
+                        <div style="margin: 2em;">
+                            {{ bar_chart_svg | safe }}
+                        </div>
                     </div>
                 </div>
             {% endif %}

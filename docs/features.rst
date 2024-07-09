@@ -117,15 +117,16 @@ Pivot Table
 Displaying query results as charts
 ----------------------------------
 
-If the results table adheres to a certain format, the results can be displayed as a pie chart or a line chart.
+If the results table adheres to a certain format, the results can be displayed as a line chart.
 
-To enable this feature, set ``EXPLORER_CHARTS_ENABLED`` setting to ``True`` and install the plotting libraries ``matplotlib`` and ``seaborn`` with
+To enable this feature, set ``EXPLORER_CHARTS_ENABLED`` setting to ``True`` and install the plotting library
+``matplotlib`` with:
 
 .. code-block:: console
 
    pip install "django-sql-explorer[charts]"
 
-This will add the "Pie chart" and the "Line chart" tabs alongside the "Preview" and the "Pivot" tabs in the query results view.
+This will add the "Line chart" tab alongside the "Preview" and the "Pivot" tabs in the query results view.
 
 The tabs show the respective charts if the query result table adheres to a format which the chart widget can read. Otherwise a message explaining the required format together with an example query is displayed.
 
