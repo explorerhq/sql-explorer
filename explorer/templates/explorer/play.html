@@ -5,11 +5,11 @@
 <div class="container">
     <div class="row">
         <div id="query_area">
-            <h2>{% trans "Playground" %}</h2>
+            <h2>{% translate "Playground" %}</h2>
             <p>
-                {% blocktrans trimmed %}
+                {% blocktranslate trimmed %}
                     The playground is for experimenting and writing ad-hoc queries. By default, nothing you do here will be saved.
-                {% endblocktrans %}
+                {% endblocktranslate %}
             </p>
             <form role="form" action="{% url 'explorer_playground' %}" method="post" id="editor" class="playground-form form-horizontal">{% csrf_token %}
                 {% if error %}
@@ -19,7 +19,7 @@
                 {% if form.connections|length > 1 and can_change %}
                     <div class="mb-3 form-floating">
                         {{ form.connection }}
-                        <label for="id_connection" class="form-label">{% trans "Connection" %}</label>
+                        <label for="id_connection" class="form-label">{% translate "Connection" %}</label>
                     </div>
                 {% else %}
                     {# still need to submit the connection, just hide the UI element #}
@@ -47,24 +47,24 @@
                 <div class="mt-3 text-center">
                     <div class="btn-group" role="group">
                         <button type="submit" id="refresh_play_button"
-                                class="btn btn-primary">{% trans 'Refresh' %}</button>
+                                class="btn btn-primary">{% translate 'Refresh' %}</button>
                         <button type="submit" id="create_button"
-                                class="btn btn-outline-primary">{% trans 'Save As New' %}</button>
+                                class="btn btn-outline-primary">{% translate 'Save As New' %}</button>
                         {% export_buttons query %}
 
                         <button type="button" class="btn btn-outline-primary" id="show_schema_button">
-                            {% trans "Show Schema" %}
+                            {% translate "Show Schema" %}
                         </button>
                         <button type="button" class="btn btn-outline-primary" id="hide_schema_button"
                                 style="display: none;">
-                            {% trans "Hide Schema" %}
+                            {% translate "Hide Schema" %}
                         </button>
                         <button type="button" class="btn btn-outline-primary" id="format_button">
-                            {% trans "Format" %}
+                            {% translate "Format" %}
                         </button>
                     </div>
                 </div>
-                <input type="hidden" value="{% trans 'Playground Query' %}" name="title" />
+                <input type="hidden" value="{% translate 'Playground Query' %}" name="title" />
                 {% if assistant_enabled %}
                     {% include 'explorer/assistant.html' %}
                 {% endif %}

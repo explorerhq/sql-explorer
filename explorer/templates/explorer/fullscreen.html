@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% trans "SQL Explorer" %}{% if query %} - {{ query.title }}{% elif title %} - {{ title }}{% endif %}</title>
+    <title>{% translate "SQL Explorer" %}{% if query %} - {{ query.title }}{% elif title %} - {{ title }}{% endif %}</title>
     {% block style %}
         {% vite_asset 'scss/styles.scss' %}
     {% endblock style %}
@@ -17,7 +17,7 @@
       {% if query %}
           {{ query.title }}{% if shared %}<small>&nbsp;&nbsp;shared</small>{% endif %}
       {% else %}
-          {% trans "New Query" %}
+          {% translate "New Query" %}
       {% endif %}
   </h2>
   <table class="table table-striped">
@@ -42,7 +42,7 @@
                   </tr>
               {% endfor %}
           {% else %}
-              <tr class="text-center"><td colspan="{{ headers|length }}">{% trans "Empty Resultset" %}</td></tr>
+              <tr class="text-center"><td colspan="{{ headers|length }}">{% translate "Empty Resultset" %}</td></tr>
           {% endif %}
       </tbody>
   </table>
