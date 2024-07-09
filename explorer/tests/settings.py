@@ -1,9 +1,8 @@
 from test_project.settings import *  # noqa
 
 EXPLORER_ENABLE_ANONYMOUS_STATS = False
-EXPLORER_TASKS_ENABLED = True  # set to true to test async tasks
-EXPLORER_AI_API_KEY = None  # set to any value to enable assistant
-EXPLORER_CHARTS_ENABLED = False
+EXPLORER_TASKS_ENABLED = True
+EXPLORER_AI_API_KEY = "foo"
 CELERY_BROKER_URL = "redis://localhost:6379/0"
 CELERY_TASK_ALWAYS_EAGER = True
 TEST_MODE = True

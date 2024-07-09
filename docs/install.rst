@@ -19,11 +19,7 @@ Install with pip from pypi:
 
    $ pip install django-sql-explorer
 
-If you would also like to support downloading Excel files install with the dependency using:
-
-.. code-block:: shell-session
-
-   $ pip install django-sql-explorer[xls]
+Take a look at available ``extras``
 
 Add to your ``INSTALLED_APPS``, located in the ``settings.py`` file in your project folder:
 

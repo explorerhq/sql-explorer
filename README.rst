@@ -17,17 +17,18 @@
 SQL Explorer
 ============
 
+* `Official Website <https://www.sqlexplorer.io/>`_
 * `Live Demo <https://demo.sqlexplorer.io/>`_
-
 * `Documentation <https://django-sql-explorer.readthedocs.io/en/latest/>`_
+* Quick Start: Clone and then ``docker compose up``
 
-* `Website <https://www.sqlexplorer.io/>`_
+Video Tour:
 
 .. |inline-image| image:: https://sql-explorer.s3.amazonaws.com/video-thumbnail.png
    :target: https://sql-explorer.s3.amazonaws.com/Sql+Explorer+5.mp4
    :height: 10em
 
-* Demo video: |inline-image|
+|inline-image|
 
 SQL Explorer aims to make the flow of data between people fast,
 simple, and confusion-free. It is a Django-based application that you
@@ -97,9 +98,8 @@ Screenshots
 Development
 ------------
 
-Included is a test_project that you can use to kick the tires. Just
-create a new virtualenv, cd into ``test_project`` and run ``start.sh`` (or
-walk through the steps yourself) to get a test instance of the app up
-and running.
+Included is a test_project that you can use to kick the tires. You can run this via ``docker compose up``
 
-You can now navigate to 127.0.0.1:8000/explorer/ and begin exploring!
+You can now navigate to 127.0.0.1:8000/explorer/, log in with admin/admin, and begin exploring!
+
+This will also run a Vite dev server with hot reloading for front-end changes.
