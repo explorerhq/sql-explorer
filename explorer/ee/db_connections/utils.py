@@ -2,8 +2,6 @@ from django.db import DatabaseError
 from django.db.utils import load_backend
 import os
 
-from dateutil import parser
-
 import sqlite3
 import io
 
@@ -126,6 +124,7 @@ def atof_custom(value):
 
 def csv_to_typed_df(csv_bytes, delimiter=",", has_headers=True):  # noqa
     import pandas as pd
+    from dateutil import parser
     try:
 
         csv_file = io.BytesIO(csv_bytes)

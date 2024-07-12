@@ -1,8 +1,9 @@
 from unittest.mock import patch
+from io import StringIO
 
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
-
+from django.core.management import call_command
 from explorer.apps import _validate_connections
 
 
@@ -17,3 +18,18 @@ class TestApps(TestCase):
     def test_validates_all_connections(self, mocked_connections):
         mocked_connections.return_value = {"garbage1": "in", "garbage2": "out"}
         self.assertRaises(ImproperlyConfigured, _validate_connections)
+
+
+class PendingMigrationsTests(TestCase):
+
+    def test_no_pending_migrations(self):
+        out = StringIO()
+        try:
+            call_command(
+                "makemigrations",
+                "--check",
+                stdout=out,
+                stderr=StringIO(),
+            )
+        except SystemExit:  # noqa
+            self.fail("Pending migrations:\n" + out.getvalue())
