@@ -1,7 +1,7 @@
 from django.db import DatabaseError
 
 from explorer import app_settings
-from explorer.charts import get_line_chart, get_pie_chart
+from explorer.charts import get_chart
 from explorer.models import QueryFavorite
 from explorer.schema import schema_json_info
 
@@ -42,6 +42,13 @@ def query_viewmodel(request, query, title=None, form=None, message=None,
     if user.is_authenticated and query.pk:
         is_favorite = QueryFavorite.objects.filter(user=user, query=query).exists()
 
+    charts = {"line_chart_svg": None,
+              "bar_chart_svg": None}
+
+    if app_settings.EXPLORER_CHARTS_ENABLED and has_valid_results:
+        charts["line_chart_svg"] = get_chart(res,"line")
+        charts["bar_chart_svg"] = get_chart(res,"bar")
+
     ret = {
         "tasks_enabled": app_settings.ENABLE_TASKS,
         "params": query.available_params_w_labels(),
@@ -65,10 +72,8 @@ def query_viewmodel(request, query, title=None, form=None, message=None,
         "unsafe_rendering": app_settings.UNSAFE_RENDERING,
         "fullscreen_params": fullscreen_params.urlencode(),
         "charts_enabled": app_settings.EXPLORER_CHARTS_ENABLED,
-        "pie_chart_svg": get_pie_chart(res) if app_settings.EXPLORER_CHARTS_ENABLED and has_valid_results else None,
-        "line_chart_svg": get_line_chart(res) if app_settings.EXPLORER_CHARTS_ENABLED and has_valid_results else None,
         "is_favorite": is_favorite,
         "show_sql_by_default": app_settings.EXPLORER_SHOW_SQL_BY_DEFAULT,
         "schema_json": schema_json_info(query.connection if query else None),
     }
-    return ret
+    return {**ret, **charts}
