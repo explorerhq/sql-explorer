@@ -7,6 +7,7 @@ import tempfile
 
 from django.core import mail
 from django.test import TestCase
+from django.utils import timezone
 
 from explorer import app_settings
 from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
@@ -75,12 +76,15 @@ class TestTasks(TestCase):
     @unittest.skipIf(not app_settings.ENABLE_TASKS, "tasks not enabled")
     def test_truncating_querylogs(self):
         QueryLog(sql="foo").save()
+        delete_time = timezone.make_aware(datetime.now() - timedelta(days=31), timezone.get_default_timezone())
         QueryLog.objects.filter(sql="foo").update(
-            run_at=datetime.now() - timedelta(days=30)
+            run_at=delete_time
         )
+
         QueryLog(sql="bar").save()
+        ok_time = timezone.make_aware(datetime.now() - timedelta(days=29), timezone.get_default_timezone())
         QueryLog.objects.filter(sql="bar").update(
-            run_at=datetime.now() - timedelta(days=29)
+            run_at=ok_time
         )
         truncate_querylogs(30)
         self.assertEqual(QueryLog.objects.count(), 1)

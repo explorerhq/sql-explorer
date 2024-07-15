@@ -25,7 +25,8 @@ def get_chart(result: QueryResult, chart_type: str) -> Optional[str]:
         c for c in range(1, len(result.data[0]))
         if all([isinstance(col[c], (int, float)) or col[c] is None for col in result.data])
     ]
-    if len(numeric_columns) < 1:
+    # Don't create charts for > 10 series. This is a lightweight visualization.
+    if len(numeric_columns) < 1 or len(numeric_columns) > 10:
         return None
     labels = [row[0] for row in result.data]
     fig, ax = plt.subplots(figsize=(10, 3.8))

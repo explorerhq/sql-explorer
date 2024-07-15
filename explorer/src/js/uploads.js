@@ -67,12 +67,14 @@ export function setupUploads() {
                 let fileNameWithoutExt = fileName.substring(0, fileName.lastIndexOf('.')) || fileName;
                 window.location.href = `../?highlight=${encodeURIComponent(fileNameWithoutExt)}`;
             } else {
-                console.error('Error:', xhr.statusText);
+                console.error('Error:', xhr.response);
+                uploadStatus.innerHTML = xhr.response;
             }
         };
 
         xhr.onerror = function() {
             console.error('Error:', xhr.statusText);
+            uploadStatus.innerHTML = xhr.response;
         };
 
         xhr.send(formData);

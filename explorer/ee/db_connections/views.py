@@ -7,11 +7,9 @@ from django.db.utils import OperationalError
 from explorer.models import DatabaseConnection
 from explorer.ee.db_connections.utils import (
     upload_sqlite,
-    create_connection_for_uploaded_sqlite,
-    is_csv,
-    csv_to_typed_df,
-    pandas_to_sqlite
+    create_connection_for_uploaded_sqlite
 )
+from explorer.ee.db_connections.create_sqlite import parse_to_sqlite
 from explorer import app_settings
 from explorer.app_settings import EXPLORER_MAX_UPLOAD_SIZE
 from explorer.ee.db_connections.forms import DatabaseConnectionForm
@@ -32,28 +30,24 @@ class UploadDbView(PermissionRequiredMixin, View):
         file = request.FILES.get("file")
         if file:
             if file.size > EXPLORER_MAX_UPLOAD_SIZE:
-                return JsonResponse({"error": "File size exceeds the limit of 5 MB"}, status=400)
+                friendly = EXPLORER_MAX_UPLOAD_SIZE / (1024 * 1024)
+                return JsonResponse({"error": f"File size exceeds the limit of {friendly} MB"}, status=400)
 
-            f_name = file.name
-            f_bytes = file.read()
-
-            if is_csv(file):
-                df = csv_to_typed_df(f_bytes)
-
-                try:
-                    f_bytes = pandas_to_sqlite(df)
-                except Exception as e:  # noqa
-                    logger.exception(f"Exception while parsing file {f_name}: {e}")
-                    return JsonResponse({"error": "Error while parsing the file."}, status=400)
-
-                f_name = f_name.replace("csv", "db")
+            try:
+                f_bytes, f_name = parse_to_sqlite(file)
+            except ValueError as e:
+                logger.error(f"Error getting bytes for {file.name}: {e}")
+                return JsonResponse({"error": "File was not csv, json, or sqlite."}, status=400)
+            except TypeError as e:
+                logger.error(f"Error parse {file.name}: {e}")
+                return JsonResponse({"error": "Error parsing file."}, status=400)
 
             try:
                 s3_path = f"user_dbs/user_{request.user.id}/{f_name}"
                 upload_sqlite(f_bytes, s3_path)
             except Exception as e:  # noqa
                 logger.exception(f"Exception while uploading file {f_name}: {e}")
-                return JsonResponse({"error": "Error while uploading file."}, status=400)
+                return JsonResponse({"error": "Error while uploading file to S3."}, status=400)
 
             create_connection_for_uploaded_sqlite(f_name, request.user.id, s3_path)
             return JsonResponse({"success": True})
@@ -77,7 +71,7 @@ class DatabaseConnectionsListView(PermissionRequiredMixin, ExplorerContextMixin,
         return qs
 
 
-class DatabaseConnectionDetailView(PermissionRequiredMixin, DetailView):
+class DatabaseConnectionDetailView(PermissionRequiredMixin, ExplorerContextMixin, DetailView):
     permission_required = "connections_permission"
     model = DatabaseConnection
     template_name = "connections/database_connection_detail.html"
@@ -91,7 +85,7 @@ class DatabaseConnectionCreateView(PermissionRequiredMixin, ExplorerContextMixin
     success_url = reverse_lazy("explorer_connections")
 
 
-class DatabaseConnectionUpdateView(PermissionRequiredMixin, UpdateView):
+class DatabaseConnectionUpdateView(PermissionRequiredMixin, ExplorerContextMixin, UpdateView):
     permission_required = "connections_permission"
     model = DatabaseConnection
     form_class = DatabaseConnectionForm

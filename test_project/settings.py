@@ -1,6 +1,6 @@
 import os
 
-
+USE_TZ = True
 SECRET_KEY = "shhh"
 DEBUG = True
 STATIC_URL = "/static/"

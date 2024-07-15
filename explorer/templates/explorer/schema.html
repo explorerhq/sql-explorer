@@ -6,19 +6,21 @@
 <div class="schema-wrapper">
     <h4>{% translate "Schema" %}</h4>
     <div id="schema-contents">
-      <p><input class="search" placeholder="{% translate "Search Table Names" %}" /></p>
+    {% if m|length > 1 %}
+        <p><input class="search form-control" placeholder="{% translate "Search Tables" %}" /></p>
         <div class="row">
             <div class="col">
                 <a class="link-primary" id="collapse_all">
-                    {% translate "Collapse All" %}
+                    {% translate "Collapse Tables" %}
                 </a>
             </div>
             <div class="col">
                 <a class="link-primary" id="expand_all">
-                    {% translate "Expand All" %}
+                    {% translate "Expand Tables" %}
                 </a>
             </div>
         </div>
+    {% endif %}
         <div class="mt-3">
             <ul class="list">
                 {% for m in schema %}
@@ -29,7 +31,7 @@
                                 <tbody>
                                     {% for c in m.1 %}
                                         <tr>
-                                            <td><code>{{ c.0 }}</code></td>
+                                            <td><code class="copyable">{{ c.0 }}</code></td>
                                             <td class="text-muted small">{{ c.1 }}</td>
                                         </tr>
                                     {% endfor %}

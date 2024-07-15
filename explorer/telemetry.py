@@ -43,7 +43,7 @@ class StatNames(SelfNamedEnum):
 
 class Stat:
 
-    STAT_COLLECTION_INTERVAL = 60 * 10  # Ten minutes
+    STAT_COLLECTION_INTERVAL = 60 * 60 * 12  # Twelve hours
     STARTUP_STAT_COLLECTION_INTERVAL = 60 * 60 * 24 * 7  # A week
 
     def __init__(self, name: StatNames, value):
@@ -108,7 +108,7 @@ def _get_install_quarter():
         filter(app="explorer").order_by("applied").first()
 
     if first_migration is not None:
-        quarter = (first_migration.applied.month - 1) // 3 + 1  # Calculate the quarter
+        quarter = (first_migration.applied.month - 1) // 3 + 1  # Calculate the quarter, for anonymization
         year = first_migration.applied.year
         quarter_str = f"Q{quarter}-{year}"
     else:
@@ -136,9 +136,9 @@ def _gather_summary_stats():
 
         # Round the counts to provide additional anonymity
         return {
-            "total_log_count": round(ql_stats["total_count"] * 0.1) * 10,
-            "unique_run_by_user_count": round(ql_stats["unique_run_by_user_count"] * 0.2) * 5,
-            "total_query_count": round(q_stats["total_count"] * 0.1) * 10,
+            "total_log_count": round(ql_stats["total_count"] * 0.01) * 100,  # Nearest 100
+            "unique_run_by_user_count": round(ql_stats["unique_run_by_user_count"] * 0.2) * 5,  # Nearest 5
+            "total_query_count": round(q_stats["total_count"] * 0.1) * 10,  # Nearest 10
             "unique_connection_count": round(q_stats["unique_connection_count"] * 0.2) * 5,
             "default_database": connection.vendor,
             "explorer_install_quarter": _get_install_quarter(),

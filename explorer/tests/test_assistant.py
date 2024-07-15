@@ -27,19 +27,23 @@ class TestAssistantViews(TestCase):
         }
 
     @patch("explorer.assistant.utils.openai_client")
-    def test_do_modify_query(self, mocked_openai_client):
+    @patch("explorer.assistant.utils.num_tokens_from_string")
+    def test_do_modify_query(self, mocked_num_tokens, mocked_openai_client):
         from explorer.assistant.views import run_assistant
 
         # create.return_value should match: resp.choices[0].message
         mocked_openai_client.return_value.chat.completions.create.return_value = Mock(
             choices=[Mock(message=Mock(content="smart computer"))])
+        mocked_num_tokens.return_value = 100
         resp = run_assistant(self.request_data, None)
         self.assertEqual(resp, "smart computer")
 
     @patch("explorer.assistant.utils.openai_client")
-    def test_assistant_help(self, mocked_openai_client):
+    @patch("explorer.assistant.utils.num_tokens_from_string")
+    def test_assistant_help(self, mocked_num_tokens, mocked_openai_client):
         mocked_openai_client.return_value.chat.completions.create.return_value = Mock(
             choices=[Mock(message=Mock(content="smart computer"))])
+        mocked_num_tokens.return_value = 100
         resp = self.client.post(reverse("assistant"),
                                 data=json.dumps(self.request_data),
                                 content_type="application/json")
@@ -246,9 +250,9 @@ class TestPromptContext(TestCase):
         ret = get_table_names_from_query(sql)
         self.assertEqual(ret, ["explorer_query"])
 
-    def test_parsing_tables_from_query_bad_sql(self):
+    def test_parsing_tables_from_no_tables(self):
         from explorer.assistant.utils import get_table_names_from_query
-        sql = "foo"
+        sql = "select 1;"
         ret = get_table_names_from_query(sql)
         self.assertEqual(ret, [])
 
