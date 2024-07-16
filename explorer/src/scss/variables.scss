@@ -17,6 +17,10 @@ $font-size-base: .8rem;
     --bs-btn-color: white !important;
 }
 
+.table-active {
+    --bs-table-bg-state: rgb(127, 176, 105) !important;
+}
+
 $card-border-radius: 0;
 $card-spacer-x: 0;
 .card-header {
@@ -27,3 +31,5 @@ $card-spacer-x: 0;
 .card {
     border-top: 0 !important;
 }
+
+
