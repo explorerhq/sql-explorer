@@ -5,6 +5,8 @@ Easy to get started
 -------------------
 - Built on Django's ORM, so works with MySQL, Postgres, Oracle,
   SQLite, Snowflake, MS SQL Server, RedShift, and MariaDB.
+- If you want to use Snowflake or SQL Server, you will need to install the relevant package
+  (e.g. https://pypi.org/project/django-snowflake/, https://github.com/microsoft/mssql-django)
 - Small number of dependencies.
 - MIT licensed (except for functionality in the /ee/ directory,
   which is still free for commercial use, but can't be resold).
