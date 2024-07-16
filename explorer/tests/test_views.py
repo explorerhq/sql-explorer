@@ -1033,6 +1033,12 @@ class DatabaseConnectionValidateViewTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, {"success": False, "error": "Invalid form data"})
 
+    def test_validate_connection_success_alt_url(self):
+        url = reverse("explorer_connection_validate_with_pk", args=[1])
+        response = self.client.post(url, data=self.valid_data)
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(response.content, {"success": True})
+
     def test_update_existing_connection(self):
         DatabaseConnection.objects.create(alias="test_alias", engine="django.db.backends.sqlite3", name=":memory:")
         response = self.client.post(self.url, data=self.valid_data)

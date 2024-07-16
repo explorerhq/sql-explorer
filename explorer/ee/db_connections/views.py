@@ -116,7 +116,8 @@ class DatabaseConnectionValidateView(PermissionRequiredMixin, View):
 
     permission_required = "connections_permission"
 
-    def post(self, request):
+    # pk param is ignored, in order to deal with having 2 URL patterns
+    def post(self, request, pk=None):  # noqa
         form = DatabaseConnectionForm(request.POST)
 
         instance = DatabaseConnection.objects.filter(alias=request.POST["alias"]).first()
@@ -131,7 +132,8 @@ class DatabaseConnectionValidateView(PermissionRequiredMixin, View):
                 user=connection_data["user"],
                 password=connection_data["password"],
                 host=connection_data["host"],
-                port=connection_data["port"]
+                port=connection_data["port"],
+                extras=connection_data["extras"]
             )
             try:
                 conn = create_django_style_connection(explorer_connection)

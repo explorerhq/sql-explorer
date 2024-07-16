@@ -63,7 +63,9 @@ export function setupUploads() {
 
         xhr.onload = function() {
             if (xhr.status === 200) {
-                window.location.href = "../";
+                let fileName = file.name;
+                let fileNameWithoutExt = fileName.substring(0, fileName.lastIndexOf('.')) || fileName;
+                window.location.href = `../?highlight=${encodeURIComponent(fileNameWithoutExt)}`;
             } else {
                 console.error('Error:', xhr.statusText);
             }
@@ -80,7 +82,7 @@ export function setupUploads() {
         var form = document.getElementById("db-connection-form");
         var formData = new FormData(form);
 
-        fetch("../../validate/", {
+        fetch("../validate/", {
             method: "POST",
             body: formData,
             headers: {

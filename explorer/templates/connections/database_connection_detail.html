@@ -28,12 +28,16 @@
             <th>Port</th>
             <td>{{ object.port }}</td>
         </tr>
+        <tr>
+            <th>Extras</th>
+            <td>{{ object.extras }}</td>
+        </tr>
         {% endif %}
     </table>
     {% if object.is_upload %}
         <span class="text-info-emphasis">The source of this connection is an uploaded file.</span>
     {% endif %}
-    <a href="{% url 'explorer_connection_update' object.pk %}" class="btn btn-warning">Edit</a>
+    <a href="{% url 'explorer_connection_update' object.pk %}" class="btn btn-info">Edit</a>
     
 </div>
 {% endblock %}

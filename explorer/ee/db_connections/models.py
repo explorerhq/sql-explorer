@@ -21,16 +21,18 @@ class DatabaseConnection(models.Model):
         ("django.db.backends.oracle", "Oracle"),
         ("django.db.backends.mysql", "MariaDB"),
         ("django_cockroachdb", "CockroachDB"),
-        ("django.db.backends.sqlserver", "SQL Server (mssql-django)"),
+        ("mssql", "SQL Server (mssql-django)"),
+        ("django_snowflake", "Snowflake"),
     )
 
     alias = models.CharField(max_length=255, unique=True)
     engine = models.CharField(max_length=255, choices=DATABASE_ENGINES)
     name = models.CharField(max_length=255)
-    user = encrypt(models.CharField(max_length=255, blank=True))
-    password = encrypt(models.CharField(max_length=255, blank=True))
+    user = encrypt(models.CharField(max_length=255, blank=True, null=True))
+    password = encrypt(models.CharField(max_length=255, blank=True, null=True))
     host = encrypt(models.CharField(max_length=255, blank=True))
     port = models.CharField(max_length=255, blank=True)
+    extras = models.JSONField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.name} ({self.alias})"
@@ -57,6 +59,7 @@ class DatabaseConnection(models.Model):
                 host=conn.get("HOST"),
                 port=conn.get("PORT"),
             )
+
 
 @receiver(pre_save, sender=DatabaseConnection)
 def validate_database_connection(sender, instance, **kwargs):

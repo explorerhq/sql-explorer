@@ -143,6 +143,24 @@ class TestDjangoStyleConnection(TestCase):
         mock_load_backend.assert_called_once_with("django.db.backends.postgresql")
         mock_backend.DatabaseWrapper.assert_called_once()
 
+    @patch("explorer.ee.db_connections.utils.load_backend")
+    def test_create_django_style_connection_with_extras(self, mock_load_backend):
+        mock_explorer_connection = MagicMock()
+        mock_explorer_connection.is_upload = False
+        mock_explorer_connection.engine = "django.db.backends.postgresql"
+        mock_explorer_connection.extras = '{"sslmode": "require", "connect_timeout": 10}'
+
+        mock_backend = MagicMock()
+        mock_load_backend.return_value = mock_backend
+
+        create_django_style_connection(mock_explorer_connection)
+
+        mock_load_backend.assert_called_once_with("django.db.backends.postgresql")
+        mock_backend.DatabaseWrapper.assert_called_once()
+        args, kwargs = mock_backend.DatabaseWrapper.call_args
+        self.assertEqual(args[0]["sslmode"], "require")
+        self.assertEqual(args[0]["connect_timeout"], 10)
+
 
 @skipIf(not EXPLORER_USER_UPLOADS_ENABLED, "User uploads not enabled")
 class TestPandasToSQLite(TestCase):

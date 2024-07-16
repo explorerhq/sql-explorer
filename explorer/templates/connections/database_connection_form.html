@@ -7,7 +7,46 @@
 {% endif %}
     <form method="post" id="db-connection-form">
         {% csrf_token %}
-        {{ form.as_p }}
+        <div>
+            <div class="mb-3 form-floating">
+                {{ form.alias }}
+                <label for="id_alias" class="form-label">Alias</label>
+                <span class="form-text text-muted">Required. How the connection will appear in SQL Explorer.</span>
+            </div>
+            <div class="mb-3 form-floating">
+                {{ form.engine }}
+                <label for="id_engine" class="form-label">Engine</label>
+            </div>
+            <div class="mb-3 form-floating">
+                {{ form.name }}
+                <label for="id_name" class="form-label">Name</label>
+                <span class="form-text text-muted">Required. The name of the database itself.</span>
+            </div>
+            <div class="mb-3 form-floating">
+                {{ form.user }}
+                <label for="id_user" class="form-label">User</label>
+            </div>
+            <div class="mb-3 form-floating">
+                {{ form.password }}
+                <label for="id_password" class="form-label">Password</label>
+            </div>
+            <div class="mb-3 form-floating">
+                {{ form.host }}
+                <label for="id_host" class="form-label">Host</label>
+                <span class="form-text text-muted">Required.</span>
+            </div>
+            <div class="mb-3 form-floating">
+                {{ form.port }}
+                <label for="id_port" class="form-label">Port</label>
+                <span class="form-text text-muted">Required.</span>
+            </div>
+            <div class="mb-3 form-floating">
+                {{ form.extras }}
+                <label for="id_extras" class="form-label">Extras</label>
+                <span class="form-text text-muted">Optionally provide JSON that will get merged into the final connection object.
+                      The result should be a valid Django database connection dictionary. This is somewhat rarely used.</span>
+            </div>
+        </div>
         <button type="submit" class="btn btn-primary">{% if object %}Update{% else %}Add{% endif %} Connection</button>
         <a href="{% url 'explorer_connections' %}" class="btn btn-secondary">Cancel</a>
         <button type="button" class="btn btn-info" id="test-connection-btn">Test Connection</button>

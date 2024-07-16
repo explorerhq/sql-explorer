@@ -236,6 +236,7 @@ class TestDatabaseConnection(TestCase):
         c = DatabaseConnection.from_django_connection(app_settings.EXPLORER_DEFAULT_CONNECTION)
         self.assertEqual(c.name, "tst1")
         self.assertEqual(c.alias, "default")
+        self.assertIsNone(c.extras)
 
     @patch("os.makedirs")
     @patch("os.path.exists", return_value=False)
