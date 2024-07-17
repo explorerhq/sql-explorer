@@ -15,6 +15,7 @@ RUN pip install --no-cache-dir -r requirements/dev.txt
 
 # Install NVM and Node.js
 ENV NVM_DIR /root/.nvm
+# This should match the version referenced below in the Run stage, and in entrypoint.sh
 ENV NODE_VERSION 20.15.1
 
 COPY package.json package-lock.json /app/
@@ -39,7 +40,10 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 # Copy Node.js environment from builder
 COPY --from=builder /root/.nvm /root/.nvm
 ENV NVM_DIR /root/.nvm
-ENV PATH $NVM_DIR/versions/node/v20.11.1/bin:$PATH
+
+# The version in this path should match the version referenced above in the Run stage, and in entrypoint.sh
+ENV PATH $NVM_DIR/versions/node/v20.15.1/bin:$PATH
+
 COPY --from=builder /app/node_modules /app/node_modules
 
 COPY . /app
