@@ -1,0 +1,15 @@
+services:
+  web:
+    build: .
+    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+    ports:
+      - "8000:8000"
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    environment:
+      - DJANGO_SETTINGS_MODULE=test_project.settings
+
+volumes:
+  node_modules:

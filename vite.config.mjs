@@ -13,6 +13,9 @@ export default defineConfig({
   root: resolve(__dirname, './'),
   base: '',
   server: {
+    host: true,
+    port: 5173,
+    strictPort: true,
     open: false,
     watch: {
       usePolling: true,
