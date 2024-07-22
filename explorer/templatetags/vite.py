@@ -2,12 +2,13 @@ import os
 
 from django import template
 from django.conf import settings
+from django.contrib.staticfiles.storage import staticfiles_storage
 from django.utils.safestring import mark_safe
 from explorer import app_settings, get_version
 
 register = template.Library()
 
-VITE_OUTPUT_DIR = f"{settings.STATIC_URL}explorer/"
+VITE_OUTPUT_DIR = staticfiles_storage.url("explorer/")
 VITE_DEV_DIR = "explorer/src/"
 VITE_SERVER_HOST = getattr(settings, "VITE_SERVER_HOST", "localhost")
 VITE_SERVER_PORT = getattr(settings, "VITE_SERVER_PORT", "5173")
