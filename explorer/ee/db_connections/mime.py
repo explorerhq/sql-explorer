@@ -16,7 +16,7 @@ def get_parser(file):
         return json_to_typed_df
     if is_sqlite(file):
         return None
-    raise ValueError(f'File {file.content_type} not supported.')
+    raise ValueError(f"File {file.content_type} not supported.")
 
 
 def is_csv(file):
