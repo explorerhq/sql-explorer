@@ -5,6 +5,41 @@ Change Log
 This document records all notable changes to `django-sql-explorer <https://github.com/explorerhq/django-sql-explorer>`_.
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+`5.1.0`_ (2024-07-TBD)
+===========================
+Major improvements:
+
+* `#647`_: Upload json files as data sources (in addition to CSV and SQLite files). Both 'normal'
+  json files, and files structured as a list of json objects (one json object per line) are supported.
+* `#643`_: Addresses #640 (Snowflake support). Additionally, supports an "extras" field on the
+  userspace DatabaseConnection object, which allows for arbitrary additional connection
+  params to get added. This allows engine-specific (or just more obscure) settings to
+  get injected into the connection.
+* `#644`_: Dockerfile and docker-compose to run the test_project. Replaces the old start.sh script.
+
+Minor improvements:
+
+* `#647`_: In the schema explorer, clicking on a field name copies it to the clipboard
+* `#647`_: Charts are limited to a maximum of 10 series. This significantly speeds up rendering
+  of 'wide' result-sets when charts are enabled.
+* `#645`_: Removed pie charts, added bar charts. Replaced Seaborn with Matplotlib
+  because it's much lighter weight. Pie charts were overly finicky to get working.
+  Bars are more useful. Will look to continue to expand charting in the future.
+* `#643`_: After uploading a csv/json/etc, the resulting connection is highlighted in the
+  connection list, making it much clearer what happened.
+* `#643`_: Fixed some bugs in user connection stuff in general, and improved the UI.
+
+Bugfixes and internal improvements:
+
+* `#647`_: Robustness to the user uploads feature, in terms of the UI, error handling and logging, and test coverage.
+* `#648`_: Backwards migration for 0016_alter_explorervalue_key.py
+* `#649`_: Use a more reliable source of the static files URL
+* `#635`_: Improved test coverage in tox, so that base requirements are properly used.
+  This would have prevented (for example) issue 631. Additionally, introduced a test
+  to verify that migrations are always generated, which would have prevented #633.
+* `#636`_: Output rendering bugfix.
+* `#567`_: Upgrade translate tags in templates to more modern style.
+
 `5.0.2`_ (2024-07-3)
 ===========================
 * `#633`_: Missing migration
@@ -561,7 +596,14 @@ Initial Release
 .. _#566: https://github.com/explorerhq/django-sql-explorer/pull/566
 .. _#571: https://github.com/explorerhq/django-sql-explorer/pull/571
 .. _#594: https://github.com/explorerhq/django-sql-explorer/pull/594
-
+.. _#647: https://github.com/explorerhq/django-sql-explorer/pull/647
+.. _#643: https://github.com/explorerhq/django-sql-explorer/pull/643
+.. _#644: https://github.com/explorerhq/django-sql-explorer/pull/644
+.. _#645: https://github.com/explorerhq/django-sql-explorer/pull/645
+.. _#648: https://github.com/explorerhq/django-sql-explorer/pull/648
+.. _#649: https://github.com/explorerhq/django-sql-explorer/pull/649
+.. _#635: https://github.com/explorerhq/django-sql-explorer/pull/635
+.. _#636: https://github.com/explorerhq/django-sql-explorer/pull/636
 
 .. _#269: https://github.com/explorerhq/django-sql-explorer/issues/269
 .. _#288: https://github.com/explorerhq/django-sql-explorer/issues/288
@@ -587,5 +629,6 @@ Initial Release
 .. _#619: https://github.com/explorerhq/django-sql-explorer/issues/619
 .. _#631: https://github.com/explorerhq/django-sql-explorer/issues/631
 .. _#633: https://github.com/explorerhq/django-sql-explorer/issues/633
+.. _#567: https://github.com/explorerhq/django-sql-explorer/issues/567
 
 .. _furo: https://github.com/pradyunsg/furo
