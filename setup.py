@@ -44,13 +44,13 @@ setup(
     name=name,
     version=version,
     author="Chris Clark",
-    author_email="chris@untrod.com",
-    maintainer="Mark Walker",
-    maintainer_email="theshow@gmail.com",
-    description=("A pluggable app that allows users (admins) to execute SQL,"
-                 " view, and export the results."),
+    author_email="chris@sqlexplorer.io",
+    maintainer="Chris Clark",
+    maintainer_email="chris@sqlexplorer.io",
+    description=("SQL Reporting that Just Works. Fast, simple, and confusion-free."
+                 "Write and share queries in a delightful SQL editor, with AI assistance"),
     license="MIT",
-    keywords="django sql explorer reports reporting csv database query",
+    keywords="django sql explorer reports reporting csv json database query",
     url="https://www.sqlexplorer.io",
     project_urls={
       "Changes": "https://django-sql-explorer.readthedocs.io/en/latest/history.html",
