@@ -17,6 +17,9 @@ CTEs are not needed for simpler requests.
 """
     )
 
+def insert_assistant_prompt_reverse(apps, schema_editor):
+    pass
+
 
 class Migration(migrations.Migration):
 
@@ -30,5 +33,5 @@ class Migration(migrations.Migration):
             name='key',
             field=models.CharField(choices=[('UUID', 'Install Unique ID'), ('SMLS', 'Startup metric last send'), ('ASP', 'System prompt for SQL Assistant')], max_length=5, unique=True),
         ),
-        migrations.RunPython(insert_assistant_prompt),
+        migrations.RunPython(insert_assistant_prompt, reverse_code=insert_assistant_prompt_reverse),
     ]
