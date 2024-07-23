@@ -918,7 +918,7 @@ class UploadDbViewTest(TestCase):
 
         self.assertFalse(DatabaseConnection.objects.filter(alias=f"test_{self.user.id}.db").exists())
 
-        with patch("explorer.ee.db_connections.mime.csv_to_typed_df") as mock_csv_to_typed_df, \
+        with patch("explorer.ee.db_connections.type_infer.csv_to_typed_df") as mock_csv_to_typed_df, \
             patch("explorer.ee.db_connections.views.upload_sqlite") as mock_upload_sqlite:
             mock_csv_to_typed_df.return_value = MagicMock()
 
