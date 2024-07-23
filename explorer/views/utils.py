@@ -1,9 +1,12 @@
 from django.db import DatabaseError
-
+import logging
 from explorer import app_settings
 from explorer.charts import get_chart
 from explorer.models import QueryFavorite
 from explorer.schema import schema_json_info
+
+
+logger = logging.getLogger(__name__)
 
 
 def query_viewmodel(request, query, title=None, form=None, message=None,
@@ -45,9 +48,16 @@ def query_viewmodel(request, query, title=None, form=None, message=None,
     charts = {"line_chart_svg": None,
               "bar_chart_svg": None}
 
-    if app_settings.EXPLORER_CHARTS_ENABLED and has_valid_results:
-        charts["line_chart_svg"] = get_chart(res,"line")
-        charts["bar_chart_svg"] = get_chart(res,"bar")
+    try:
+        if app_settings.EXPLORER_CHARTS_ENABLED and has_valid_results:
+            charts["line_chart_svg"] = get_chart(res,"line")
+            charts["bar_chart_svg"] = get_chart(res,"bar")
+    except TypeError as e:
+        if ql is not None:
+            msg = f"Error generating charts for querylog {ql.id}: {e}"
+        else:
+            msg = f"Error generating charts for query {query.id}: {e}"
+        logger.error(msg)
 
     ret = {
         "tasks_enabled": app_settings.ENABLE_TASKS,

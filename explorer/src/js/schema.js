@@ -9,24 +9,28 @@ function searchFocus() {
 
 export function setupSchema() {
 
-    let options = {
-        valueNames: ['app-name'],
-        handlers: {'updated': [searchFocus]}
-    };
+    let hasControls = document.getElementById('collapse_all');
+    if (hasControls) {
+        let options = {
+            valueNames: ['app-name'],
+            handlers: {'updated': [searchFocus]}
+        };
 
-    new List('schema-contents', options);
+        new List('schema-contents', options);
 
-    document.getElementById('collapse_all').addEventListener('click', function () {
-        document.querySelectorAll('.schema-table').forEach(function (element) {
-            element.style.display = 'none';
+
+        document.getElementById('collapse_all').addEventListener('click', function () {
+            document.querySelectorAll('.schema-table').forEach(function (element) {
+                element.style.display = 'none';
+            });
         });
-    });
 
-    document.getElementById('expand_all').addEventListener('click', function () {
-        document.querySelectorAll('.schema-table').forEach(function (element) {
-            element.style.display = '';
+        document.getElementById('expand_all').addEventListener('click', function () {
+            document.querySelectorAll('.schema-table').forEach(function (element) {
+                element.style.display = '';
+            });
         });
-    });
+    }
 
     document.querySelectorAll('.schema-header').forEach(function (header) {
         header.addEventListener('click', function () {
@@ -36,6 +40,15 @@ export function setupSchema() {
             } else {
                 schemaTable.style.display = 'none';
             }
+        });
+    });
+
+    document.querySelectorAll('.copyable').forEach(function (fieldName) {
+        fieldName.addEventListener('click', () => {
+            navigator.clipboard.writeText(fieldName.innerHTML);
+            let oldText = fieldName.innerHTML;
+            fieldName.innerHTML = 'Copied';
+            setTimeout(()=>fieldName.innerHTML=oldText, 1000);
         });
     });
 }

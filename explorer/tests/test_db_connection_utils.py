@@ -1,6 +1,5 @@
 from django.test import TestCase
 from unittest import skipIf
-from django.core.files.uploadedfile import SimpleUploadedFile
 from explorer.app_settings import EXPLORER_USER_UPLOADS_ENABLED
 if EXPLORER_USER_UPLOADS_ENABLED:
     import pandas as pd
@@ -11,58 +10,10 @@ from unittest.mock import patch, MagicMock
 from explorer.ee.db_connections.utils import (
     get_sqlite_for_connection,
     create_django_style_connection,
-    pandas_to_sqlite,
-    is_csv,
-    csv_to_typed_df
+    pandas_to_sqlite
 )
 
 
-def _get_csv(csv_name):
-    current_script_dir = os.path.dirname(os.path.abspath(__file__))
-    file_path = os.path.join(current_script_dir, "csvs", csv_name)
-
-    # Open the file in binary mode and read its contents
-    with open(file_path, "rb") as file:
-        csv_bytes = file.read()
-
-    return csv_bytes
-
-
-@skipIf(not EXPLORER_USER_UPLOADS_ENABLED, "User uploads not enabled")
-class TestCsvToTypedDf(TestCase):
-
-    def test_mixed_types(self):
-        df = csv_to_typed_df(_get_csv("mixed.csv"))
-        self.assertTrue(pd.api.types.is_object_dtype(df["Value1"]))
-        self.assertTrue(pd.api.types.is_object_dtype(df["Value2"]))
-        self.assertTrue(pd.api.types.is_object_dtype(df["Value3"]))
-
-    def test_all_types(self):
-        df = csv_to_typed_df(_get_csv("all_types.csv"))
-        self.assertTrue(pd.api.types.is_datetime64_ns_dtype(df["Dates"]))
-        print(df["Integers"].dtype)
-        self.assertTrue(pd.api.types.is_integer_dtype(df["Integers"]))
-        self.assertTrue(pd.api.types.is_float_dtype(df["Floats"]))
-        self.assertTrue(pd.api.types.is_object_dtype(df["Strings"]))
-
-    def test_integer_parsing(self):
-        df = csv_to_typed_df(_get_csv("integers.csv"))
-        self.assertTrue(pd.api.types.is_integer_dtype(df["Integers"]))
-        self.assertTrue(pd.api.types.is_integer_dtype(df["More_integers"]))
-
-    def test_float_parsing(self):
-        df = csv_to_typed_df(_get_csv("floats.csv"))
-        self.assertTrue(pd.api.types.is_float_dtype(df["Floats"]))
-
-    def test_date_parsing(self):
-
-        # Will not handle these formats:
-        # Unix Timestamp: 1706232300 (Seconds since Unix Epoch - 1970-01-01 00:00:00 UTC)
-        # ISO 8601 Week Number: 2024-W04-3 (Year-WWeekNumber-Weekday)
-        # Day of Year: 2024-024 (Year-DayOfYear)
-
-        df = csv_to_typed_df(_get_csv("dates.csv"))
-        self.assertTrue(pd.api.types.is_datetime64_ns_dtype(df["Dates"]))
 
 
 @skipIf(not EXPLORER_USER_UPLOADS_ENABLED, "User uploads not enabled")
@@ -185,7 +136,7 @@ class TestPandasToSQLite(TestCase):
         con = sqlite3.connect(temp_db_path)
         try:
             cursor = con.cursor()
-            cursor.execute("SELECT * FROM data")
+            cursor.execute("SELECT * FROM data")  # noqa
             rows = cursor.fetchall()
 
             # Verify the content of the SQLite database
@@ -198,19 +149,3 @@ class TestPandasToSQLite(TestCase):
             os.remove(temp_db_path)
 
 
-class TestIsCsvFunction(TestCase):
-
-    def test_is_csv_with_csv_file(self):
-        # Create a SimpleUploadedFile with content_type set to "text/csv"
-        csv_file = SimpleUploadedFile("test.csv", b"column1,column2\n1,A\n2,B", content_type="text/csv")
-        self.assertTrue(is_csv(csv_file))
-
-    def test_is_csv_with_non_csv_file(self):
-        # Create a SimpleUploadedFile with content_type set to "text/plain"
-        txt_file = SimpleUploadedFile("test.txt", b"Just some text", content_type="text/plain")
-        self.assertFalse(is_csv(txt_file))
-
-    def test_is_csv_with_empty_content_type(self):
-        # Create a SimpleUploadedFile with an empty content_type
-        empty_file = SimpleUploadedFile("test.csv", b"column1,column2\n1,A\n2,B", content_type="")
-        self.assertFalse(is_csv(empty_file))

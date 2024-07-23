@@ -1,21 +1,19 @@
 Features
 ========
 
-Easy to get started
--------------------
-- Built on Django's ORM, so works with MySQL, Postgres, Oracle,
-  SQLite, Snowflake, MS SQL Server, RedShift, and MariaDB.
-- If you want to use Snowflake or SQL Server, you will need to install the relevant package
-  (e.g. https://pypi.org/project/django-snowflake/, https://github.com/microsoft/mssql-django)
-- Small number of dependencies.
-- MIT licensed (except for functionality in the /ee/ directory,
-  which is still free for commercial use, but can't be resold).
-
 SQL Assistant
 -------------
 - Built in integration with OpenAI (or the LLM of your choosing)
   to quickly get help with your query, with relevant schema
   automatically injected into the prompt. Simple, effective.
+
+Database Support
+----------------
+- Supports MySql, postgres (and, by extension, pg-connection-compatible DBs like Redshift), SQLite,
+  Oracle, MS SQL Server, MariaDB, and Snowflake
+- Note for Snowflake or SQL Server, you will need to install the relevant Django connection package
+  (e.g. https://pypi.org/project/django-snowflake/, https://github.com/microsoft/mssql-django)
+- Also supports ad-hoc data sources by uploading JSON, CSV, or SQLite files directly.
 
 Snapshots
 ---------
@@ -120,7 +118,8 @@ Displaying query results as charts
 ----------------------------------
 
 If the results table has numeric columns, they can be displayed in a bar chart. The first column will always be used
-as the x-axis labels. This is quite basic, but can be useful for quick visualization.
+as the x-axis labels. This is quite basic, but can be useful for quick visualization. Charts (if enabled) will render
+for query results with ten or fewer numeric columns. With more series than that, the charts become a hot mess quickly.
 
 To enable this feature, set ``EXPLORER_CHARTS_ENABLED`` setting to ``True`` and install the plotting library
 ``matplotlib`` with:
@@ -169,7 +168,7 @@ Multiple Connections
   way. See connections.py for more documentation on
   multi-connection setup.
 - SQL Explorer also supports user-provided connections in the form
-  of standard database connection details, or uploading CSV or SQLite
+  of standard database connection details, or uploading CSV, JSON or SQLite
   files. See the 'User uploads' section of :doc:`settings`.
 
 Power tips

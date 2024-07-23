@@ -6,6 +6,7 @@ from datetime import date, datetime, timedelta
 
 from django.core.cache import cache
 from django.core.mail import send_mail
+from django.utils import timezone
 
 from explorer import app_settings
 from explorer.exporters import get_exporter_class
@@ -87,7 +88,8 @@ def snapshot_queries():
 
 @shared_task
 def truncate_querylogs(days):
-    qs = QueryLog.objects.filter(run_at__lt=datetime.now() - timedelta(days=days))
+    t = timezone.make_aware(datetime.now() - timedelta(days=days), timezone.get_default_timezone())
+    qs = QueryLog.objects.filter(run_at__lt=t)
     logger.info(f"Deleting {qs.count()} QueryLog objects older than {days} days.")
     qs.delete()
     logger.info("Done deleting QueryLog objects.")

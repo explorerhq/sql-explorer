@@ -2,7 +2,9 @@ import importlib
 import json
 import time
 import unittest
+import os
 from unittest.mock import Mock, patch, MagicMock
+from unittest import skipIf
 
 from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -16,7 +18,7 @@ from django.urls import reverse
 
 from explorer import app_settings
 from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
-from explorer.app_settings import EXPLORER_TOKEN
+from explorer.app_settings import EXPLORER_TOKEN, EXPLORER_USER_UPLOADS_ENABLED
 from explorer.models import MSG_FAILED_BLACKLIST, Query, QueryFavorite, QueryLog, DatabaseConnection
 from explorer.tests.factories import QueryLogFactory, SimpleQueryFactory
 from explorer.utils import user_can_see_query
@@ -900,6 +902,7 @@ class TestQueryFavorite(TestCase):
         self.assertFalse(resp["is_favorite"])
 
 
+@skipIf(not EXPLORER_USER_UPLOADS_ENABLED, "User uploads not enabled")
 class UploadDbViewTest(TestCase):
 
     def setUp(self):
@@ -913,21 +916,52 @@ class UploadDbViewTest(TestCase):
         file_content = "col1,col2\nval1,val2\nval3,val4"
         uploaded_file = SimpleUploadedFile("test.csv", file_content.encode(), content_type="text/csv")
 
-        with patch("explorer.ee.db_connections.views.is_csv", return_value=True), \
-            patch("explorer.ee.db_connections.views.csv_to_typed_df") as mock_csv_to_typed_df, \
-            patch("explorer.ee.db_connections.views.pandas_to_sqlite") as mock_pandas_to_sqlite, \
+        self.assertFalse(DatabaseConnection.objects.filter(alias=f"test_{self.user.id}.db").exists())
+
+        with patch("explorer.ee.db_connections.type_infer.csv_to_typed_df") as mock_csv_to_typed_df, \
             patch("explorer.ee.db_connections.views.upload_sqlite") as mock_upload_sqlite:
             mock_csv_to_typed_df.return_value = MagicMock()
-            mock_pandas_to_sqlite.return_value = b"sqlite_content"
 
             response = self.client.post(reverse("explorer_upload"), {"file": uploaded_file})
 
             self.assertEqual(response.status_code, 200)
             self.assertJSONEqual(response.content, {"success": True})
-            print(DatabaseConnection.objects.first().alias)
             self.assertTrue(DatabaseConnection.objects.filter(alias=f"test_{self.user.id}.db").exists())
             mock_upload_sqlite.assert_called_once()
             mock_csv_to_typed_df.assert_called_once()
+
+    # An end-to-end test that uploads a json file, verifies a connection was created, then issues a query
+    # using that connection and verifies the right data is returned.
+    @patch("explorer.ee.db_connections.views.upload_sqlite")
+    def test_upload_file(self, mock_upload_sqlite):
+        self.assertFalse(DatabaseConnection.objects.filter(alias__contains="kings").exists())
+
+        # Test data file
+        file_path = os.path.join(os.getcwd(), "explorer/tests/json/kings.json")
+        with open(file_path, "rb") as f:
+            response = self.client.post(reverse("explorer_upload"), {"file": f})
+
+        # Verify that the mock was called and the connection created
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(mock_upload_sqlite.call_count, 1)
+
+        # Now write the SQLite bytes locally, to the newly-created connection's local path
+        # We are going query this new data source, and writing the bytes here preempts the system's attempt to download
+        # it from S3 since the file already exists on disk. No need to mock get_sqlite_for_connection!
+        conn = DatabaseConnection.objects.filter(alias__contains="kings").first()
+        os.makedirs(os.path.dirname(conn.local_name), exist_ok=True)
+        with open(conn.local_name, "wb") as temp_file:
+            temp_file.write(mock_upload_sqlite.call_args[0][0].getvalue())
+
+        resp = self.client.post(
+            reverse("explorer_playground"),
+            {"sql": "select * from data where Name = 'Athelstan';", "connection": conn.alias}
+        )
+
+        # Assert that the reign of this particular king is indeed in the results.
+        self.assertIn("925-940", resp.content.decode("utf-8"))
+
+        os.remove(conn.local_name)
 
     def test_post_no_file(self):
         response = self.client.post(reverse("explorer_upload"))
@@ -963,7 +997,7 @@ class UploadDbViewTest(TestCase):
         response = self.client.post(reverse("explorer_upload"), {"file": uploaded_file})
 
         self.assertEqual(response.status_code, 400)
-        self.assertJSONEqual(response.content, {"error": "File size exceeds the limit of 5 MB"})
+        self.assertJSONEqual(response.content, {"error": "File size exceeds the limit of 1.0 MB"})
 
 
 class DatabaseConnectionsListViewTestCase(TestCase):
