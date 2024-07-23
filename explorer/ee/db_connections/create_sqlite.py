@@ -1,7 +1,7 @@
 import os
 from io import BytesIO
 
-from explorer.ee.db_connections.mime import get_parser
+from explorer.ee.db_connections.type_infer import get_parser
 from explorer.ee.db_connections.utils import pandas_to_sqlite
 
 

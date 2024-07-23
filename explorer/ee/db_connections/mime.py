@@ -1,22 +1,9 @@
 import csv
 import json
-from explorer.ee.db_connections.type_infer import json_to_typed_df, json_list_to_typed_df, csv_to_typed_df
 
 # These are 'shallow' checks. They are just to understand if the upload appears valid at surface-level.
 # A deeper check will happen when pandas tries to parse the file.
 # This is designed to be quick, and simply assigned the right (full) parsing function to the uploaded file.
-
-
-def get_parser(file):
-    if is_csv(file):
-        return csv_to_typed_df
-    if is_json_list(file):
-        return json_list_to_typed_df
-    if is_json(file):
-        return json_to_typed_df
-    if is_sqlite(file):
-        return None
-    raise ValueError(f"File {file.content_type} not supported.")
 
 
 def is_csv(file):

@@ -1,9 +1,22 @@
 import io
 import json
+from explorer.ee.db_connections.mime import is_csv, is_json, is_sqlite, is_json_list
 
 
-MAX_TYPING_SAMPLE_SIZE = 10000
+MAX_TYPING_SAMPLE_SIZE = 5000
 SHORTEST_PLAUSIBLE_DATE_STRING = 5
+
+
+def get_parser(file):
+    if is_csv(file):
+        return csv_to_typed_df
+    if is_json_list(file):
+        return json_list_to_typed_df
+    if is_json(file):
+        return json_to_typed_df
+    if is_sqlite(file):
+        return None
+    raise ValueError(f"File {file.content_type} not supported.")
 
 
 def csv_to_typed_df(csv_bytes, delimiter=",", has_headers=True):
