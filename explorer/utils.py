@@ -1,4 +1,6 @@
 import re
+import os
+import unicodedata
 from collections import deque
 from typing import Iterable, Tuple
 
@@ -228,7 +230,7 @@ def get_s3_bucket():
     return s3.Bucket(name=app_settings.S3_BUCKET)
 
 
-def s3_upload(key, data):
+def s3_csv_upload(key, data):
     if app_settings.S3_DESTINATION:
         key = "/".join([app_settings.S3_DESTINATION, key])
     bucket = get_s3_bucket()
@@ -250,3 +252,18 @@ def is_xls_writer_available():
         return True
     except ImportError:
         return False
+
+
+def secure_filename(filename):
+    filename, ext = os.path.splitext(filename)
+    if not filename and not ext:
+        raise ValueError("Filename or extension cannot be blank")
+    if ext.lower() not in [".db", ".sqlite", ".sqlite3", ".csv", ".json", ".txt"]:
+        raise ValueError(f"Invalid extension: {ext}")
+
+    filename = unicodedata.normalize("NFKD", filename).encode("ascii", "ignore").decode("ascii")
+    filename = re.sub(r"[^a-zA-Z0-9_.-]", "_", filename)
+    filename = filename.strip("._")
+    if not filename:  # If filename becomes empty, replace it with an underscore
+        filename = "_"
+    return f"{filename}{ext}"

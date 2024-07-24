@@ -45,6 +45,12 @@ export function setupUploads() {
         let formData = new FormData();
         formData.append('file', file);
 
+        let appendElem = document.getElementById('append');
+        let appendValue = appendElem.value;
+        if (appendValue) {
+            formData.append('append', appendValue);
+        }
+
         let xhr = new XMLHttpRequest();
         xhr.open('POST', '../upload/', true);
         xhr.setRequestHeader('X-CSRFToken', getCsrfToken());
@@ -63,9 +69,8 @@ export function setupUploads() {
 
         xhr.onload = function() {
             if (xhr.status === 200) {
-                let fileName = file.name;
-                let fileNameWithoutExt = fileName.substring(0, fileName.lastIndexOf('.')) || fileName;
-                window.location.href = `../?highlight=${encodeURIComponent(fileNameWithoutExt)}`;
+                let highlightValue = appendValue ? appendElem.options[appendElem.selectedIndex].text : file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+                 window.location.href = `../?highlight=${encodeURIComponent(highlightValue)}`;
             } else {
                 console.error('Error:', xhr.response);
                 uploadStatus.innerHTML = xhr.response;
@@ -80,25 +85,28 @@ export function setupUploads() {
         xhr.send(formData);
     }
 
-    document.getElementById("test-connection-btn").addEventListener("click", function() {
-        var form = document.getElementById("db-connection-form");
-        var formData = new FormData(form);
+    let testConnBtn = document.getElementById("test-connection-btn");
+    if (testConnBtn) {
+        testConnBtn.addEventListener("click", function() {
+            let form = document.getElementById("db-connection-form");
+            let formData = new FormData(form);
 
-        fetch("../validate/", {
-            method: "POST",
-            body: formData,
-            headers: {
-                "X-CSRFToken": getCsrfToken()
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert("Connection successful!");
-            } else {
-                alert("Connection failed: " + data.error);
-            }
-        })
-        .catch(error => console.error("Error:", error));
-    });
+            fetch("../validate/", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-CSRFToken": getCsrfToken()
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Connection successful!");
+                } else {
+                    alert("Connection failed: " + data.error);
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    }
 }

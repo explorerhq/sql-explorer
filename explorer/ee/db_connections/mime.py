@@ -42,7 +42,7 @@ def is_json_list(file):
 
 
 def is_sqlite(file):
-    if file.content_type != "application/x-sqlite3":
+    if file.content_type not in ["application/x-sqlite3", "application/octet-stream"]:
         return False
     try:
         # Check if the file starts with the SQLite file header

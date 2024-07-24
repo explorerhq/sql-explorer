@@ -50,8 +50,8 @@ def query_viewmodel(request, query, title=None, form=None, message=None,
 
     try:
         if app_settings.EXPLORER_CHARTS_ENABLED and has_valid_results:
-            charts["line_chart_svg"] = get_chart(res,"line")
-            charts["bar_chart_svg"] = get_chart(res,"bar")
+            charts["line_chart_svg"] = get_chart(res, "line")
+            charts["bar_chart_svg"] = get_chart(res, "bar")
     except TypeError as e:
         if ql is not None:
             msg = f"Error generating charts for querylog {ql.id}: {e}"

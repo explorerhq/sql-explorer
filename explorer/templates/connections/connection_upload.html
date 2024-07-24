@@ -1,0 +1,32 @@
+{% extends 'explorer/base.html' %}
+{% block sql_explorer_content %}
+<div class="container mt-5">
+    <div class="pt-3">
+        <h4>Upload a file</h4>
+        <p>Supports .csv, .json, .db, and .sqlite files. JSON files with one JSON document per line are also supported. CSV/JSON data will be parsed and converted to SQLite. SQLite databases must <i>not</i> be password protected.</p>
+        <p></p>
+
+        <form id="upload-form">
+            <div class="form-floating mb-3">
+                <select id="append" name="append" class="form-select">
+                    <option value="" selected>-- Create new connection --</option>
+                    {% for connection in valid_connections %}
+                        <option value="{{ connection.id }}">{{ connection.alias }}</option>
+                    {% endfor %}
+                </select>
+                <label for="append">Append to existing connection:</label>
+                <span class="form-text text-muted">When appending, if a table with the filename already exists, it will be replaced with the uploaded data.</span>
+            </div>
+
+            <div id="drop-area" class="p-3 mb-4 bg-light border rounded" style="cursor: pointer">
+                <p class="lead mb-0">Drag and drop, or click to upload .csv, .json, .db, .sqlite.</p>
+                <input type="file" id="fileElem" style="display:none" accept=".db,.csv,.sqlite,.json">
+                <div class="progress mt-3" style="height: 20px;">
+                    <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                </div>
+                <p id="upload-status" class="mt-2"></p>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

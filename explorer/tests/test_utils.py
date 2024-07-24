@@ -6,7 +6,7 @@ from explorer import app_settings
 from explorer.tests.factories import SimpleQueryFactory
 from explorer.utils import (
     EXPLORER_PARAM_TOKEN, extract_params, get_params_for_url, get_params_from_request, param, passes_blacklist,
-    shared_dict_update, swap_params,
+    shared_dict_update, swap_params, secure_filename
 )
 
 
@@ -271,3 +271,35 @@ class TestConnections(TestCase):
         from explorer.connections import connections
         self.assertTrue(EXPLORER_DEFAULT_CONNECTION in connections())
         self.assertNotEqual(len(connections()), len([c for c in djcs]))
+
+
+class TestSecureFilename(TestCase):
+    def test_basic_ascii(self):
+        self.assertEqual(secure_filename("simple_file.txt"), "simple_file.txt")
+
+    def test_special_characters(self):
+        self.assertEqual(secure_filename("file@name!.txt"), "file_name.txt")
+
+    def test_leading_trailing_underscores(self):
+        self.assertEqual(secure_filename("_leading.txt"), "leading.txt")
+        self.assertEqual(secure_filename("trailing_.txt"), "trailing.txt")
+        self.assertEqual(secure_filename(".__filename__.txt"), "filename.txt")
+
+    def test_unicode_characters(self):
+        self.assertEqual(secure_filename("fïléñâmé.txt"), "filename.txt")
+        self.assertEqual(secure_filename("测试文件.txt"), "_.txt")
+
+    def test_empty_filename(self):
+        with self.assertRaises(ValueError):
+            secure_filename("")
+
+    def test_bad_extension(self):
+        with self.assertRaises(ValueError):
+            secure_filename("foo.xyz")
+
+    def test_empty_extension(self):
+        with self.assertRaises(ValueError):
+            secure_filename("foo.")
+
+    def test_spaces(self):
+        self.assertEqual(secure_filename("file name.txt"), "file_name.txt")

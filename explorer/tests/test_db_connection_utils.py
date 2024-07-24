@@ -14,52 +14,55 @@ from explorer.ee.db_connections.utils import (
 )
 
 
-
-
 @skipIf(not EXPLORER_USER_UPLOADS_ENABLED, "User uploads not enabled")
 class TestSQLiteConnection(TestCase):
 
     @patch("explorer.utils.get_s3_bucket")
-    @patch("os.path.exists")
-    @patch("os.getcwd")
-    def test_get_sqlite_for_connection_downloads_file_if_not_exists(self, mock_getcwd, mock_path_exists,
-                                                                    mock_get_s3_bucket):
-        mock_getcwd.return_value = "/tmp"
-        mock_path_exists.return_value = False
+    def test_get_sqlite_for_connection_downloads_file_if_not_exists(self, mock_get_s3_bucket):
         mock_s3 = MagicMock()
         mock_get_s3_bucket.return_value = mock_s3
 
-        mock_explorer_connection = MagicMock()
-        mock_explorer_connection.name = "test_db"
-        mock_explorer_connection.host = "s3_bucket/test_db"
-        mock_explorer_connection.local_name = "/tmp/user_dbs/test_db"
+        conn = DatabaseConnection(
+            name="test_db.db",
+            host="s3_bucket/test_db.db",
+            engine=DatabaseConnection.SQLITE
+        )
+        conn.delete_local_sqlite()
 
-        result = get_sqlite_for_connection(mock_explorer_connection)
+        local_name = conn.local_name
 
-        mock_s3.download_file.assert_called_once_with("s3_bucket/test_db", "/tmp/user_dbs/test_db")
+        result = get_sqlite_for_connection(conn)
+
+        mock_s3.download_file.assert_called_once_with("s3_bucket/test_db.db", local_name)
         self.assertIsNone(result.host)
-        self.assertEqual(result.name, "/tmp/user_dbs/test_db")
+        self.assertEqual(result.name, local_name)
 
     @patch("explorer.utils.get_s3_bucket")
-    @patch("os.path.exists")
-    @patch("os.getcwd")
-    def test_get_sqlite_for_connection_skips_download_if_exists(self, mock_getcwd, mock_path_exists,
-                                                                mock_get_s3_bucket):
-        mock_getcwd.return_value = "/tmp"
-        mock_path_exists.return_value = True
+    def test_get_sqlite_for_connection_skips_download_if_exists(self, mock_get_s3_bucket):
         mock_s3 = MagicMock()
         mock_get_s3_bucket.return_value = mock_s3
 
-        mock_explorer_connection = MagicMock()
-        mock_explorer_connection.name = "test_db"
-        mock_explorer_connection.host = "s3_bucket/test_db"
-        mock_explorer_connection.local_name = "/tmp/user_dbs/test_db"
+        conn = DatabaseConnection(
+            name="test_db.db",
+            host="s3_bucket/test_db.db",
+            engine=DatabaseConnection.SQLITE
+        )
+        conn.delete_local_sqlite()
 
-        result = get_sqlite_for_connection(mock_explorer_connection)
+        local_name = conn.local_name
+
+        with open(local_name, "wb") as file:
+            file.write(b"\x00" * 10)
+
+        conn.update_fingerprint()
+
+        result = get_sqlite_for_connection(conn)
 
         mock_s3.download_file.assert_not_called()
         self.assertIsNone(result.host)
-        self.assertEqual(result.name, "/tmp/user_dbs/test_db")
+        self.assertEqual(result.name, local_name)
+
+        os.remove(local_name)
 
 
 class TestDjangoStyleConnection(TestCase):
@@ -125,7 +128,7 @@ class TestPandasToSQLite(TestCase):
         df = pd.DataFrame(data)
 
         # Convert the DataFrame to SQLite and get the BytesIO buffer
-        db_buffer = pandas_to_sqlite(df)
+        db_buffer = pandas_to_sqlite(df, "data", "test_pandas_to_sqlite.db")
 
         # Write the buffer to a temporary file to simulate reading it back
         temp_db_path = "temp_test_database.db"

@@ -20,7 +20,7 @@ from explorer.tests.factories import SimpleQueryFactory
 class TestTasks(TestCase):
 
     @unittest.skipIf(not app_settings.ENABLE_TASKS, "tasks not enabled")
-    @patch("explorer.tasks.s3_upload")
+    @patch("explorer.tasks.s3_csv_upload")
     def test_async_results(self, mocked_upload):
         mocked_upload.return_value = "http://s3.com/your-file.csv"
 
@@ -46,7 +46,7 @@ class TestTasks(TestCase):
         self.assertEqual(mocked_upload.call_count, 1)
 
     @unittest.skipIf(not app_settings.ENABLE_TASKS, "tasks not enabled")
-    @patch("explorer.tasks.s3_upload")
+    @patch("explorer.tasks.s3_csv_upload")
     def test_async_results_fails_with_message(self, mocked_upload):
         mocked_upload.return_value = "http://s3.com/your-file.csv"
 
@@ -61,7 +61,7 @@ class TestTasks(TestCase):
         self.assertEqual(mocked_upload.call_count, 0)
 
     @unittest.skipIf(not app_settings.ENABLE_TASKS, "tasks not enabled")
-    @patch("explorer.tasks.s3_upload")
+    @patch("explorer.tasks.s3_csv_upload")
     def test_snapshots(self, mocked_upload):
         mocked_upload.return_value = "http://s3.com/your-file.csv"
 

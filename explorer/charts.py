@@ -34,7 +34,7 @@ def get_chart(result: QueryResult, chart_type: str) -> Optional[str]:
     bar_positions = []
     for idx, col_num in enumerate(numeric_columns):
         if chart_type == "bar":
-            values = [row[col_num] for row in result.data]
+            values = [row[col_num] if row[col_num] is not None else 0 for row in result.data]
             bar_container = ax.bar([x + idx * BAR_WIDTH
                                     for x in range(len(labels))], values, BAR_WIDTH, label=result.headers[col_num])
             bars.append(bar_container)
