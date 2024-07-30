@@ -5,7 +5,7 @@ Change Log
 This document records all notable changes to `django-sql-explorer <https://github.com/explorerhq/django-sql-explorer>`_.
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
-`5.1.0`_ (2024-07-TBD)
+`5.1.0`_ (2024-07-30)
 ===========================
 Major improvements:
 
