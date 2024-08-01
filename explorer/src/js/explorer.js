@@ -233,8 +233,8 @@ export class ExplorerEditor {
             element.addEventListener('click', toggleFavorite);
         });
 
-        document.getElementById('show_schema_button').addEventListener('click', this.showSchema.bind(this));
-        document.getElementById('hide_schema_button').addEventListener('click', this.hideSchema.bind(this));
+        document.getElementById('show_schema_button')?.addEventListener('click', this.showSchema.bind(this));
+        document.getElementById('hide_schema_button')?.addEventListener('click', this.hideSchema.bind(this));
 
 
         $("#format_button").click(function(e) {
