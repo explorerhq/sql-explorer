@@ -1,7 +1,7 @@
 __version_info__ = {
     "major": 5,
     "minor": 1,
-    "patch": 0,
+    "patch": 1,
     "releaselevel": "final",
     "serial": 0
 }
