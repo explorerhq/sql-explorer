@@ -6,7 +6,6 @@
 <div class="schema-wrapper">
     <h4>{% translate "Schema" %}</h4>
     <div id="schema-contents">
-    {% if m|length > 1 %}
         <p><input class="search form-control" placeholder="{% translate "Search Tables" %}" /></p>
         <div class="row">
             <div class="col">
@@ -20,7 +19,6 @@
                 </a>
             </div>
         </div>
-    {% endif %}
         <div class="mt-3">
             <ul class="list">
                 {% for m in schema %}
