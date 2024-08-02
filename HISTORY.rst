@@ -10,6 +10,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * `#654`_: Bugfix: Parameterized query does not work for viewers
 * `#653`_: Bugfix: Schema search not visible anymore
 * Bugfix: Error messages in query.html were floating in the wrong spot
+* `#555`_: Prevent queries with many thousands of results from being punishingly slow. The number of data points in
+  the chart now matches the number of data points in the preview pane.
 
 `5.1.0`_ (2024-07-30)
 ===========================
@@ -612,6 +614,7 @@ Initial Release
 .. _#649: https://github.com/explorerhq/sql-explorer/pull/649
 .. _#635: https://github.com/explorerhq/sql-explorer/pull/635
 .. _#636: https://github.com/explorerhq/sql-explorer/pull/636
+.. _#555: https://github.com/explorerhq/sql-explorer/pull/555
 
 .. _#269: https://github.com/explorerhq/sql-explorer/issues/269
 .. _#288: https://github.com/explorerhq/sql-explorer/issues/288
