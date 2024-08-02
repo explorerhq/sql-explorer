@@ -33,11 +33,11 @@
                 {% endif %}
                 {{ form.non_field_errors }}
                 <div class="my-3 form-floating">
+                    <input class="form-control" id="id_title" maxlength="255" name="title" type="text" {% if not can_change %}disabled{% endif %} value="{{ form.title.value|default_if_none:"" }}" />
+                    <label for="id_title" class="form-label">{% translate "Title" %}</label>
                     {% if form.title.errors %}{% for error in form.title.errors %}
                         <div class="alert alert-danger">{{ error|escape }}</div>
                     {% endfor %}{% endif %}
-                    <input class="form-control" id="id_title" maxlength="255" name="title" type="text" {% if not can_change %}disabled{% endif %} value="{{ form.title.value|default_if_none:"" }}" />
-                    <label for="id_title" class="form-label">{% translate "Title" %}</label>
                 </div>
                 {% if form.connections|length > 1 and can_change %}
                     <div class="mb-3 form-floating">
@@ -46,14 +46,12 @@
                     </div>
                 {% else %}
                     {# still need to submit the connection, just hide the UI element #}
-                    <div class="hidden">
+                    <div class="d-none">
                       {{ form.connection }}
                     </div>
+                    <div>{{ form.connection.value }}</div>
                 {% endif %}
                 <div class="mb-3 form-floating">
-                    {% if form.description.errors %}
-                        <div class="alert alert-danger">{{ form.description.errors }}</div>
-                    {% endif %}
                     <textarea
                         id="id_description" class="form-control" cols="40" name="description"
                         {% if not can_change %}disabled{% endif %} rows="2"
@@ -61,6 +59,9 @@
                     <label for="id_description" class="form-label">
                         {% translate "Description"%}
                     </label>
+                    {% if form.description.errors %}
+                        <div class="alert alert-danger">{{ form.description.errors }}</div>
+                    {% endif %}
                 </div>
                 {% if form.sql.errors %}
                     {% for error in form.sql.errors %}
@@ -121,7 +122,7 @@
                                 {% translate "Format" %}
                             </button>
                         {% else %}
-                            <button id="refresh_button" type="button" class="btn btn-default">{% translate "Refresh" %}</button>
+                            <button id="refresh_button" type="button" class="btn btn-outline-primary">{% translate "Refresh" %}</button>
                             {% export_buttons query %}
                         {% endif %}
                     </div>

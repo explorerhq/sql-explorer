@@ -15,12 +15,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/explorerhq/django-sql-explorer.git"
+    "url": "git+https://github.com/explorerhq/sql-explorer.git"
   },
   "author": "Chris Clark",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/explorerhq/django-sql-explorer/issues"
+    "url": "https://github.com/explorerhq/sql-explorer/issues"
   },
   "homepage": "https://www.sqlexplorer.io",
   "dependencies": {
