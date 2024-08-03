@@ -1,9 +1,10 @@
 from django.conf import settings
 
-from factory import Sequence, SubFactory
+from factory import Sequence, SubFactory, LazyFunction
 from factory.django import DjangoModelFactory
 
 from explorer.models import Query, QueryLog
+from explorer.ee.db_connections.utils import default_db_connection_id
 
 
 class UserFactory(DjangoModelFactory):
@@ -23,8 +24,8 @@ class SimpleQueryFactory(DjangoModelFactory):
     title = Sequence(lambda n: f"My simple query {n}")
     sql = "SELECT 1+1 AS TWO"  # same result in postgres and sqlite
     description = "Doin' math"
-    connection = "default"
     created_by_user = SubFactory(UserFactory)
+    database_connection_id = LazyFunction(default_db_connection_id)
 
 
 class QueryLogFactory(DjangoModelFactory):
@@ -33,3 +34,4 @@ class QueryLogFactory(DjangoModelFactory):
         model = QueryLog
 
     sql = "SELECT 2+2 AS FOUR"
+    database_connection_id = LazyFunction(default_db_connection_id)

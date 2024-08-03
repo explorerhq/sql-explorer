@@ -1,7 +1,6 @@
 from django.apps import AppConfig
-from django.core.exceptions import ImproperlyConfigured
-from django.db import connections as djcs
 from django.utils.translation import gettext_lazy as _
+from django.db import transaction, DEFAULT_DB_ALIAS, connections
 
 
 class ExplorerAppConfig(AppConfig):
@@ -10,36 +9,26 @@ class ExplorerAppConfig(AppConfig):
     verbose_name = _("SQL Explorer")
     default_auto_field = "django.db.models.AutoField"
 
-    def ready(self):
-        from explorer.schema import build_async_schemas
-        _validate_connections()
-        build_async_schemas()
 
+# SQL Explorer DatabaseConnection models store connection info but are always translated into "django-style" connections
+# before use, because we use Django's DB engine to run queries, gather schema information, etc.
 
-def _get_default():
-    from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION
-    return EXPLORER_DEFAULT_CONNECTION
+# In general this isn't a problem; we cough up a django-style connection and all is well. The exception is when using
+# the `with transaction.atomic(using=...):` context manager. The atomic() function takes a connection *alias* argument
+# and the retrieves the connection from settings.DATABASES. But of course if we are providing a user-created connection
+# alias, Django doesn't find it.
 
+# The solution is to monkey-patch the `get_connection` function within transaction.atomic to make it aware of the
+# user-created connections.
 
-def _get_explorer_connections():
-    from explorer.app_settings import EXPLORER_CONNECTIONS
-    return EXPLORER_CONNECTIONS
+# This code should be double-checked against new versions of Django to make sure the original logic is still correct.
 
+def new_get_connection(using=None):
+    from explorer.ee.db_connections.models import DatabaseConnection
+    if using is None:
+        using = DEFAULT_DB_ALIAS
+    if using in connections:
+        return connections[using]
+    return DatabaseConnection.objects.get(alias=using).as_django_connection()
 
-def _validate_connections():
-
-    # Validate connections, when using settings.EXPLORER_CONNECTIONS
-    # Skip if none are configured, as the app will use user-configured connections (DatabaseConnection models)
-    if _get_explorer_connections().values() and _get_default() not in _get_explorer_connections().values():
-        raise ImproperlyConfigured(
-            f"EXPLORER_DEFAULT_CONNECTION is {_get_default()}, "
-            f"but that alias is not present in the values of "
-            f"EXPLORER_CONNECTIONS"
-        )
-
-    for name, conn_name in _get_explorer_connections().items():
-        if conn_name not in djcs:
-            raise ImproperlyConfigured(
-                f"EXPLORER_CONNECTIONS contains ({name}, {conn_name}), "
-                f"but {conn_name} is not a valid Django DB connection."
-            )
+transaction.get_connection = new_get_connection

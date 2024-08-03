@@ -180,20 +180,6 @@ class InvalidExplorerConnectionException(Exception):
     pass
 
 
-def get_valid_connection(alias=None):
-    from explorer.connections import connections
-
-    if not alias:
-        return connections()[app_settings.EXPLORER_DEFAULT_CONNECTION]
-
-    if alias not in connections():
-        raise InvalidExplorerConnectionException(
-            f"Attempted to access connection {alias}, "
-            f"but that is not a registered Explorer connection."
-        )
-    return connections()[alias]
-
-
 def delete_from_s3(s3_path):
     s3_bucket = get_s3_bucket()
     s3_bucket.delete_objects(

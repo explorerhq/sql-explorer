@@ -84,6 +84,6 @@ def query_viewmodel(request, query, title=None, form=None, message=None,
         "charts_enabled": app_settings.EXPLORER_CHARTS_ENABLED,
         "is_favorite": is_favorite,
         "show_sql_by_default": app_settings.EXPLORER_SHOW_SQL_BY_DEFAULT,
-        "schema_json": schema_json_info(query.connection if query else None),
+        "schema_json": schema_json_info(query.database_connection) if query and query.database_connection else None,
     }
     return {**ret, **charts}

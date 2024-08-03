@@ -1,7 +1,6 @@
 from explorer import app_settings
 from explorer.schema import schema_info
 from explorer.models import ExplorerValue
-from explorer.utils import get_valid_connection
 from django.db.utils import OperationalError
 
 
@@ -35,8 +34,8 @@ def extract_response(r):
     return r[-1].content
 
 
-def tables_from_schema_info(connection, table_names):
-    schema = schema_info(connection)
+def tables_from_schema_info(db_connection, table_names):
+    schema = schema_info(db_connection)
     return [table for table in schema if table[0] in set(table_names)]
 
 
@@ -65,8 +64,7 @@ def sample_rows_from_table(connection, table_name):
     Returns:
         A list of rows with field values truncated if they exceed 500 characters/bytes.
     """
-    conn = get_valid_connection(connection)
-    cursor = conn.cursor()
+    cursor = connection.cursor()
     try:
         cursor.execute(f"SELECT * FROM {table_name} LIMIT {ROW_SAMPLE_SIZE}")
         ret = [[header[0] for header in cursor.description]]
@@ -125,30 +123,27 @@ def fits_in_window(string: str) -> bool:
     return num_tokens_from_string(string) < (app_settings.EXPLORER_ASSISTANT_MODEL["max_tokens"] * 0.95)
 
 
-def build_prompt(request_data, included_tables):
+def build_prompt(db_connection, assistant_request, included_tables, query_error=None, sql=None):
     user_prompt = ""
+    djc = db_connection.as_django_connection()
+    user_prompt += f"## Database Vendor / SQL Flavor is {djc.vendor}\n\n"
 
-    db_vendor = get_valid_connection(request_data.get("connection")).vendor
-    user_prompt += f"## Database Vendor / SQL Flavor is {db_vendor}\n\n"
+    if query_error:
+        user_prompt += f"## Query Error ##\n\n{query_error}\n\n"
 
-    db_error = request_data.get("db_error")
-    if db_error:
-        user_prompt += f"## Query Error ##\n\n{db_error}\n\n"
-
-    sql = request_data.get("sql")
     if sql:
         user_prompt += f"## Existing SQL ##\n\n{sql}\n\n"
 
-    results_sample = sample_rows_from_tables(request_data["connection"],
+    results_sample = sample_rows_from_tables(djc,
                                              included_tables)
     if fits_in_window(user_prompt + results_sample):
         user_prompt += f"## Table Structure with Sampled Data ##\n\n{results_sample}\n\n"
     else:  # If it's too large with sampling, then provide *just* the structure
-        table_struct = tables_from_schema_info(request_data["connection"],
+        table_struct = tables_from_schema_info(db_connection,
                                                included_tables)
         user_prompt += f"## Table Structure ##\n\n{table_struct}\n\n"
 
-    user_prompt += f"## User's Request to Assistant ##\n\n{request_data['assistant_request']}\n\n"
+    user_prompt += f"## User's Request to Assistant ##\n\n{assistant_request}\n\n"
 
     prompt = {
         "system": ExplorerValue.objects.get_item(ExplorerValue.ASSISTANT_SYSTEM_PROMPT).value,

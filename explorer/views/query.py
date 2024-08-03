@@ -15,6 +15,7 @@ from explorer.utils import (
 from explorer.views.auth import PermissionRequiredMixin
 from explorer.views.mixins import ExplorerContextMixin
 from explorer.views.utils import query_viewmodel
+from explorer.ee.db_connections.utils import default_db_connection_id
 
 
 class PlayQueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
@@ -27,18 +28,18 @@ class PlayQueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
 
         if url_get_log_id(request):
             log = get_object_or_404(QueryLog, pk=url_get_log_id(request))
-            c = log.connection or ""
-            query = Query(sql=log.sql, title="Playground", connection=c)
+            c = log.database_connection_id or ""
+            query = Query(sql=log.sql, title="Playground", database_connection_id=c)
             return self.render_with_sql(request, query)
 
         return self.render()
 
     def post(self, request):
-        c = request.POST.get("connection", "")
+        c = request.POST.get("database_connection", default_db_connection_id())
         show = url_get_show(request)
         sql = request.POST.get("sql", "")
 
-        query = Query(sql=sql, title="Playground", connection=c)
+        query = Query(sql=sql, title="Playground", database_connection_id=c)
 
         passes_blacklist, failing_words = query.passes_blacklist()
 

@@ -29,7 +29,7 @@
                     <td>{{ connection.name }}</td>
                     <td>{{ connection.get_engine_display }}{% if connection.is_upload %} (uploaded){% endif %}</td>
                     <td>
-                        <a href="../play/?connection={{ connection.alias }}" class="px-2"><i class="bi-arrow-up-right-square small me-1"></i>Query</a>
+                        <a href="../play/?connection={{ connection.id }}" class="px-2"><i class="bi-arrow-up-right-square small me-1"></i>Query</a>
                         {% if connection.id %}
                             <a href="{% url 'explorer_connection_update' connection.pk %}" class="px-2"><i class="bi-pencil-square"></i></a>
                             <a href="{% url 'explorer_connection_delete' connection.pk %}"><i class="bi-trash"></i></a>

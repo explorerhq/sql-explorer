@@ -131,7 +131,7 @@ def _gather_summary_stats():
 
         q_stats = Query.objects.aggregate(
             total_count=Count("*"),
-            unique_connection_count=Count("connection", distinct=True)
+            unique_connection_count=Count("database_connection_id", distinct=True)
         )
 
         # Round the counts to provide additional anonymity

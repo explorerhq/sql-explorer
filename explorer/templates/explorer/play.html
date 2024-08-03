@@ -18,14 +18,15 @@
                 {{ form.non_field_errors }}
                 {% if form.connections|length > 1 and can_change %}
                     <div class="mb-3 form-floating">
-                        {{ form.connection }}
-                        <label for="id_connection" class="form-label">{% translate "Connection" %}</label>
+                        {{ form.database_connection }}
+                        <label for="id_database_connection" class="form-label">{% translate "Connection" %}</label>
                     </div>
                 {% else %}
                     {# still need to submit the connection, just hide the UI element #}
-                    <div class="hidden">
-                      {{ form.connection }}
+                    <div class="d-none">
+                      {{ form.database_connection }}
                     </div>
+                    <div>{{ form.database_connection.value }}</div>
                 {% endif %}
                 <div class="row">
                     <div class="col">

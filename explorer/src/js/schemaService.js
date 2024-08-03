@@ -27,5 +27,5 @@ export const SchemaSvc = {
 };
 
 export function getConnElement() {
-    return document.querySelector('#id_connection');
+    return document.querySelector('#id_database_connection');
 }

@@ -3,15 +3,14 @@ import unittest
 from datetime import date, datetime
 
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db import connections
 from django.test import TestCase
 from django.utils import timezone
 
-from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
 from explorer.exporters import CSVExporter, ExcelExporter, JSONExporter
 from explorer.models import QueryResult
 from explorer.tests.factories import SimpleQueryFactory
 from explorer.utils import is_xls_writer_available
+from explorer.ee.db_connections.utils import default_db_connection
 
 
 class TestCsv(TestCase):
@@ -19,7 +18,7 @@ class TestCsv(TestCase):
     def test_writing_unicode(self):
         res = QueryResult(
             SimpleQueryFactory(sql='select 1 as "a", 2 as ""').sql,
-            connections[CONN]
+            default_db_connection().as_django_connection()
         )
         res.execute_query()
         res.process()
@@ -52,7 +51,7 @@ class TestJson(TestCase):
     def test_writing_json(self):
         res = QueryResult(
             SimpleQueryFactory(sql='select 1 as "a", 2 as ""').sql,
-            connections[CONN]
+            default_db_connection().as_django_connection()
         )
         res.execute_query()
         res.process()
@@ -65,7 +64,7 @@ class TestJson(TestCase):
     def test_writing_datetimes(self):
         res = QueryResult(
             SimpleQueryFactory(sql='select 1 as "a", 2 as "b"').sql,
-            connections[CONN]
+            default_db_connection().as_django_connection()
         )
         res.execute_query()
         res.process()
@@ -93,7 +92,7 @@ class TestExcel(TestCase):
                 sql='select 1 as "a", 2 as ""',
                 title="\\/*[]:?this title is longer than 32 characters"
             ).sql,
-            connections[CONN]
+            default_db_connection().as_django_connection()
         )
 
         res.execute_query()
@@ -119,7 +118,7 @@ class TestExcel(TestCase):
                 sql='select 1 as "a", 2 as ""',
                 title="\\/*[]:?this title is longer than 32 characters"
             ).sql,
-            connections[CONN]
+            default_db_connection().as_django_connection()
         )
 
         res.execute_query()

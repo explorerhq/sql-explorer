@@ -30,20 +30,6 @@ Add to your ``INSTALLED_APPS``, located in the ``settings.py`` file in your proj
         'explorer',
     )
 
-Configure your settings to something like:
-
-.. code-block:: python
-
-    EXPLORER_CONNECTIONS = { 'Default': 'readonly' }
-    EXPLORER_DEFAULT_CONNECTION = 'readonly'
-
-The first setting lists the connections you want to allow Explorer to
-use. The keys of the connections dictionary are friendly names to show
-Explorer users, and the values are the actual database aliases used in
-``settings.DATABASES``. It is highly recommended to setup read-only roles
-in your database, add them in your project's ``DATABASES`` setting and
-use these read-only connections in the ``EXPLORER_CONNECTIONS``.
-
 Add the following to your urls.py (all Explorer URLs are restricted
 via the ``EXPLORER_PERMISSION_VIEW`` and ``EXPLORER_PERMISSION_CHANGE``
 settings. See Settings section below for further documentation.):
@@ -57,15 +43,6 @@ settings. See Settings section below for further documentation.):
         path('explorer/', include('explorer.urls')),
     ]
 
-If you want to quickly use django-sql-explorer with the existing default
-connection **and know what you are doing** (or you are on development), you
-can use the following settings:
-
-.. code-block:: python
-
-    EXPLORER_CONNECTIONS = { 'Default': 'default' }
-    EXPLORER_DEFAULT_CONNECTION = 'default'
-
 Run migrate to create the tables:
 
 ``python manage.py migrate``
@@ -78,7 +55,9 @@ And run the server:
 
 ``python manage.py runserver``
 
-You can now browse to http://127.0.0.1:8000/explorer/ and get exploring!
+You can now browse to http://127.0.0.1:8000/explorer/. Add a database connection at /explorer/connections/new/, and you
+are ready to start exploring! If you have a database in your settings.DATABASES you would like to query, you can create
+a connection with the same alias and name and set the Engine to "Django Database".
 
 Note that Explorer expects STATIC_URL to be set appropriately. This isn't a problem
 with vanilla Django setups, but if you are using e.g. Django Storages with S3, you

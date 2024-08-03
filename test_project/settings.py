@@ -17,20 +17,13 @@ DATABASES = {
         "TEST": {
             "NAME": "tmp"
         }
-    },
-    "alt": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": "tmp2",
-        "TEST": {
-            "NAME": "tmp2"
-        }
-    },
+    }
 }
 
 EXPLORER_CONNECTIONS = {
-    "SQLite": "default",
-    "Another": "alt",
+    "Primary": "default",
 }
+
 EXPLORER_DEFAULT_CONNECTION = "default"
 
 ROOT_URLCONF = "test_project.urls"

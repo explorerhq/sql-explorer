@@ -31,5 +31,9 @@ app.conf.beat_schedule = {
     "explorer.tasks.remove_unused_sqlite_dbs": {
         "task": "explorer.tasks.remove_unused_sqlite_dbs",
         "schedule": crontab(hour="1", minute="20")
+    },
+    "explorer.tasks.build_async_schemas": {
+        "task": "explorer.tasks.build_async_schemas",
+        "schedule": crontab(hour="1", minute="30")
     }
 }

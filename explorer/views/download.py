@@ -4,6 +4,7 @@ from django.views.generic.base import View
 from explorer.models import Query
 from explorer.views.auth import PermissionRequiredMixin
 from explorer.views.export import _export
+from explorer.ee.db_connections.utils import default_db_connection_id
 
 
 class DownloadQueryView(PermissionRequiredMixin, View):
@@ -21,8 +22,8 @@ class DownloadFromSqlView(PermissionRequiredMixin, View):
 
     def post(self, request, *args, **kwargs):
         sql = request.POST.get("sql", "")
-        connection = request.POST.get("connection", "")
-        query = Query(sql=sql, connection=connection, title="")
+        connection = request.POST.get("database_connection", default_db_connection_id())
+        query = Query(sql=sql, database_connection_id=connection, title="")
         ql = query.log(request.user)
         query.title = f"Playground-{ql.id}"
         return _export(request, query)

@@ -4,6 +4,7 @@ from django.utils import timezone
 import json
 
 from explorer.telemetry import Stat, StatNames
+from explorer.ee.db_connections.models import DatabaseConnection
 from explorer.assistant.models import PromptLog
 from explorer.assistant.utils import (
     do_req, extract_response,
@@ -18,7 +19,14 @@ def run_assistant(request_data, user):
     extra_tables = request_data.get("selected_tables", [])
     included_tables = get_table_names_from_query(sql) + extra_tables
 
-    prompt = build_prompt(request_data, included_tables)
+    connection_id = request_data.get("connection_id")
+    try:
+        conn = DatabaseConnection.objects.get(id=connection_id)
+    except DatabaseConnection.DoesNotExist:
+        return "Error: Connection not found"
+
+    prompt = build_prompt(conn, request_data.get("assistant_request"),
+                          included_tables, request_data.get("db_error"), request_data.get("sql"))
 
     start = timezone.now()
     pl = PromptLog(

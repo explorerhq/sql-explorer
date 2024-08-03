@@ -1,0 +1,11 @@
+{% extends "explorer/base.html" %}
+{% load i18n %}
+
+{% block sql_explorer_content_takeover %}
+    <div class="schema-wrapper">
+        <h4 class="text-center">{% translate "Schema failed to build." %}</h4>
+        <div>{% blocktranslate %}
+            The connection '{{ connection }}' is likely misconfigured or unavailable.
+        {% endblocktranslate %}</div>
+    </div>
+{% endblock %}

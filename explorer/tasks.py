@@ -96,26 +96,33 @@ def truncate_querylogs(days):
 
 
 @shared_task
-def build_schema_cache_async(connection_alias):
+def build_schema_cache_async(db_connection_id):
     from .schema import (
         build_schema_info,
         connection_schema_cache_key,
         connection_schema_json_cache_key,
         transform_to_json_schema,
     )
-
-    ret = build_schema_info(connection_alias)
-    cache.set(connection_schema_cache_key(connection_alias), ret)
-    cache.set(connection_schema_json_cache_key(connection_alias), transform_to_json_schema(ret))
+    db_connection = DatabaseConnection.objects.get(id=db_connection_id)
+    ret = build_schema_info(db_connection)
+    cache.set(connection_schema_cache_key(db_connection.id), ret)
+    cache.set(connection_schema_json_cache_key(db_connection.id), transform_to_json_schema(ret))
     return ret
 
 
 @shared_task
 def remove_unused_sqlite_dbs():
-    uploaded_dbs = DatabaseConnection.objects.filter(engine=DatabaseConnection.SQLITE, host__isnull=False)
-    for db in uploaded_dbs:
+    days = app_settings.EXPLORER_PRUNE_LOCAL_UPLOAD_COPY_DAYS_INACTIVITY
+    t = timezone.make_aware(datetime.now() - timedelta(days=days), timezone.get_default_timezone())
+    for db in DatabaseConnection.objects.uploads():
         if os.path.exists(db.local_name):
-            recent_run = QueryLog.objects.filter(connection=db.alias).first()
-            days = app_settings.EXPLORER_PRUNE_LOCAL_UPLOAD_COPY_DAYS_INACTIVITY
-            if recent_run and (datetime.now() - timedelta(days=days)) > recent_run.run_at:
+            recent_run = QueryLog.objects.filter(database_connection=db).first()
+            if recent_run and t > recent_run.run_at:
                 os.remove(db.local_name)
+
+
+@shared_task
+def build_async_schemas():
+    from explorer.schema import schema_info
+    for c in DatabaseConnection.objects.non_uploads().all():
+        schema_info(c.alias)
