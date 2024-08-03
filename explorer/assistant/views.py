@@ -1,14 +1,21 @@
 from django.http import JsonResponse
 from django.views import View
 from django.utils import timezone
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+
+from .forms import TableDescriptionForm
+from .models import TableDescription
+
 import json
 
+from explorer.views.auth import PermissionRequiredMixin
+from explorer.views.mixins import ExplorerContextMixin
 from explorer.telemetry import Stat, StatNames
 from explorer.ee.db_connections.models import DatabaseConnection
 from explorer.assistant.models import PromptLog
 from explorer.assistant.utils import (
     do_req, extract_response,
-    get_table_names_from_query,
     build_prompt
 )
 
@@ -16,8 +23,7 @@ from explorer.assistant.utils import (
 def run_assistant(request_data, user):
 
     sql = request_data.get("sql")
-    extra_tables = request_data.get("selected_tables", [])
-    included_tables = get_table_names_from_query(sql) + extra_tables
+    included_tables = request_data.get("selected_tables", [])
 
     connection_id = request_data.get("connection_id")
     try:
@@ -47,7 +53,6 @@ def run_assistant(request_data, user):
         pl.save()
         Stat(StatNames.ASSISTANT_RUN, {
             "included_table_count": len(included_tables),
-            "extra_table_count": len(extra_tables),
             "has_sql": bool(sql),
             "duration": pl.duration,
         }).track()
@@ -67,3 +72,33 @@ class AssistantHelpView(View):
             return JsonResponse(response_data)
         except json.JSONDecodeError:
             return JsonResponse({"status": "error", "message": "Invalid JSON"}, status=400)
+
+
+class TableDescriptionListView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
+    model = TableDescription
+    permission_required = "view_permission"
+    template_name = "assistant/table_description_list.html"
+    context_object_name = "table_descriptions"
+
+
+class TableDescriptionCreateView(PermissionRequiredMixin, ExplorerContextMixin, CreateView):
+    model = TableDescription
+    permission_required = "change_permission"
+    template_name = "assistant/table_description_form.html"
+    success_url = reverse_lazy("table_description_list")
+    form_class = TableDescriptionForm
+
+
+class TableDescriptionUpdateView(PermissionRequiredMixin, ExplorerContextMixin, UpdateView):
+    model = TableDescription
+    permission_required = "change_permission"
+    template_name = "assistant/table_description_form.html"
+    success_url = reverse_lazy("table_description_list")
+    form_class = TableDescriptionForm
+
+
+class TableDescriptionDeleteView(PermissionRequiredMixin, ExplorerContextMixin, DeleteView):
+    model = TableDescription
+    permission_required = "change_permission"
+    template_name = "assistant/table_description_confirm_delete.html"
+    success_url = reverse_lazy("table_description_list")

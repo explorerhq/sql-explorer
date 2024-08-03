@@ -23,6 +23,7 @@ from explorer.tests.factories import QueryLogFactory, SimpleQueryFactory
 from explorer.utils import user_can_see_query
 from explorer.ee.db_connections.utils import default_db_connection
 from explorer.schema import connection_schema_cache_key, connection_schema_json_cache_key
+from explorer.assistant.models import TableDescription
 
 
 def reload_app_settings():
@@ -1071,12 +1072,6 @@ class DatabaseConnectionValidateViewTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(response.content, {"success": False, "error": "Invalid form data"})
 
-    def test_validate_connection_success_alt_url(self):
-        url = reverse("explorer_connection_validate_with_pk", args=[1])
-        response = self.client.post(url, data=self.valid_data)
-        self.assertEqual(response.status_code, 200)
-        self.assertJSONEqual(response.content, {"success": True})
-
     def test_update_existing_connection(self):
         DatabaseConnection.objects.create(alias="test_alias", engine="django.db.backends.sqlite3", name=":memory:")
         response = self.client.post(self.url, data=self.valid_data)
@@ -1178,4 +1173,16 @@ class SimpleViewTests(TestCase):
 
     def test_database_connection_upload_view(self):
         response = self.client.get(reverse("explorer_upload_create"))
+        self.assertEqual(response.status_code, 200)
+
+    def test_table_description_list_view(self):
+        td = TableDescription(database_connection=default_db_connection(), table_name="foo", description="annotated")
+        td.save()
+        response = self.client.get(reverse("table_description_list"))
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(reverse("table_description_update", args=[td.pk]))
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(reverse("table_description_create"))
         self.assertEqual(response.status_code, 200)

@@ -99,6 +99,9 @@
                                 <a href="#" title="Open in playground" id="playground_button">
                                     <i class="bi-arrow-up-right-square"></i>
                                 </a>
+                                <a href="#" title="Format code (Cmd/ctrl+shift+f)" id="format_button">
+                                    <i class="bi-list-nested"></i>
+                                </a>
                             </small>
                         </div>
                     {% endif %}
@@ -116,9 +119,6 @@
                             </button>
                             <button type="button" class="btn btn-outline-primary" id="hide_schema_button" style="display: none;">
                                 {% translate "Hide Schema" %}
-                            </button>
-                            <button type="button" class="btn btn-outline-primary" id="format_button">
-                                {% translate "Format" %}
                             </button>
                         {% else %}
                             <button id="refresh_button" type="button" class="btn btn-outline-primary">{% translate "Refresh" %}</button>
@@ -150,5 +150,6 @@
 </div>
 <div class="container mt-1 text-end small">
     {% if query and can_change and tasks_enabled %}{{ form.snapshot }} {% translate "Snapshot" %}{% endif %}
+    {% if query and can_change and assistant_enabled %}{{ form.few_shot }} {% translate "Assistant Example" %}{% endif %}
 </div>
 {% endblock %}

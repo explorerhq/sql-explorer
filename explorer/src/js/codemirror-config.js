@@ -14,9 +14,14 @@ import { Prec } from "@codemirror/state";
 import {sql} from "@codemirror/lang-sql";
 import { SchemaSvc } from "./schemaService"
 
+let debounceTimeout;
+
 let updateListenerExtension = EditorView.updateListener.of((update) => {
   if (update.docChanged) {
-    document.dispatchEvent(new CustomEvent('docChanged', {}));
+    clearTimeout(debounceTimeout);
+    debounceTimeout = setTimeout(() => {
+      document.dispatchEvent(new CustomEvent('docChanged', {}));
+    }, 500);
   }
 });
 
@@ -34,12 +39,21 @@ const hideTooltipOnEsc = EditorView.domEventHandlers({
     }
 });
 
-function displaySchemaTooltip(editor, content) {
+function displaySchemaTooltip(content) {
     let tooltip = document.getElementById('schema_tooltip');
     if (tooltip) {
         tooltip.classList.remove('d-none');
         tooltip.classList.add('d-block');
-        tooltip.textContent = content;
+
+        // Clear existing content
+        tooltip.textContent = '';
+
+        content.forEach(item => {
+            let column = document.createElement('span');
+            column.textContent = item;
+            column.classList.add('mx-1')
+            tooltip.appendChild(column);
+        });
     }
 }
 
@@ -53,11 +67,11 @@ function fetchAndShowSchema(view) {
         SchemaSvc.get().then(schema => {
             let formattedSchema;
             if (schema.hasOwnProperty(tableName)) {
-                formattedSchema = JSON.stringify(schema[tableName], null, 2);
+                displaySchemaTooltip(schema[tableName]);
             } else {
-                formattedSchema = `Table '${tableName}' not found in schema for connection`;
+                const errorMsg = [`Table '${tableName}' not found in schema for connection`];
+                displaySchemaTooltip(errorMsg);
             }
-            displaySchemaTooltip(view, formattedSchema);
         });
     }
     return true;
@@ -94,6 +108,27 @@ const submitKeymapArr = [
         key: "Cmd-Enter",
         run: () => {
             document.dispatchEvent(submitEventFromCM);
+            return true;
+        }
+    }
+]
+
+
+const formatEventFromCM = new CustomEvent('formatEventFromCM', {});
+const formatKeymap = [
+    {
+        key: "Ctrl-F",
+        mac: "Cmd-F",
+        run: () => {
+            document.dispatchEvent(formatEventFromCM);
+            return true;
+        }
+    },
+    {
+        key: "Ctrl-F",
+        mac: "Cmd-F",
+        run: () => {
+            document.dispatchEvent(formatEventFromCM);
             return true;
         }
     }
@@ -136,6 +171,7 @@ export const explorerSetup = (() => [
         ...completionKeymap,
         ...lintKeymap,
         ...autocompleteKeymap,
-        ...schemaKeymap
+        ...schemaKeymap,
+        ...formatKeymap
     ])
 ])()

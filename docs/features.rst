@@ -5,7 +5,19 @@ SQL Assistant
 -------------
 - Built in integration with OpenAI (or the LLM of your choosing)
   to quickly get help with your query, with relevant schema
-  automatically injected into the prompt. Simple, effective.
+  automatically injected into the prompt.
+- The assistant tries hard to get relevant context into the prompt to the LLM, alongside your explicit request. You
+  can choose tables to include explicitly (and any tables you are reference in your SQL you will see get included as
+  well). When a table is "included", the prompt will include the schema of the table, 3 sample rows, any Table
+  Annotations you have added, and any designated "few shot examples". More on each of those below.
+- Table Annotations: Write persistent table annotations with descriptive information that will get injected into the
+  prompt for the assistant. For example, if a table is commonly joined to another table through a non-obvious foreign
+  key, you can tell the assistant about it in plain english, as an annotation to that table. Every time that table is
+  deemed 'relevant' to an assistant request, that annotation will be included alongside the schema and sample data.
+- Few-shot examples: Using the small checkbox on the bottom-right of any saved query, you can designate queries as
+  "Assistant Examples". When making an assistant request, the 'included tables' are intersected with tables referenced
+  by designated Example queries, and those queries are injected into the prompt, and the LLM is told that that these
+  are good reference queries.
 
 Database Support
 ----------------
@@ -222,8 +234,7 @@ Power tips
   view.
 - Command+Enter and Ctrl+Enter will execute a query when typing in
   the SQL editor area.
-- Hit the "Format" button to format and clean up your SQL (this is
-  non-validating -- just formatting).
+- Cmd+Shift+F (Windows: Ctrl+Shift+F) to format the SQL in the editor.
 - Use the Query Logs feature to share one-time queries that aren't
   worth creating a persistent query for. Just run your SQL in the
   playground, then navigate to ``/logs`` and share the link

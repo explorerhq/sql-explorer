@@ -9,7 +9,15 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.db import OperationalError
 from explorer.ee.db_connections.utils import default_db_connection
-from explorer.assistant.utils import sample_rows_from_table, ROW_SAMPLE_SIZE, build_prompt
+from explorer.assistant.utils import (
+    sample_rows_from_table,
+    ROW_SAMPLE_SIZE,
+    build_prompt,
+    get_relevant_few_shots,
+    get_relevant_annotation
+)
+
+from explorer.assistant.models import TableDescription
 
 
 def conn():
@@ -31,23 +39,19 @@ class TestAssistantViews(TestCase):
         }
 
     @patch("explorer.assistant.utils.openai_client")
-    @patch("explorer.assistant.utils.num_tokens_from_string")
-    def test_do_modify_query(self, mocked_num_tokens, mocked_openai_client):
+    def test_do_modify_query(self, mocked_openai_client):
         from explorer.assistant.views import run_assistant
 
         # create.return_value should match: resp.choices[0].message
         mocked_openai_client.return_value.chat.completions.create.return_value = Mock(
             choices=[Mock(message=Mock(content="smart computer"))])
-        mocked_num_tokens.return_value = 100
         resp = run_assistant(self.request_data, None)
         self.assertEqual(resp, "smart computer")
 
     @patch("explorer.assistant.utils.openai_client")
-    @patch("explorer.assistant.utils.num_tokens_from_string")
-    def test_assistant_help(self, mocked_num_tokens, mocked_openai_client):
+    def test_assistant_help(self, mocked_openai_client):
         mocked_openai_client.return_value.chat.completions.create.return_value = Mock(
             choices=[Mock(message=Mock(content="smart computer"))])
-        mocked_num_tokens.return_value = 100
         resp = self.client.post(reverse("assistant"),
                                 data=json.dumps(self.request_data),
                                 content_type="application/json")
@@ -57,38 +61,45 @@ class TestAssistantViews(TestCase):
 @unittest.skipIf(not app_settings.has_assistant(), "assistant not enabled")
 class TestBuildPrompt(TestCase):
 
-    @patch("explorer.assistant.utils.sample_rows_from_tables", return_value="sample data")
-    @patch("explorer.assistant.utils.fits_in_window", return_value=True)
     @patch("explorer.models.ExplorerValue.objects.get_item")
-    def test_build_prompt_with_vendor_only(self, mock_get_item, mock_fits_in_window, mock_sample_rows):
+    def test_build_prompt_with_vendor_only(self, mock_get_item):
+        mock_get_item.return_value.value = "system prompt"
+        result = build_prompt(default_db_connection(),
+                              "Help me with SQL", [], sql="SELECT * FROM table;")
+        self.assertIn("sqlite", result["system"])
+
+    @patch("explorer.assistant.utils.sample_rows_from_table", return_value="sample data")
+    @patch("explorer.assistant.utils.table_schema", return_value=[])
+    @patch("explorer.models.ExplorerValue.objects.get_item")
+    def test_build_prompt_with_sql_and_annotation(self, mock_get_item, mock_table_schema, mock_sample_rows):
         mock_get_item.return_value.value = "system prompt"
 
-        included_tables = []
-
-        result = build_prompt(default_db_connection(), "Help me with SQL", included_tables)
-        self.assertIn("## Database Vendor / SQL Flavor is sqlite", result["user"])
-        self.assertIn("## User's Request to Assistant ##\n\nHelp me with SQL\n\n", result["user"])
-        self.assertEqual(result["system"], "system prompt")
-
-    @patch("explorer.assistant.utils.sample_rows_from_tables", return_value="sample data")
-    @patch("explorer.assistant.utils.fits_in_window", return_value=True)
-    @patch("explorer.models.ExplorerValue.objects.get_item")
-    def test_build_prompt_with_sql(self, mock_get_item, mock_fits_in_window, mock_sample_rows):
-        mock_get_item.return_value.value = "system prompt"
-
-        included_tables = []
+        included_tables = ["foo"]
+        td = TableDescription(database_connection=default_db_connection(), table_name="foo", description="annotated")
+        td.save()
 
         result = build_prompt(default_db_connection(),
                               "Help me with SQL", included_tables, sql="SELECT * FROM table;")
-        self.assertIn("## Database Vendor / SQL Flavor is sqlite", result["user"])
-        self.assertIn("## Existing SQL ##\n\nSELECT * FROM table;\n\n", result["user"])
-        self.assertIn("## User's Request to Assistant ##\n\nHelp me with SQL\n\n", result["user"])
-        self.assertEqual(result["system"], "system prompt")
+        self.assertIn("Usage Notes:\nannotated", result["user"])
 
-    @patch("explorer.assistant.utils.sample_rows_from_tables", return_value="sample data")
-    @patch("explorer.assistant.utils.fits_in_window", return_value=True)
+    @patch("explorer.assistant.utils.sample_rows_from_table", return_value="sample data")
+    @patch("explorer.assistant.utils.table_schema", return_value=[])
     @patch("explorer.models.ExplorerValue.objects.get_item")
-    def test_build_prompt_with_sql_and_error(self, mock_get_item, mock_fits_in_window, mock_sample_rows):
+    def test_build_prompt_with_few_shot(self, mock_get_item, mock_table_schema, mock_sample_rows):
+        mock_get_item.return_value.value = "system prompt"
+
+        included_tables = ["magic"]
+        SimpleQueryFactory(title="Few shot", description="the quick brown fox", sql="select 'magic value';",
+                           few_shot=True)
+
+        result = build_prompt(default_db_connection(),
+                              "Help me with SQL", included_tables, sql="SELECT * FROM table;")
+        self.assertIn("Relevant example queries", result["user"])
+        self.assertIn("magic value", result["user"])
+
+    @patch("explorer.assistant.utils.sample_rows_from_table", return_value="sample data")
+    @patch("explorer.models.ExplorerValue.objects.get_item")
+    def test_build_prompt_with_sql_and_error(self, mock_get_item, mock_sample_rows):
         mock_get_item.return_value.value = "system prompt"
 
         included_tables = []
@@ -96,45 +107,22 @@ class TestBuildPrompt(TestCase):
         result = build_prompt(default_db_connection(),
                               "Help me with SQL", included_tables,
                               "Syntax error", "SELECT * FROM table;")
-        self.assertIn("## Database Vendor / SQL Flavor is sqlite", result["user"])
-        self.assertIn("## Existing SQL ##\n\nSELECT * FROM table;\n\n", result["user"])
-        self.assertIn("## Query Error ##\n\nSyntax error\n\n", result["user"])
-        self.assertIn("## User's Request to Assistant ##\n\nHelp me with SQL\n\n", result["user"])
-        self.assertEqual(result["system"], "system prompt")
+        self.assertIn("## Existing User-Written SQL ##\nSELECT * FROM table;", result["user"])
+        self.assertIn("## Query Error ##\nSyntax error\n", result["user"])
+        self.assertIn("## User's Request to Assistant ##\nHelp me with SQL", result["user"])
+        self.assertIn("system prompt", result["system"])
 
-    @patch("explorer.assistant.utils.sample_rows_from_tables", return_value="sample data")
-    @patch("explorer.assistant.utils.fits_in_window", return_value=True)
     @patch("explorer.models.ExplorerValue.objects.get_item")
-    def test_build_prompt_with_extra_tables_fitting_window(self, mock_get_item, mock_fits_in_window, mock_sample_rows):
+    def test_build_prompt_with_extra_tables_fitting_window(self, mock_get_item):
         mock_get_item.return_value.value = "system prompt"
 
-        included_tables = ["table1", "table2"]
+        included_tables = ["explorer_query"]
+        SimpleQueryFactory()
 
         result = build_prompt(default_db_connection(), "Help me with SQL",
                               included_tables, sql="SELECT * FROM table;")
-        self.assertIn("## Database Vendor / SQL Flavor is sqlite", result["user"])
-        self.assertIn("## Existing SQL ##\n\nSELECT * FROM table;\n\n", result["user"])
-        self.assertIn("## Table Structure with Sampled Data ##\n\nsample data\n\n", result["user"])
-        self.assertIn("## User's Request to Assistant ##\n\nHelp me with SQL\n\n", result["user"])
-        self.assertEqual(result["system"], "system prompt")
-
-    @patch("explorer.assistant.utils.sample_rows_from_tables", return_value="sample data")
-    @patch("explorer.assistant.utils.fits_in_window", return_value=False)
-    @patch("explorer.assistant.utils.tables_from_schema_info", return_value="table structure")
-    @patch("explorer.models.ExplorerValue.objects.get_item")
-    def test_build_prompt_with_extra_tables_not_fitting_window(self, mock_get_item, mock_tables_from_schema_info,
-                                                               mock_fits_in_window, mock_sample_rows):
-        mock_get_item.return_value.value = "system prompt"
-
-        included_tables = ["table1", "table2"]
-
-        result = build_prompt(default_db_connection(), "Help me with SQL",
-                              included_tables, sql="SELECT * FROM table;")
-        self.assertIn("## Database Vendor / SQL Flavor is sqlite", result["user"])
-        self.assertIn("## Existing SQL ##\n\nSELECT * FROM table;\n\n", result["user"])
-        self.assertIn("## Table Structure ##\n\ntable structure\n\n", result["user"])
-        self.assertIn("## User's Request to Assistant ##\n\nHelp me with SQL\n\n", result["user"])
-        self.assertEqual(result["system"], "system prompt")
+        self.assertIn("## Information for Table 'explorer_query' ##", result["user"])
+        self.assertIn("Sample rows:\nid | title", result["user"])
 
 
 @unittest.skipIf(not app_settings.has_assistant(), "assistant not enabled")
@@ -161,10 +149,10 @@ class TestPromptContext(TestCase):
         header, row = ret
 
         self.assertEqual(header, ["col1", "col2"])
-        self.assertEqual(row[0], "a" * 500 + "...")
+        self.assertEqual(row[0], "a" * 200 + "...")
         self.assertEqual(row[1], "short string")
 
-    def test_truncates_long_binary_data(self):
+    def test_binary_data(self):
         long_binary = b"a" * 600
 
         # Mock database connection and cursor
@@ -179,8 +167,8 @@ class TestPromptContext(TestCase):
         header, row = ret
 
         self.assertEqual(header, ["col1", "col2"])
-        self.assertEqual(row[0], b"a" * 500 + b"...")
-        self.assertEqual(row[1], b"short binary")
+        self.assertEqual(row[0], "<binary_data>")
+        self.assertEqual(row[1], "<binary_data>")
 
     def test_handles_various_data_types(self):
         # Mock database connection and cursor
@@ -217,24 +205,12 @@ class TestPromptContext(TestCase):
             ["val1", "val2"],
         ]
         ret = format_rows_from_table(d)
-        self.assertEqual(ret, "col1 | col2\n" + "-" * 50 + "\nval1 | val2\n")
-
-    def test_parsing_tables_from_query(self):
-        from explorer.assistant.utils import get_table_names_from_query
-        sql = "SELECT * FROM explorer_query"
-        ret = get_table_names_from_query(sql)
-        self.assertEqual(ret, ["explorer_query"])
-
-    def test_parsing_tables_from_no_tables(self):
-        from explorer.assistant.utils import get_table_names_from_query
-        sql = "select 1;"
-        ret = get_table_names_from_query(sql)
-        self.assertEqual(ret, [])
+        self.assertEqual(ret, "col1 | col2\nval1 | val2")
 
     def test_schema_info_from_table_names(self):
-        from explorer.assistant.utils import tables_from_schema_info
-        ret = tables_from_schema_info(default_db_connection(), ["explorer_query"])
-        expected = [("explorer_query", [
+        from explorer.assistant.utils import table_schema
+        ret = table_schema(default_db_connection(), "explorer_query")
+        expected = [
             ("id", "AutoField"),
             ("title", "CharField"),
             ("sql", "TextField"),
@@ -244,26 +220,65 @@ class TestPromptContext(TestCase):
             ("created_by_user_id", "IntegerField"),
             ("snapshot", "BooleanField"),
             ("connection", "CharField"),
-            ("database_connection_id", "IntegerField")])]
+            ("database_connection_id", "IntegerField"),
+            ("few_shot", "BooleanField")]
         self.assertEqual(ret, expected)
 
 
 @unittest.skipIf(not app_settings.has_assistant(), "assistant not enabled")
 class TestAssistantUtils(TestCase):
 
-    def test_sample_rows_from_tables(self):
-        from explorer.assistant.utils import sample_rows_from_tables
+    def test_sample_rows_from_table(self):
+        from explorer.assistant.utils import sample_rows_from_table, format_rows_from_table
         SimpleQueryFactory(title="First Query")
         SimpleQueryFactory(title="Second Query")
         QueryLogFactory()
-        ret = sample_rows_from_tables(conn(), ["explorer_query", "explorer_querylog"])
+        ret = sample_rows_from_table(conn(), "explorer_query")
+        self.assertEqual(len(ret), ROW_SAMPLE_SIZE)
+        ret = format_rows_from_table(ret)
         self.assertTrue("First Query" in ret)
         self.assertTrue("Second Query" in ret)
-        self.assertTrue("explorer_querylog" in ret)
 
-    def test_sample_rows_from_tables_no_tables(self):
-        from explorer.assistant.utils import sample_rows_from_tables
+    def test_sample_rows_from_tables_no_table_match(self):
+        from explorer.assistant.utils import sample_rows_from_table
         SimpleQueryFactory(title="First Query")
         SimpleQueryFactory(title="Second Query")
-        ret = sample_rows_from_tables(conn(), [])
-        self.assertEqual(ret, "")
+        ret = sample_rows_from_table(conn(), "banana")
+        self.assertEqual(ret, [["no such table: banana"]])
+
+    def test_relevant_few_shots(self):
+        relevant_q1 = SimpleQueryFactory(sql="select * from relevant_table", few_shot=True)
+        relevant_q2 = SimpleQueryFactory(sql="select * from conn.RELEVANT_TABLE limit 10", few_shot=True)
+        irrelevant_q2 = SimpleQueryFactory(sql="select * from conn.RELEVANT_TABLE limit 10", few_shot=False)
+        relevant_q3 = SimpleQueryFactory(sql="select * from conn.another_good_table limit 10", few_shot=True)
+        irrelevant_q1 = SimpleQueryFactory(sql="select * from irrelevant_table")
+        included_tables = ["relevant_table", "ANOTHER_GOOD_TABLE"]
+        res = get_relevant_few_shots(relevant_q1.database_connection, included_tables)
+        res_ids = [td.id for td in res]
+        self.assertIn(relevant_q1.id, res_ids)
+        self.assertIn(relevant_q2.id, res_ids)
+        self.assertIn(relevant_q3.id, res_ids)
+        self.assertNotIn(irrelevant_q1.id, res_ids)
+        self.assertNotIn(irrelevant_q2.id, res_ids)
+
+    def test_get_relevant_annotations(self):
+
+        relevant1 = TableDescription(
+            database_connection=default_db_connection(),
+            table_name="fruit"
+        )
+        relevant2 = TableDescription(
+            database_connection=default_db_connection(),
+            table_name="Vegetables"
+        )
+        irrelevant = TableDescription(
+            database_connection=default_db_connection(),
+            table_name="animals"
+        )
+        relevant1.save()
+        relevant2.save()
+        irrelevant.save()
+        res1 = get_relevant_annotation(default_db_connection(), "Fruit")
+        self.assertEqual(relevant1.id, res1.id)
+        res2 = get_relevant_annotation(default_db_connection(), "vegetables")
+        self.assertEqual(relevant2.id, res2.id)

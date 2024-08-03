@@ -19,6 +19,7 @@
     <input type="hidden" id="csrfCookieName" value="{% firstof csrf_cookie_name 'csrftoken' %}">
     <input type="hidden" id="csrfTokenInDOM" value="{% firstof csrf_token_in_dom False %}">
     <input type="hidden" id="clientRoute" value="{{ request.resolver_match.url_name }}">
+    <input type="hidden" id="baseUrlPath" value="{% url 'explorer_index' %}">
 {% if vite_dev_mode %}
     <div class="vite-not-running-canary" style="text-align:center;">
         <hr>
@@ -63,6 +64,12 @@ npm run dev
                             <a class="nav-link{% if view_name == 'explorer_connections' %} active{% endif %}"
                                href="{% url 'explorer_connections' %}"><i class="small me-1 bi-globe"></i>{% translate "Connections" %}</a>
                         </li>
+                        {% if assistant_enabled %}
+                            <li class="nav-item">
+                                <a class="nav-link{% if view_name == 'table_description_list' %} active{% endif %}"
+                                   href="{% url 'table_description_list' %}"><i class="small me-1 bi-bank2"></i>{% translate "Annotations" %}</a>
+                            </li>
+                        {% endif %}
                     {% endif %}
                 {% endif %}
                 <li class="nav-item">

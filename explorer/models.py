@@ -9,8 +9,6 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from explorer import app_settings
-# import the models so that the migration tooling knows the assistant models are part of the explorer app
-from explorer.assistant import models as assistant_models  # noqa
 from explorer.telemetry import Stat, StatNames
 from explorer.utils import (
     extract_params, get_params_for_url, get_s3_bucket, passes_blacklist, s3_url,
@@ -21,7 +19,7 @@ from explorer.ee.db_connections.utils import default_db_connection
 
 # Issue #618. All models must be imported so that Django understands how to manage migrations for the app
 from explorer.ee.db_connections.models import DatabaseConnection  # noqa
-from explorer.assistant.models import PromptLog  # noqa
+from explorer.assistant.models import PromptLog, TableDescription  # noqa
 
 MSG_FAILED_BLACKLIST = "Query failed the SQL blacklist: %s"
 
@@ -58,6 +56,8 @@ class Query(models.Model):
         )
     )
     database_connection = models.ForeignKey(to=DatabaseConnection, on_delete=models.SET_NULL, null=True)
+    few_shot = models.BooleanField(default=False, help_text=_(
+        "Will be included as a good example of SQL in assistant queries that use relevant tables"))
 
     def __init__(self, *args, **kwargs):
         self.params = kwargs.get("params")

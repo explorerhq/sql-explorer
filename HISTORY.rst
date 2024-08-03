@@ -7,13 +7,40 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 vNext
 ===========================
-* `#660`_: Userspace connection migration. This should be an invisible change, but represents a significant refactor of how connections function.
-Instead of a weird blend of DatabaseConnection models and underlying Django models (which were the original Explorer connections),
-this migrates all connections to DatabaseConnection models and implements proper foreign keys to them on the Query and QueryLog models.
-A data migration creates new DatabaseConnection models based on the configured settings.EXPLORER_CONNECTIONS.
-Going forward, admins can create new Django-backed DatabaseConnection models by registering the connection in EXPLORER_CONNECTIONS, and then creating a
-DatabaseConnection model using the Django admin or the user-facing /connections/new/ form, and entering the Django DB alias and setting the connection type to "Django Connection"
+* Keyboard shortcut for formatting the SQL in the editor.
 
+  - Cmd+Shift+F (Windows: Ctrl+Shift+F)
+  - The format button has been moved tobe a small icon towards the bottom-right of the SQL editor.
+
+* `#664`_: Improvements to the AI SQL Assistant:
+
+  - Table Annotations: Write persistent table annotations with descriptive information that will get injected into the
+    prompt for the assistant. For example, if a table is commonly joined to another table through a non-obvious foreign
+    key, you can tell the assistant about it in plain english, as an annotation to that table. Every time that table is
+    deemed 'relevant' to an assistant request, that annotation will be included alongside the schema and sample data.
+  - Few-Shot Examples: Using the small checkbox on the bottom-right of any saved queries, you can designate certain
+    queries as 'few shot examples". When making an assistant request, any designated few-shot examples that reference
+    the same tables as your assistant request will get included as 'reference sql' in the prompt for the LLM.
+  - Autocomplete / multiselect when selecting tables info to send to the SQL Assistant. Much easier and more keyboard
+    focused.
+  - Relevant tables are added client-side visually, in real time, based on what's in the SQL editor. The dependency on
+    sql_metadata is therefore removed, as server-side SQL parsing is no longer necessary
+  - Improved system prompt that emphasizes the particular SQL dialect being used.
+  - Addresses issue #657.
+
+* `#660`_: Userspace connection migration.
+
+  - This should be an invisible change, but represents a significant refactor of how connections function. Instead of a
+    weird blend of DatabaseConnection models and underlying Django models (which were the original Explorer
+    connections), this migrates all connections to DatabaseConnection models and implements proper foreign keys to them
+    on the Query and QueryLog models. A data migration creates new DatabaseConnection models based on the configured
+    settings.EXPLORER_CONNECTIONS. Going forward, admins can create new Django-backed DatabaseConnection models by
+    registering the connection in EXPLORER_CONNECTIONS, and then creating a DatabaseConnection model using the Django
+    admin or the user-facing /connections/new/ form, and entering the Django DB alias and setting the connection type
+    to "Django Connection".
+  - The Query.connection and QueryLog.connection fields are deprecated and will be removed in a future release. They
+    are kept around in this release in case there is an unforeseen issue with the migration. Preserving the fields for
+    now ensures there is no data loss in the event that a rollback to an earlier version is required.
 
 `5.2.0`_ (2024-08-19)
 ===========================

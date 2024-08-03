@@ -1,9 +1,9 @@
 import {getCsrfToken} from "./csrf";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
-import * as bootstrap from 'bootstrap';
-import List from "list.js";
+import * as bootstrap from "bootstrap";
 import { SchemaSvc, getConnElement } from "./schemaService"
+import Choices from "choices.js"
 
 function getErrorMessage() {
     const errorElement = document.querySelector('.alert-danger.db-error');
@@ -11,58 +11,73 @@ function getErrorMessage() {
 }
 
 function setupTableList() {
+
+    if(window.assistantChoices) {
+        window.assistantChoices.destroy();
+    }
+
     SchemaSvc.get().then(schema => {
         const keys = Object.keys(schema);
-        const tableList = document.getElementById('table-list');
-        tableList.innerHTML = '';
+        const selectElement = document.createElement('select');
+        selectElement.className = 'js-choice';
+        selectElement.toggleAttribute('multiple');
+        selectElement.toggleAttribute('data-trigger');
 
-        keys.forEach((key, index) => {
-            const div = document.createElement('div');
-            div.className = 'form-check';
-
-            const input = document.createElement('input');
-            input.className = 'form-check-input table-checkbox';
-            input.type = 'checkbox';
-            input.value = key;
-            input.id = 'flexCheckDefault' + index;
-
-            const label = document.createElement('label');
-            label.className = 'form-check-label';
-            label.setAttribute('for', input.id);
-            label.textContent = key;
-
-            div.appendChild(input);
-            div.appendChild(label);
-            tableList.appendChild(div);
+        keys.forEach((key) => {
+            const option = document.createElement('option');
+            option.value = key;
+            option.textContent = key;
+            selectElement.appendChild(option);
         });
 
-        let options = {
-            valueNames: ['form-check-label'],
-        };
+        const tableList = document.getElementById('table-list');
+        tableList.innerHTML = '';
+        tableList.appendChild(selectElement);
 
-        new List('additional_table_container', options);
+        const choices = new Choices('.js-choice', {
+            removeItemButton: true,
+            searchEnabled: true,
+            shouldSort: false,
+            placeholder: true,
+            placeholderValue: 'Relevant tables',
+            position: 'bottom'
+        });
+
+        // TODO - nasty. Should be refactored. Used by submitAssistantAsk to get relevant tables.
+        window.assistantChoices = choices;
 
         const selectAllButton = document.getElementById('select_all_button');
-        const checkboxes = document.querySelectorAll('.table-checkbox');
-
-        let selectState = 'all';
-
-        selectAllButton.innerHTML = 'Select All';
-
         selectAllButton.addEventListener('click', (e) => {
             e.preventDefault();
-            const isSelectingAll = selectState === 'all';
-            checkboxes.forEach((checkbox) => {
-                checkbox.checked = isSelectingAll;
+            choices.setChoiceByValue(keys);
+        });
+
+        const deselectAllButton = document.getElementById('deselect_all_button');
+        deselectAllButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            keys.forEach(k => {
+                choices.removeActiveItemsByValue(k);
             });
-            selectState = isSelectingAll ? 'none' : 'all';
-            selectAllButton.innerHTML = isSelectingAll ? 'Deselect All' : 'Select All';
+        });
+
+        selectRelevantTables(choices, keys);
+
+        document.addEventListener('docChanged', (e) => {
+            selectRelevantTables(choices, keys);
         });
     })
     .catch(error => {
         console.error('Error retrieving JSON schema:', error);
     });
 }
+
+function selectRelevantTables(choices, keys) {
+    const textContent = window.editor.state.doc.toString();
+    const textWords = new Set(textContent.split(/\s+/));
+    const hasKeys = keys.filter(key => textWords.has(key));
+    choices.setChoiceByValue(hasKeys);
+}
+
 
 export function setUpAssistant(expand = false) {
 
@@ -71,13 +86,13 @@ export function setUpAssistant(expand = false) {
 
     const error = getErrorMessage();
 
-    if(expand || error) {
+    if (expand || error) {
         const myCollapseElement = document.getElementById('assistant_collapse');
         const bsCollapse = new bootstrap.Collapse(myCollapseElement, {
-          toggle: false
+            toggle: false
         });
         bsCollapse.show();
-        if(error) {
+        if (error) {
             document.getElementById('id_error_help_message').classList.remove('d-none');
         }
     }
@@ -85,7 +100,7 @@ export function setUpAssistant(expand = false) {
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
-    document.getElementById('id_assistant_input').addEventListener('keydown', function(event) {
+    document.getElementById('id_assistant_input').addEventListener('keydown', function (event) {
         if ((event.ctrlKey || event.metaKey) && (event.key === 'Enter')) {
             event.preventDefault();
             submitAssistantAsk();
@@ -97,15 +112,11 @@ export function setUpAssistant(expand = false) {
 
 function submitAssistantAsk() {
 
-    const selectedTables = Array.from(
-        document.querySelectorAll('.table-checkbox:checked')
-    ).map(cb => cb.value);
-
     const data = {
         sql: window.editor?.state.doc.toString() ?? null,
         connection_id: document.getElementById("id_database_connection")?.value ?? null,
         assistant_request: document.getElementById("id_assistant_input")?.value ?? null,
-        selected_tables: selectedTables,
+        selected_tables: assistantChoices.getValue(true),
         db_error: getErrorMessage()
     };
 
@@ -113,7 +124,7 @@ function submitAssistantAsk() {
     document.getElementById("response_block").classList.remove('d-none');
     document.getElementById("assistant_spinner").classList.remove('d-none');
 
-    fetch('../assistant/', {
+    fetch(`${window.baseUrlPath}assistant/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

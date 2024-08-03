@@ -1,0 +1,14 @@
+{% extends "explorer/base.html" %}
+
+{% block sql_explorer_content %}
+<div class="container mt-5">
+  <h1>Confirm Delete</h1>
+  <p>Are you sure you want to delete the table description for "{{ object.table_name }}" in {{ object.connection.alias }}?</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-secondary">Confirm Delete</button>
+    <a href="{% url 'table_description_list' %}" class="btn btn-info">Cancel</a>
+  </form>
+</div>
+{% endblock %}
+

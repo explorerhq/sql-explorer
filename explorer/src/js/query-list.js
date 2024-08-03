@@ -60,7 +60,7 @@ function setUpEmailCsv() {
     }
     let handleEmailCsvSubmit = function (e) {
         let email = document.querySelector('#emailCsvInput').value;
-        let url = '/' + curQueryEmailId + '/email_csv?email=' + email;
+        let url =`${window.baseUrlPath}${curQueryEmailId}/email_csv?email=${email}`;
         if (isValidEmail(email)) {
             fetch(url, {
                 method: 'POST',

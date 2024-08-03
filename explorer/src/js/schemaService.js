@@ -9,7 +9,7 @@ const fetchSchema = async () => {
     }
 
     try {
-        const response = await fetch(`../schema.json/${conn}`);
+        const response = await fetch(`${window.baseUrlPath}schema.json/${conn}`);
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
