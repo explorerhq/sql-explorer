@@ -169,7 +169,49 @@ Multiple Connections
   multi-connection setup.
 - SQL Explorer also supports user-provided connections in the form
   of standard database connection details, or uploading CSV, JSON or SQLite
-  files. See the 'User uploads' section of :doc:`settings`.
+  files.
+
+File Uploads
+------------
+
+Upload CSV or JSON files, or SQLite databases to immediately create connections for querying.
+
+The base name of the file and the ID of the uploaded is used as the database name, to prevent collisions from multiple
+users uploading a file with the same name. The base name of the file is also used as the table name (e.g. uploading
+customers.csv results in a database file named customers_1.db, with a table named 'customers').
+
+Of interest, you can also append uploaded files to previously uploaded data sources. For example, if you had a
+'customers.csv' file and an 'orders.csv' file, you could upload customers.csv and create a new data source. You can
+then go back and upload orders.csv with the 'Append' drop-down set to your newly-created customers database, and you
+will have a resulting SQLite database connection with both tables available to be queried together. If you were to
+upload a new 'orders.csv' and append it to customers, the table 'orders' would be *fully replaced* with the new file.
+
+**How it works**
+
+1. Your file is uploaded to the web server. For CSV files, the first row is assumed to be a header.
+2. It is read into a Pandas dataframe. Many fields end up as strings that are in fact numeric or datetimes.
+3. During this step, if it is a json file, the json is 'normalized'. E.g. nested objects are flattened.
+4. A customer parser runs type-detection on each column for richer typer information.
+5. The dataframe is coerced to these more accurate types.
+6. The dataframe is written to a SQLite file, which is present on the server, and uploaded to S3.
+7. The SQLite database is added as a new connection to SQL Explorer and is available for querying, just like any
+   other data source.
+8. If the SQLite file is not available locally, it will be pulled on-demand from S3 when needed.
+9. Local SQLite files are periodically cleaned up by a recurring task after (by default) 7 days of inactivity.
+
+Note that if the upload is a SQLite database, steps 2-5 are skipped and the database is simply uploaded to S3 and made
+available for querying.
+
+**File formats**
+
+- Supports well-formed .csv, and .json files. Also supports .json files where each line of the file is a separate json
+  object. See /explorer/tests/json/ in the source for examples of what is supported.
+- Supports SQLite files with a .db or .sqlite extension. The validity of the SQLite file is not fully checked until
+  a query is attempted.
+
+**Configuration**
+
+- See the 'User uploads' section of :doc:`settings` for configuration details.
 
 Power tips
 ----------

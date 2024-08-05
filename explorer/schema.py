@@ -73,6 +73,14 @@ def schema_info(connection_alias):
         return build_schema_cache_async(connection_alias)
 
 
+def clear_schema_cache(connection_alias):
+    key = connection_schema_cache_key(connection_alias)
+    cache.delete(key)
+
+    key = connection_schema_json_cache_key(connection_alias)
+    cache.delete(key)
+
+
 def build_schema_info(connection_alias):
     """
         Construct schema information via engine-specific queries of the

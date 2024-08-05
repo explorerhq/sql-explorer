@@ -2,7 +2,7 @@ from django.db import DatabaseError
 from django.db.utils import load_backend
 import os
 import json
-
+import hashlib
 import sqlite3
 import io
 
@@ -21,29 +21,23 @@ def upload_sqlite(db_bytes, path):
 # to this new database connection. Oops!
 # TODO: In the future, queries should probably be FK'ed to the ID of the connection, rather than simply
 #       storing the alias of the connection as a string.
-def create_connection_for_uploaded_sqlite(filename, user_id, s3_path):
+def create_connection_for_uploaded_sqlite(filename, s3_path):
     from explorer.models import DatabaseConnection
-    base, ext = os.path.splitext(filename)
-    filename = f"{base}_{user_id}{ext}"
     return DatabaseConnection.objects.create(
-        alias=f"{filename}",
+        alias=filename,
         engine=DatabaseConnection.SQLITE,
         name=filename,
-        host=s3_path
+        host=s3_path,
     )
 
 
 def get_sqlite_for_connection(explorer_connection):
-    from explorer.utils import get_s3_bucket
-
     # Get the database from s3, then modify the connection to work with the downloaded file.
     # E.g. "host" should not be set, and we need to get the full path to the file
-    local_name = explorer_connection.local_name
-    if not os.path.exists(local_name):
-        s3 = get_s3_bucket()
-        s3.download_file(explorer_connection.host, local_name)
+    explorer_connection.download_sqlite_if_needed()
+    # Note the order here is important; .local_name checked "is_upload" which relies on .host being set
+    explorer_connection.name = explorer_connection.local_name
     explorer_connection.host = None
-    explorer_connection.name = local_name
     return explorer_connection
 
 
@@ -52,6 +46,10 @@ def user_dbs_local_dir():
     if not os.path.exists(d):
         os.makedirs(d)
     return d
+
+
+def uploaded_db_local_path(name):
+    return os.path.join(user_dbs_local_dir(), name)
 
 
 def create_django_style_connection(explorer_connection):
@@ -87,24 +85,45 @@ def create_django_style_connection(explorer_connection):
         raise DatabaseError(f"Failed to create explorer connection: {e}") from e
 
 
-def pandas_to_sqlite(df, local_path="local_database.db"):
-    # Write the DataFrame to a local SQLite database
-    # In theory, it would be nice to write the dataframe to an in-memory SQLite DB, and then dump the bytes from that
-    # but there is no way to get to the underlying bytes from an in-memory SQLite DB
-    con = sqlite3.connect(local_path)
-    try:
-        df.to_sql(name="data", con=con, if_exists="replace", index=False)
-    finally:
-        con.close()
+def sqlite_to_bytesio(local_path):
+    # Write the file to disk. It'll be uploaded to s3, and left here locally for querying
+    db_file = io.BytesIO()
+    with open(local_path, "rb") as f:
+        db_file.write(f.read())
+    db_file.seek(0)
+    return db_file
 
-    # Read the local SQLite database file into a BytesIO buffer
+
+def pandas_to_sqlite(df, table_name, local_path):
+    # Write the DataFrame to a local SQLite database and return it as a BytesIO object.
+    # This intentionally leaves the sqlite db on the local disk so that it is ready to go for
+    # querying immediately after the connection has been created. Removing it would also be OK, since
+    # the system knows to re-download it if it's not available, but this saves an extra download from S3.
+    conn = sqlite3.connect(local_path)
+
     try:
-        db_file = io.BytesIO()
-        with open(local_path, "rb") as f:
-            db_file.write(f.read())
-        db_file.seek(0)
-        return db_file
+        df.to_sql(table_name, conn, if_exists="replace", index=False)
     finally:
-        # Delete the local SQLite database file
-        # Finally block to ensure we don't litter files around
-        os.remove(local_path)
+        conn.commit()
+        conn.close()
+
+    return sqlite_to_bytesio(local_path)
+
+
+def quick_hash(file_path, num_samples=10, sample_size=1024):
+    hasher = hashlib.sha256()
+    file_size = os.path.getsize(file_path)
+
+    if file_size == 0:
+        return hasher.hexdigest()
+
+    sample_interval = file_size // num_samples
+    with open(file_path, "rb") as f:
+        for i in range(num_samples):
+            f.seek(i * sample_interval)
+            sample_data = f.read(sample_size)
+            if not sample_data:
+                break
+            hasher.update(sample_data)
+
+    return hasher.hexdigest()

@@ -936,7 +936,7 @@ class UploadDbViewTest(TestCase):
     def test_upload_file(self, mock_upload_sqlite):
         self.assertFalse(DatabaseConnection.objects.filter(alias__contains="kings").exists())
 
-        # Test data file
+        # Upload some JSON
         file_path = os.path.join(os.getcwd(), "explorer/tests/json/kings.json")
         with open(file_path, "rb") as f:
             response = self.client.post(reverse("explorer_upload"), {"file": f})
@@ -945,22 +945,31 @@ class UploadDbViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(mock_upload_sqlite.call_count, 1)
 
-        # Now write the SQLite bytes locally, to the newly-created connection's local path
-        # We are going query this new data source, and writing the bytes here preempts the system's attempt to download
-        # it from S3 since the file already exists on disk. No need to mock get_sqlite_for_connection!
+        # Query it and make sure that the reign of this particular king is indeed in the results.
         conn = DatabaseConnection.objects.filter(alias__contains="kings").first()
-        os.makedirs(os.path.dirname(conn.local_name), exist_ok=True)
-        with open(conn.local_name, "wb") as temp_file:
-            temp_file.write(mock_upload_sqlite.call_args[0][0].getvalue())
-
         resp = self.client.post(
             reverse("explorer_playground"),
-            {"sql": "select * from data where Name = 'Athelstan';", "connection": conn.alias}
+            {"sql": "select * from kings where Name = 'Athelstan';", "connection": conn.alias}
         )
-
-        # Assert that the reign of this particular king is indeed in the results.
         self.assertIn("925-940", resp.content.decode("utf-8"))
 
+        # Append a new table to the existing connection
+        file_path = os.path.join(os.getcwd(), "explorer/tests/csvs/rc_sample.csv")
+        with open(file_path, "rb") as f:
+            response = self.client.post(reverse("explorer_upload"), {"file": f, "append": conn.id})
+
+        # Make sure it got re-uploaded
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(mock_upload_sqlite.call_count, 2)
+
+        # Query it and make sure a valid result is in the response. Note this is the *same* connection.
+        resp = self.client.post(
+            reverse("explorer_playground"),
+            {"sql": "select * from rc_sample where material_type = 'Steel';", "connection": conn.alias}
+        )
+        self.assertIn("Goudurix", resp.content.decode("utf-8"))
+
+        # Clean up filesystem
         os.remove(conn.local_name)
 
     def test_post_no_file(self):
@@ -1126,3 +1135,6 @@ class SimpleViewTests(TestCase):
         response = self.client.get(reverse("explorer_connection_delete", args=[self.connection.pk]))
         self.assertEqual(response.status_code, 200)
 
+    def test_database_connection_upload_view(self):
+        response = self.client.get(reverse("explorer_upload_create"))
+        self.assertEqual(response.status_code, 200)

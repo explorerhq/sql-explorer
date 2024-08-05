@@ -1,0 +1,50 @@
+name,material_type,seating_type,speed,height,length,num_inversions,manufacturer,park,status
+Goudurix,Steel,Sit Down,75.0,37.0,950.0,7.0,Vekoma,Parc Asterix,status.operating
+Dream catcher,Steel,Suspended,45.0,25.0,600.0,0.0,Vekoma,Bobbejaanland,status.operating
+Alucinakis,Steel,Sit Down,30.0,8.0,250.0,0.0,Zamperla,Terra Mítica,status.operating
+Anaconda,Wooden,Sit Down,85.0,35.0,1200.0,0.0,William J. Cobb,Walygator Parc,status.operating
+Azteka,Steel,Sit Down,55.0,17.0,500.0,0.0,Soquet,Le Pal,status.operating
+Bat Coaster,Steel,Inverted,70.0,20.0,400.0,2.0,Pinfari,Nigloland,status.relocated
+Batman : Arkham Asylum,Steel,Inverted,80.0,32.0,823.0,5.0,B&M,Parque Warner Madrid,status.operating
+Big Thunder Mountain,Steel,Sit Down,60.0,22.0,1500.0,0.0,Vekoma,Disneyland Park,status.operating
+EqWalizer,Steel,Sit Down,76.0,36.0,285.0,3.0,Vekoma,Walibi Rhône Alpes,status.operating
+Calamity Mine,Steel,Sit Down,48.0,14.0,785.0,0.0,Vekoma,Walibi Belgium,status.operating
+"Casey Jr, le Petit Train du Cirque",Steel,Sit Down,30.0,,,0.0,Vekoma,Disneyland Park,status.operating
+Cobra,Steel,Sit Down,76.0,36.0,285.0,3.0,Vekoma,Walibi Belgium,status.operating
+Coccinelle,Steel,Sit Down,36.0,8.0,360.0,0.0,Zierer,Walibi Rhône Alpes,status.operating
+Coleoz'Arbres,Steel,Sit Down,60.0,,540.0,0.0,Schwarzkopf,Bagatelle,status.closed.definitely
+Comet,Steel,Sit Down,64.0,24.0,,3.0,Vekoma,Walygator Parc,status.operating
+Course de Bobsleigh,Steel,Sit Down,65.0,15.0,450.0,0.0,Schwarzkopf,Nigloland,status.relocated
+Cumbres,Steel,Sit Down,,3.0,,0.0,Miler Coaster,Parque de Atracciones de Madrid,status.closed.definitely
+Le Dragon de Bei Hai,Steel,Sit Down,,,,0.0,Cavazza Diego,La Mer de Sable,status.closed.definitely
+Euro Mir,Steel,Spinning,80.0,28.0,980.0,0.0,Mack,Europa Park,status.operating
+Eurosat,Steel,Sit Down,60.0,26.0,877.0,0.0,Mack,Europa Park,status.retracked
+Expedition Ge Force,Steel,Sit Down,120.0,53.0,1220.0,0.0,Intamin,Holiday Park,status.operating
+Le Grand canyon,Steel,Sit Down,50.0,12.0,380.0,0.0,Soquet,Fraispertuis City,status.operating
+Indiana Jones et le Temple du Péril,Steel,Sit Down,58.0,18.0,566.0,1.0,Intamin,Disneyland Park,status.operating
+Jaguar,Steel,Inverted,83.0,34.0,689.0,5.0,Vekoma,Isla Magica,status.operating
+Cop Car Chase (1),Steel,Sit Down,60.0,16.0,620.0,2.0,Intamin,Movie Park Germany,status.closed.definitely
+Loup Garou,Wooden,Sit Down,80.0,28.0,1035.0,0.0,Vekoma,Walibi Belgium,status.operating
+Magnus Colossus,Wooden,Sit Down,92.0,38.0,1150.0,0.0,RCCA,Terra Mítica,status.closed.temporarily
+Oki Doki,Steel,Sit Down,58.0,16.0,436.0,0.0,Vekoma,Bobbejaanland,status.operating
+SOS Numerobis,Steel,Sit Down,32.0,6.0,200.0,0.0,Zierer,Parc Asterix,status.operating
+Poseïdon,Steel,Water Coaster,70.0,23.0,836.0,0.0,Mack,Europa Park,status.operating
+Rock'n Roller Coaster avec Aerosmith,Steel,Sit Down,92.0,24.0,1037.0,3.0,Vekoma,Walt Disney Studios,status.operating
+La Ronde des Rondins,Steel,Sit Down,26.0,3.0,60.0,0.0,Zierer,Parc Asterix,status.relocated
+Silverstar,Steel,Sit Down,127.0,73.0,1620.0,0.0,B&M,Europa Park,status.operating
+Superman la Atraccion de Acero,Steel,Floorless,105.0,50.0,1200.0,7.0,B&M,Parque Warner Madrid,status.operating
+La Trace du Hourra,Steel,Bobsleigh,60.0,31.0,900.0,0.0,Mack,Parc Asterix,status.operating
+Stunt Fall,Steel,Sit Down,106.0,58.0,367.0,3.0,Vekoma,Parque Warner Madrid,status.operating
+Le Tigre de Sibérie,Steel,Sit Down,40.0,13.0,360.0,0.0,Reverchon,Le Pal,status.operating
+Titánide,Steel,Inverted,80.0,33.0,689.0,5.0,Vekoma,Terra Mítica,status.operating
+Tom y Jerry,Steel,Sit Down,36.0,8.0,360.0,0.0,Zierer,Parque Warner Madrid,status.operating
+Psyké underground,Steel,Sit Down,85.0,42.0,260.0,1.0,Schwarzkopf,Walibi Belgium,status.operating
+Tonnerre de Zeus,Wooden,Sit Down,84.0,30.0,1233.0,0.0,CCI,Parc Asterix,status.operating
+Tren Bravo (Left),Steel,Sit Down,45.0,6.0,394.0,0.0,Zamperla,Terra Mítica,status.closed.temporarily
+Typhoon,Steel,Sit Down,80.0,26.0,670.0,4.0,Gerstlauer,Bobbejaanland,status.operating
+Schweizer Bobbahn,Steel,Bobsleigh,50.0,19.0,487.0,0.0,Mack,Europa Park,status.operating
+Vampire,Steel,Inverted,80.0,33.0,689.0,5.0,Vekoma,Walibi Belgium,status.operating
+Le Vol d'Icare,Steel,Sit Down,42.0,11.0,410.0,0.0,Zierer,Parc Asterix,status.operating
+Wild Train,Steel,Sit Down,70.0,15.0,330.0,0.0,Pax,Parc Saint Paul,status.operating
+Bandit,Wooden,Sit Down,80.0,28.0,1099.0,0.0,RCCA,Movie Park Germany,status.operating
+Woodstock Express,Steel,Sit Down,,,220.0,0.0,Zamperla,Walibi Rhône Alpes,status.operating

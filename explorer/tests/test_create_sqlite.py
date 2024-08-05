@@ -1,8 +1,8 @@
 from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
-from unittest import skipIf
+from unittest import skipIf, mock
 from explorer.app_settings import EXPLORER_USER_UPLOADS_ENABLED
-from explorer.ee.db_connections.create_sqlite import parse_to_sqlite
+from explorer.ee.db_connections.create_sqlite import parse_to_sqlite, get_names
 import os
 import sqlite3
 
@@ -11,13 +11,13 @@ SQLITE_BYTES = b'SQLite format 3\x00\x10\x00\x01\x01\x00@  \x00\x00\x00\x02\x00\
 PATH = "./test_parse_to_sqlite.db"
 
 
-def write_sqlite_and_get_row(f_bytes):
+def write_sqlite_and_get_row(f_bytes, table_name):
     os.makedirs(os.path.dirname(PATH), exist_ok=True)
     with open(PATH, "wb") as temp_file:
         temp_file.write(f_bytes.getvalue())
     conn = sqlite3.connect(PATH)
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM data")
+    cursor.execute(f"SELECT * FROM {table_name}")
     rows = cursor.fetchall()
     cursor.close()
     conn.close()
@@ -28,18 +28,57 @@ def write_sqlite_and_get_row(f_bytes):
 @skipIf(not EXPLORER_USER_UPLOADS_ENABLED, reason="User uploads disabled")
 class TestCreateSqlite(TestCase):
 
+    #def test_parse_to_sqlite_with_sqlite_file
+
     def test_parse_to_sqlite(self):
         file = SimpleUploadedFile("name.csv", b"name, title\nchris,cto", content_type="text/csv")
-        sqlite_bytes, name = parse_to_sqlite(file)
-        rows = write_sqlite_and_get_row(sqlite_bytes)
+        sqlite_bytes, name = parse_to_sqlite(file, None, user_id=1)
+        rows = write_sqlite_and_get_row(sqlite_bytes, "name")
 
-        self.assertEqual(name, "name.db")
         self.assertEqual(rows[0], ("chris", "cto"))
+        self.assertEqual(name, "name_1.db")
 
     def test_parse_to_sqlite_with_no_parser(self):
         file = SimpleUploadedFile("name.db", SQLITE_BYTES, content_type="application/x-sqlite3")
-        sqlite_bytes, name = parse_to_sqlite(file)
-        rows = write_sqlite_and_get_row(sqlite_bytes)
+        sqlite_bytes, name = parse_to_sqlite(file, None, user_id=1)
+        rows = write_sqlite_and_get_row(sqlite_bytes, "data")
 
         self.assertEqual(rows[0], ("chris", "cto"))
-        self.assertEqual(name, "name.db")
+        self.assertEqual(name, "name_1.db")
+
+
+class TestGetNames(TestCase):
+    def setUp(self):
+        # Mock file object
+        self.mock_file = mock.MagicMock()
+        self.mock_file.name = "test file name.txt"
+
+        # Mock append_conn object
+        self.mock_append_conn = mock.MagicMock()
+        self.mock_append_conn.name = "/path/to/existing_db.sqlite"
+
+    def test_no_append_conn(self):
+        table_name, f_name = get_names(self.mock_file, append_conn=None, user_id=123)
+        self.assertEqual(table_name, "test_file_name")
+        self.assertEqual(f_name, "test_file_name_123.db")
+
+    def test_with_append_conn(self):
+        table_name, f_name = get_names(self.mock_file, append_conn=self.mock_append_conn, user_id=123)
+        self.assertEqual(table_name, "test_file_name")
+        self.assertEqual(f_name, "existing_db.sqlite")
+
+    def test_secure_filename(self):
+        self.mock_file.name = "测试文件.txt"
+        table_name, f_name = get_names(self.mock_file, append_conn=None, user_id=123)
+        self.assertEqual(table_name, "_")
+        self.assertEqual(f_name, "__123.db")
+
+    def test_empty_filename(self):
+        self.mock_file.name = ".txt"
+        with self.assertRaises(ValueError):
+            get_names(self.mock_file, append_conn=None, user_id=123)
+
+    def test_invalid_extension(self):
+        self.mock_file.name = "filename.exe"
+        with self.assertRaises(ValueError):
+            get_names(self.mock_file, append_conn=None, user_id=123)

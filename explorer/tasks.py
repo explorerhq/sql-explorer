@@ -18,7 +18,7 @@ if app_settings.ENABLE_TASKS:
     from celery import shared_task
     from celery.utils.log import get_task_logger
 
-    from explorer.utils import s3_upload
+    from explorer.utils import s3_csv_upload
 
     logger = get_task_logger(__name__)
 else:
@@ -42,7 +42,7 @@ def execute_query(query_id, email_address):
     exporter = get_exporter_class("csv")(q)
     random_part = "".join(random.choice(string.ascii_uppercase + string.digits) for _ in range(20))
     try:
-        url = s3_upload(f"{random_part}.csv", convert_csv_to_bytesio(exporter))
+        url = s3_csv_upload(f"{random_part}.csv", convert_csv_to_bytesio(exporter))
         subj = f'[SQL Explorer] Report "{q.title}" is ready'
         msg = f"Download results:\n\r{url}"
     except Exception as e:
@@ -69,7 +69,7 @@ def snapshot_query(query_id):
         exporter = get_exporter_class("csv")(q)
         k = "query-{}/snap-{}.csv".format(q.id, date.today().strftime("%Y%m%d-%H:%M:%S"))
         logger.info(f"Uploading snapshot for query {query_id} as {k}...")
-        url = s3_upload(k, convert_csv_to_bytesio(exporter))
+        url = s3_csv_upload(k, convert_csv_to_bytesio(exporter))
         logger.info(f"Done uploading snapshot for query {query_id}. URL: {url}")
     except Exception as e:
         logger.warning(f"Failed to snapshot query {query_id} ({e}). Retrying...")

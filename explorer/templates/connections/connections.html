@@ -6,6 +6,7 @@
     <h3>Connections</h3>
     <div class="mt-3">
         <a href="{% url 'explorer_connection_create' %}" class="btn btn-primary mb-3">Add New Connection</a>
+        <a href="{% url 'explorer_upload_create' %}" class="btn btn-primary mb-3">Upload File</a>
         <table class="table table-striped" id="connections_table">
             <thead>
                 <tr>
@@ -32,6 +33,7 @@
                         {% if connection.id %}
                             <a href="{% url 'explorer_connection_update' connection.pk %}" class="px-2"><i class="bi-pencil-square"></i></a>
                             <a href="{% url 'explorer_connection_delete' connection.pk %}"><i class="bi-trash"></i></a>
+                            <a title="Refresh schema and data. For uploads, will force a refresh from S3." href="{% url 'explorer_connection_refresh' connection.pk %}"><i class="bi-arrow-repeat"></i></a>
                         {% endif %}
                     </td>
                 </tr>

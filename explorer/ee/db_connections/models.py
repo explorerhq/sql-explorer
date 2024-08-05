@@ -1,11 +1,10 @@
 import os
-
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
-from explorer.ee.db_connections.utils import user_dbs_local_dir
+from explorer.ee.db_connections.utils import uploaded_db_local_path, quick_hash
 
 from django_cryptography.fields import encrypt
 
@@ -33,9 +32,31 @@ class DatabaseConnection(models.Model):
     host = encrypt(models.CharField(max_length=255, blank=True))
     port = models.CharField(max_length=255, blank=True)
     extras = models.JSONField(blank=True, null=True)
+    upload_fingerprint = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return f"{self.name} ({self.alias})"
+
+    def update_fingerprint(self):
+        self.upload_fingerprint = self.local_fingerprint()
+        self.save()
+
+    def local_fingerprint(self):
+        if os.path.exists(self.local_name):
+            return quick_hash(self.local_name)
+
+    def _download_sqlite(self):
+        from explorer.utils import get_s3_bucket
+        s3 = get_s3_bucket()
+        s3.download_file(self.host, self.local_name)
+
+    def download_sqlite_if_needed(self):
+        download = not os.path.exists(self.local_name) or self.local_fingerprint() != self.upload_fingerprint
+
+        if download:
+            self._download_sqlite()
+            self.update_fingerprint()
+
 
     @property
     def is_upload(self):
@@ -44,7 +65,11 @@ class DatabaseConnection(models.Model):
     @property
     def local_name(self):
         if self.is_upload:
-            return os.path.join(user_dbs_local_dir(), self.name)
+            return uploaded_db_local_path(self.name)
+
+    def delete_local_sqlite(self):
+        if self.is_upload and os.path.exists(self.local_name):
+            os.remove(self.local_name)
 
     @classmethod
     def from_django_connection(cls, connection_alias):

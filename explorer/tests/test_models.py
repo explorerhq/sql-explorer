@@ -1,5 +1,6 @@
 import unittest
-from unittest.mock import Mock, patch
+import os
+from unittest.mock import Mock, patch, MagicMock
 
 from django.core.exceptions import ValidationError
 from django.db import connections
@@ -224,6 +225,7 @@ class TestColumnSummary(TestCase):
 
 class TestDatabaseConnection(TestCase):
 
+
     def test_cant_create_a_connection_with_conflicting_name(self):
         thrown = False
         try:
@@ -257,3 +259,66 @@ class TestDatabaseConnection(TestCase):
 
         # Ensure os.makedirs was called once since the directory does not exist
         mock_makedirs.assert_called_once_with("/mocked/path/user_dbs")
+
+    @patch("explorer.utils.get_s3_bucket")
+    def test_fingerprint_is_updated_after_download_and_download_is_not_called_again(self, mock_get_s3_bucket):
+        # Setup
+        mock_s3 = mock_get_s3_bucket.return_value
+
+        connection = DatabaseConnection.objects.create(
+            alias="test",
+            engine=DatabaseConnection.SQLITE,
+            name="test_db.sqlite3",
+            host="some-s3-bucket",
+        )
+
+        # Define a function to mock S3 download
+        def mock_download_file(path, filename):
+            with open(filename, "w") as f:
+                f.write("Initial content")
+
+        mock_s3.download_file = MagicMock(side_effect=mock_download_file)
+
+        # First download
+        connection.download_sqlite_if_needed()
+
+        # Check that the file was "downloaded" (in this case, created)
+        self.assertTrue(os.path.exists(connection.local_name))
+
+        # Check that the fingerprint was updated
+        self.assertIsNotNone(connection.upload_fingerprint)
+        initial_fingerprint = connection.upload_fingerprint
+
+        # Mock S3 download to track calls
+        mock_s3.download_file.reset_mock()
+
+        # Second attempt to download
+        connection.download_sqlite_if_needed()
+
+        # Check that download was not called again
+        mock_s3.download_file.assert_not_called()
+
+        # Check that the fingerprint hasn't changed
+        connection.refresh_from_db()
+        self.assertEqual(connection.upload_fingerprint, initial_fingerprint)
+
+        # Modify the file to simulate changes
+        with open(connection.local_name, "w") as f:
+            f.write("Modified content")
+
+        # Third attempt to download
+        connection.download_sqlite_if_needed()
+
+        # Check that download was called again
+        mock_s3.download_file.assert_called_once()
+
+        # Check that the fingerprint has been updated back to the original
+        connection.refresh_from_db()
+        self.assertEqual(connection.upload_fingerprint, initial_fingerprint)
+
+    def tearDown(self):
+        # Clean up any files created during the test
+        for obj in DatabaseConnection.objects.all():
+            if os.path.exists(obj.local_name):
+                os.remove(obj.local_name)
+        DatabaseConnection.objects.all().delete()
