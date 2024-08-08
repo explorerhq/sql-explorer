@@ -9,10 +9,13 @@ function searchFocus() {
         searchElement.focus();
     }
 }
-function expandAll() {
-    document.querySelectorAll('.collapse').forEach(function(element){
-       element.classList.add('show');
-    });
+function expandAll(param) {
+    const searchTerm = document.querySelector('.search').value;
+    if (searchTerm.trim() !== "") {
+        document.querySelectorAll('.collapse').forEach(function (element) {
+            element.classList.add('show');
+        });
+    }
 }
 export function setupQueryList() {
 
@@ -23,7 +26,7 @@ export function setupQueryList() {
     let options = {
         valueNames: ['sort-name', 'sort-created', 'sort-created', 'sort-last-run', 'sort-run-count', 'sort-connection'],
         handlers: {'updated': [searchFocus],
-                   'searchStart': [expandAll]},
+                   'searchComplete': [expandAll]},
         searchDelay: 250,
         searchColumns: ['sort-name']
     };
