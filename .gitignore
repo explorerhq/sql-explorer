@@ -26,3 +26,5 @@ user_dbs/*
 tmp2
 chinook.sqlite
 model_data.json
+tst1
+tst1-journal

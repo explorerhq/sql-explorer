@@ -105,7 +105,7 @@ EXPLORER_USER_QUERY_VIEWS = {}
 # Tasks disabled by default, but if you have celery installed
 # make sure the broker URL is set correctly
 EXPLORER_TASKS_ENABLED = False
-CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
 
 EXPLORER_S3_BUCKET = os.environ.get("EXPLORER_S3_BUCKET")
 EXPLORER_S3_ACCESS_KEY = os.environ.get("EXPLORER_S3_ACCESS_KEY")
