@@ -69,18 +69,18 @@
             </thead>
             <tbody class="list">
                 {% for object in object_list %}
-                    <tr {% if object.is_in_category %}class="collapse {{object.collapse_target}}"{% endif %}>
+                    <tr {% if object.is_in_category %}class="collapse {{object.collapse_target}}" data-bs-config='{"delay":0}'{% endif %}>
                         {% if object.is_header %}
                             <td colspan="100">
                                 <strong>
                                     <span data-bs-toggle="collapse" style="cursor: pointer;" data-bs-target=".{{object.collapse_target}}">
-                                        {{ object.title }} ({{ object.count }})
+                                        <i class="bi-plus-circle"></i> {{ object.title }} ({{ object.count }})
                                     </span>
                                 </strong>
                             </td>
                         {% else %}
-                            <td class="sort-name{% if object.is_in_category %} indented{% endif %}">
-                                <a href="{% url 'query_detail' object.id %}">{{ object.title }}</a>
+                            <td class="sort-name">
+                                <a href="{% url 'query_detail' object.id %}"{% if object.is_in_category %} class="ms-3"{% endif %}>{{ object.title }}</a>
                             </td>
                             <td class="sort-created">{{ object.created_at|date:"m/d/y" }}
                                 {% if object.created_by_user %}

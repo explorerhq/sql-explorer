@@ -9,6 +9,11 @@ function searchFocus() {
         searchElement.focus();
     }
 }
+function expandAll() {
+    document.querySelectorAll('.collapse').forEach(function(element){
+       element.classList.add('show');
+    });
+}
 export function setupQueryList() {
 
     document.querySelectorAll('.query_favorite_toggle').forEach(function (element) {
@@ -17,7 +22,10 @@ export function setupQueryList() {
 
     let options = {
         valueNames: ['sort-name', 'sort-created', 'sort-created', 'sort-last-run', 'sort-run-count', 'sort-connection'],
-        handlers: {'updated': [searchFocus]}
+        handlers: {'updated': [searchFocus],
+                   'searchStart': [expandAll]},
+        searchDelay: 250,
+        searchColumns: ['sort-name']
     };
     new List('queries', options);
 
