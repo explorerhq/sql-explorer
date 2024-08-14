@@ -5,7 +5,7 @@ set -e
 
 # Source the nvm script to set up the environment
 # This should match the version referenced in Dockerfile
-. /root/.nvm/nvm.sh
+. /usr/local/.nvm/nvm.sh
 nvm use 20.15.1
 
 # Django
