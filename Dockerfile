@@ -14,7 +14,8 @@ COPY requirements /app/requirements
 RUN pip install --no-cache-dir -r requirements/dev.txt
 
 # Install NVM and Node.js
-ENV NVM_DIR /root/.nvm
+RUN mkdir /usr/local/.nvm
+ENV NVM_DIR /usr/local/.nvm
 # This should match the version referenced below in the Run stage, and in entrypoint.sh
 ENV NODE_VERSION 20.15.1
 
@@ -38,8 +39,8 @@ COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/pytho
 COPY --from=builder /usr/local/bin /usr/local/bin
 
 # Copy Node.js environment from builder
-COPY --from=builder /root/.nvm /root/.nvm
-ENV NVM_DIR /root/.nvm
+COPY --from=builder /usr/local/.nvm /usr/local/.nvm
+ENV NVM_DIR /usr/local/.nvm
 
 # The version in this path should match the version referenced above in the Run stage, and in entrypoint.sh
 ENV PATH $NVM_DIR/versions/node/v20.15.1/bin:$PATH
@@ -68,7 +69,7 @@ if queries == 0:
 ORM
 
 # Copy and set permissions for the entrypoint script
-COPY --chown=myuser:myuser entrypoint.sh /entrypoint.sh
+COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # Expose the ports the app runs on
