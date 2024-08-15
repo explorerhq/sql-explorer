@@ -5,6 +5,20 @@ Change Log
 This document records all notable changes to `SQL Explorer <https://github.com/explorerhq/sql-explorer>`_.
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+`5.2b1`_ (2024-08-14)
+===========================
+* `#651`_: Ability to append an upload to a previously uploaded file/sqlite DB as a new table
+
+  * Good cache busting and detection of file changes on uploads
+  * Significant documentation improvements to uploads and connections
+  * Separate the upload UI from the 'add connection' UI, as they are materially different
+  * Fix a small bug with bar chart generation, when values are null
+  * Ability to refresh a connection's schema and data (if it's an upload) from the connections list view
+
+* `#659`_: Search all queries, even if the header is collapsed. Addresses issue #464 (partially) and #658 (fully).
+* `#662`_: Refactored dockerfile to use non-root directories. Addresses issue #661.
+
+
 `5.1.1`_ (2024-07-30)
 ===========================
 * `#654`_: Bugfix: Parameterized query does not work for viewers
@@ -528,6 +542,7 @@ Initial Release
 .. _5.0.2: https://github.com/explorerhq/sql-explorer/compare/5.0.1...5.0.2
 .. _5.1.0: https://github.com/explorerhq/sql-explorer/compare/5.0.2...5.1.0
 .. _5.1.1: https://github.com/explorerhq/sql-explorer/compare/5.1.0...5.1.1
+.. _5.2b1: https://github.com/explorerhq/sql-explorer/compare/5.1.1...5.2b1
 
 
 .. _#254: https://github.com/explorerhq/sql-explorer/pull/254
@@ -615,6 +630,9 @@ Initial Release
 .. _#635: https://github.com/explorerhq/sql-explorer/pull/635
 .. _#636: https://github.com/explorerhq/sql-explorer/pull/636
 .. _#555: https://github.com/explorerhq/sql-explorer/pull/555
+.. _#651: https://github.com/explorerhq/sql-explorer/pull/651
+.. _#659: https://github.com/explorerhq/sql-explorer/pull/659
+.. _#662: https://github.com/explorerhq/sql-explorer/pull/662
 
 .. _#269: https://github.com/explorerhq/sql-explorer/issues/269
 .. _#288: https://github.com/explorerhq/sql-explorer/issues/288
