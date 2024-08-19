@@ -5,7 +5,7 @@ Change Log
 This document records all notable changes to `SQL Explorer <https://github.com/explorerhq/sql-explorer>`_.
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
-`5.2b1`_ (2024-08-14)
+`5.2.0`_ (2024-08-19)
 ===========================
 * `#651`_: Ability to append an upload to a previously uploaded file/sqlite DB as a new table
 
@@ -542,7 +542,7 @@ Initial Release
 .. _5.0.2: https://github.com/explorerhq/sql-explorer/compare/5.0.1...5.0.2
 .. _5.1.0: https://github.com/explorerhq/sql-explorer/compare/5.0.2...5.1.0
 .. _5.1.1: https://github.com/explorerhq/sql-explorer/compare/5.1.0...5.1.1
-.. _5.2b1: https://github.com/explorerhq/sql-explorer/compare/5.1.1...5.2b1
+.. _5.2b1: https://github.com/explorerhq/sql-explorer/compare/5.1.1...5.2.0
 
 
 .. _#254: https://github.com/explorerhq/sql-explorer/pull/254
