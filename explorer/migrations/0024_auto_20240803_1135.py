@@ -26,8 +26,9 @@ def populate_new_foreign_key(apps, _):
     has_default = DatabaseConnection.objects.filter(default=True).exists()
     if not has_default:
         dbc = DatabaseConnection.objects.all().first()
-        dbc.default = True
-        dbc.save()
+        if dbc:
+            dbc.default = True
+            dbc.save()
 
     # These are written as raw SQL rather than queryset updates because e.g. Query.connection is no longer
     # referencable as it was removed from the codebase.
