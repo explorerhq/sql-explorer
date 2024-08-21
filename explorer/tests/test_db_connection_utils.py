@@ -5,11 +5,10 @@ if EXPLORER_USER_UPLOADS_ENABLED:
     import pandas as pd
 import os
 import sqlite3
+from django.db import DatabaseError
 from explorer.models import DatabaseConnection
 from unittest.mock import patch, MagicMock
 from explorer.ee.db_connections.utils import (
-    get_sqlite_for_connection,
-    create_django_style_connection,
     pandas_to_sqlite
 )
 
@@ -31,11 +30,9 @@ class TestSQLiteConnection(TestCase):
 
         local_name = conn.local_name
 
-        result = get_sqlite_for_connection(conn)
+        conn.as_django_connection()
 
         mock_s3.download_file.assert_called_once_with("s3_bucket/test_db.db", local_name)
-        self.assertIsNone(result.host)
-        self.assertEqual(result.name, local_name)
 
     @patch("explorer.utils.get_s3_bucket")
     def test_get_sqlite_for_connection_skips_download_if_exists(self, mock_get_s3_bucket):
@@ -56,58 +53,28 @@ class TestSQLiteConnection(TestCase):
 
         conn.update_fingerprint()
 
-        result = get_sqlite_for_connection(conn)
+        conn.as_django_connection()
 
         mock_s3.download_file.assert_not_called()
-        self.assertIsNone(result.host)
-        self.assertEqual(result.name, local_name)
 
         os.remove(local_name)
 
 
 class TestDjangoStyleConnection(TestCase):
 
-    @patch("explorer.ee.db_connections.utils.get_sqlite_for_connection")
-    @patch("explorer.ee.db_connections.utils.load_backend")
-    def test_create_django_style_connection_sqlite(self, mock_load_backend, mock_get_sqlite_for_connection):
-        mock_explorer_connection = MagicMock()
-        mock_explorer_connection.engine = DatabaseConnection.SQLITE
-        mock_explorer_connection.host = "s3_bucket/test_db"
-        mock_get_sqlite_for_connection.return_value = mock_explorer_connection
-
-        mock_backend = MagicMock()
-        mock_load_backend.return_value = mock_backend
-
-        create_django_style_connection(mock_explorer_connection)
-
-        mock_get_sqlite_for_connection.assert_called_once_with(mock_explorer_connection)
-        mock_backend.DatabaseWrapper.assert_called_once()
-
-    @patch("explorer.ee.db_connections.utils.load_backend")
-    def test_create_django_style_connection_non_sqlite(self, mock_load_backend):
-        mock_explorer_connection = MagicMock()
-        mock_explorer_connection.is_upload = False
-        mock_explorer_connection.engine = "django.db.backends.postgresql"
-
-        mock_backend = MagicMock()
-        mock_load_backend.return_value = mock_backend
-
-        create_django_style_connection(mock_explorer_connection)
-
-        mock_load_backend.assert_called_once_with("django.db.backends.postgresql")
-        mock_backend.DatabaseWrapper.assert_called_once()
-
-    @patch("explorer.ee.db_connections.utils.load_backend")
+    @patch("explorer.ee.db_connections.models.load_backend")
     def test_create_django_style_connection_with_extras(self, mock_load_backend):
-        mock_explorer_connection = MagicMock()
-        mock_explorer_connection.is_upload = False
-        mock_explorer_connection.engine = "django.db.backends.postgresql"
-        mock_explorer_connection.extras = '{"sslmode": "require", "connect_timeout": 10}'
+        conn = DatabaseConnection(
+            name="test_db",
+            alias="test_db",
+            engine="django.db.backends.postgresql",
+            extras='{"sslmode": "require", "connect_timeout": 10}'
+        )
 
         mock_backend = MagicMock()
         mock_load_backend.return_value = mock_backend
 
-        create_django_style_connection(mock_explorer_connection)
+        conn.as_django_connection()
 
         mock_load_backend.assert_called_once_with("django.db.backends.postgresql")
         mock_backend.DatabaseWrapper.assert_called_once()
@@ -151,4 +118,7 @@ class TestPandasToSQLite(TestCase):
             con.close()
             os.remove(temp_db_path)
 
-
+    def test_cant_create_connection_for_unregistered_django_alias(self):
+        conn = DatabaseConnection(alias="not_registered", engine=DatabaseConnection.DJANGO)
+        conn.save()
+        self.assertRaises(DatabaseError, conn.as_django_connection)

@@ -4,6 +4,8 @@ from django.conf import settings
 
 
 EXPLORER_CONNECTIONS = getattr(settings, "EXPLORER_CONNECTIONS", {})
+
+# Deprecated as of 6.0. Will be removed in a future version.
 EXPLORER_DEFAULT_CONNECTION = getattr(
     settings, "EXPLORER_DEFAULT_CONNECTION", None
 )
@@ -75,7 +77,6 @@ EXPLORER_PERMISSION_CONNECTIONS = getattr(
 EXPLORER_RECENT_QUERY_COUNT = getattr(
     settings, "EXPLORER_RECENT_QUERY_COUNT", 5
 )
-EXPLORER_ASYNC_SCHEMA = getattr(settings, "EXPLORER_ASYNC_SCHEMA", False)
 
 DEFAULT_EXPORTERS = [
     ("csv", "explorer.exporters.CSVExporter"),

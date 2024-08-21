@@ -1,11 +1,11 @@
 from django.core.cache import cache
 
 from explorer.app_settings import (
-    ENABLE_TASKS, EXPLORER_ASYNC_SCHEMA, EXPLORER_CONNECTIONS, EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES,
+    EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES,
     EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES, EXPLORER_SCHEMA_INCLUDE_VIEWS,
 )
 from explorer.tasks import build_schema_cache_async
-from explorer.utils import get_valid_connection, InvalidExplorerConnectionException
+from explorer.utils import InvalidExplorerConnectionException
 
 
 # These wrappers make it easy to mock and test
@@ -21,22 +21,18 @@ def _include_views():
     return EXPLORER_SCHEMA_INCLUDE_VIEWS is True
 
 
-def do_async():
-    return ENABLE_TASKS and EXPLORER_ASYNC_SCHEMA
-
-
 def _include_table(t):
     if _get_includes() is not None:
         return any([t.startswith(p) for p in _get_includes()])
     return not any([t.startswith(p) for p in _get_excludes()])
 
 
-def connection_schema_cache_key(connection_alias):
-    return f"_explorer_cache_key_{connection_alias}"
+def connection_schema_cache_key(connection_id):
+    return f"_explorer_cache_key_{connection_id}"
 
 
-def connection_schema_json_cache_key(connection_alias):
-    return f"_explorer_cache_key_json_{connection_alias}"
+def connection_schema_json_cache_key(connection_id):
+    return f"_explorer_cache_key_json_{connection_id}"
 
 
 def transform_to_json_schema(schema_info):
@@ -48,13 +44,13 @@ def transform_to_json_schema(schema_info):
     return json_schema
 
 
-def schema_json_info(connection_alias):
-    key = connection_schema_json_cache_key(connection_alias)
+def schema_json_info(db_connection):
+    key = connection_schema_json_cache_key(db_connection.id)
     ret = cache.get(key)
     if ret:
         return ret
     try:
-        si = schema_info(connection_alias) or []
+        si = schema_info(db_connection) or []
     except InvalidExplorerConnectionException:
         return []
     json_schema = transform_to_json_schema(si)
@@ -62,26 +58,24 @@ def schema_json_info(connection_alias):
     return json_schema
 
 
-def schema_info(connection_alias):
-    key = connection_schema_cache_key(connection_alias)
+def schema_info(db_connection):
+    key = connection_schema_cache_key(db_connection.id)
     ret = cache.get(key)
     if ret:
         return ret
-    if do_async():
-        build_schema_cache_async.delay(connection_alias)
     else:
-        return build_schema_cache_async(connection_alias)
+        return build_schema_cache_async(db_connection.id)
 
 
-def clear_schema_cache(connection_alias):
-    key = connection_schema_cache_key(connection_alias)
+def clear_schema_cache(db_connection):
+    key = connection_schema_cache_key(db_connection.id)
     cache.delete(key)
 
-    key = connection_schema_json_cache_key(connection_alias)
+    key = connection_schema_json_cache_key(db_connection.id)
     cache.delete(key)
 
 
-def build_schema_info(connection_alias):
+def build_schema_info(db_connection):
     """
         Construct schema information via engine-specific queries of the
         tables in the DB.
@@ -98,7 +92,7 @@ def build_schema_info(connection_alias):
             ]
 
         """
-    connection = get_valid_connection(connection_alias)
+    connection = db_connection.as_django_connection()
     ret = []
     with connection.cursor() as cursor:
         tables_to_introspect = connection.introspection.table_names(
@@ -125,7 +119,3 @@ def build_schema_info(connection_alias):
     return ret
 
 
-def build_async_schemas():
-    if do_async():
-        for c in EXPLORER_CONNECTIONS:
-            schema_info(c)

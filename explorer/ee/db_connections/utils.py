@@ -1,10 +1,17 @@
-from django.db import DatabaseError
-from django.db.utils import load_backend
 import os
-import json
+
 import hashlib
 import sqlite3
 import io
+
+
+def default_db_connection():
+    from explorer.ee.db_connections.models import DatabaseConnection
+    return DatabaseConnection.objects.default()
+
+
+def default_db_connection_id():
+    return default_db_connection().id
 
 
 # Uploading the same filename twice (from the same user) will overwrite the 'old' DB on S3
@@ -19,26 +26,14 @@ def upload_sqlite(db_bytes, path):
 # the DBs go into user-specific folders on s3), but the *aliases* would be the same. So one user
 # could (innocently) upload a file with the same name, and any existing queries would be suddenly pointing
 # to this new database connection. Oops!
-# TODO: In the future, queries should probably be FK'ed to the ID of the connection, rather than simply
-#       storing the alias of the connection as a string.
 def create_connection_for_uploaded_sqlite(filename, s3_path):
-    from explorer.models import DatabaseConnection
+    from explorer.ee.db_connections.models import DatabaseConnection
     return DatabaseConnection.objects.create(
         alias=filename,
         engine=DatabaseConnection.SQLITE,
         name=filename,
         host=s3_path,
     )
-
-
-def get_sqlite_for_connection(explorer_connection):
-    # Get the database from s3, then modify the connection to work with the downloaded file.
-    # E.g. "host" should not be set, and we need to get the full path to the file
-    explorer_connection.download_sqlite_if_needed()
-    # Note the order here is important; .local_name checked "is_upload" which relies on .host being set
-    explorer_connection.name = explorer_connection.local_name
-    explorer_connection.host = None
-    return explorer_connection
 
 
 def user_dbs_local_dir():
@@ -50,39 +45,6 @@ def user_dbs_local_dir():
 
 def uploaded_db_local_path(name):
     return os.path.join(user_dbs_local_dir(), name)
-
-
-def create_django_style_connection(explorer_connection):
-
-    if explorer_connection.is_upload:
-        explorer_connection = get_sqlite_for_connection(explorer_connection)
-
-    connection_settings = {
-        "ENGINE": explorer_connection.engine,
-        "NAME": explorer_connection.name,
-        "USER": explorer_connection.user,
-        "PASSWORD": explorer_connection.password,
-        "HOST": explorer_connection.host,
-        "PORT": explorer_connection.port,
-        "TIME_ZONE": None,
-        "CONN_MAX_AGE": 0,
-        "CONN_HEALTH_CHECKS": False,
-        "OPTIONS": {},
-        "TEST": {},
-        "AUTOCOMMIT": True,
-        "ATOMIC_REQUESTS": False,
-    }
-
-    if explorer_connection.extras:
-        extras_dict = json.loads(explorer_connection.extras) if isinstance(explorer_connection.extras,
-                                                                           str) else explorer_connection.extras
-        connection_settings.update(extras_dict)
-
-    try:
-        backend = load_backend(explorer_connection.engine)
-        return backend.DatabaseWrapper(connection_settings, explorer_connection.alias)
-    except DatabaseError as e:
-        raise DatabaseError(f"Failed to create explorer connection: {e}") from e
 
 
 def sqlite_to_bytesio(local_path):

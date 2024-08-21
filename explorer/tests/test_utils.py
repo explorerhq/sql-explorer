@@ -262,17 +262,6 @@ class TestParams(TestCase):
         self.assertEqual(get_params_for_url(q), None)
 
 
-class TestConnections(TestCase):
-
-    def test_only_registered_connections_are_in_connections(self):
-        from django.db import connections as djcs
-
-        from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION
-        from explorer.connections import connections
-        self.assertTrue(EXPLORER_DEFAULT_CONNECTION in connections())
-        self.assertNotEqual(len(connections()), len([c for c in djcs]))
-
-
 class TestSecureFilename(TestCase):
     def test_basic_ascii(self):
         self.assertEqual(secure_filename("simple_file.txt"), "simple_file.txt")

@@ -55,7 +55,7 @@ function fetchAndShowSchema(view) {
             if (schema.hasOwnProperty(tableName)) {
                 formattedSchema = JSON.stringify(schema[tableName], null, 2);
             } else {
-                formattedSchema = `Table '${tableName}' not found in schema for connection '${conn}'`;
+                formattedSchema = `Table '${tableName}' not found in schema for connection`;
             }
             displaySchemaTooltip(view, formattedSchema);
         });

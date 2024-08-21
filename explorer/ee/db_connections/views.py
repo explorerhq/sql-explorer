@@ -3,21 +3,19 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.views import View
 from django.http import JsonResponse, HttpResponse
 from django.urls import reverse_lazy
-from django.db.utils import OperationalError
+from django.db.utils import OperationalError, DatabaseError
 from explorer.models import DatabaseConnection
 from explorer.ee.db_connections.utils import (
     upload_sqlite,
     create_connection_for_uploaded_sqlite
 )
 from explorer.ee.db_connections.create_sqlite import parse_to_sqlite
-from explorer import app_settings
 from explorer.schema import clear_schema_cache
 from explorer.app_settings import EXPLORER_MAX_UPLOAD_SIZE
 from explorer.ee.db_connections.forms import DatabaseConnectionForm
 from explorer.utils import delete_from_s3
 from explorer.views.auth import PermissionRequiredMixin
 from explorer.views.mixins import ExplorerContextMixin
-from explorer.ee.db_connections.utils import create_django_style_connection
 from explorer.ee.db_connections.mime import is_sqlite
 
 
@@ -47,7 +45,9 @@ class UploadDbView(PermissionRequiredMixin, View):
 
             # You can't double stramp a triple stamp!
             if append_path and is_sqlite(file):
-                raise TypeError("Can't append a SQLite file to a SQLite file. Only CSV and JSON.")
+                msg = "Can't append a SQLite file to a SQLite file. Only CSV and JSON."
+                logger.error(msg)
+                return JsonResponse({"error": msg}, status=400)
 
             try:
                 f_bytes, f_name = parse_to_sqlite(file, conn, request.user.id)
@@ -73,7 +73,7 @@ class UploadDbView(PermissionRequiredMixin, View):
             if not append_path:
                 conn = create_connection_for_uploaded_sqlite(f_name, s3_path)
 
-            clear_schema_cache(conn.alias)
+            clear_schema_cache(conn)
             conn.update_fingerprint()
             return JsonResponse({"success": True})
         else:
@@ -86,14 +86,6 @@ class DatabaseConnectionsListView(PermissionRequiredMixin, ExplorerContextMixin,
     permission_required = "connections_permission"
     template_name = "connections/connections.html"
     model = DatabaseConnection
-
-    def get_queryset(self):
-        qs = list(DatabaseConnection.objects.all())
-        for _, alias in app_settings.EXPLORER_CONNECTIONS.items():
-            django_conn = DatabaseConnection.from_django_connection(alias)
-            if django_conn:
-                qs.append(django_conn)
-        return qs
 
 
 class DatabaseConnectionDetailView(PermissionRequiredMixin, ExplorerContextMixin, DetailView):
@@ -149,7 +141,7 @@ class DatabaseConnectionRefreshView(PermissionRequiredMixin, View):
     def get(self, request, pk):  # noqa
         conn = DatabaseConnection.objects.get(id=pk)
         conn.delete_local_sqlite()
-        clear_schema_cache(conn.alias)
+        clear_schema_cache(conn)
         message = f"Deleted schema cache for {conn.alias}. Schema will be regenerated on next use."
         if conn.is_upload:
             message += "\nRemoved local SQLite DB. Will be re-downloaded from S3 on next use."
@@ -181,11 +173,13 @@ class DatabaseConnectionValidateView(PermissionRequiredMixin, View):
                 extras=connection_data["extras"]
             )
             try:
-                conn = create_django_style_connection(explorer_connection)
+                conn = explorer_connection.as_django_connection()
                 with conn.cursor() as cursor:
                     cursor.execute("SELECT 1")
                 return JsonResponse({"success": True})
             except OperationalError as e:
+                return JsonResponse({"success": False, "error": str(e)})
+            except DatabaseError as e:
                 return JsonResponse({"success": False, "error": str(e)})
         else:
             return JsonResponse({"success": False, "error": "Invalid form data"})

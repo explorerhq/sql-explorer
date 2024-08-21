@@ -41,15 +41,14 @@
                 </div>
                 {% if form.connections|length > 1 and can_change %}
                     <div class="mb-3 form-floating">
-                        {{ form.connection }}
-                        <label for="id_connection" class="form-label">{% translate "Connection" %}</label>
+                        {{ form.database_connection }}
+                        <label for="id_database_connection" class="form-label">{% translate "Connection" %}</label>
                     </div>
                 {% else %}
                     {# still need to submit the connection, just hide the UI element #}
                     <div class="d-none">
-                      {{ form.connection }}
+                      {{ form.database_connection }}
                     </div>
-                    <div>{{ form.connection.value }}</div>
                 {% endif %}
                 <div class="mb-3 form-floating">
                     <textarea

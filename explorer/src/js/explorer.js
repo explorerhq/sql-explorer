@@ -49,7 +49,7 @@ function selectConnection() {
     var connectionId = urlParams.get('connection');
 
     if (connectionId) {
-        var connectionSelect = document.getElementById('id_connection');
+        var connectionSelect = document.getElementById('id_database_connection');
         if (connectionSelect) {
             connectionSelect.value = connectionId;
         }

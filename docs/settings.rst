@@ -93,24 +93,17 @@ Generate DB schema asynchronously. Requires Celery and ``EXPLORER_TASKS_ENABLED`
    EXPLORER_ASYNC_SCHEMA = False
 
 
-Default connection
-******************
-
-The name of the Django database connection to use. Ideally set this to a connection with read only permissions
-
-.. code-block:: python
-
-   EXPLORER_DEFAULT_CONNECTION = None  # Must be set for the app to work, as this is required
-
-
 Database connections
 ********************
 
 A dictionary of ``{'Friendly Name': 'django_db_alias'}``.
+If you want to create a DatabaseConnection to a DB that is registered in settings.DATABASES, then add the alias to this
+dictionary (with a friendly name of your choice), and then create a new connection (../connections/new/) with the alias
+and name set to the alias of the Django database, and the Engine set to "Django Database".
 
 .. code-block:: python
 
-   EXPLORER_CONNECTIONS = {}  # At a minimum, should be set to something like { 'Default': 'readonly' } or similar. See connections.py for more documentation.
+   EXPLORER_CONNECTIONS = {}
 
 
 Permission view

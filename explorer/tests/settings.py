@@ -30,3 +30,16 @@ DATABASES = {
         }
     }
 }
+
+EXPLORER_CONNECTIONS = {
+    "SQLite": "default",
+    "Another": "alt",
+}
+
+class PrimaryDatabaseRouter:
+    def allow_migrate(self, db, app_label, model_name=None, **hints):
+        if db == "default":
+            return None
+        return False
+
+DATABASE_ROUTERS = ["explorer.tests.settings.PrimaryDatabaseRouter"]

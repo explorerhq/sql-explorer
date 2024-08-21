@@ -3,13 +3,13 @@ import os
 from unittest.mock import Mock, patch, MagicMock
 
 from django.core.exceptions import ValidationError
-from django.db import connections
+from django.db import IntegrityError
 from django.test import TestCase
 
 from explorer import app_settings
-from explorer.app_settings import EXPLORER_DEFAULT_CONNECTION as CONN
 from explorer.models import ColumnHeader, ColumnSummary, Query, QueryLog, QueryResult, DatabaseConnection
 from explorer.tests.factories import SimpleQueryFactory
+from explorer.ee.db_connections.utils import default_db_connection
 
 
 class TestQueryModel(TestCase):
@@ -33,14 +33,14 @@ class TestQueryModel(TestCase):
 
     def test_query_log(self):
         self.assertEqual(0, QueryLog.objects.count())
-        q = SimpleQueryFactory(connection="alt")
+        q = SimpleQueryFactory()
         q.log(None)
         self.assertEqual(1, QueryLog.objects.count())
         log = QueryLog.objects.first()
         self.assertEqual(log.run_by_user, None)
         self.assertEqual(log.query, q)
         self.assertFalse(log.is_playground)
-        self.assertEqual(log.connection, q.connection)
+        self.assertEqual(log.database_connection, q.database_connection)
 
     def test_query_logs_final_sql(self):
         q = SimpleQueryFactory(sql="select '$$foo$$';")
@@ -138,16 +138,19 @@ class TestQueryModel(TestCase):
         with self.assertRaises(ValidationError):
             q.execute_query_only()
 
-    def test_cant_query_with_unregistered_connection(self):
-        from explorer.utils import InvalidExplorerConnectionException
-        q = SimpleQueryFactory(sql="select '$$foo:bar$$', '$$qux$$';", connection="not_registered")
-        self.assertRaises(InvalidExplorerConnectionException, q.execute_query_only)
+    def test_query_will_execute_with_null_database_connection(self):
+        q = SimpleQueryFactory(sql="select 1;")
+        q.database_connection_id = None
+        q.save()
+        q.refresh_from_db()
+        qr = q.execute_query_only()
+        self.assertEqual(qr.data[0], [1])
 
 
 class TestQueryResults(TestCase):
 
     def setUp(self):
-        conn = connections[CONN]
+        conn = default_db_connection().as_django_connection()
         self.qr = QueryResult('select 1 as "foo", "qux" as "mux";', conn)
 
     def test_column_access(self):
@@ -225,20 +228,14 @@ class TestColumnSummary(TestCase):
 
 class TestDatabaseConnection(TestCase):
 
-
     def test_cant_create_a_connection_with_conflicting_name(self):
         thrown = False
         try:
-            DatabaseConnection.objects.create(name="default")
-        except ValidationError:
+            conn = DatabaseConnection(alias="default")
+            conn.save()
+        except IntegrityError:
             thrown = True
         self.assertTrue(thrown)
-
-    def test_create_db_connection_from_django_connection(self):
-        c = DatabaseConnection.from_django_connection(app_settings.EXPLORER_DEFAULT_CONNECTION)
-        self.assertEqual(c.name, "tst1")
-        self.assertEqual(c.alias, "default")
-        self.assertIsNone(c.extras)
 
     @patch("os.makedirs")
     @patch("os.path.exists", return_value=False)
@@ -316,9 +313,12 @@ class TestDatabaseConnection(TestCase):
         connection.refresh_from_db()
         self.assertEqual(connection.upload_fingerprint, initial_fingerprint)
 
-    def tearDown(self):
-        # Clean up any files created during the test
-        for obj in DatabaseConnection.objects.all():
-            if os.path.exists(obj.local_name):
-                os.remove(obj.local_name)
-        DatabaseConnection.objects.all().delete()
+    def test_default_is_set(self):
+        orig_default = default_db_connection()
+        new_default = DatabaseConnection(alias="new1", engine=DatabaseConnection.SQLITE, name="test_db.sqlite3",
+                                         default=True)
+        new_default.save()
+        orig_default.refresh_from_db()
+        self.assertFalse(orig_default.default)
+        self.assertEqual(new_default.id, default_db_connection().id)
+        self.assertEqual(DatabaseConnection.objects.filter(default=True).count(), 1)

@@ -1,9 +1,11 @@
 from django.db.utils import IntegrityError
 from django.forms.models import model_to_dict
 from django.test import TestCase
+from unittest.mock import patch, MagicMock
 
 from explorer.forms import QueryForm
 from explorer.tests.factories import SimpleQueryFactory
+from explorer.ee.db_connections.utils import default_db_connection_id
 
 
 class TestFormValidation(TestCase):
@@ -28,3 +30,36 @@ class TestFormValidation(TestCase):
         q.params = {}
         form = QueryForm(model_to_dict(q))
         self.assertFalse(form.is_valid())
+
+
+class QueryFormTestCase(TestCase):
+
+    def test_valid_form_submission(self):
+        form_data = {
+            "title": "Test Query",
+            "sql": "SELECT * FROM table",
+            "description": "A test query description",
+            "snapshot": False,
+            "database_connection": str(default_db_connection_id()),
+        }
+
+        form = QueryForm(data=form_data)
+        self.assertTrue(form.is_valid(), msg=form.errors)
+        query = form.save()
+
+        # Verify that the Query instance was created and is correctly linked to the DatabaseConnection
+        self.assertEqual(query.database_connection_id, default_db_connection_id())
+        self.assertEqual(query.title, form_data["title"])
+        self.assertEqual(query.sql, form_data["sql"])
+
+    @patch("explorer.forms.default_db_connection")
+    def test_default_connection_first(self, mocked_default_db_connection):
+        dbc = MagicMock()
+        dbc.id = default_db_connection_id()
+        mocked_default_db_connection.return_value = dbc
+        self.assertEqual(default_db_connection_id(), QueryForm().connections[0][0])
+
+        dbc = MagicMock()
+        dbc.id = 2
+        mocked_default_db_connection.return_value = dbc
+        self.assertEqual(2, QueryForm().connections[0][0])

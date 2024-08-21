@@ -103,7 +103,7 @@ function submitAssistantAsk() {
 
     const data = {
         sql: window.editor?.state.doc.toString() ?? null,
-        connection: document.getElementById("id_connection")?.value ?? null,
+        connection_id: document.getElementById("id_database_connection")?.value ?? null,
         assistant_request: document.getElementById("id_assistant_input")?.value ?? null,
         selected_tables: selectedTables,
         db_error: getErrorMessage()

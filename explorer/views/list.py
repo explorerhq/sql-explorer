@@ -113,6 +113,7 @@ class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
                 "created_at": q.created_at,
                 "is_header": False,
                 "run_count": q.querylog_set.count(),
+                "connection_name": str(q.database_connection),
                 "ran_successfully": lrl.success,
                 "last_run_at": lrl.run_at,
                 "created_by_user":

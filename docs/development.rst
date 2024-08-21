@@ -36,10 +36,10 @@ Install the dev requirements:
 
 And then:
 
-``python manage.py test --settings=tests.settings``
+``python manage.py test --settings=explorer.tests.settings``
 
 Or with coverage:
 
-``coverage run --source='.' manage.py test --settings=tests.settings``
+``coverage run --source='.' manage.py test --settings=explorer.tests.settings``
 ``coverage combine``
 ``coverage report``

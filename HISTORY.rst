@@ -5,6 +5,16 @@ Change Log
 This document records all notable changes to `SQL Explorer <https://github.com/explorerhq/sql-explorer>`_.
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+vNext
+===========================
+* `#660`_: Userspace connection migration. This should be an invisible change, but represents a significant refactor of how connections function.
+Instead of a weird blend of DatabaseConnection models and underlying Django models (which were the original Explorer connections),
+this migrates all connections to DatabaseConnection models and implements proper foreign keys to them on the Query and QueryLog models.
+A data migration creates new DatabaseConnection models based on the configured settings.EXPLORER_CONNECTIONS.
+Going forward, admins can create new Django-backed DatabaseConnection models by registering the connection in EXPLORER_CONNECTIONS, and then creating a
+DatabaseConnection model using the Django admin or the user-facing /connections/new/ form, and entering the Django DB alias and setting the connection type to "Django Connection"
+
+
 `5.2.0`_ (2024-08-19)
 ===========================
 * `#651`_: Ability to append an upload to a previously uploaded file/sqlite DB as a new table

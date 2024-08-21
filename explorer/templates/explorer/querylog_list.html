@@ -9,6 +9,7 @@
                 <tr>
                     <th>{% translate "Run At" %}</th>
                     <th>{% translate "Run By" %}</th>
+                    <th>{% translate "Database Connection" %}</th>
                     <th>{% translate "Duration" %}</th>
                     <th class="sql">SQL</th>
                     <th>{% translate "Query ID" %}</th>
@@ -19,7 +20,8 @@
                 {% for object in recent_logs %}
                     <tr>
                         <td>{{ object.run_at|date:"SHORT_DATETIME_FORMAT" }}</td>
-                        <td>{{ object.run_by_user.email }}</td>
+                        <td>{{ object.run_by_user }}</td>
+                        <td>{{ object.database_connection }}</td>
                         <td>{{ object.duration|floatformat:2 }}ms</td>
                         <td class="log-sql">{{ object.sql }}</td>
                         <td>
