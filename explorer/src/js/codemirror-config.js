@@ -14,14 +14,10 @@ import { Prec } from "@codemirror/state";
 import {sql} from "@codemirror/lang-sql";
 import { SchemaSvc } from "./schemaService"
 
-let debounceTimeout;
 
 let updateListenerExtension = EditorView.updateListener.of((update) => {
   if (update.docChanged) {
-    clearTimeout(debounceTimeout);
-    debounceTimeout = setTimeout(() => {
       document.dispatchEvent(new CustomEvent('docChanged', {}));
-    }, 500);
   }
 });
 

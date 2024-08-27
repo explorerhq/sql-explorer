@@ -7,11 +7,6 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 vNext
 ===========================
-* Keyboard shortcut for formatting the SQL in the editor.
-
-  - Cmd+Shift+F (Windows: Ctrl+Shift+F)
-  - The format button has been moved tobe a small icon towards the bottom-right of the SQL editor.
-
 * `#664`_: Improvements to the AI SQL Assistant:
 
   - Table Annotations: Write persistent table annotations with descriptive information that will get injected into the
@@ -23,8 +18,9 @@ vNext
     the same tables as your assistant request will get included as 'reference sql' in the prompt for the LLM.
   - Autocomplete / multiselect when selecting tables info to send to the SQL Assistant. Much easier and more keyboard
     focused.
-  - Relevant tables are added client-side visually, in real time, based on what's in the SQL editor. The dependency on
-    sql_metadata is therefore removed, as server-side SQL parsing is no longer necessary
+  - Relevant tables are added client-side visually, in real time, based on what's in the SQL editor and/or any tables
+    mentioned in the assistant request. The dependency on sql_metadata is therefore removed, as server-side SQL parsing
+    is no longer necessary.
   - Improved system prompt that emphasizes the particular SQL dialect being used.
   - Addresses issue #657.
 
@@ -41,6 +37,13 @@ vNext
   - The Query.connection and QueryLog.connection fields are deprecated and will be removed in a future release. They
     are kept around in this release in case there is an unforeseen issue with the migration. Preserving the fields for
     now ensures there is no data loss in the event that a rollback to an earlier version is required.
+
+* Fixed a bug when validating connections to uploaded files. Also added basic locking when downloading files from S3.
+
+* Keyboard shortcut for formatting the SQL in the editor.
+
+  - Cmd+Shift+F (Windows: Ctrl+Shift+F)
+  - The format button has been moved tobe a small icon towards the bottom-right of the SQL editor.
 
 `5.2.0`_ (2024-08-19)
 ===========================
@@ -670,6 +673,8 @@ Initial Release
 .. _#651: https://github.com/explorerhq/sql-explorer/pull/651
 .. _#659: https://github.com/explorerhq/sql-explorer/pull/659
 .. _#662: https://github.com/explorerhq/sql-explorer/pull/662
+.. _#660: https://github.com/explorerhq/sql-explorer/pull/660
+.. _#664: https://github.com/explorerhq/sql-explorer/pull/664
 
 .. _#269: https://github.com/explorerhq/sql-explorer/issues/269
 .. _#288: https://github.com/explorerhq/sql-explorer/issues/288

@@ -10,6 +10,14 @@ function getErrorMessage() {
     return errorElement ? errorElement.textContent.trim() : null;
 }
 
+function debounce(func, delay) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), delay);
+    };
+}
+
 function setupTableList() {
 
     if(window.assistantChoices) {
@@ -60,24 +68,33 @@ function setupTableList() {
             });
         });
 
-        selectRelevantTables(choices, keys);
+        selectRelevantTablesSql(choices, keys);
 
-        document.addEventListener('docChanged', (e) => {
-            selectRelevantTables(choices, keys);
-        });
+        document.addEventListener('docChanged', debounce(
+            () => selectRelevantTablesSql(choices, keys), 500));
+
+        document.getElementById('id_assistant_input').addEventListener('input', debounce(
+            () => selectRelevantTablesRequest(choices, keys), 300));
+
     })
     .catch(error => {
         console.error('Error retrieving JSON schema:', error);
     });
 }
 
-function selectRelevantTables(choices, keys) {
+function selectRelevantTablesSql(choices, keys) {
     const textContent = window.editor.state.doc.toString();
     const textWords = new Set(textContent.split(/\s+/));
     const hasKeys = keys.filter(key => textWords.has(key));
     choices.setChoiceByValue(hasKeys);
 }
 
+function selectRelevantTablesRequest(choices, keys) {
+    const textContent = document.getElementById("id_assistant_input").value
+    const textWords = new Set(textContent.split(/\s+/));
+    const hasKeys = keys.filter(key => textWords.has(key));
+    choices.setChoiceByValue(hasKeys);
+}
 
 export function setUpAssistant(expand = false) {
 

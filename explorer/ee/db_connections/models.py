@@ -4,7 +4,7 @@ from django.db import models, DatabaseError, connections, transaction
 from django.db.utils import load_backend
 from explorer.app_settings import EXPLORER_CONNECTIONS
 from explorer.ee.db_connections.utils import quick_hash, uploaded_db_local_path
-
+from django.core.cache import cache
 from django_cryptography.fields import encrypt
 
 
@@ -66,12 +66,27 @@ class DatabaseConnection(models.Model):
         s3 = get_s3_bucket()
         s3.download_file(self.host, self.local_name)
 
-    def download_sqlite_if_needed(self):
-        download = not os.path.exists(self.local_name) or self.local_fingerprint() != self.upload_fingerprint
+    def _download_needed(self):
+        # If the file doesn't exist, obviously we need to download it
+        # If it does exist, then check if it's out of date. But only check if in fact the DatabaseConnection has been
+        # saved to the DB. For example, we might be validating an unsaved connection, in which case the fingerprint
+        # won't be set yet.
+        return (not os.path.exists(self.local_name) or
+               (self.id is not None and self.local_fingerprint() != self.upload_fingerprint))
 
-        if download:
-            self._download_sqlite()
-            self.update_fingerprint()
+    def download_sqlite_if_needed(self):
+
+        if self._download_needed():
+            cache_key = f"download_lock_{self.local_name}"
+            lock_acquired = cache.add(cache_key, "locked", timeout=300)  # Timeout after 5 minutes
+
+            if lock_acquired:
+                try:
+                    if self._download_needed():
+                        self._download_sqlite()
+                        self.update_fingerprint()
+                finally:
+                    cache.delete(cache_key)
 
     @property
     def is_upload(self):

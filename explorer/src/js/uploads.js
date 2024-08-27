@@ -91,7 +91,7 @@ export function setupUploads() {
             let form = document.getElementById("db-connection-form");
             let formData = new FormData(form);
 
-            fetch(`${window.baseUrlPath}validate/`, {
+            fetch(`${window.baseUrlPath}connections/validate/`, {
                 method: "POST",
                 body: formData,
                 headers: {

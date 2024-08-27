@@ -258,6 +258,80 @@ class TestDatabaseConnection(TestCase):
         mock_makedirs.assert_called_once_with("/mocked/path/user_dbs")
 
     @patch("explorer.utils.get_s3_bucket")
+    @patch("explorer.ee.db_connections.models.cache")
+    def test_single_download_triggered(self, mock_cache, mock_get_s3_bucket):
+        # Setup mocks
+        mock_cache.add.return_value = True  # Simulate acquiring the lock
+        mock_s3 = MagicMock()
+        mock_get_s3_bucket.return_value = mock_s3
+
+        # Call the method
+        instance = DatabaseConnection(
+            alias="test",
+            engine=DatabaseConnection.SQLITE,
+            name="test_db.sqlite3",
+            host="some-s3-bucket",
+            id=123
+        )
+        instance.download_sqlite_if_needed()
+
+        # Assertions
+        mock_s3.download_file.assert_called_once()
+        mock_cache.add.assert_called_once()
+        mock_cache.delete.assert_called_once()
+
+    @patch("explorer.utils.get_s3_bucket")
+    @patch("explorer.ee.db_connections.models.cache")
+    def test_skip_download_when_locked(self, mock_cache, mock_get_s3_bucket):
+        # Setup mocks
+        mock_cache.add.return_value = False  # Simulate that another process has the lock
+        mock_s3 = MagicMock()
+        mock_get_s3_bucket.return_value = mock_s3
+
+        # Call the method
+        instance = DatabaseConnection(
+            alias="test",
+            engine=DatabaseConnection.SQLITE,
+            name="test_db.sqlite3",
+            host="some-s3-bucket",
+            id=123
+        )
+        instance.download_sqlite_if_needed()
+
+        # Assertions
+        mock_s3.download_file.assert_not_called()
+        mock_cache.add.assert_called_once()
+        mock_cache.delete.assert_not_called()
+
+    @patch("explorer.utils.get_s3_bucket")
+    def test_not_downloaded_if_file_exists_and_model_is_unsaved(self, mock_get_s3_bucket):
+
+        # Note this is NOT being saved to disk, e.g. how a DatabaseValidate would work.
+        connection = DatabaseConnection(
+            alias="test",
+            engine=DatabaseConnection.SQLITE,
+            name="test_db.sqlite3",
+            host="some-s3-bucket",
+        )
+
+        def mock_download_file(path, filename): pass
+        mock_s3 = mock_get_s3_bucket.return_value
+        mock_s3.download_file = MagicMock(side_effect=mock_download_file)
+
+        # write the file
+        with open(connection.local_name, "w") as f:
+            f.write("Initial content")
+
+        # See if it downloads
+        connection.download_sqlite_if_needed()
+
+        # And it shouldn't....
+        mock_s3.download_file.assert_not_called()
+
+        # ...even though the fingerprints don't match
+        self.assertIsNone(connection.upload_fingerprint)
+
+    @patch("explorer.utils.get_s3_bucket")
     def test_fingerprint_is_updated_after_download_and_download_is_not_called_again(self, mock_get_s3_bucket):
         # Setup
         mock_s3 = mock_get_s3_bucket.return_value
