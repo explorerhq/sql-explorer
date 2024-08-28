@@ -125,7 +125,97 @@ export function setUpAssistant(expand = false) {
     });
 
     document.getElementById('ask_assistant_btn').addEventListener('click', submitAssistantAsk);
+
+    document.getElementById('assistant_history').addEventListener('click', getAssistantHistory);
+
 }
+
+function getAssistantHistory() {
+
+    // Remove any existing modal with the same ID
+    const existingModal = document.getElementById('historyModal');
+    if (existingModal) {
+        existingModal.remove()
+    }
+
+    const data = {
+        connection_id: document.getElementById("id_database_connection")?.value ?? null
+    };
+
+    fetch(`${window.baseUrlPath}assistant/history/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfToken()
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Create table rows from the fetched data
+        let tableRows = '';
+        data.logs.forEach(log => {
+            let md = DOMPurify.sanitize(marked.parse(log.response));
+            tableRows += `
+                <tr>
+                    <td>${log.user_request}</td>
+                    <td>${md}</td>
+                </tr>
+            `;
+        });
+
+        // Create the complete table HTML
+        const tableHtml = `
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>User Request</th>
+                        <th>Response</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${tableRows}
+                </tbody>
+            </table>
+        `;
+
+        // Insert the table into a new Bootstrap modal
+        const modalHtml = `
+            <div class="modal fade" id="historyModal" tabindex="-1" aria-labelledby="historyModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="historyModalLabel">Assistant History</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            ${tableHtml}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Append the modal to the body
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+        // Show the modal
+        const historyModal = new bootstrap.Modal(document.getElementById('historyModal'));
+        historyModal.show();
+    })
+    .catch(error => {
+        console.error('There was a problem with the fetch operation:', error);
+    });
+}
+
 
 function submitAssistantAsk() {
 

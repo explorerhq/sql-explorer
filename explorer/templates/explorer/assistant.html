@@ -9,6 +9,14 @@
     </div>
     <div id="assistant_collapse" class="accordion-collapse collapse" aria-labelledby="assistant_accordion_header" data-bs-parent="#assistant_accordion">
         <div class="accordion-body card">
+            <div id="response_block" class="position-relative d-none">
+                <div class="mb-3 p-2 rounded-2 border bg-light">
+                    <div id="assistant_response"></div>
+                    <p class="spinner-border text-primary d-none" id="assistant_spinner" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </p>
+                </div>
+            </div>
             <div class="row assistant_input_parent">
                 <div class="col-8" id="assistant_input_wrapper">
                     <textarea
@@ -20,34 +28,24 @@
                     </div>
                 </div>
                 <div id="additional_table_container" class="col-4">
-                    <div class="row">
-                        <div class="col-6">
-                            <i class="bi-plus-circle" id="select_all_button" style="cursor: pointer;" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Select all"></i>
-                            <i class="bi-trash" id="deselect_all_button" style="cursor: pointer;" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Remove all"></i>
-                        </div>
-                        <div class="col-6 text-end">
-                            <i class="bi-question-circle" style="cursor: pointer;"
-                            data-bs-toggle="tooltip" data-bs-placement="top"
-                            data-bs-title="SQL Assistant builds a prompt with your query, your request, and the tables (schema, sample data, and annotations) referenced here."></i></div>
-                    </div>
                     <div id="table-list" class="list"></div>
                 </div>
             </div>
-
+            <div class="row">
+                <div class="col-12 text-end">
+                    <i class="bi-plus-circle" id="select_all_button" style="cursor: pointer;" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Select all"></i>
+                    <i class="bi-trash" id="deselect_all_button" style="cursor: pointer;" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Remove all"></i>
+                    <i class="bi-card-list" id="assistant_history" style="cursor: pointer;" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="History"></i>
+                    <i class="bi-question-circle" style="cursor: pointer;"
+                    data-bs-toggle="tooltip" data-bs-placement="top"
+                    data-bs-title="SQL Assistant builds a prompt with your query, your request, and the tables (schema, sample data, and annotations) referenced here."></i>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-12 text-center">
                     <div class="btn-group mt-3" role="group">
                         <button type="button" class="btn btn-outline-primary" id="ask_assistant_btn">Ask Assistant</button>
                     </div>
-                </div>
-            </div>
-
-            <div id="response_block" class="position-relative d-none">
-                <div class="mt-3 p-2 pt-4 rounded-2 border bg-light">
-                    <div id="assistant_response"></div>
-                    <p class="spinner-border text-primary d-none" id="assistant_spinner" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </p>
                 </div>
             </div>
         </div>

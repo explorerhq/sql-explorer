@@ -30,8 +30,8 @@ def run_assistant(request_data, user):
         conn = DatabaseConnection.objects.get(id=connection_id)
     except DatabaseConnection.DoesNotExist:
         return "Error: Connection not found"
-
-    prompt = build_prompt(conn, request_data.get("assistant_request"),
+    assistant_request = request_data.get("assistant_request")
+    prompt = build_prompt(conn, assistant_request,
                           included_tables, request_data.get("db_error"), request_data.get("sql"))
 
     start = timezone.now()
@@ -39,6 +39,8 @@ def run_assistant(request_data, user):
         prompt=prompt,
         run_by_user=user,
         run_at=timezone.now(),
+        user_request=assistant_request,
+        database_connection=conn
     )
     response_text = None
     try:
@@ -102,3 +104,21 @@ class TableDescriptionDeleteView(PermissionRequiredMixin, ExplorerContextMixin, 
     permission_required = "change_permission"
     template_name = "assistant/table_description_confirm_delete.html"
     success_url = reverse_lazy("table_description_list")
+
+
+class AssistantHistoryApiView(View):
+
+    def post(self, request, *args, **kwargs):
+        try:
+            data = json.loads(request.body)
+            logs = PromptLog.objects.filter(
+                run_by_user=request.user,
+                database_connection_id=data["connection_id"]
+            ).order_by("-run_at")[:5]
+            ret = [{
+                "user_request": log.user_request,
+                "response": log.response
+            } for log in logs]
+            return JsonResponse({"logs": ret})
+        except json.JSONDecodeError:
+            return JsonResponse({"status": "error", "message": "Invalid JSON"}, status=400)

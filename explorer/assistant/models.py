@@ -9,6 +9,7 @@ class PromptLog(models.Model):
         app_label = "explorer"
 
     prompt = models.TextField(blank=True)
+    user_request = models.TextField(blank=True)
     response = models.TextField(blank=True)
     run_by_user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -20,6 +21,7 @@ class PromptLog(models.Model):
     duration = models.FloatField(blank=True, null=True)  # seconds
     model = models.CharField(blank=True, max_length=128, default="")
     error = models.TextField(blank=True, null=True)
+    database_connection = models.ForeignKey(to=DatabaseConnection, on_delete=models.SET_NULL, blank=True, null=True)
 
 
 class TableDescription(models.Model):

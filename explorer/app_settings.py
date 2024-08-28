@@ -152,10 +152,16 @@ VITE_DEV_MODE = getattr(settings, "VITE_DEV_MODE", False)
 EXPLORER_AI_API_KEY = getattr(settings, "EXPLORER_AI_API_KEY", None)
 
 EXPLORER_ASSISTANT_BASE_URL = getattr(settings, "EXPLORER_ASSISTANT_BASE_URL", "https://api.openai.com/v1")
+
+# Deprecated. Will be removed in a future release. Please use EXPLORER_ASSISTANT_MODEL_NAME instead
 EXPLORER_ASSISTANT_MODEL = getattr(settings, "EXPLORER_ASSISTANT_MODEL",
                                    # Return the model name and max_tokens it supports
                                    {"name": "gpt-4o",
                                     "max_tokens": 128000})
+
+EXPLORER_ASSISTANT_MODEL_NAME = getattr(settings, "EXPLORER_ASSISTANT_MODEL_NAME",
+                                    EXPLORER_ASSISTANT_MODEL["name"])
+
 
 EXPLORER_DB_CONNECTIONS_ENABLED = getattr(settings, "EXPLORER_DB_CONNECTIONS_ENABLED", False)
 EXPLORER_USER_UPLOADS_ENABLED = getattr(settings, "EXPLORER_USER_UPLOADS_ENABLED", False)
