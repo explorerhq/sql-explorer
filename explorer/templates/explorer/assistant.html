@@ -27,15 +27,21 @@
                         "Ask Assistant" to try and automatically fix the issue. The assistant is already aware of error messages & context.
                     </div>
                 </div>
-                <div id="additional_table_container" class="col-4">
-                    <div id="table-list" class="list"></div>
+                <div id="additional_table_container" class="col-3" style="width: 31% !important">
+                    <div id="table-list"></div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-12 text-end">
+            <div class="assistant-icons" style="">
+                <div>
                     <i class="bi-plus-circle" id="select_all_button" style="cursor: pointer;" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Select all"></i>
+                </div>
+                <div>
                     <i class="bi-trash" id="deselect_all_button" style="cursor: pointer;" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Remove all"></i>
+                </div>
+                <div>
                     <i class="bi-card-list" id="assistant_history" style="cursor: pointer;" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="History"></i>
+                </div>
+                <div>
                     <i class="bi-question-circle" style="cursor: pointer;"
                     data-bs-toggle="tooltip" data-bs-placement="top"
                     data-bs-title="SQL Assistant builds a prompt with your query, your request, and the tables (schema, sample data, and annotations) referenced here."></i>
@@ -48,6 +54,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </div>

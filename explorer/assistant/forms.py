@@ -25,7 +25,7 @@ class TableDescriptionForm(forms.ModelForm):
 
         f = forms.ChoiceField(
             choices=choices,
-            widget=forms.Select(attrs={"class": "form-select"})
+            widget=forms.Select(attrs={"class": "form-select", "data-placeholder": "Select table"})
         )
 
         # We don't actually care about validating the 'choices' that the ChoiceField does by default.

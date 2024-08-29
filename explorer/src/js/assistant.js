@@ -46,8 +46,6 @@ function setupTableList() {
             removeItemButton: true,
             searchEnabled: true,
             shouldSort: false,
-            placeholder: true,
-            placeholderValue: 'Relevant tables',
             position: 'bottom'
         });
 
@@ -132,8 +130,10 @@ export function setUpAssistant(expand = false) {
 
 function getAssistantHistory() {
 
+    const historyModalId = 'historyModal';
+
     // Remove any existing modal with the same ID
-    const existingModal = document.getElementById('historyModal');
+    const existingModal = document.getElementById(historyModalId);
     if (existingModal) {
         existingModal.remove()
     }
@@ -186,7 +186,7 @@ function getAssistantHistory() {
 
         // Insert the table into a new Bootstrap modal
         const modalHtml = `
-            <div class="modal fade" id="historyModal" tabindex="-1" aria-labelledby="historyModalLabel" aria-hidden="true">
+            <div class="modal fade" id="${historyModalId}" tabindex="-1" aria-labelledby="historyModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -204,12 +204,10 @@ function getAssistantHistory() {
             </div>
         `;
 
-        // Append the modal to the body
         document.body.insertAdjacentHTML('beforeend', modalHtml);
-
-        // Show the modal
-        const historyModal = new bootstrap.Modal(document.getElementById('historyModal'));
+        const historyModal = new bootstrap.Modal(document.getElementById(historyModalId));
         historyModal.show();
+
     })
     .catch(error => {
         console.error('There was a problem with the fetch operation:', error);

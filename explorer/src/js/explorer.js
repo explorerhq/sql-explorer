@@ -25,7 +25,7 @@ function updateSchema() {
         });
     });
 
-    $("#schema_frame").attr("src", `../schema/${getConnElement().value}`);
+    $("#schema_frame").attr("src", `${window.baseUrlPath}schema/${getConnElement().value}`);
 }
 
 

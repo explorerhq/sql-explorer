@@ -21,6 +21,7 @@ vNext
   - Relevant tables are added client-side visually, in real time, based on what's in the SQL editor and/or any tables
     mentioned in the assistant request. The dependency on sql_metadata is therefore removed, as server-side SQL parsing
     is no longer necessary.
+  - Ability to view Assistant request/response history.
   - Improved system prompt that emphasizes the particular SQL dialect being used.
   - Addresses issue #657.
 

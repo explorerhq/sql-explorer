@@ -35,7 +35,14 @@ function populateTableList() {
     });
 }
 
+function updateSchema() {
+    document.getElementById("schema_frame").src = `${window.baseUrlPath}schema/${getConnElement().value}`;
+}
+
 export function setupTableDescription() {
     getConnElement().addEventListener('change', populateTableList);
     populateTableList();
+
+    getConnElement().addEventListener('change', updateSchema);
+    updateSchema();
 }

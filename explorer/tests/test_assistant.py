@@ -5,10 +5,12 @@ from explorer import app_settings
 
 import json
 from django.test import TestCase
+from django.utils import timezone
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.db import OperationalError
 from explorer.ee.db_connections.utils import default_db_connection
+from explorer.ee.db_connections.models import DatabaseConnection
 from explorer.assistant.utils import (
     sample_rows_from_table,
     ROW_SAMPLE_SIZE,
@@ -18,6 +20,7 @@ from explorer.assistant.utils import (
 )
 
 from explorer.assistant.models import TableDescription
+from explorer.models import PromptLog
 
 
 def conn():
@@ -282,3 +285,134 @@ class TestAssistantUtils(TestCase):
         self.assertEqual(relevant1.id, res1.id)
         res2 = get_relevant_annotation(default_db_connection(), "vegetables")
         self.assertEqual(relevant2.id, res2.id)
+
+
+class TestAssistantHistoryApiView(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_superuser(
+            "admin", "admin@admin.com", "pwd"
+        )
+        self.client.login(username="admin", password="pwd")
+
+    def test_assistant_history_api_view(self):
+        # Create some PromptLogs
+        connection = default_db_connection()
+        PromptLog.objects.create(
+            run_by_user=self.user,
+            database_connection=connection,
+            user_request="Test request 1",
+            response="Test response 1",
+            run_at=timezone.now()
+        )
+        PromptLog.objects.create(
+            run_by_user=self.user,
+            database_connection=connection,
+            user_request="Test request 2",
+            response="Test response 2",
+            run_at=timezone.now()
+        )
+
+        # Make a POST request to the API
+        url = reverse("assistant_history")
+        data = {
+            "connection_id": connection.id
+        }
+        response = self.client.post(url, data=json.dumps(data), content_type="application/json")
+
+        # Check the response
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertIn("logs", response_data)
+        self.assertEqual(len(response_data["logs"]), 2)
+        self.assertEqual(response_data["logs"][0]["user_request"], "Test request 2")
+        self.assertEqual(response_data["logs"][0]["response"], "Test response 2")
+        self.assertEqual(response_data["logs"][1]["user_request"], "Test request 1")
+        self.assertEqual(response_data["logs"][1]["response"], "Test response 1")
+
+    def test_assistant_history_api_view_invalid_json(self):
+        url = reverse("assistant_history")
+        response = self.client.post(url, data="invalid json", content_type="application/json")
+        self.assertEqual(response.status_code, 400)
+        response_data = json.loads(response.content)
+        self.assertEqual(response_data["status"], "error")
+        self.assertEqual(response_data["message"], "Invalid JSON")
+
+    def test_assistant_history_api_view_no_logs(self):
+        connection = default_db_connection()
+        url = reverse("assistant_history")
+        data = {
+            "connection_id": connection.id
+        }
+        response = self.client.post(url, data=json.dumps(data), content_type="application/json")
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertIn("logs", response_data)
+        self.assertEqual(len(response_data["logs"]), 0)
+
+    def test_assistant_history_api_view_filtered_results(self):
+        # Create two users
+        user1 = self.user
+        user2 = User.objects.create_superuser(
+            "admin2", "admin2@admin.com", "pwd"
+        )
+
+        # Create two database connections
+        connection1 = default_db_connection()
+        connection2 = DatabaseConnection.objects.create(
+            alias="test_connection",
+            engine="django.db.backends.sqlite3",
+            name=":memory:"
+        )
+
+        # Create prompt logs for both users and connections
+        PromptLog.objects.create(
+            run_by_user=user1,
+            database_connection=connection1,
+            user_request="User1 Connection1 request",
+            response="User1 Connection1 response",
+            run_at=timezone.now()
+        )
+        PromptLog.objects.create(
+            run_by_user=user1,
+            database_connection=connection2,
+            user_request="User1 Connection2 request",
+            response="User1 Connection2 response",
+            run_at=timezone.now()
+        )
+        PromptLog.objects.create(
+            run_by_user=user2,
+            database_connection=connection1,
+            user_request="User2 Connection1 request",
+            response="User2 Connection1 response",
+            run_at=timezone.now()
+        )
+
+        # Make a POST request to the API as user1
+        url = reverse("assistant_history")
+        data = {
+            "connection_id": connection1.id
+        }
+        response = self.client.post(url, data=json.dumps(data), content_type="application/json")
+
+        # Check the response
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertIn("logs", response_data)
+        self.assertEqual(len(response_data["logs"]), 1)
+        self.assertEqual(response_data["logs"][0]["user_request"], "User1 Connection1 request")
+        self.assertEqual(response_data["logs"][0]["response"], "User1 Connection1 response")
+
+        # Now test with user2
+        self.client.logout()
+        self.client.login(username="admin2", password="pwd")
+
+        response = self.client.post(url, data=json.dumps(data), content_type="application/json")
+
+        # Check the response
+        self.assertEqual(response.status_code, 200)
+        response_data = json.loads(response.content)
+        self.assertIn("logs", response_data)
+        self.assertEqual(len(response_data["logs"]), 1)
+        self.assertEqual(response_data["logs"][0]["user_request"], "User2 Connection1 request")
+        self.assertEqual(response_data["logs"][0]["response"], "User2 Connection1 response")
