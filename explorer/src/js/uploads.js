@@ -52,7 +52,7 @@ export function setupUploads() {
         }
 
         let xhr = new XMLHttpRequest();
-        xhr.open('POST', '../upload/', true);
+        xhr.open('POST', `${window.baseUrlPath}connections/upload/`, true);
         xhr.setRequestHeader('X-CSRFToken', getCsrfToken());
 
         xhr.upload.onprogress = function(event) {
@@ -91,7 +91,7 @@ export function setupUploads() {
             let form = document.getElementById("db-connection-form");
             let formData = new FormData(form);
 
-            fetch("../validate/", {
+            fetch(`${window.baseUrlPath}connections/validate/`, {
                 method: "POST",
                 body: formData,
                 headers: {

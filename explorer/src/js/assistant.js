@@ -1,67 +1,97 @@
 import {getCsrfToken} from "./csrf";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
-import * as bootstrap from 'bootstrap';
-import List from "list.js";
+import * as bootstrap from "bootstrap";
 import { SchemaSvc, getConnElement } from "./schemaService"
+import Choices from "choices.js"
 
 function getErrorMessage() {
     const errorElement = document.querySelector('.alert-danger.db-error');
     return errorElement ? errorElement.textContent.trim() : null;
 }
 
+function debounce(func, delay) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), delay);
+    };
+}
+
 function setupTableList() {
+
+    if(window.assistantChoices) {
+        window.assistantChoices.destroy();
+    }
+
     SchemaSvc.get().then(schema => {
         const keys = Object.keys(schema);
+        const selectElement = document.createElement('select');
+        selectElement.className = 'js-choice';
+        selectElement.toggleAttribute('multiple');
+        selectElement.toggleAttribute('data-trigger');
+
+        keys.forEach((key) => {
+            const option = document.createElement('option');
+            option.value = key;
+            option.textContent = key;
+            selectElement.appendChild(option);
+        });
+
         const tableList = document.getElementById('table-list');
         tableList.innerHTML = '';
+        tableList.appendChild(selectElement);
 
-        keys.forEach((key, index) => {
-            const div = document.createElement('div');
-            div.className = 'form-check';
-
-            const input = document.createElement('input');
-            input.className = 'form-check-input table-checkbox';
-            input.type = 'checkbox';
-            input.value = key;
-            input.id = 'flexCheckDefault' + index;
-
-            const label = document.createElement('label');
-            label.className = 'form-check-label';
-            label.setAttribute('for', input.id);
-            label.textContent = key;
-
-            div.appendChild(input);
-            div.appendChild(label);
-            tableList.appendChild(div);
+        const choices = new Choices('.js-choice', {
+            removeItemButton: true,
+            searchEnabled: true,
+            shouldSort: false,
+            position: 'bottom'
         });
 
-        let options = {
-            valueNames: ['form-check-label'],
-        };
-
-        new List('additional_table_container', options);
+        // TODO - nasty. Should be refactored. Used by submitAssistantAsk to get relevant tables.
+        window.assistantChoices = choices;
 
         const selectAllButton = document.getElementById('select_all_button');
-        const checkboxes = document.querySelectorAll('.table-checkbox');
-
-        let selectState = 'all';
-
-        selectAllButton.innerHTML = 'Select All';
-
         selectAllButton.addEventListener('click', (e) => {
             e.preventDefault();
-            const isSelectingAll = selectState === 'all';
-            checkboxes.forEach((checkbox) => {
-                checkbox.checked = isSelectingAll;
-            });
-            selectState = isSelectingAll ? 'none' : 'all';
-            selectAllButton.innerHTML = isSelectingAll ? 'Deselect All' : 'Select All';
+            choices.setChoiceByValue(keys);
         });
+
+        const deselectAllButton = document.getElementById('deselect_all_button');
+        deselectAllButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            keys.forEach(k => {
+                choices.removeActiveItemsByValue(k);
+            });
+        });
+
+        selectRelevantTablesSql(choices, keys);
+
+        document.addEventListener('docChanged', debounce(
+            () => selectRelevantTablesSql(choices, keys), 500));
+
+        document.getElementById('id_assistant_input').addEventListener('input', debounce(
+            () => selectRelevantTablesRequest(choices, keys), 300));
+
     })
     .catch(error => {
         console.error('Error retrieving JSON schema:', error);
     });
+}
+
+function selectRelevantTablesSql(choices, keys) {
+    const textContent = window.editor.state.doc.toString();
+    const textWords = new Set(textContent.split(/\s+/));
+    const hasKeys = keys.filter(key => textWords.has(key));
+    choices.setChoiceByValue(hasKeys);
+}
+
+function selectRelevantTablesRequest(choices, keys) {
+    const textContent = document.getElementById("id_assistant_input").value
+    const textWords = new Set(textContent.split(/\s+/));
+    const hasKeys = keys.filter(key => textWords.has(key));
+    choices.setChoiceByValue(hasKeys);
 }
 
 export function setUpAssistant(expand = false) {
@@ -71,13 +101,13 @@ export function setUpAssistant(expand = false) {
 
     const error = getErrorMessage();
 
-    if(expand || error) {
+    if (expand || error) {
         const myCollapseElement = document.getElementById('assistant_collapse');
         const bsCollapse = new bootstrap.Collapse(myCollapseElement, {
-          toggle: false
+            toggle: false
         });
         bsCollapse.show();
-        if(error) {
+        if (error) {
             document.getElementById('id_error_help_message').classList.remove('d-none');
         }
     }
@@ -85,7 +115,7 @@ export function setUpAssistant(expand = false) {
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
-    document.getElementById('id_assistant_input').addEventListener('keydown', function(event) {
+    document.getElementById('id_assistant_input').addEventListener('keydown', function (event) {
         if ((event.ctrlKey || event.metaKey) && (event.key === 'Enter')) {
             event.preventDefault();
             submitAssistantAsk();
@@ -93,19 +123,105 @@ export function setUpAssistant(expand = false) {
     });
 
     document.getElementById('ask_assistant_btn').addEventListener('click', submitAssistantAsk);
+
+    document.getElementById('assistant_history').addEventListener('click', getAssistantHistory);
+
 }
 
-function submitAssistantAsk() {
+function getAssistantHistory() {
 
-    const selectedTables = Array.from(
-        document.querySelectorAll('.table-checkbox:checked')
-    ).map(cb => cb.value);
+    const historyModalId = 'historyModal';
+
+    // Remove any existing modal with the same ID
+    const existingModal = document.getElementById(historyModalId);
+    if (existingModal) {
+        existingModal.remove()
+    }
+
+    const data = {
+        connection_id: document.getElementById("id_database_connection")?.value ?? null
+    };
+
+    fetch(`${window.baseUrlPath}assistant/history/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfToken()
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Create table rows from the fetched data
+        let tableRows = '';
+        data.logs.forEach(log => {
+            let md = DOMPurify.sanitize(marked.parse(log.response));
+            tableRows += `
+                <tr>
+                    <td>${log.user_request}</td>
+                    <td>${md}</td>
+                </tr>
+            `;
+        });
+
+        // Create the complete table HTML
+        const tableHtml = `
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>User Request</th>
+                        <th>Response</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${tableRows}
+                </tbody>
+            </table>
+        `;
+
+        // Insert the table into a new Bootstrap modal
+        const modalHtml = `
+            <div class="modal fade" id="${historyModalId}" tabindex="-1" aria-labelledby="historyModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="historyModalLabel">Assistant History</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            ${tableHtml}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        const historyModal = new bootstrap.Modal(document.getElementById(historyModalId));
+        historyModal.show();
+
+    })
+    .catch(error => {
+        console.error('There was a problem with the fetch operation:', error);
+    });
+}
+
+
+function submitAssistantAsk() {
 
     const data = {
         sql: window.editor?.state.doc.toString() ?? null,
         connection_id: document.getElementById("id_database_connection")?.value ?? null,
         assistant_request: document.getElementById("id_assistant_input")?.value ?? null,
-        selected_tables: selectedTables,
+        selected_tables: assistantChoices.getValue(true),
         db_error: getErrorMessage()
     };
 
@@ -113,7 +229,7 @@ function submitAssistantAsk() {
     document.getElementById("response_block").classList.remove('d-none');
     document.getElementById("assistant_spinner").classList.remove('d-none');
 
-    fetch('../assistant/', {
+    fetch(`${window.baseUrlPath}assistant/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

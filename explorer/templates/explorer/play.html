@@ -26,6 +26,7 @@
                     <div class="d-none">
                       {{ form.database_connection }}
                     </div>
+                    <div>{{ form.database_connection.value }}</div>
                 {% endif %}
                 <div class="row">
                     <div class="col">
@@ -45,6 +46,13 @@
                 </div>
 
                 <div class="mt-3 text-center">
+                    <div class="position-relative float-end">
+                        <small>
+                            <a href="#" title="Format code (Cmd/ctrl+shift+f)" id="format_button">
+                                <i class="bi-list-nested"></i>
+                            </a>
+                        </small>
+                    </div>
                     <div class="btn-group" role="group">
                         <button type="submit" id="refresh_play_button"
                                 class="btn btn-primary">{% translate 'Refresh' %}</button>
@@ -58,9 +66,6 @@
                         <button type="button" class="btn btn-outline-primary" id="hide_schema_button"
                                 style="display: none;">
                             {% translate "Hide Schema" %}
-                        </button>
-                        <button type="button" class="btn btn-outline-primary" id="format_button">
-                            {% translate "Format" %}
                         </button>
                     </div>
                 </div>

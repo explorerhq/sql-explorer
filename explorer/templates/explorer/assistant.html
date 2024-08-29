@@ -9,44 +9,52 @@
     </div>
     <div id="assistant_collapse" class="accordion-collapse collapse" aria-labelledby="assistant_accordion_header" data-bs-parent="#assistant_accordion">
         <div class="accordion-body card">
-            <div class="row assistant_input_parent">
-                <div class="mt-3 col-8" id="assistant_input_wrapper">
-                    <textarea
-                        class="form-control mb-4" id="id_assistant_input"
-                        name="sql_assistant" rows="5" placeholder="What do you need help with?"></textarea>
-                    <label for="id_assistant_input" class="form-label d-none" id="id_assistant_input_label">Assistant prompt</label>
-                    <div id="id_error_help_message" class="d-none text-secondary small">
-                        "Ask Assistant" to try and automatically fix the issue. The assistant is already aware of error messages & context.
-                    </div>
-                </div>
-                <div id="additional_table_container" class="col-4">
-                    <input id="search_assistant_tables" class="search" placeholder="{% translate "Search Tables" %}" />
-                    <button id="select_all_button" class="btn btn-primary btn-sm">Select All</button>
-                    <a class="small text-secondary" style="cursor: pointer; text-decoration: none;"
-                        data-bs-toggle="tooltip" data-bs-placement="top"
-                        data-bs-title="SQL Assistant builds a prompt with your query, your request, relevant schema (tables referenced in your query) and sample data from those tables. You can optionally include other tables (schema + data sample) that you'd like SQL Assistant to know about.">(?)</a>
-                    <label for="search_assistant_tables" class="d-none" id="search_assistant_tables_label">Search tables</label>
-
-                    <div id="table-list" class="list"></div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-12 text-center">
-                    <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-outline-primary" id="ask_assistant_btn">Ask Assistant</button>
-                    </div>
-                </div>
-            </div>
-
             <div id="response_block" class="position-relative d-none">
-                <div class="mt-3 p-2 pt-4 rounded-2 border bg-light">
+                <div class="mb-3 p-2 rounded-2 border bg-light">
                     <div id="assistant_response"></div>
                     <p class="spinner-border text-primary d-none" id="assistant_spinner" role="status">
                         <span class="visually-hidden">Loading...</span>
                     </p>
                 </div>
             </div>
+            <div class="row assistant_input_parent">
+                <div class="col-8" id="assistant_input_wrapper">
+                    <textarea
+                        class="form-control" id="id_assistant_input"
+                        name="sql_assistant" rows="5" placeholder="What do you need help with?"></textarea>
+                    <label for="id_assistant_input" class="form-label d-none" id="id_assistant_input_label">Assistant prompt</label>
+                    <div id="id_error_help_message" class="d-none text-secondary small">
+                        "Ask Assistant" to try and automatically fix the issue. The assistant is already aware of error messages & context.
+                    </div>
+                </div>
+                <div id="additional_table_container" class="col-3" style="width: 31% !important">
+                    <div id="table-list"></div>
+                </div>
+            </div>
+            <div class="assistant-icons" style="">
+                <div>
+                    <i class="bi-plus-circle" id="select_all_button" style="cursor: pointer;" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Select all"></i>
+                </div>
+                <div>
+                    <i class="bi-trash" id="deselect_all_button" style="cursor: pointer;" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Remove all"></i>
+                </div>
+                <div>
+                    <i class="bi-card-list" id="assistant_history" style="cursor: pointer;" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="History"></i>
+                </div>
+                <div>
+                    <i class="bi-question-circle" style="cursor: pointer;"
+                    data-bs-toggle="tooltip" data-bs-placement="top"
+                    data-bs-title="SQL Assistant builds a prompt with your query, your request, and the tables (schema, sample data, and annotations) referenced here."></i>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 text-center">
+                    <div class="btn-group mt-3" role="group">
+                        <button type="button" class="btn btn-outline-primary" id="ask_assistant_btn">Ask Assistant</button>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>

@@ -6,7 +6,7 @@ from explorer.views import (
     ListQueryView, PlayQueryView, QueryFavoritesView, QueryFavoriteView, QueryView, SchemaJsonView, SchemaView,
     StreamQueryView, format_sql
 )
-from explorer.assistant.views import AssistantHelpView
+from explorer.assistant.urls import assistant_urls
 
 urlpatterns = [
     path(
@@ -43,7 +43,7 @@ urlpatterns = [
     path("favorites/", QueryFavoritesView.as_view(), name="query_favorites"),
     path("favorite/<int:query_id>", QueryFavoriteView.as_view(), name="query_favorite"),
     path("", ListQueryView.as_view(), name="explorer_index"),
-    path("assistant/", AssistantHelpView.as_view(), name="assistant"),
 ]
 
+urlpatterns += assistant_urls
 urlpatterns += ee_urls

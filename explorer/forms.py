@@ -34,6 +34,7 @@ class QueryForm(ModelForm):
 
     sql = SqlField()
     snapshot = BooleanField(widget=CheckboxInput, required=False)
+    few_shot = BooleanField(widget=CheckboxInput, required=False)
     database_connection = CharField(widget=Select, required=False)
 
     def __init__(self, *args, **kwargs):
@@ -77,4 +78,4 @@ class QueryForm(ModelForm):
 
     class Meta:
         model = Query
-        fields = ["title", "sql", "description", "snapshot", "database_connection"]
+        fields = ["title", "sql", "description", "snapshot", "database_connection", "few_shot"]

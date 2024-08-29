@@ -1,0 +1,50 @@
+{% extends "explorer/base.html" %}
+
+{% block sql_explorer_content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-9">
+          <h1>{% if form.instance.pk %}Edit{% else %}Create{% endif %} Table Description</h1>
+          {% if form.errors %}
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <div class="alert alert-danger">
+                        <strong>{{ error|escape }}</strong>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <div class="alert alert-danger">
+                    <strong>{{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+          {% endif %}
+          <form method="post" id="table-description-form">
+            {% csrf_token %}
+            <div>
+              <div class="mb-3 form-floating">
+                {{ form.database_connection }}
+                <label for="{{ form.database_connection.id_for_label }}" class="form-label">Connection</label>
+              </div>
+              <div class="mb-3 form-floating z-3">
+                <small>Table Name</small>
+                {{ form.table_name }}
+              </div>
+              <div class="mb-3 form-floating">
+                {{ form.description }}
+                <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">{% if form.instance.pk %}Update{% else %}Save{% endif %} Annotation</button>
+            <a href="{% url 'table_description_list' %}" class="btn btn-secondary">Cancel</a>
+          </form>
+        </div>
+        <div class="col-md-3">
+            <div id="schema">
+                <iframe class="no-autofocus" src="" height="828px" frameBorder="0" id="schema_frame"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

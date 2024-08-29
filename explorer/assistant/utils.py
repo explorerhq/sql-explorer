@@ -1,12 +1,16 @@
+from dataclasses import dataclass
 from explorer import app_settings
 from explorer.schema import schema_info
-from explorer.models import ExplorerValue
+from explorer.models import ExplorerValue, Query
 from django.db.utils import OperationalError
+from django.db.models.functions import Lower
+from django.db.models import Q
+from explorer.assistant.models import TableDescription
 
 
 OPENAI_MODEL = app_settings.EXPLORER_ASSISTANT_MODEL["name"]
-ROW_SAMPLE_SIZE = 2
-MAX_FIELD_SAMPLE_SIZE = 500  # characters
+ROW_SAMPLE_SIZE = 3
+MAX_FIELD_SAMPLE_SIZE = 200  # characters
 
 
 def openai_client():
@@ -34,25 +38,17 @@ def extract_response(r):
     return r[-1].content
 
 
-def tables_from_schema_info(db_connection, table_names):
+def table_schema(db_connection, table_name):
     schema = schema_info(db_connection)
-    return [table for table in schema if table[0] in set(table_names)]
-
-
-def sample_rows_from_tables(connection, table_names):
-    ret = ""
-    for table_name in table_names:
-        ret += f"SAMPLE FROM TABLE {table_name}:\n"
-        ret += format_rows_from_table(
-            sample_rows_from_table(connection, table_name)
-        ) + "\n\n"
-    return ret
+    s = [table for table in schema if table[0] == table_name]
+    if len(s):
+        return s[0][1]
 
 
 def sample_rows_from_table(connection, table_name):
     """
     Fetches a sample of rows from the specified table and ensures that any field values
-    exceeding 500 characters (or bytes) are truncated. This is useful for handling fields
+    exceeding 200 characters (or bytes) are truncated. This is useful for handling fields
     like "description" that might contain very long strings of text or binary data.
     Truncating these fields prevents issues with displaying or processing overly large values.
     An ellipsis ("...") is appended to indicate that the data has been truncated.
@@ -76,8 +72,8 @@ def sample_rows_from_table(connection, table_name):
                 new_val = field
                 if isinstance(field, str) and len(field) > MAX_FIELD_SAMPLE_SIZE:
                     new_val = field[:MAX_FIELD_SAMPLE_SIZE] + "..."  # Truncate and add ellipsis
-                elif isinstance(field, (bytes, bytearray)) and len(field) > MAX_FIELD_SAMPLE_SIZE:
-                    new_val = field[:MAX_FIELD_SAMPLE_SIZE] + b"..."  # Truncate binary data
+                elif isinstance(field, (bytes, bytearray)):
+                    new_val = "<binary_data>"
                 processed_row.append(new_val)
             ret.append(processed_row)
 
@@ -87,66 +83,97 @@ def sample_rows_from_table(connection, table_name):
 
 
 def format_rows_from_table(rows):
-    column_headers = list(rows[0])
-    ret = " | ".join(column_headers) + "\n" + "-" * 50 + "\n"
-    for row in rows[1:]:
-        row_str = " | ".join(str(item) for item in row)
-        ret += row_str + "\n"
-    return ret
+    """ Given an array of rows (a list of lists), returns e.g.
+
+AlbumId | Title | ArtistId
+1 | For Those About To Rock We Salute You | 1
+2 | Let It Rip | 2
+3 | Restless and Wild | 2
+
+    """
+    return "\n".join([" | ".join([str(item) for item in row]) for row in rows])
 
 
-def get_table_names_from_query(sql):
-    from sql_metadata import Parser
-    if sql:
-        try:
-            parsed = Parser(sql)
-            return parsed.tables
-        except ValueError:
-            return []
-    return []
+def build_system_prompt(flavor):
+    bsp = ExplorerValue.objects.get_item(ExplorerValue.ASSISTANT_SYSTEM_PROMPT).value
+    bsp += f"\nYou are an expert at writing SQL, specifically for {flavor}, and account for the nuances of this dialect of SQL. You always respond with valid {flavor} SQL."  # noqa
+    return bsp
 
 
-def num_tokens_from_string(string: str) -> int:
-    """Returns the number of tokens in a text string."""
-    import tiktoken
-    try:
-        encoding = tiktoken.encoding_for_model(OPENAI_MODEL)
-    except KeyError:
-        encoding = tiktoken.get_encoding("cl100k_base")
-    num_tokens = len(encoding.encode(string))
-    return num_tokens
+def get_relevant_annotation(db_connection, t):
+    return TableDescription.objects.annotate(
+        table_name_lower=Lower("table_name")
+    ).filter(
+        database_connection=db_connection,
+        table_name_lower=t.lower()
+    ).first()
 
 
-def fits_in_window(string: str) -> bool:
-    # Ratchet down by 5% to account for other boilerplate and system prompt
-    # TODO make this better by actually looking at the token count of the system prompt
-    return num_tokens_from_string(string) < (app_settings.EXPLORER_ASSISTANT_MODEL["max_tokens"] * 0.95)
+def get_relevant_few_shots(db_connection, included_tables):
+    included_tables_lower = [t.lower() for t in included_tables]
+
+    query_conditions = Q()
+    for table in included_tables_lower:
+        query_conditions |= Q(sql__icontains=table)
+
+    return Query.objects.annotate(
+        sql_lower=Lower("sql")
+    ).filter(
+        database_connection=db_connection,
+        few_shot=True
+    ).filter(query_conditions)
+
+
+def get_few_shot_chunk(db_connection, included_tables):
+    included_tables = [t.lower() for t in included_tables]
+    few_shot_examples = get_relevant_few_shots(db_connection, included_tables)
+    if few_shot_examples:
+        return "## Relevant example queries, written by expert SQL analysts ##\n" + "\n\n".join(
+            [f"Description: {fs.title} - {fs.description}\nSQL:\n{fs.sql}"
+             for fs in few_shot_examples.all()]
+        )
+
+
+@dataclass
+class TablePromptData:
+    name: str
+    schema: list
+    sample: list
+    annotation: TableDescription
+
+    def render(self):
+        fmt_schema = "\n".join([str(field) for field in self.schema])
+        ret = f"""## Information for Table '{self.name}' ##
+
+Schema:\n{fmt_schema}
+
+Sample rows:\n{format_rows_from_table(self.sample)}"""
+        if self.annotation:
+            ret += f"\nUsage Notes:\n{self.annotation.description}"
+        return ret
 
 
 def build_prompt(db_connection, assistant_request, included_tables, query_error=None, sql=None):
-    user_prompt = ""
-    djc = db_connection.as_django_connection()
-    user_prompt += f"## Database Vendor / SQL Flavor is {djc.vendor}\n\n"
+    included_tables = [t.lower() for t in included_tables]
 
-    if query_error:
-        user_prompt += f"## Query Error ##\n\n{query_error}\n\n"
+    error_chunk = f"## Query Error ##\n{query_error}" if query_error else None
+    sql_chunk = f"## Existing User-Written SQL ##\n{sql}" if sql else None
+    request_chunk = f"## User's Request to Assistant ##\n{assistant_request}"
+    table_chunks = [
+        TablePromptData(
+            name=t,
+            schema=table_schema(db_connection, t),
+            sample=sample_rows_from_table(db_connection.as_django_connection(), t),
+            annotation=get_relevant_annotation(db_connection, t)
+        ).render()
+        for t in included_tables
+    ]
+    few_shot_chunk = get_few_shot_chunk(db_connection, included_tables)
 
-    if sql:
-        user_prompt += f"## Existing SQL ##\n\n{sql}\n\n"
-
-    results_sample = sample_rows_from_tables(djc,
-                                             included_tables)
-    if fits_in_window(user_prompt + results_sample):
-        user_prompt += f"## Table Structure with Sampled Data ##\n\n{results_sample}\n\n"
-    else:  # If it's too large with sampling, then provide *just* the structure
-        table_struct = tables_from_schema_info(db_connection,
-                                               included_tables)
-        user_prompt += f"## Table Structure ##\n\n{table_struct}\n\n"
-
-    user_prompt += f"## User's Request to Assistant ##\n\n{assistant_request}\n\n"
+    chunks = [error_chunk, sql_chunk, *table_chunks, few_shot_chunk, request_chunk]
 
     prompt = {
-        "system": ExplorerValue.objects.get_item(ExplorerValue.ASSISTANT_SYSTEM_PROMPT).value,
-        "user": user_prompt
+        "system": build_system_prompt(db_connection.as_django_connection().vendor),
+        "user": "\n\n".join([c for c in chunks if c]),
     }
     return prompt

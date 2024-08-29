@@ -14,13 +14,19 @@
     cursor: pointer;
 }
 
-#additional_table_container {
-    overflow-y: auto;
-    max-height: 10rem;
-}
-
 #assistant_input_parent {
     max-height: 120px;
     overflow: hidden;
 }
 
+.assistant-icons {
+    width: 1rem;
+    position: absolute;
+    right: .75rem;
+}
+
+#table-list {
+    .choices__inner {
+        min-height: 7rem !important;
+    }
+}

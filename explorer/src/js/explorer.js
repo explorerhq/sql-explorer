@@ -25,7 +25,7 @@ function updateSchema() {
         });
     });
 
-    $("#schema_frame").attr("src", `../schema/${getConnElement().value}`);
+    $("#schema_frame").attr("src", `${window.baseUrlPath}schema/${getConnElement().value}`);
 }
 
 
@@ -87,6 +87,10 @@ export class ExplorerEditor {
 
         document.addEventListener('submitEventFromCM', (e) => {
             this.$submit.click();
+        });
+
+        document.addEventListener('formatEventFromCM', (e) => {
+            this.formatSql();
         });
 
         document.addEventListener('docChanged', (e) => {
@@ -157,7 +161,7 @@ export class ExplorerEditor {
         formData.append('sql', sqlText); // Append the SQL text to the form data
 
         // Make the fetch call
-        fetch("../format/", {
+        fetch(`${window.baseUrlPath}format/`, {
             method: "POST",
             headers: {
                 // 'Content-Type': 'application/x-www-form-urlencoded', // Not needed when using FormData, as the browser sets it along with the boundary

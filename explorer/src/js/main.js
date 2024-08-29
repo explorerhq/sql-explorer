@@ -18,11 +18,14 @@ const route_initializers = {
     explorer_schema:     () => import('./schema').then(({setupSchema}) => setupSchema()),
     explorer_upload_create:            () => import('./uploads').then(({setupUploads}) => setupUploads()),
     explorer_connection_update:            () => import('./uploads').then(({setupUploads}) => setupUploads()),
-    explorer_connection_create:            () => import('./uploads').then(({setupUploads}) => setupUploads())
+    explorer_connection_create:            () => import('./uploads').then(({setupUploads}) => setupUploads()),
+    table_description_create: () => import('./tableDescription').then(({setupTableDescription}) => setupTableDescription()),
+    table_description_update: () => import('./tableDescription').then(({setupTableDescription}) => setupTableDescription()),
 };
 
 document.addEventListener('DOMContentLoaded', function() {
     const clientRoute = document.getElementById('clientRoute').value;
+    window.baseUrlPath = document.getElementById('baseUrlPath').value;
     if (route_initializers.hasOwnProperty(clientRoute)) {
         route_initializers[clientRoute]();
     }

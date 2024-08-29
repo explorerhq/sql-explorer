@@ -7,7 +7,7 @@ from explorer.ee.db_connections.admin import DatabaseConnectionAdmin  # noqa
 
 @admin.register(Query)
 class QueryAdmin(admin.ModelAdmin):
-    list_display = ("title", "description", "created_by_user",)
+    list_display = ("title", "description", "created_by_user", "few_shot")
     list_filter = ("title",)
     raw_id_fields = ("created_by_user",)
     actions = [generate_report_action()]
