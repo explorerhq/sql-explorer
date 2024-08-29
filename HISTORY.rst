@@ -5,7 +5,7 @@ Change Log
 This document records all notable changes to `SQL Explorer <https://github.com/explorerhq/sql-explorer>`_.
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
-vNext
+`5.3.0 (beta)`_ (2024-08-29)
 ===========================
 * `#664`_: Improvements to the AI SQL Assistant:
 
@@ -583,7 +583,8 @@ Initial Release
 .. _5.0.2: https://github.com/explorerhq/sql-explorer/compare/5.0.1...5.0.2
 .. _5.1.0: https://github.com/explorerhq/sql-explorer/compare/5.0.2...5.1.0
 .. _5.1.1: https://github.com/explorerhq/sql-explorer/compare/5.1.0...5.1.1
-.. _5.2b1: https://github.com/explorerhq/sql-explorer/compare/5.1.1...5.2.0
+.. _5.2.0: https://github.com/explorerhq/sql-explorer/compare/5.1.1...5.2.0
+.. _5.3b1: https://github.com/explorerhq/sql-explorer/compare/5.2.0...5.3b1
 
 
 .. _#254: https://github.com/explorerhq/sql-explorer/pull/254
