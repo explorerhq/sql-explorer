@@ -39,7 +39,7 @@
                         <div class="alert alert-danger">{{ error|escape }}</div>
                     {% endfor %}{% endif %}
                 </div>
-                {% if form.connections|length > 1 and can_change %}
+                {% if can_change %}
                     <div class="mb-3 form-floating">
                         {{ form.database_connection }}
                         <label for="id_database_connection" class="form-label">{% translate "Connection" %}</label>

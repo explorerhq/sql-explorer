@@ -9,6 +9,7 @@ from explorer.models import Query, QueryFavorite, QueryLog
 from explorer.utils import allowed_query_pks, url_get_query_id
 from explorer.views.auth import PermissionRequiredMixin
 from explorer.views.mixins import ExplorerContextMixin
+from explorer.ee.db_connections.models import DatabaseConnection
 
 
 class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
@@ -36,6 +37,7 @@ class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["object_list"] = self._build_queries_and_headers()
+        context["connection_count"] = DatabaseConnection.objects.count()
         context["recent_queries"] = self.recently_viewed()
         context["tasks_enabled"] = app_settings.ENABLE_TASKS
         context["vite_dev_mode"] = app_settings.VITE_DEV_MODE
