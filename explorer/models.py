@@ -81,13 +81,22 @@ class Query(models.Model):
         executing_user=None,
         is_connection_for_explorer_master_db=False,
     ):
-        return QueryResult(
+        ret = QueryResult(
             self.final_sql(),
             self.title,
             is_connection_type_pii,
             executing_user if executing_user else self.created_by_user,
             is_connection_for_explorer_master_db,
         )
+
+        for each_row in ret.data:
+            for col_index in range(len(each_row)):
+                try:
+                    each_row[col_index] = json.loads(each_row[col_index])
+                except:
+                    pass
+
+        return ret
 
     def execute_with_logging(self, executing_user):
         ql = self.log(executing_user)
