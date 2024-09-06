@@ -325,7 +325,11 @@ def should_route_to_asyncapi_db(sql):
         "request_log_requestlogdata",
         "temp_request_log_requestlog_customer",
         "temp_request_log_requestlogdata_customer",
-        "request_log_asyncapirequestlogv2"
+        "request_log_asyncapirequestlogv2",
+        "request_log_requestloginbound",
+        "request_log_requestlogdatainbound",
+        "request_log_requestlogoutbound",
+        "request_log_requestlogdataoutbound",
     ]
     pattern = r"\b(?:%s)\b" % "|".join(map(re.escape, request_log_tables))
     match = re.search(pattern, sql)
