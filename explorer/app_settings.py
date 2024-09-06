@@ -170,7 +170,7 @@ EXPLORER_PRUNE_LOCAL_UPLOAD_COPY_DAYS_INACTIVITY = getattr(settings,
 # 500mb default max
 EXPLORER_MAX_UPLOAD_SIZE = getattr(settings, "EXPLORER_MAX_UPLOAD_SIZE", 500 * 1024 * 1024)
 
-EXPLORER_HOSTED = getattr(settings, "EXPLORER_HOSTED", True)
+EXPLORER_HOSTED = getattr(settings, "EXPLORER_HOSTED", False)
 
 
 def has_assistant():

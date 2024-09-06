@@ -4,13 +4,21 @@
 {% block sql_explorer_content %}
     <div style="display: none">{% csrf_token %}</div>
     {% if connection_count == 0 %}
-        <div class="container">
-            <h3>
-                Welcome!
-            </h3>
-            <p>
-                <a href="{% url 'explorer_connections' %}">Create a connection</a> to get started
-            </p>
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8 text-center">
+                    <h1 class="display-4 text-primary mb-4">Welcome to SQL Explorer!</h1>
+                    <p class="lead text-muted">
+                        First things first, in order to create queries and start exploring, you'll need to:
+                    </p>
+                    <p class="mb-4">
+                        <a href="{% url 'explorer_connections' %}" class="btn btn-secondary btn-lg">Create a Connection</a>
+                    </p>
+                    <p class="text-muted">
+                        Need help? Check out the <a href="https://django-sql-explorer.readthedocs.io/en/latest/" class="text-decoration-underline">documentation</a>{% if hosted %} or <a href="mailto:support@sqlexplorer.io" class="text-decoration-underline">contact support</a>{% endif %}.
+                    </p>
+                </div>
+            </div>
         </div>
     {% else %}
         {% if recent_queries|length > 0 %}
