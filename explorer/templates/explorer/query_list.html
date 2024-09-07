@@ -20,6 +20,23 @@
                 </div>
             </div>
         </div>
+    {% elif object_list|length == 0 %}
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8 text-center">
+                    <h1 class="display-4 text-primary mb-4">Time to create a query</h1>
+                    <p class="lead text-muted">
+                        You have {{ connection_count }} connection{% if connection_count > 1 %}s{% endif %} created, now get cracking!
+                    </p>
+                    <p class="mb-4">
+                        <a href="{% url 'query_create' %}" class="btn btn-secondary btn-lg">Create a Query</a> or <a href="{% url 'explorer_playground' %}" class="btn btn-secondary btn-lg">Play Around</a>
+                    </p>
+                    <p class="text-muted">
+                        Need help? Check out the <a href="https://django-sql-explorer.readthedocs.io/en/latest/" class="text-decoration-underline">documentation</a>{% if hosted %} or <a href="mailto:support@sqlexplorer.io" class="text-decoration-underline">contact support</a>{% endif %}.
+                    </p>
+                </div>
+            </div>
+        </div>
     {% else %}
         {% if recent_queries|length > 0 %}
             <div class="container">

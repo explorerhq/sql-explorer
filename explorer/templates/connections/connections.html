@@ -5,8 +5,15 @@
 <div class="container">
     <h3>Connections</h3>
     <div class="mt-3">
-        <a href="{% url 'explorer_connection_create' %}" class="btn btn-primary mb-3">Add New Connection</a>
-        <a href="{% url 'explorer_upload_create' %}" class="btn btn-primary mb-3">Upload File</a>
+        <div class="d-flex align-items-center gap-2 mb-3">
+            <a href="{% url 'explorer_connection_create' %}" class="btn btn-primary">Add New Connection</a>
+            <a href="{% url 'explorer_upload_create' %}" class="btn btn-primary">Upload File</a>
+            {% if object_list|length == 0 %}
+                <span class="text-secondary d-flex align-items-center fw-bold">
+                    <i class="bi-arrow-left me-1"></i>Connect to an existing database, or upload a csv, json, or sqlite file.
+                </span>
+            {% endif %}
+        </div>
         <table class="table table-striped" id="connections_table">
             <thead>
                 <tr>

@@ -96,6 +96,10 @@
                     {% if query %}
                         <div class="position-relative float-end">
                             <small>
+                                <span class="pe-3">
+                                    {% if query and can_change and assistant_enabled %}{{ form.few_shot }} {% translate "Assistant Example" %}{% endif %}
+                                    <i class="bi-question-circle" style="cursor: pointer;" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Queries marked as examples will be sent, when relevant, to the AI Assistant as few-shot examples of how certain tables are used."></i>
+                                </span>
                                 <a href="#" title="Open in playground" id="playground_button">
                                     <i class="bi-arrow-up-right-square"></i>
                                 </a>
@@ -150,6 +154,5 @@
 </div>
 <div class="container mt-1 text-end small">
     {% if query and can_change and tasks_enabled %}{{ form.snapshot }} {% translate "Snapshot" %}{% endif %}
-    {% if query and can_change and assistant_enabled %}{{ form.few_shot }} {% translate "Assistant Example" %}{% endif %}
 </div>
 {% endblock %}

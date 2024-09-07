@@ -82,7 +82,6 @@ class UploadDbView(PermissionRequiredMixin, View):
 
 class DatabaseConnectionsListView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
 
-    context_object_name = "sqlite_uploads"
     permission_required = "connections_permission"
     template_name = "connections/connections.html"
     model = DatabaseConnection
