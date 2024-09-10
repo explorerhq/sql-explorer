@@ -5,7 +5,7 @@ Change Log
 This document records all notable changes to `SQL Explorer <https://github.com/explorerhq/sql-explorer>`_.
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
-`5.3.0 (beta)`_ (2024-08-29)
+`5.3.0 (beta 2)`_ (2024-09-10)
 ===========================
 * `#664`_: Improvements to the AI SQL Assistant:
 
@@ -40,6 +40,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
     now ensures there is no data loss in the event that a rollback to an earlier version is required.
 
 * Fixed a bug when validating connections to uploaded files. Also added basic locking when downloading files from S3.
+
+* On-boarding UI; if no connections or queries are created, the UI walks the user through it a bit.
 
 * Keyboard shortcut for formatting the SQL in the editor.
 

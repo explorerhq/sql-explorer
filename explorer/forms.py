@@ -41,7 +41,8 @@ class QueryForm(ModelForm):
         super().__init__(*args, **kwargs)
         self.fields["database_connection"].widget.choices = self.connections
         if not self.instance.database_connection:
-            self.initial["database_connection"] = default_db_connection().alias
+            default_db = default_db_connection()
+            self.initial["database_connection"] = default_db_connection().alias if default_db else None
         self.fields["database_connection"].widget.attrs["class"] = "form-select"
 
     def clean(self):
@@ -66,6 +67,10 @@ class QueryForm(ModelForm):
 
     @property
     def connections(self):
+        default_db = default_db_connection()
+        if default_db is None:
+            return []
+
         # Ensure the default connection appears first in the dropdown in the form
         result = DatabaseConnection.objects.annotate(
             custom_order=Case(

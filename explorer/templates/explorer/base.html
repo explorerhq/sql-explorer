@@ -80,6 +80,12 @@ npm run dev
                     <a class="nav-link{% if not query and view_name == 'query_favorites' %} active{% endif %}"
                        href="{% url 'query_favorites' %}"><i class="small me-1 bi-heart"></i>{% translate "Favorites" %}</a>
                 </li>
+            {% if hosted %}
+                <li class="nav-item">
+                    <a class="nav-link"
+                       href="/"><i class="small me-1 bi-arrow-return-left"></i>Manage</a>
+                </li>
+            {% endif %}
             </ul>
         </div>
     </nav>

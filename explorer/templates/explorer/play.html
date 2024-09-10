@@ -16,7 +16,7 @@
                     <div class="alert alert-danger db-error">{{ error|escape }}</div>
                 {% endif %}
                 {{ form.non_field_errors }}
-                {% if form.connections|length > 1 and can_change %}
+                {% if can_change %}
                     <div class="mb-3 form-floating">
                         {{ form.database_connection }}
                         <label for="id_database_connection" class="form-label">{% translate "Connection" %}</label>
@@ -26,7 +26,6 @@
                     <div class="d-none">
                       {{ form.database_connection }}
                     </div>
-                    <div>{{ form.database_connection.value }}</div>
                 {% endif %}
                 <div class="row">
                     <div class="col">

@@ -23,6 +23,7 @@ class ExplorerContextMixin:
             "csrf_cookie_name": settings.CSRF_COOKIE_NAME,
             "csrf_token_in_dom": settings.CSRF_COOKIE_HTTPONLY or settings.CSRF_USE_SESSIONS,
             "view_name": self.request.resolver_match.view_name,
+            "hosted": app_settings.EXPLORER_HOSTED
         }
 
     def get_context_data(self, **kwargs):

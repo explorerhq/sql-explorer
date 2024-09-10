@@ -3,160 +3,196 @@
 
 {% block sql_explorer_content %}
     <div style="display: none">{% csrf_token %}</div>
-    {% if recent_queries|length > 0 %}
-        <div class="container">
-            <h3>{% translate "Recently Run by You" %}</h3>
+    {% if connection_count == 0 %}
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8 text-center">
+                    <h1 class="display-4 text-primary mb-4">Welcome to SQL Explorer!</h1>
+                    <p class="lead text-muted">
+                        First things first, in order to create queries and start exploring, you'll need to:
+                    </p>
+                    <p class="mb-4">
+                        <a href="{% url 'explorer_connections' %}" class="btn btn-secondary btn-lg">Create a Connection</a>
+                    </p>
+                    <p class="text-muted">
+                        Need help? Check out the <a href="https://django-sql-explorer.readthedocs.io/en/latest/" class="text-decoration-underline">documentation</a>{% if hosted %} or <a href="mailto:support@sqlexplorer.io" class="text-decoration-underline">contact support</a>{% endif %}.
+                    </p>
+                </div>
+            </div>
+        </div>
+    {% elif object_list|length == 0 %}
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8 text-center">
+                    <h1 class="display-4 text-primary mb-4">Time to create a query</h1>
+                    <p class="lead text-muted">
+                        You have {{ connection_count }} connection{% if connection_count > 1 %}s{% endif %} created, now get cracking!
+                    </p>
+                    <p class="mb-4">
+                        <a href="{% url 'query_create' %}" class="btn btn-secondary btn-lg">Create a Query</a> or <a href="{% url 'explorer_playground' %}" class="btn btn-secondary btn-lg">Play Around</a>
+                    </p>
+                    <p class="text-muted">
+                        Need help? Check out the <a href="https://django-sql-explorer.readthedocs.io/en/latest/" class="text-decoration-underline">documentation</a>{% if hosted %} or <a href="mailto:support@sqlexplorer.io" class="text-decoration-underline">contact support</a>{% endif %}.
+                    </p>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        {% if recent_queries|length > 0 %}
+            <div class="container">
+                <h3>{% translate "Recently Run by You" %}</h3>
+                <table class="table table-striped table-borderless">
+                    <thead>
+                        <tr>
+                            <th>{% translate "Query" %}</th>
+                            <th>{% translate "Last Run" %}</th>
+                            <th class="text-center">CSV</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for object in recent_queries %}
+                            <tr>
+                                <td class="name">
+                                    <a href="{% url 'query_detail' object.query_id %}">{{ object.query.title }}</a>
+                                </td>
+                                <td>{{ object.run_at|date:"SHORT_DATETIME_FORMAT" }}</td>
+                                <td class="text-center">
+                                    <a href="{% url 'download_query' object.query_id %}">
+                                        <i class="bi-download"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+
+        <div id="queries" class="container">
+            <div class="row">
+                <div class="col">
+                    <h3>{% translate "All Queries" %}</h3>
+                </div>
+                <div class="col text-end">
+                    <input class="search" placeholder="{% translate "Search" %}" style="">
+                </div>
+            </div>
             <table class="table table-striped table-borderless">
                 <thead>
                     <tr>
-                        <th>{% translate "Query" %}</th>
-                        <th>{% translate "Last Run" %}</th>
-                        <th class="text-center">CSV</th>
+                        <th><i class="sort bi-chevron-expand pe-1" data-sort="sort-name"
+                                                             data-dir="asc"></i>{% translate "Query" %}</th>
+                        <th><i class="sort bi-chevron-expand pe-1" data-sort="sort-created"
+                                                             data-dir="asc"></i>{% translate "Created" %}</th>
+                        {% if tasks_enabled %}
+                            <th><i class="sort bi-chevron-expand pe-1" data-sort="{{ forloop.counter0 }}"
+                                                             data-dir="asc"></i>{% translate "Email" %}</th>
+                        {% endif %}
+                        <th>{% translate "CSV" %}</th>
+                        {% if can_change %}
+                            <th>{% translate "Play" %}</th>
+                            <th>{% translate "Delete" %}</th>
+                        {% endif %}
+                        <th>{% translate "Favorite" %}</th>
+                        <th><i class="sort bi-chevron-expand pe-1" data-sort="sort-last-run"
+                                                             data-dir="asc"></i>{% translate "Last Run" %}</th>
+                        <th><i class="sort bi-chevron-expand pe-1" data-sort="sort-run-count"
+                                                             data-dir="asc"></i>{% translate "Run Count" %}</th>
+                        <th><i class="sort bi-chevron-expand pe-1" data-sort="sort-connection"
+                                                             data-dir="asc"></i>{% translate "Connection" %}</th>
                     </tr>
                 </thead>
-                <tbody>
-                    {% for object in recent_queries %}
-                        <tr>
-                            <td class="name">
-                                <a href="{% url 'query_detail' object.query_id %}">{{ object.query.title }}</a>
-                            </td>
-                            <td>{{ object.run_at|date:"SHORT_DATETIME_FORMAT" }}</td>
-                            <td class="text-center">
-                                <a href="{% url 'download_query' object.query_id %}">
-                                    <i class="bi-download"></i>
-                                </a>
-                            </td>
+                <tbody class="list">
+                    {% for object in object_list %}
+                        <tr {% if object.is_in_category %}class="collapse {{object.collapse_target}}" data-bs-config='{"delay":0}'{% endif %}>
+                            {% if object.is_header %}
+                                <td colspan="100">
+                                    <strong>
+                                        <span data-bs-toggle="collapse" style="cursor: pointer;" data-bs-target=".{{object.collapse_target}}">
+                                            <i class="bi-plus-circle"></i> {{ object.title }} ({{ object.count }})
+                                        </span>
+                                    </strong>
+                                </td>
+                            {% else %}
+                                <td class="sort-name">
+                                    <a href="{% url 'query_detail' object.id %}"{% if object.is_in_category %} class="ms-3"{% endif %}>{{ object.title }}</a>
+                                </td>
+                                <td class="sort-created">{{ object.created_at|date:"m/d/y" }}
+                                    {% if object.created_by_user %}
+                                        {% blocktranslate trimmed with cuser=object.created_by_user %}
+                                            by {{cuser}}
+                                        {% endblocktranslate %}
+                                    {% endif %}
+                                </td>
+                                {% if tasks_enabled %}
+                                  <td>
+                                      <a class="email-csv" data-query-id="{{ object.id }}">
+                                          <i class="bi-send-arrow-down"></i>
+                                      </a>
+                                  </td>
+                                {% endif %}
+                                <td>
+                                    <a href="{% url 'download_query' object.id %}">
+                                        <i class="bi-download"></i>
+                                    </a>
+                                </td>
+                                {% if can_change %}
+                                    <td>
+                                        <a href="{% url 'explorer_playground' %}?query_id={{ object.id }}">
+                                            <i class="bi-arrow-up-right-square"></i>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'query_delete' object.id %}">
+                                            <i class="bi-trash"></i>
+                                        </a>
+                                    </td>
+                                {% endif %}
+                                <td> {% query_favorite_button object.id object.is_favorite 'query_favorite_toggle' %}</td>
+                                <td class="sort-last-run">{% if object.ran_successfully %}
+                                        <i class="bi-check-circle pe-2 text-success"></i>
+                                    {% elif object.ran_successfully is not None %}
+                                        <i class="bi-slash-circle pe-2 text-danger"></i>
+                                    {% endif %}
+                                    {{ object.last_run_at|date:"m/d/y" }}
+                                </td>
+                                <td class="sort-run-count">{{ object.run_count }}</td>
+                                <td class="sort-connection">{{ object.connection_name }}</td>
+                            {% endif %}
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+
+        <div class="modal fade" id="emailCsvModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Email Query Results</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group">
+                            <input type="email" autofocus="true" name="email" id="emailCsvInput" class="form-control" placeholder="Email" />
+                            <label for="emailCsvInput" style="display: none" aria-hidden="true">{% translate "Email" %}</label>
+                            <span class="input-group-btn">
+                                <button id="btnSubmitCsvEmail" type="button" class="btn btn-primary">Send</button>
+                            </span>
+                        </div>
+                        <div class="mt-3">
+                            <div class="alert alert-success" style="display: none;" role="alert" id="email-success-msg">
+                                {% translate "Email will be sent when query completes" %}
+                            </div>
+                            <div class="alert alert-danger" style="display: none;" role="alert" id="email-error-msg">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     {% endif %}
-
-    <div id="queries" class="container">
-        <div class="row">
-            <div class="col">
-                <h3>{% translate "All Queries" %}</h3>
-            </div>
-            <div class="col text-end">
-                <input class="search" placeholder="{% translate "Search" %}" style="">
-            </div>
-        </div>
-        <table class="table table-striped table-borderless">
-            <thead>
-                <tr>
-                    <th><i class="sort bi-chevron-expand pe-1" data-sort="sort-name"
-                                                         data-dir="asc"></i>{% translate "Query" %}</th>
-                    <th><i class="sort bi-chevron-expand pe-1" data-sort="sort-created"
-                                                         data-dir="asc"></i>{% translate "Created" %}</th>
-                    {% if tasks_enabled %}
-                        <th><i class="sort bi-chevron-expand pe-1" data-sort="{{ forloop.counter0 }}"
-                                                         data-dir="asc"></i>{% translate "Email" %}</th>
-                    {% endif %}
-                    <th>{% translate "CSV" %}</th>
-                    {% if can_change %}
-                        <th>{% translate "Play" %}</th>
-                        <th>{% translate "Delete" %}</th>
-                    {% endif %}
-                    <th>{% translate "Favorite" %}</th>
-                    <th><i class="sort bi-chevron-expand pe-1" data-sort="sort-last-run"
-                                                         data-dir="asc"></i>{% translate "Last Run" %}</th>
-                    <th><i class="sort bi-chevron-expand pe-1" data-sort="sort-run-count"
-                                                         data-dir="asc"></i>{% translate "Run Count" %}</th>
-                    <th><i class="sort bi-chevron-expand pe-1" data-sort="sort-connection"
-                                                         data-dir="asc"></i>{% translate "Connection" %}</th>
-                </tr>
-            </thead>
-            <tbody class="list">
-                {% for object in object_list %}
-                    <tr {% if object.is_in_category %}class="collapse {{object.collapse_target}}" data-bs-config='{"delay":0}'{% endif %}>
-                        {% if object.is_header %}
-                            <td colspan="100">
-                                <strong>
-                                    <span data-bs-toggle="collapse" style="cursor: pointer;" data-bs-target=".{{object.collapse_target}}">
-                                        <i class="bi-plus-circle"></i> {{ object.title }} ({{ object.count }})
-                                    </span>
-                                </strong>
-                            </td>
-                        {% else %}
-                            <td class="sort-name">
-                                <a href="{% url 'query_detail' object.id %}"{% if object.is_in_category %} class="ms-3"{% endif %}>{{ object.title }}</a>
-                            </td>
-                            <td class="sort-created">{{ object.created_at|date:"m/d/y" }}
-                                {% if object.created_by_user %}
-                                    {% blocktranslate trimmed with cuser=object.created_by_user %}
-                                        by {{cuser}}
-                                    {% endblocktranslate %}
-                                {% endif %}
-                            </td>
-                            {% if tasks_enabled %}
-                              <td>
-                                  <a class="email-csv" data-query-id="{{ object.id }}">
-                                      <i class="bi-send-arrow-down"></i>
-                                  </a>
-                              </td>
-                            {% endif %}
-                            <td>
-                                <a href="{% url 'download_query' object.id %}">
-                                    <i class="bi-download"></i>
-                                </a>
-                            </td>
-                            {% if can_change %}
-                                <td>
-                                    <a href="{% url 'explorer_playground' %}?query_id={{ object.id }}">
-                                        <i class="bi-arrow-up-right-square"></i>
-                                    </a>
-                                </td>
-                                <td>
-                                    <a href="{% url 'query_delete' object.id %}">
-                                        <i class="bi-trash"></i>
-                                    </a>
-                                </td>
-                            {% endif %}
-                            <td> {% query_favorite_button object.id object.is_favorite 'query_favorite_toggle' %}</td>
-                            <td class="sort-last-run">{% if object.ran_successfully %}
-                                    <i class="bi-check-circle pe-2 text-success"></i>
-                                {% elif object.ran_successfully is not None %}
-                                    <i class="bi-slash-circle pe-2 text-danger"></i>
-                                {% endif %}
-                                {{ object.last_run_at|date:"m/d/y" }}
-                            </td>
-                            <td class="sort-run-count">{{ object.run_count }}</td>
-                            <td class="sort-connection">{{ object.connection_name }}</td>
-                        {% endif %}
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
-    <div class="modal fade" id="emailCsvModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Email Query Results</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="input-group">
-                        <input type="email" autofocus="true" name="email" id="emailCsvInput" class="form-control" placeholder="Email" />
-                        <label for="emailCsvInput" style="display: none" aria-hidden="true">{% translate "Email" %}</label>
-                        <span class="input-group-btn">
-                            <button id="btnSubmitCsvEmail" type="button" class="btn btn-primary">Send</button>
-                        </span>
-                    </div>
-                    <div class="mt-3">
-                        <div class="alert alert-success" style="display: none;" role="alert" id="email-success-msg">
-                            {% translate "Email will be sent when query completes" %}
-                        </div>
-                        <div class="alert alert-danger" style="display: none;" role="alert" id="email-error-msg">
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
 {% endblock %}

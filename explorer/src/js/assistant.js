@@ -46,7 +46,8 @@ function setupTableList() {
             removeItemButton: true,
             searchEnabled: true,
             shouldSort: false,
-            position: 'bottom'
+            position: 'bottom',
+            placeholderValue: "Click to search for relevant tables"
         });
 
         // TODO - nasty. Should be refactored. Used by submitAssistantAsk to get relevant tables.
@@ -66,6 +67,16 @@ function setupTableList() {
             });
         });
 
+        const refreshTables = document.getElementById('refresh_tables_button');
+        refreshTables.addEventListener('click', (e) => {
+            e.preventDefault();
+            keys.forEach(k => {
+                choices.removeActiveItemsByValue(k);
+            });
+            selectRelevantTablesSql(choices, keys)
+            selectRelevantTablesRequest(choices, keys)
+        });
+
         selectRelevantTablesSql(choices, keys);
 
         document.addEventListener('docChanged', debounce(
@@ -81,16 +92,16 @@ function setupTableList() {
 }
 
 function selectRelevantTablesSql(choices, keys) {
-    const textContent = window.editor.state.doc.toString();
+    const textContent = window.editor.state.doc.toString().toLowerCase();
     const textWords = new Set(textContent.split(/\s+/));
-    const hasKeys = keys.filter(key => textWords.has(key));
+    const hasKeys = keys.filter(key => textWords.has(key.toLowerCase()));
     choices.setChoiceByValue(hasKeys);
 }
 
 function selectRelevantTablesRequest(choices, keys) {
     const textContent = document.getElementById("id_assistant_input").value
-    const textWords = new Set(textContent.split(/\s+/));
-    const hasKeys = keys.filter(key => textWords.has(key));
+    const textWords = new Set(textContent.toLowerCase().split(/\s+/));
+    const hasKeys = keys.filter(key => textWords.has(key.toLowerCase()));
     choices.setChoiceByValue(hasKeys);
 }
 

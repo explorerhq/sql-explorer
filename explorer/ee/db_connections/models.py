@@ -151,7 +151,6 @@ class DatabaseConnection(models.Model):
                 DatabaseConnection.objects.filter(default=True).update(default=False)
         else:
             # If there is no default set yet, make this newly created one the default.
-            # Effectively this is for first-time installations.
             has_default = DatabaseConnection.objects.filter(default=True).exists()
             if not has_default:
                 self.default = True
