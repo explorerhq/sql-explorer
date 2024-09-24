@@ -5,7 +5,7 @@ Change Log
 This document records all notable changes to `SQL Explorer <https://github.com/explorerhq/sql-explorer>`_.
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
-`5.3.0 (beta 2)`_ (2024-09-10)
+`5.3.0`_ (2024-09-24)
 ===========================
 * `#664`_: Improvements to the AI SQL Assistant:
 
@@ -47,6 +47,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
   - Cmd+Shift+F (Windows: Ctrl+Shift+F)
   - The format button has been moved tobe a small icon towards the bottom-right of the SQL editor.
+
+* `#675`_ - fail gracefully when building the schema if a particular table cant be accessed by the connection
 
 `5.2.0`_ (2024-08-19)
 ===========================
@@ -707,5 +709,6 @@ Initial Release
 .. _#567: https://github.com/explorerhq/sql-explorer/issues/567
 .. _#654: https://github.com/explorerhq/sql-explorer/issues/654
 .. _#653: https://github.com/explorerhq/sql-explorer/issues/653
+.. _#675: https://github.com/explorerhq/sql-explorer/issues/675
 
 .. _furo: https://github.com/pradyunsg/furo
