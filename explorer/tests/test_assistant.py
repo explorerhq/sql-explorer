@@ -16,7 +16,8 @@ from explorer.assistant.utils import (
     ROW_SAMPLE_SIZE,
     build_prompt,
     get_relevant_few_shots,
-    get_relevant_annotation
+    get_relevant_annotation,
+    table_schema
 )
 
 from explorer.assistant.models import TableDescription
@@ -211,8 +212,23 @@ class TestPromptContext(TestCase):
         self.assertEqual(ret, "col1 | col2\nval1 | val2")
 
     def test_schema_info_from_table_names(self):
-        from explorer.assistant.utils import table_schema
         ret = table_schema(default_db_connection(), "explorer_query")
+        expected = [
+            ("id", "AutoField"),
+            ("title", "CharField"),
+            ("sql", "TextField"),
+            ("description", "TextField"),
+            ("created_at", "DateTimeField"),
+            ("last_run_date", "DateTimeField"),
+            ("created_by_user_id", "IntegerField"),
+            ("snapshot", "BooleanField"),
+            ("connection", "CharField"),
+            ("database_connection_id", "IntegerField"),
+            ("few_shot", "BooleanField")]
+        self.assertEqual(ret, expected)
+
+    def test_schema_info_from_table_names_case_invariant(self):
+        ret = table_schema(default_db_connection(), "EXPLORER_QUERY")
         expected = [
             ("id", "AutoField"),
             ("title", "CharField"),

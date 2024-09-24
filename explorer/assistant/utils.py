@@ -40,7 +40,7 @@ def extract_response(r):
 
 def table_schema(db_connection, table_name):
     schema = schema_info(db_connection)
-    s = [table for table in schema if table[0] == table_name]
+    s = [table for table in schema if table[0].lower() == table_name.lower()]
     if len(s):
         return s[0][1]
 

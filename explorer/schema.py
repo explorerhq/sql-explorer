@@ -1,4 +1,5 @@
 from django.core.cache import cache
+from django.db import ProgrammingError
 
 from explorer.app_settings import (
     EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES,
@@ -102,10 +103,15 @@ def build_schema_info(db_connection):
         for table_name in tables_to_introspect:
             if not _include_table(table_name):
                 continue
+            try:
+                table_description = connection.introspection.get_table_description(
+                    cursor, table_name
+                )
+            # Issue 675. A connection maybe not have permissions to access some tables in the DB.
+            except ProgrammingError:
+                continue
+
             td = []
-            table_description = connection.introspection.get_table_description(
-                cursor, table_name
-            )
             for row in table_description:
                 column_name = row[0]
                 try:
