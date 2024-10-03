@@ -51,7 +51,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverage-data-${{ matrix.python-version }}
-          path: '${{ github.workspace }}/.coverage*'
+          path: '.coverage*'
 
   coverage:
     name: Coverage
@@ -74,7 +74,6 @@ jobs:
       - name: Download data
         uses: actions/download-artifact@v4
         with:
-          path: ${{ github.workspace }}
           pattern: coverage-data-*
           merge-multiple: true
 
