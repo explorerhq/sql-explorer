@@ -56,6 +56,30 @@ function selectConnection() {
     }
 }
 
+function downloadCSVFromTable() {
+    var table = document.getElementById("preview");
+    var rows = table.querySelectorAll("tr");
+    var csv = [];
+
+    rows.forEach(function (row) {
+        var cols = row.querySelectorAll("td, th");
+        var rowData = [];
+        cols.forEach(function (col) {
+            rowData.push(col.innerText);
+        });
+        csv.push(rowData.join(","));
+    });
+
+    var csvFile = new Blob([csv.join("\n")], { type: "text/csv" });
+    var downloadLink = document.createElement("a");
+    downloadLink.href = URL.createObjectURL(csvFile);
+    downloadLink.download = "preview.csv";
+
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+}
+
 export class ExplorerEditor {
     constructor(queryId) {
 
@@ -100,7 +124,7 @@ export class ExplorerEditor {
         this.bind();
 
         if (cookie.get("schema_sidebar_open") === 'true') {
-            this.showSchema(true);
+            this.toggleSchema(true, true);
         }
     }
 
@@ -189,28 +213,29 @@ export class ExplorerEditor {
         form.submit();
     }
 
-    showSchema(noAutofocus) {
-        if (noAutofocus === true) {
-            $("#schema_frame").addClass("no-autofocus");
-        }
-        $("#query_area").removeClass("col").addClass("col-9");
-        var schema$ = $("#schema");
-        schema$.addClass("col-md-3");
-        schema$.show();
-        $("#show_schema_button").hide();
-        $("#hide_schema_button").show();
-        cookie.set("schema_sidebar_open", 'true');
-        return false;
-    }
+    toggleSchema(noAutofocus, doShow) {
+        var schema = document.getElementById("schema");
+        var queryArea = document.getElementById("query_area");
+        var toggleBtn = document.getElementById("toggle_schema_button");
 
-    hideSchema() {
-        $("#query_area").removeClass("col-9").addClass("col");
-        var schema$ = $("#schema");
-        schema$.removeClass("col-3");
-        schema$.hide();
-        $("#hide_schema_button").hide();
-        $("#show_schema_button").show();
-        cookie.set("schema_sidebar_open", 'false');
+        if (doShow || schema.style.display === "none" || schema.style.display === "") { // show
+            if (noAutofocus === true) {
+                schema.classList.add("no-autofocus");
+            }
+            queryArea.classList.remove("col");
+            queryArea.classList.add("col-9");
+            schema.classList.add("col-md-3");
+            schema.style.display = "block";
+            toggleBtn.innerHTML = "Hide Schema";
+            cookie.set("schema_sidebar_open", 'true');
+        } else { // hide
+            queryArea.classList.remove("col-9");
+            queryArea.classList.add("col");
+            schema.classList.remove("col-md-3");
+            schema.style.display = "none";
+            toggleBtn.innerHTML = "Show Schema";
+            cookie.set("schema_sidebar_open", 'false');
+        }
         return false;
     }
 
@@ -237,9 +262,9 @@ export class ExplorerEditor {
             element.addEventListener('click', toggleFavorite);
         });
 
-        document.getElementById('show_schema_button')?.addEventListener('click', this.showSchema.bind(this));
-        document.getElementById('hide_schema_button')?.addEventListener('click', this.hideSchema.bind(this));
+        document.getElementById('toggle_schema_button')?.addEventListener('click', this.toggleSchema.bind(this));
 
+        document.getElementById('preview-download')?.addEventListener('click', downloadCSVFromTable)
 
         $("#format_button").click(function(e) {
             e.preventDefault();
@@ -262,6 +287,7 @@ export class ExplorerEditor {
         }.bind(this));
 
         $("#save_only_button").click(function() {
+            console.log("here");
             var params = this.getParams(this);
             if(params) {
                 this.$form.attr('action', '../' + this.queryId + '/?show=0&params=' + this.serializeParams(params));
