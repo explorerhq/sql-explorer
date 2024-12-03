@@ -11,5 +11,5 @@ class QueryAdmin(admin.ModelAdmin):
 
     actions = [generate_report_action()]
 
-
 admin.site.register(Query, QueryAdmin)
+
