@@ -1,7 +1,7 @@
-from django.conf.urls import url, include
+from django.urls import include, re_path
 from django.contrib import admin
 from explorer.urls import urlpatterns
 
 admin.autodiscover()
 
-urlpatterns += [url(r"^admin/", include(admin.site.urls))]
+urlpatterns += [re_path(r"^admin/", include(admin.site.urls))]
