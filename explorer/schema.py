@@ -1,5 +1,5 @@
 from django.core.cache import cache
-from django.db import ProgrammingError
+from django.db import NotSupportedError, ProgrammingError
 
 from explorer.app_settings import (
     EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES,
@@ -108,7 +108,7 @@ def build_schema_info(db_connection):
                     cursor, table_name
                 )
             # Issue 675. A connection maybe not have permissions to access some tables in the DB.
-            except ProgrammingError:
+            except (NotSupportedError, ProgrammingError):
                 continue
 
             td = []
