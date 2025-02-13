@@ -47,7 +47,7 @@ def execute_query(query_id, email_address):
         msg = f"Download results:\n\r{url}"
     except Exception as e:
         subj = f"[SQL Explorer] Error running report {q.title}"
-        msg = f"Error: {e}\nPlease contact an administrator"
+        msg = "Please contact an administrator."
         logger.exception(f"{subj}: {e}")
     send_mail(subj, msg, app_settings.FROM_EMAIL, [email_address])
 
