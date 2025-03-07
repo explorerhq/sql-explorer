@@ -331,6 +331,7 @@ def should_route_to_asyncapi_db(sql):
         "request_log_requestlogoutbound",
         "request_log_requestlogdataoutbound",
         "crm_integrations_v2_supermoneycrmapirequestqueue",
+        "request_log_leadeventslog",
     ]
     pattern = r"\b(?:%s)\b" % "|".join(map(re.escape, request_log_tables))
     match = re.search(pattern, sql)
