@@ -10,11 +10,13 @@ class EmailCsvQueryView(PermissionRequiredMixin, View):
     permission_required = "view_permission"
 
     def post(self, request, query_id, *args, **kwargs):
-        if request.headers.get("x-requested-with") == "XMLHttpRequest":
-            email = request.POST.get("email", None)
-            if email:
-                execute_query.delay(query_id, email)
-                return JsonResponse(
-                    {"message": "message was sent successfully"}
-                )
-        return JsonResponse({}, status=403)
+        email = request.POST.get("email", None)
+        if not email:
+            return JsonResponse(
+                {"error": "email is required"},
+                status=400,
+            )
+
+        execute_query.delay(query_id, email)
+
+        return JsonResponse({"message": "message was sent successfully"})
