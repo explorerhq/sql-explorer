@@ -1,0 +1,344 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-12-17 06:38-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+#: explorer/apps.py:9 explorer/templates/explorer/base.html:9
+#: explorer/templates/explorer/base.html:50
+#: explorer/templates/explorer/fullscreen.html:9
+msgid "SQL Explorer"
+msgstr ""
+
+#: explorer/models.py:43
+msgid "Include in snapshot task (if enabled)"
+msgstr "Incluir na tarefa de estado (se habilitado)"
+
+#: explorer/models.py:53
+msgid ""
+"Name of DB connection (as specified in settings) to use for this query.Will "
+"use EXPLORER_DEFAULT_CONNECTION if left blank"
+msgstr "Nome da conexão do BD(definida nas configurações) para usar nessa consulta. Será "
+"usada EXPLORER_DEFAULT_CONNECTION se deixada em branco"
+
+#: explorer/models.py:60
+msgid ""
+"Will be included as a good example of SQL in assistant queries that use "
+"relevant tables"
+msgstr "Vai ser incluido como um bom exemplo de assistente consultas SQL que usam "
+"tabelas relevantes"
+
+#: explorer/models.py:69 explorer/templates/explorer/query_favorites.html:10
+#: explorer/templates/explorer/query_list.html:47
+#: explorer/templates/explorer/query_list.html:84
+msgid "Query"
+msgstr "Consulta"
+
+#: explorer/models.py:70
+msgid "Queries"
+msgstr "Consultas"
+
+#: explorer/templates/explorer/base.html:56
+#: explorer/templates/explorer/fullscreen.html:20
+#: explorer/templates/explorer/query.html:18
+msgid "New Query"
+msgstr "Nova Consulta"
+
+#: explorer/templates/explorer/base.html:60
+#: explorer/templates/explorer/play.html:8
+#: explorer/templates/explorer/querylog_list.html:16
+#: explorer/templates/explorer/querylog_list.html:35
+msgid "Playground"
+msgstr "Explorar"
+
+#: explorer/templates/explorer/base.html:65
+msgid "Connections"
+msgstr "Conexões"
+
+#: explorer/templates/explorer/base.html:70
+msgid "Annotations"
+msgstr "Anotações"
+
+#: explorer/templates/explorer/base.html:77
+msgid "Logs"
+msgstr "Registros"
+
+#: explorer/templates/explorer/base.html:81
+msgid "Favorites"
+msgstr "Favoritos"
+
+#: explorer/templates/explorer/export_buttons.html:7
+msgid "Download..."
+msgstr "Baixar..."
+
+#: explorer/templates/explorer/fullscreen.html:45
+#: explorer/templates/explorer/preview_pane.html:104
+msgid "Empty Resultset"
+msgstr "Resultado Vazio"
+
+#: explorer/templates/explorer/play.html:10
+msgid ""
+"The playground is for experimenting and writing ad-hoc queries. By default, "
+"nothing you do here will be saved."
+msgstr "O 'explorar' é para experimentar e escrever consultas. Por padrão, "
+"nada que você fizer aqui será salvo."
+
+#: explorer/templates/explorer/play.html:22
+#: explorer/templates/explorer/query.html:45
+#: explorer/templates/explorer/query_list.html:102
+msgid "Connection"
+msgstr "Conexão"
+
+#: explorer/templates/explorer/play.html:57
+#: explorer/templates/explorer/query.html:128
+msgid "Refresh"
+msgstr "Recarregar"
+
+#: explorer/templates/explorer/play.html:59
+msgid "Save As New"
+msgstr "Salvar como Nova"
+
+#: explorer/templates/explorer/play.html:63
+#: explorer/templates/explorer/query.html:122
+msgid "Show Schema"
+msgstr "Exibir Estrutura"
+
+#: explorer/templates/explorer/play.html:67
+#: explorer/templates/explorer/query.html:125
+msgid "Hide Schema"
+msgstr "Esconder Estrutura"
+
+#: explorer/templates/explorer/play.html:71
+msgid "Playground Query"
+msgstr "Explorar Consulta"
+
+#: explorer/templates/explorer/preview_pane.html:7
+msgid "Preview"
+msgstr "Vizualizar"
+
+#: explorer/templates/explorer/preview_pane.html:9
+msgid "Snapshots"
+msgstr "Estados"
+
+#: explorer/templates/explorer/preview_pane.html:12
+msgid "Pivot"
+msgstr "Pivô"
+
+#: explorer/templates/explorer/preview_pane.html:14
+msgid "Line Chart"
+msgstr "Gráfico de Linha"
+
+#: explorer/templates/explorer/preview_pane.html:15
+msgid "Bar Chart"
+msgstr "Gráfico de Barra"
+
+#: explorer/templates/explorer/preview_pane.html:30
+#, python-format
+msgid "Execution time: %(duration)s ms"
+msgstr "Tempo de execução: %(duration)s ms"
+
+#: explorer/templates/explorer/preview_pane.html:37
+msgid "Showing"
+msgstr "Exibindo"
+
+#: explorer/templates/explorer/preview_pane.html:41
+msgid "First"
+msgstr "Primeiro"
+
+#: explorer/templates/explorer/preview_pane.html:45
+#, python-format
+msgid "of %(total_rows)s total rows."
+msgstr "%(total_rows)s total de linhas."
+
+#: explorer/templates/explorer/query.html:37
+msgid "Title"
+msgstr "Título"
+
+#: explorer/templates/explorer/query.html:59
+msgid "Description"
+msgstr "Descrição"
+
+#: explorer/templates/explorer/query.html:100
+msgid "Assistant Example"
+msgstr "Exemplo de Assistente"
+
+#: explorer/templates/explorer/query.html:115
+msgid "Save & Run"
+msgstr "Salvar e Executar"
+
+#: explorer/templates/explorer/query.html:118
+msgid "Save Only"
+msgstr "Apenas Salvar"
+
+#: explorer/templates/explorer/query.html:149
+#, python-format
+msgid ""
+"Avg. execution: %(avg_duration_display)sms. Query created by %(cuser)s on "
+"%(created)s."
+msgstr "Tempo Médio de execução: %(avg_duration_display)sms. Consulta criada por %(cuser)s em "
+"%(created)s."
+
+#: explorer/templates/explorer/query.html:152
+msgid "History"
+msgstr "Histórico"
+
+#: explorer/templates/explorer/query.html:156
+msgid "Snapshot"
+msgstr "Estado"
+
+#: explorer/templates/explorer/query_confirm_delete.html:8
+#, python-format
+msgid "Are you sure you want to delete \"%(title)s\"?"
+msgstr "Você tem certeza que deseja apagar \"%(title)s\"?"
+
+#: explorer/templates/explorer/query_favorites.html:6
+msgid "Favorite Queries"
+msgstr "Consultas Favoritas"
+
+#: explorer/templates/explorer/query_favorites.html:25
+msgid "No favorite queries added yet."
+msgstr "Nenhuma consulta favorita ainda."
+
+#: explorer/templates/explorer/query_list.html:43
+msgid "Recently Run by You"
+msgstr "Executadas Recentemente por você"
+
+#: explorer/templates/explorer/query_list.html:48
+#: explorer/templates/explorer/query_list.html:98
+msgid "Last Run"
+msgstr "Útima Execução"
+
+#: explorer/templates/explorer/query_list.html:74
+msgid "All Queries"
+msgstr "Todas as Consultas"
+
+#: explorer/templates/explorer/query_list.html:77
+msgid "Search"
+msgstr "Procurar"
+
+#: explorer/templates/explorer/query_list.html:86
+msgid "Created"
+msgstr "Criada"
+
+#: explorer/templates/explorer/query_list.html:89
+#: explorer/templates/explorer/query_list.html:178
+msgid "Email"
+msgstr "E-mail"
+
+#: explorer/templates/explorer/query_list.html:91
+msgid "CSV"
+msgstr "CSV"
+
+#: explorer/templates/explorer/query_list.html:93
+msgid "Play"
+msgstr "Executar"
+
+#: explorer/templates/explorer/query_list.html:94
+msgid "Delete"
+msgstr "Apagar"
+
+#: explorer/templates/explorer/query_list.html:96
+msgid "Favorite"
+msgstr "Favorito"
+
+#: explorer/templates/explorer/query_list.html:100
+msgid "Run Count"
+msgstr "Quantidade de Execuções"
+
+#: explorer/templates/explorer/query_list.html:122
+#, python-format
+msgid "by %(cuser)s"
+msgstr "por %(cuser)s"
+
+#: explorer/templates/explorer/query_list.html:185
+msgid "Email will be sent when query completes"
+msgstr "E-mail será enviado quando a consulta terminar"
+
+#: explorer/templates/explorer/querylog_list.html:6
+#, python-format
+msgid "Recent Query Logs - Page %(pagenum)s"
+msgstr "Registros de Consultas Recentes - Página %(pagenum)s"
+
+#: explorer/templates/explorer/querylog_list.html:10
+msgid "Run At"
+msgstr "Executado em"
+
+#: explorer/templates/explorer/querylog_list.html:11
+msgid "Run By"
+msgstr "Executado por"
+
+#: explorer/templates/explorer/querylog_list.html:12
+msgid "Database Connection"
+msgstr "Conexão do Banco de Dados"
+
+#: explorer/templates/explorer/querylog_list.html:13
+msgid "Duration"
+msgstr "Duração"
+
+#: explorer/templates/explorer/querylog_list.html:15
+msgid "Query ID"
+msgstr "Identificador da Consulta"
+
+#: explorer/templates/explorer/querylog_list.html:30
+#, python-format
+msgid "Query %(query_id)s"
+msgstr "Consulta %(query_id)s"
+
+#: explorer/templates/explorer/querylog_list.html:42
+msgid "Open"
+msgstr "Aberto"
+
+#: explorer/templates/explorer/querylog_list.html:56
+#, python-format
+msgid "Page %(pnum)s of %(anum)s"
+msgstr "Página %(pnum)s de %(anum)s"
+
+#: explorer/templates/explorer/schema.html:7
+msgid "Schema"
+msgstr "Estrutura"
+
+#: explorer/templates/explorer/schema.html:9
+msgid "Search Tables"
+msgstr "Tabela de Consultas"
+
+#: explorer/templates/explorer/schema.html:13
+msgid "Collapse Tables"
+msgstr "Esconder Tabelas"
+
+#: explorer/templates/explorer/schema.html:18
+msgid "Expand Tables"
+msgstr "Exibir Tabelas"
+
+#: explorer/templates/explorer/schema_error.html:6
+msgid "Schema failed to build."
+msgstr "Estrutura falhou em ser construída"
+
+#: explorer/templates/explorer/schema_error.html:7
+#, python-format
+msgid ""
+"\n"
+"            The connection '%(connection)s' is likely misconfigured or "
+"unavailable.\n"
+"        "
+msgstr ""
+"\n"
+"            A conexão '%(connection)s' está mal configurada ou "
+"indisponível.\n"
+"        "
+
+#: explorer/views/query.py:137
+msgid "Query saved."
+msgstr "Consulta Salva"
