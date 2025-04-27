@@ -21,7 +21,7 @@
                     <tr>
                         <td>{{ table_description.database_connection }}</td>
                         <td>{{ table_description.table_name }}</td>
-                        <td>{{ table_description.description|truncatewords:20 }}</td>
+                        <td>{{ table_description.description }}</td>
                         <td>
                             <a href="{% url 'table_description_update' table_description.pk %}" class="px-2"><i class="bi-pencil-square"></i></a>
                             <a href="{% url 'table_description_delete' table_description.pk %}"><i class="bi-trash"></i></a>
