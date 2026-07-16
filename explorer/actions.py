@@ -21,7 +21,7 @@ def generate_report_action(description="Generate CSV file from SQL query",):
             content_type=queries["content_type"]
         )
         response["Content-Disposition"] = queries["filename"]
-        response["Content-Length"] = queries["length"]
+        response["Content-Length"] = len(response.content)
         return response
 
     generate_report.short_description = description
@@ -43,7 +43,6 @@ def _package(queries):
         is_one and CSVExporter(queries[0]).get_output()
     ) or _build_zip(queries)
 
-    ret["length"] = (is_one and len(ret["data"]) or ret["data"].blksize)
     return ret
 
 
