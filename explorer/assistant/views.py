@@ -61,7 +61,9 @@ def run_assistant(request_data, user):
     return response_text
 
 
-class AssistantHelpView(View):
+class AssistantHelpView(PermissionRequiredMixin, View):
+
+    permission_required = "change_permission"
 
     def post(self, request, *args, **kwargs):
         try:
@@ -106,7 +108,9 @@ class TableDescriptionDeleteView(PermissionRequiredMixin, ExplorerContextMixin, 
     success_url = reverse_lazy("table_description_list")
 
 
-class AssistantHistoryApiView(View):
+class AssistantHistoryApiView(PermissionRequiredMixin, View):
+
+    permission_required = "change_permission"
 
     def post(self, request, *args, **kwargs):
         try:
