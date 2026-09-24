@@ -56,6 +56,40 @@ function selectConnection() {
     }
 }
 
+// Quote like Python's csv.writer (used by the server-side CSV export): only when needed.
+function csvEscape(value) {
+    if (/[",\r\n]/.test(value)) {
+        return '"' + value.replace(/"/g, '""') + '"';
+    }
+    return value;
+}
+
+function downloadCSVFromTable() {
+    var table = document.getElementById("preview");
+    // Skip the hidden row-number column, the optional stats row, and the stats tables nested in the headers.
+    var headers = table.querySelectorAll("thead > tr:first-child > th:not(.counter)");
+    var rows = [Array.from(headers)].concat(
+        Array.from(table.querySelectorAll("tbody > tr.data-row")).map(function (row) {
+            return Array.from(row.querySelectorAll(":scope > td:not(.counter)"));
+        })
+    );
+    var csv = rows.map(function (cells) {
+        return cells.map(function (cell) { return csvEscape(cell.innerText); }).join(",");
+    });
+
+    // BOM so Excel detects UTF-8, matching the server-side export.
+    var csvFile = new Blob(["\ufeff" + csv.join("\r\n")], { type: "text/csv;charset=utf-8" });
+    var url = URL.createObjectURL(csvFile);
+    var downloadLink = document.createElement("a");
+    downloadLink.href = url;
+    downloadLink.download = "preview.csv";
+
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+    URL.revokeObjectURL(url);
+}
+
 export class ExplorerEditor {
     constructor(queryId) {
 
@@ -100,7 +134,7 @@ export class ExplorerEditor {
         this.bind();
 
         if (cookie.get("schema_sidebar_open") === 'true') {
-            this.showSchema(true);
+            this.toggleSchema(true, true);
         }
     }
 
@@ -189,28 +223,29 @@ export class ExplorerEditor {
         form.submit();
     }
 
-    showSchema(noAutofocus) {
-        if (noAutofocus === true) {
-            $("#schema_frame").addClass("no-autofocus");
-        }
-        $("#query_area").removeClass("col").addClass("col-9");
-        var schema$ = $("#schema");
-        schema$.addClass("col-md-3");
-        schema$.show();
-        $("#show_schema_button").hide();
-        $("#hide_schema_button").show();
-        cookie.set("schema_sidebar_open", 'true');
-        return false;
-    }
+    toggleSchema(noAutofocus, doShow) {
+        var schema = document.getElementById("schema");
+        var queryArea = document.getElementById("query_area");
+        var toggleBtn = document.getElementById("toggle_schema_button");
 
-    hideSchema() {
-        $("#query_area").removeClass("col-9").addClass("col");
-        var schema$ = $("#schema");
-        schema$.removeClass("col-3");
-        schema$.hide();
-        $("#hide_schema_button").hide();
-        $("#show_schema_button").show();
-        cookie.set("schema_sidebar_open", 'false');
+        if (doShow || schema.style.display === "none" || schema.style.display === "") { // show
+            if (noAutofocus === true) {
+                schema.classList.add("no-autofocus");
+            }
+            queryArea.classList.remove("col");
+            queryArea.classList.add("col-9");
+            schema.classList.add("col-md-3");
+            schema.style.display = "block";
+            toggleBtn.innerHTML = "Hide Schema";
+            cookie.set("schema_sidebar_open", 'true');
+        } else { // hide
+            queryArea.classList.remove("col-9");
+            queryArea.classList.add("col");
+            schema.classList.remove("col-md-3");
+            schema.style.display = "none";
+            toggleBtn.innerHTML = "Show Schema";
+            cookie.set("schema_sidebar_open", 'false');
+        }
         return false;
     }
 
@@ -237,9 +272,9 @@ export class ExplorerEditor {
             element.addEventListener('click', toggleFavorite);
         });
 
-        document.getElementById('show_schema_button')?.addEventListener('click', this.showSchema.bind(this));
-        document.getElementById('hide_schema_button')?.addEventListener('click', this.hideSchema.bind(this));
+        document.getElementById('toggle_schema_button')?.addEventListener('click', this.toggleSchema.bind(this));
 
+        document.getElementById('preview-download')?.addEventListener('click', downloadCSVFromTable)
 
         $("#format_button").click(function(e) {
             e.preventDefault();
