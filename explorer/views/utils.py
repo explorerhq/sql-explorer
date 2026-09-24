@@ -9,7 +9,7 @@ from explorer.schema import schema_json_info
 logger = logging.getLogger(__name__)
 
 
-def query_viewmodel(request, query, title=None, form=None, message=None,
+def query_viewmodel(request, query, title=None, form=None, message=None,  # noqa: PLR0917
                     run_query=True, error=None,
                     rows=app_settings.EXPLORER_DEFAULT_ROWS):
     """

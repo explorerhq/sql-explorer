@@ -38,11 +38,21 @@ def extract_response(r):
     return r[-1].content
 
 
-def table_schema(db_connection, table_name):
-    schema = schema_info(db_connection)
+def find_table(db_connection, table_name):
+    """
+    Look up a table in the connection's (include/exclude-filtered) schema, case-insensitively.
+    Returns a (real_table_name, schema) tuple, or None if the table is not in the schema.
+    """
+    schema = schema_info(db_connection) or []
     s = [table for table in schema if table[0].lower() == table_name.lower()]
     if len(s):
-        return s[0][1]
+        return s[0]
+
+
+def table_schema(db_connection, table_name):
+    table = find_table(db_connection, table_name)
+    if table:
+        return table[1]
 
 
 def sample_rows_from_table(connection, table_name):
@@ -62,7 +72,8 @@ def sample_rows_from_table(connection, table_name):
     """
     cursor = connection.cursor()
     try:
-        cursor.execute(f"SELECT * FROM {table_name} LIMIT {ROW_SAMPLE_SIZE}")
+        # table_name must be validated against the schema by the caller; quote it regardless.
+        cursor.execute(f"SELECT * FROM {connection.ops.quote_name(table_name)} LIMIT {ROW_SAMPLE_SIZE}")
         ret = [[header[0] for header in cursor.description]]
         rows = cursor.fetchall()
 
@@ -159,14 +170,17 @@ def build_prompt(db_connection, assistant_request, included_tables, query_error=
     error_chunk = f"## Query Error ##\n{query_error}" if query_error else None
     sql_chunk = f"## Existing User-Written SQL ##\n{sql}" if sql else None
     request_chunk = f"## User's Request to Assistant ##\n{assistant_request}"
+    # Only sample tables that actually exist in the connection's schema. The table names come
+    # from the request, so they must never be interpolated into SQL unvalidated.
+    known_tables = [find_table(db_connection, t) for t in included_tables]
     table_chunks = [
         TablePromptData(
-            name=t,
-            schema=table_schema(db_connection, t),
-            sample=sample_rows_from_table(db_connection.as_django_connection(), t),
-            annotation=get_relevant_annotation(db_connection, t)
+            name=name,
+            schema=schema,
+            sample=sample_rows_from_table(db_connection.as_django_connection(), name),
+            annotation=get_relevant_annotation(db_connection, name)
         ).render()
-        for t in included_tables
+        for name, schema in [t for t in known_tables if t]
     ]
     few_shot_chunk = get_few_shot_chunk(db_connection, included_tables)
 
