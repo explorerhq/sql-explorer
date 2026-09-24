@@ -56,28 +56,38 @@ function selectConnection() {
     }
 }
 
+// Quote like Python's csv.writer (used by the server-side CSV export): only when needed.
+function csvEscape(value) {
+    if (/[",\r\n]/.test(value)) {
+        return '"' + value.replace(/"/g, '""') + '"';
+    }
+    return value;
+}
+
 function downloadCSVFromTable() {
     var table = document.getElementById("preview");
-    var rows = table.querySelectorAll("tr");
-    var csv = [];
-
-    rows.forEach(function (row) {
-        var cols = row.querySelectorAll("td, th");
-        var rowData = [];
-        cols.forEach(function (col) {
-            rowData.push(col.innerText);
-        });
-        csv.push(rowData.join(","));
+    // Skip the hidden row-number column, the optional stats row, and the stats tables nested in the headers.
+    var headers = table.querySelectorAll("thead > tr:first-child > th:not(.counter)");
+    var rows = [Array.from(headers)].concat(
+        Array.from(table.querySelectorAll("tbody > tr.data-row")).map(function (row) {
+            return Array.from(row.querySelectorAll(":scope > td:not(.counter)"));
+        })
+    );
+    var csv = rows.map(function (cells) {
+        return cells.map(function (cell) { return csvEscape(cell.innerText); }).join(",");
     });
 
-    var csvFile = new Blob([csv.join("\n")], { type: "text/csv" });
+    // BOM so Excel detects UTF-8, matching the server-side export.
+    var csvFile = new Blob(["\ufeff" + csv.join("\r\n")], { type: "text/csv;charset=utf-8" });
+    var url = URL.createObjectURL(csvFile);
     var downloadLink = document.createElement("a");
-    downloadLink.href = URL.createObjectURL(csvFile);
+    downloadLink.href = url;
     downloadLink.download = "preview.csv";
 
     document.body.appendChild(downloadLink);
     downloadLink.click();
     document.body.removeChild(downloadLink);
+    URL.revokeObjectURL(url);
 }
 
 export class ExplorerEditor {
@@ -287,7 +297,6 @@ export class ExplorerEditor {
         }.bind(this));
 
         $("#save_only_button").click(function() {
-            console.log("here");
             var params = this.getParams(this);
             if(params) {
                 this.$form.attr('action', '../' + this.queryId + '/?show=0&params=' + this.serializeParams(params));
