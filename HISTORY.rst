@@ -5,6 +5,24 @@ Change Log
 This document records all notable changes to `SQL Explorer <https://github.com/explorerhq/sql-explorer>`_.
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+`5.3.1`_ (2026-09-24)
+===========================
+* `#710`_: **Security fix.** The AI Assistant endpoints (``/assistant/`` and ``/assistant/history/``) did not check
+  permissions, and table names passed to the assistant were not validated before being used to sample rows. The
+  endpoints now require ``EXPLORER_PERMISSION_CHANGE``, and only tables present in the connection's schema (respecting
+  ``EXPLORER_SCHEMA_INCLUDE_TABLE_PREFIXES`` / ``EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES``) are sampled. All users of
+  4.1 and later are encouraged to upgrade.
+
+* `#687`_: UI improvements:
+
+  - A download button in the preview pane exports the displayed results as CSV (`#683`_).
+  - Fixed the assistant controls floating incorrectly while a response is being generated (`#685`_).
+  - Show/Hide Schema is now a single toggle button.
+  - Table descriptions are no longer truncated in the table description list.
+
+* `#703`_: The email CSV endpoint no longer requires the ``X-Requested-With`` header, and returns a 400 if no email
+  address is provided.
+
 `5.3.0`_ (2024-09-24)
 ===========================
 * `#664`_: Improvements to the AI SQL Assistant:
@@ -589,6 +607,8 @@ Initial Release
 .. _5.1.1: https://github.com/explorerhq/sql-explorer/compare/5.1.0...5.1.1
 .. _5.2.0: https://github.com/explorerhq/sql-explorer/compare/5.1.1...5.2.0
 .. _5.3b1: https://github.com/explorerhq/sql-explorer/compare/5.2.0...5.3b1
+.. _5.3.0: https://github.com/explorerhq/sql-explorer/compare/5.3b1...5.3.0
+.. _5.3.1: https://github.com/explorerhq/sql-explorer/compare/5.3.0...5.3.1
 
 
 .. _#254: https://github.com/explorerhq/sql-explorer/pull/254
@@ -681,6 +701,9 @@ Initial Release
 .. _#662: https://github.com/explorerhq/sql-explorer/pull/662
 .. _#660: https://github.com/explorerhq/sql-explorer/pull/660
 .. _#664: https://github.com/explorerhq/sql-explorer/pull/664
+.. _#687: https://github.com/explorerhq/sql-explorer/pull/687
+.. _#703: https://github.com/explorerhq/sql-explorer/pull/703
+.. _#710: https://github.com/explorerhq/sql-explorer/pull/710
 
 .. _#269: https://github.com/explorerhq/sql-explorer/issues/269
 .. _#288: https://github.com/explorerhq/sql-explorer/issues/288
@@ -698,6 +721,8 @@ Initial Release
 .. _#490: https://github.com/explorerhq/sql-explorer/issues/490
 .. _#492: https://github.com/explorerhq/sql-explorer/issues/492
 .. _#592: https://github.com/explorerhq/sql-explorer/issues/592
+.. _#683: https://github.com/explorerhq/sql-explorer/issues/683
+.. _#685: https://github.com/explorerhq/sql-explorer/issues/685
 .. _#609: https://github.com/explorerhq/sql-explorer/issues/609
 .. _#610: https://github.com/explorerhq/sql-explorer/issues/610
 .. _#612: https://github.com/explorerhq/sql-explorer/issues/612

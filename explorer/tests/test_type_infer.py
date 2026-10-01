@@ -18,6 +18,11 @@ def _get_csv(csv_name):
     return csv_bytes
 
 
+def _is_text_dtype(series):
+    # pandas < 3 stores text as object; pandas 3 uses a dedicated string dtype
+    return pd.api.types.is_object_dtype(series) or pd.api.types.is_string_dtype(series)
+
+
 def _get_json(json_name):
     current_script_dir = os.path.dirname(os.path.abspath(__file__))
     file_path = os.path.join(current_script_dir, "json", json_name)
@@ -34,16 +39,16 @@ class TestCsvToTypedDf(TestCase):
 
     def test_mixed_types(self):
         df = csv_to_typed_df(_get_csv("mixed.csv"))
-        self.assertTrue(pd.api.types.is_object_dtype(df["Value1"]))
-        self.assertTrue(pd.api.types.is_object_dtype(df["Value2"]))
-        self.assertTrue(pd.api.types.is_object_dtype(df["Value3"]))
+        self.assertTrue(_is_text_dtype(df["Value1"]))
+        self.assertTrue(_is_text_dtype(df["Value2"]))
+        self.assertTrue(_is_text_dtype(df["Value3"]))
 
     def test_all_types(self):
         df = csv_to_typed_df(_get_csv("all_types.csv"))
-        self.assertTrue(pd.api.types.is_datetime64_ns_dtype(df["Dates"]))
+        self.assertTrue(pd.api.types.is_datetime64_any_dtype(df["Dates"]))
         self.assertTrue(pd.api.types.is_integer_dtype(df["Integers"]))
         self.assertTrue(pd.api.types.is_float_dtype(df["Floats"]))
-        self.assertTrue(pd.api.types.is_object_dtype(df["Strings"]))
+        self.assertTrue(_is_text_dtype(df["Strings"]))
 
     def test_integer_parsing(self):
         df = csv_to_typed_df(_get_csv("integers.csv"))
@@ -62,7 +67,7 @@ class TestCsvToTypedDf(TestCase):
         # Day of Year: 2024-024 (Year-DayOfYear)
 
         df = csv_to_typed_df(_get_csv("dates.csv"))
-        self.assertTrue(pd.api.types.is_datetime64_ns_dtype(df["Dates"]))
+        self.assertTrue(pd.api.types.is_datetime64_any_dtype(df["Dates"]))
 
 
 @skipIf(not EXPLORER_USER_UPLOADS_ENABLED, "User uploads not enabled")
@@ -70,19 +75,19 @@ class TestJsonToTypedDf(TestCase):
 
     def test_basic_json(self):
         df = json_to_typed_df(_get_json("kings.json"))
-        self.assertTrue(pd.api.types.is_object_dtype(df["Name"]))
-        self.assertTrue(pd.api.types.is_object_dtype(df["Country"]))
+        self.assertTrue(_is_text_dtype(df["Name"]))
+        self.assertTrue(_is_text_dtype(df["Country"]))
         self.assertTrue(pd.api.types.is_integer_dtype(df["ID"]))
 
     def test_nested_json(self):
         df = json_to_typed_df(_get_json("github.json"))
-        self.assertTrue(pd.api.types.is_object_dtype(df["subscription_url"]))
-        self.assertTrue(pd.api.types.is_object_dtype(df["topics"]))
+        self.assertTrue(_is_text_dtype(df["subscription_url"]))
+        self.assertTrue(_is_text_dtype(df["topics"]))
         self.assertTrue(pd.api.types.is_integer_dtype(df["size"]))
         self.assertTrue(pd.api.types.is_integer_dtype(df["owner.id"]))
 
     def test_json_list(self):
         df = json_list_to_typed_df(_get_json("list.json"))
         self.assertTrue(pd.api.types.is_integer_dtype(df["Item.value.M.unique_connection_count.N"]))
-        self.assertTrue(pd.api.types.is_object_dtype(df["Item.instanceId.S"]))
+        self.assertTrue(_is_text_dtype(df["Item.instanceId.S"]))
         self.assertEqual(len(df), 5)

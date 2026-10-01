@@ -12,7 +12,7 @@ class UserFactory(DjangoModelFactory):
     class Meta:
         model = settings.AUTH_USER_MODEL
 
-    username = Sequence(lambda n: "User %03d" % n)
+    username = Sequence(lambda n: f"User {n:03d}")
     is_staff = True
 
 

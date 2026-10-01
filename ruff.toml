@@ -1,4 +1,6 @@
 line-length = 120
+# Keep in sync with python_requires in setup.py; ruff can't read it from there.
+target-version = "py38"
 
 extend-exclude = [
   ".ruff_cache",

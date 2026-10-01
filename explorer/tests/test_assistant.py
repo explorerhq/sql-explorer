@@ -73,7 +73,7 @@ class TestBuildPrompt(TestCase):
         self.assertIn("sqlite", result["system"])
 
     @patch("explorer.assistant.utils.sample_rows_from_table", return_value="sample data")
-    @patch("explorer.assistant.utils.table_schema", return_value=[])
+    @patch("explorer.assistant.utils.find_table", return_value=("foo", []))
     @patch("explorer.models.ExplorerValue.objects.get_item")
     def test_build_prompt_with_sql_and_annotation(self, mock_get_item, mock_table_schema, mock_sample_rows):
         mock_get_item.return_value.value = "system prompt"
@@ -87,7 +87,7 @@ class TestBuildPrompt(TestCase):
         self.assertIn("Usage Notes:\nannotated", result["user"])
 
     @patch("explorer.assistant.utils.sample_rows_from_table", return_value="sample data")
-    @patch("explorer.assistant.utils.table_schema", return_value=[])
+    @patch("explorer.assistant.utils.find_table", return_value=("magic", []))
     @patch("explorer.models.ExplorerValue.objects.get_item")
     def test_build_prompt_with_few_shot(self, mock_get_item, mock_table_schema, mock_sample_rows):
         mock_get_item.return_value.value = "system prompt"
@@ -128,6 +128,19 @@ class TestBuildPrompt(TestCase):
         self.assertIn("## Information for Table 'explorer_query' ##", result["user"])
         self.assertIn("Sample rows:\nid | title", result["user"])
 
+    @patch("explorer.assistant.utils.sample_rows_from_table")
+    @patch("explorer.models.ExplorerValue.objects.get_item")
+    def test_build_prompt_skips_tables_not_in_schema(self, mock_get_item, mock_sample_rows):
+        mock_get_item.return_value.value = "system prompt"
+        malicious = "explorer_query UNION SELECT username, password FROM auth_user --"
+
+        result = build_prompt(default_db_connection(), "Help me with SQL",
+                              [malicious, "explorer_query"])
+
+        mock_sample_rows.assert_called_once()
+        self.assertEqual(mock_sample_rows.call_args[0][1], "explorer_query")
+        self.assertNotIn("auth_user", result["user"])
+
 
 @unittest.skipIf(not app_settings.has_assistant(), "assistant not enabled")
 class TestPromptContext(TestCase):
@@ -141,7 +154,7 @@ class TestPromptContext(TestCase):
         self.assertEqual(len(ret), ROW_SAMPLE_SIZE+1)  # includes header row
 
     def test_truncates_long_strings(self):
-        c = MagicMock
+        c = MagicMock()
         mock_cursor = MagicMock()
         long_string = "a" * 600
         mock_cursor.description = [("col1",), ("col2",)]
@@ -160,7 +173,7 @@ class TestPromptContext(TestCase):
         long_binary = b"a" * 600
 
         # Mock database connection and cursor
-        c = MagicMock
+        c = MagicMock()
         mock_cursor = MagicMock()
         mock_cursor.description = [("col1",), ("col2",)]
         mock_cursor.fetchall.return_value = [(long_binary, b"short binary")]
@@ -176,7 +189,7 @@ class TestPromptContext(TestCase):
 
     def test_handles_various_data_types(self):
         # Mock database connection and cursor
-        c = MagicMock
+        c = MagicMock()
         mock_cursor = MagicMock()
         mock_cursor.description = [("col1",), ("col2",), ("col3",)]
         mock_cursor.fetchall.return_value = [(123, 45.67, "normal string")]
@@ -192,7 +205,7 @@ class TestPromptContext(TestCase):
         self.assertEqual(row[2], "normal string")
 
     def test_handles_operational_error(self):
-        c = MagicMock
+        c = MagicMock()
         mock_cursor = MagicMock()
         mock_cursor.execute.side_effect = OperationalError("Test OperationalError")
         c.cursor = MagicMock()
@@ -258,6 +271,12 @@ class TestAssistantUtils(TestCase):
         self.assertTrue("First Query" in ret)
         self.assertTrue("Second Query" in ret)
 
+    def test_sample_rows_from_table_quotes_table_name(self):
+        from explorer.assistant.utils import sample_rows_from_table
+        ret = sample_rows_from_table(conn(), "explorer_query; DROP TABLE explorer_query")
+        self.assertEqual(ret, [["no such table: explorer_query; DROP TABLE explorer_query"]])
+        self.assertTrue(conn().introspection.table_names().count("explorer_query"))
+
     def test_sample_rows_from_tables_no_table_match(self):
         from explorer.assistant.utils import sample_rows_from_table
         SimpleQueryFactory(title="First Query")
@@ -301,6 +320,28 @@ class TestAssistantUtils(TestCase):
         self.assertEqual(relevant1.id, res1.id)
         res2 = get_relevant_annotation(default_db_connection(), "vegetables")
         self.assertEqual(relevant2.id, res2.id)
+
+
+class TestAssistantViewPermissions(TestCase):
+
+    def assert_denied(self, url_name):
+        with patch("explorer.assistant.views.run_assistant") as mock_run:
+            resp = self.client.post(reverse(url_name),
+                                    data=json.dumps({"connection_id": default_db_connection().id,
+                                                     "selected_tables": ["explorer_query"]}),
+                                    content_type="application/json")
+            mock_run.assert_not_called()
+        self.assertNotIn("application/json", resp["Content-Type"])
+
+    def test_anonymous_user_cannot_use_assistant(self):
+        self.assert_denied("assistant")
+        self.assert_denied("assistant_history")
+
+    def test_non_staff_user_cannot_use_assistant(self):
+        User.objects.create_user("user", "user@user.com", "pwd")
+        self.client.login(username="user", password="pwd")
+        self.assert_denied("assistant")
+        self.assert_denied("assistant_history")
 
 
 class TestAssistantHistoryApiView(TestCase):

@@ -111,18 +111,28 @@
                     {% endif %}
                     <div class="btn-group" role="group">
                         {% if can_change %}
-                            <button id="save_button" type="submit" class="btn btn-primary">
-                                {% translate "Save & Run" %}
-                            </button>
-                            <button class="btn btn-outline-primary" id="save_only_button">
-                                {% translate "Save Only" %}
-                            </button>
+                            <div class="btn-group" role="group">
+                                <button id="save_button"
+                                        type="submit"
+                                        class="btn btn-primary">
+                                    {% translate 'Save & Run' %}
+                                </button>
+                                <button type="button"
+                                        class="btn btn-primary dropdown-toggle dropdown-toggle-split"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="visually-hidden">Toggle Dropdown</span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <button type="submit" class="dropdown-item" id="save_only_button">
+                                            {% translate 'Save Only' %}
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
                             {% export_buttons query %}
-                            <button type="button" class="btn btn-outline-primary" id="show_schema_button">
+                            <button type="button" class="btn btn-outline-primary" id="toggle_schema_button">
                                 {% translate "Show Schema" %}
-                            </button>
-                            <button type="button" class="btn btn-outline-primary" id="hide_schema_button" style="display: none;">
-                                {% translate "Hide Schema" %}
                             </button>
                         {% else %}
                             <button id="refresh_button" type="button" class="btn btn-outline-primary">{% translate "Refresh" %}</button>
