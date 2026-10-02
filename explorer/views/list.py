@@ -6,7 +6,7 @@ from django.views.generic import ListView
 
 from explorer import app_settings
 from explorer.models import Query, QueryFavorite, QueryLog
-from explorer.utils import allowed_query_pks, url_get_query_id
+from explorer.utils import allowed_query_pks, get_int_from_request, url_get_query_id
 from explorer.views.auth import PermissionRequiredMixin
 from explorer.views.mixins import ExplorerContextMixin
 from explorer.ee.db_connections.models import DatabaseConnection
@@ -136,4 +136,21 @@ class ListQueryLogView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
         kwargs = {"sql__isnull": False}
         if url_get_query_id(self.request):
             kwargs["query_id"] = url_get_query_id(self.request)
+        connection_id = get_int_from_request(self.request, "connection", None)
+        if connection_id:
+            kwargs["database_connection_id"] = connection_id
+        if self.request.GET.get("run_by_me") and self.request.user.is_authenticated:
+            kwargs["run_by_user"] = self.request.user
         return QueryLog.objects.filter(**kwargs).all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        params = self.request.GET.copy()
+        if "page" in params:
+            del params["page"]
+        context["database_connections"] = DatabaseConnection.objects.all()
+        context["selected_connection"] = get_int_from_request(self.request, "connection", None)
+        context["run_by_me"] = bool(self.request.GET.get("run_by_me"))
+        context["query_id"] = url_get_query_id(self.request)
+        context["filter_querystring"] = params.urlencode()
+        return context
