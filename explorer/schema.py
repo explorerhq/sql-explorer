@@ -1,5 +1,5 @@
 from django.core.cache import cache
-from django.db import ProgrammingError
+from django.db import DatabaseError, ProgrammingError
 
 from explorer.app_settings import (
     EXPLORER_SCHEMA_EXCLUDE_TABLE_PREFIXES,
@@ -52,8 +52,8 @@ def schema_json_info(db_connection):
         return ret
     try:
         si = schema_info(db_connection) or []
-    except InvalidExplorerConnectionException:
-        return []
+    except (InvalidExplorerConnectionException, DatabaseError):
+        return {}
     json_schema = transform_to_json_schema(si)
     cache.set(key, json_schema)
     return json_schema

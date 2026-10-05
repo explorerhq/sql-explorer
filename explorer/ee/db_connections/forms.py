@@ -24,6 +24,9 @@ class JSONTextInput(forms.TextInput):
             raise ValidationError("Enter a valid JSON") from ex
 
 
+MISSING_DRIVER = "missing_driver"
+
+
 class DatabaseConnectionForm(forms.ModelForm):
     class Meta:
         model = DatabaseConnection
@@ -38,3 +41,18 @@ class DatabaseConnectionForm(forms.ModelForm):
             "port": forms.TextInput(attrs={"class": "form-control"}),
             "extras": JSONTextInput(attrs={"class": "form-control"}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["engine"].choices = [
+            (value, f"{label} (driver not installed)"
+             if DatabaseConnection.missing_driver_message(value) else label)
+            for value, label in self.fields["engine"].choices
+        ]
+
+    def clean_engine(self):
+        engine = self.cleaned_data["engine"]
+        message = DatabaseConnection.missing_driver_message(engine)
+        if message:
+            raise ValidationError(message, code=MISSING_DRIVER)
+        return engine
