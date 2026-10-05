@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [
       viteStaticCopy({
         targets: [
-          { src: 'explorer/src/images/*', dest: 'images' },
+          { src: 'explorer/src/images/*', dest: 'images', rename: { stripBase: true } },
         ]
     })
   ],
@@ -20,6 +20,16 @@ export default defineConfig({
     watch: {
       usePolling: true,
       disableGlobbing: false,
+    },
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        // Bootstrap 5's Sass relies on @import and global functions that Dart Sass deprecates; they still work and
+        // can't be migrated until Bootstrap 6, so keep the build output readable.
+        silenceDeprecations: ['import', 'global-builtin', 'color-functions', 'if-function'],
+        quietDeps: true,
+      },
     },
   },
   resolve: {
