@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 from django.db import DatabaseError, models, transaction
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from django.core.validators import RegexValidator
 
 from explorer import app_settings
 from explorer.telemetry import Stat, StatNames
@@ -27,7 +28,13 @@ logger = logging.getLogger(__name__)
 
 
 class Query(models.Model):
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, validators=[
+        RegexValidator(
+            r"^[a-zA-Z0-9\s\.\-\_]+$",
+            "Title contains invalid characters. "
+            "Only alphanumeric characters, spaces, periods, hyphens, and underscores are allowed."
+        )
+    ])
     sql = models.TextField(blank=False, null=False)
     description = models.TextField(blank=True)
     created_by_user = models.ForeignKey(
