@@ -4,6 +4,7 @@ import hashlib
 import sqlite3
 import io
 
+from explorer import app_settings
 
 def default_db_connection():
     from explorer.ee.db_connections.models import DatabaseConnection
@@ -18,7 +19,7 @@ def default_db_connection_id():
 def upload_sqlite(db_bytes, path):
     from explorer.utils import get_s3_bucket
     bucket = get_s3_bucket()
-    bucket.put_object(Key=path, Body=db_bytes, ServerSideEncryption="AES256")
+    bucket.put_object(Key=path, Body=db_bytes, **app_settings.S3_OBJECT_PARAMETERS)
 
 
 # Aliases have the user_id appended to them so that if two users upload files with the same name
