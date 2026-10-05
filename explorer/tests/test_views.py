@@ -9,7 +9,8 @@ from unittest import skipIf
 from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.cache import cache
-from django.db import DatabaseError
+from django.core.exceptions import ImproperlyConfigured
+from django.db import DatabaseError, OperationalError
 from django.forms.models import model_to_dict
 from django.shortcuts import redirect
 from django.test import TestCase
@@ -676,6 +677,34 @@ class TestSchemaView(TestCase):
         )
         self.assertEqual(resp.status_code, 404)
 
+    @patch("explorer.ee.db_connections.models.load_backend")
+    def test_shows_error_when_driver_missing(self, mock_load):
+        conn = DatabaseConnection.objects.create(alias="mysql", engine="django.db.backends.mysql", name="db")
+        mock_load.side_effect = ImproperlyConfigured("Error loading MySQLdb module.")
+        resp = self.client.get(reverse("explorer_schema", kwargs={"connection": conn.id}))
+        self.assertEqual(resp.status_code, 200)
+        self.assertTemplateUsed(resp, "explorer/schema_error.html")
+        self.assertContains(resp, "mysqlclient")
+
+    @patch("explorer.schema.build_schema_info")
+    def test_shows_error_when_db_unreachable(self, mock_build):
+        mock_build.side_effect = OperationalError("could not connect to server")
+        resp = self.client.get(
+            reverse("explorer_schema", kwargs={"connection": default_db_connection().id})
+        )
+        self.assertEqual(resp.status_code, 200)
+        self.assertTemplateUsed(resp, "explorer/schema_error.html")
+        self.assertContains(resp, "could not connect to server")
+
+    @patch("explorer.schema.build_schema_info")
+    def test_schema_json_empty_when_db_unreachable(self, mock_build):
+        mock_build.side_effect = OperationalError("could not connect to server")
+        resp = self.client.get(
+            reverse("explorer_schema_json", kwargs={"connection": default_db_connection().id})
+        )
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(json.loads(resp.content), {})
+
     def test_admin_required(self):
         self.client.logout()
         resp = self.client.get(
@@ -1068,7 +1097,17 @@ class DatabaseConnectionValidateViewTestCase(TestCase):
         self.assertJSONEqual(response.content, {"success": True})
 
     @patch("explorer.ee.db_connections.models.load_backend")
-    def test_database_connection_error(self, mock_load):
+    def test_validate_connection_missing_driver(self, mock_load):
+        mock_load.side_effect = ImproperlyConfigured("Error loading MySQLdb module.")
+        response = self.client.post(self.url, data={**self.valid_data, "engine": "django.db.backends.mysql"})
+        self.assertEqual(response.status_code, 200)
+        body = json.loads(response.content)
+        self.assertFalse(body["success"])
+        self.assertIn("mysqlclient", body["error"])
+
+    @patch.object(DatabaseConnection, "missing_driver_message", return_value=None)
+    @patch("explorer.ee.db_connections.models.load_backend")
+    def test_database_connection_error(self, mock_load, mock_driver_check):
         mock_load.side_effect = DatabaseError("Connection error")
         response = self.client.post(self.url, data=self.valid_data)
         self.assertEqual(response.status_code, 200)

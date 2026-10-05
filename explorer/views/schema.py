@@ -1,3 +1,4 @@
+from django.db import DatabaseError
 from django.http import Http404, JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils.decorators import method_decorator
@@ -26,7 +27,12 @@ class SchemaView(PermissionRequiredMixin, View):
             raise Http404 from e
         except ValueError as e:
             raise Http404 from e
-        schema = schema_info(connection)
+        try:
+            schema = schema_info(connection)
+        except DatabaseError as e:
+            return render(request,
+                          "explorer/schema_error.html",
+                          {"connection": connection.alias, "error": str(e)})
         if schema:
             return render(
                 request,

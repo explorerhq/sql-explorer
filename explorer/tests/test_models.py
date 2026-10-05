@@ -2,8 +2,8 @@ import unittest
 import os
 from unittest.mock import Mock, patch, MagicMock
 
-from django.core.exceptions import ValidationError
-from django.db import IntegrityError
+from django.core.exceptions import ImproperlyConfigured, ValidationError
+from django.db import DatabaseError, IntegrityError
 from django.test import TestCase
 
 from explorer import app_settings
@@ -396,3 +396,19 @@ class TestDatabaseConnection(TestCase):
         self.assertFalse(orig_default.default)
         self.assertEqual(new_default.id, default_db_connection().id)
         self.assertEqual(DatabaseConnection.objects.filter(default=True).count(), 1)
+
+    def test_missing_driver_raises_database_error(self):
+        conn = DatabaseConnection(alias="nodriver", engine="not_a_real_backend", name="x")
+        with self.assertRaisesMessage(DatabaseError, "isn't installed"):
+            conn.as_django_connection()
+
+    @patch("explorer.ee.db_connections.models.load_backend")
+    def test_missing_driver_message_names_package(self, mock_load):
+        mock_load.side_effect = ImproperlyConfigured("Error loading MySQLdb module.")
+        message = DatabaseConnection.missing_driver_message("django.db.backends.mysql")
+        self.assertIn("MySQL / MariaDB", message)
+        self.assertIn("mysqlclient", message)
+
+    def test_missing_driver_message_none_when_installed(self):
+        self.assertIsNone(DatabaseConnection.missing_driver_message(DatabaseConnection.SQLITE))
+        self.assertIsNone(DatabaseConnection.missing_driver_message(DatabaseConnection.DJANGO))

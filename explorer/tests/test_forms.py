@@ -1,9 +1,11 @@
+from django.core.exceptions import ImproperlyConfigured
 from django.db.utils import IntegrityError
 from django.forms.models import model_to_dict
 from django.test import TestCase
 from unittest.mock import patch, MagicMock
 
 from explorer.forms import QueryForm
+from explorer.ee.db_connections.forms import DatabaseConnectionForm, MISSING_DRIVER
 from explorer.tests.factories import SimpleQueryFactory
 from explorer.ee.db_connections.utils import default_db_connection_id
 
@@ -63,3 +65,32 @@ class QueryFormTestCase(TestCase):
         dbc.id = 2
         mocked_default_db_connection.return_value = dbc
         self.assertEqual(2, QueryForm().connections[0][0])
+
+
+class DatabaseConnectionFormTestCase(TestCase):
+
+    def _data(self, engine):
+        return {"alias": "conn", "engine": engine, "name": "db", "user": "", "password": "",
+                "host": "", "port": "", "extras": ""}
+
+    def test_valid_when_driver_installed(self):
+        form = DatabaseConnectionForm(self._data("django.db.backends.sqlite3"))
+        self.assertTrue(form.is_valid(), form.errors)
+
+    @patch("explorer.ee.db_connections.models.load_backend")
+    def test_invalid_when_driver_missing(self, mock_load):
+        mock_load.side_effect = ImproperlyConfigured("Error loading MySQLdb module.")
+        form = DatabaseConnectionForm(self._data("django.db.backends.mysql"))
+        self.assertFalse(form.is_valid())
+        self.assertTrue(form.has_error("engine", code=MISSING_DRIVER))
+        self.assertIn("mysqlclient", form.errors["engine"][0])
+
+    @patch("explorer.ee.db_connections.models.load_backend")
+    def test_engine_choices_flag_missing_drivers(self, mock_load):
+        def load(engine):
+            if engine == "django.db.backends.mysql":
+                raise ImproperlyConfigured("Error loading MySQLdb module.")
+        mock_load.side_effect = load
+        labels = dict(DatabaseConnectionForm().fields["engine"].choices)
+        self.assertEqual(labels["django.db.backends.mysql"], "MariaDB (driver not installed)")
+        self.assertEqual(labels["django.db.backends.sqlite3"], "SQLite3")
