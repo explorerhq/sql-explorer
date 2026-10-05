@@ -5,6 +5,12 @@ Change Log
 This document records all notable changes to `SQL Explorer <https://github.com/explorerhq/sql-explorer>`_.
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+Unreleased
+===========================
+* `#713`_: Connections whose database driver isn't installed (e.g. MySQL without ``mysqlclient``) can no longer be
+  saved, and are marked "(driver not installed)" in the engine dropdown. Existing ones, and unreachable databases, now
+  show a readable error in the schema pane, Test connection, and query runs instead of a 500.
+
 `5.3.1`_ (2026-09-24)
 ===========================
 * `#710`_: **Security fix.** The AI Assistant endpoints (``/assistant/`` and ``/assistant/history/``) did not check
@@ -703,6 +709,7 @@ Initial Release
 .. _#664: https://github.com/explorerhq/sql-explorer/pull/664
 .. _#687: https://github.com/explorerhq/sql-explorer/pull/687
 .. _#703: https://github.com/explorerhq/sql-explorer/pull/703
+.. _#713: https://github.com/explorerhq/sql-explorer/pull/713
 .. _#710: https://github.com/explorerhq/sql-explorer/pull/710
 
 .. _#269: https://github.com/explorerhq/sql-explorer/issues/269
