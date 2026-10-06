@@ -4,6 +4,28 @@
 {% block sql_explorer_content %}
     <div class="container">
         <h3>{% blocktranslate with pagenum=page_obj.number %}Recent Query Logs - Page {{pagenum}}{% endblocktranslate %}</h3>
+        <form method="get" class="row g-2 align-items-end mb-3">
+            {% if query_id %}<input type="hidden" name="query_id" value="{{ query_id }}">{% endif %}
+            <div class="col-auto">
+                <label for="connection" class="form-label">{% translate "Database Connection" %}</label>
+                <select name="connection" id="connection" class="form-select">
+                    <option value="">{% translate "All connections" %}</option>
+                    {% for conn in database_connections %}
+                        <option value="{{ conn.id }}"{% if conn.id == selected_connection %} selected{% endif %}>{{ conn }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-auto">
+                <div class="form-check">
+                    <input type="checkbox" name="run_by_me" value="1" id="run_by_me" class="form-check-input"{% if run_by_me %} checked{% endif %}>
+                    <label for="run_by_me" class="form-check-label">{% translate "Run by you" %}</label>
+                </div>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">{% translate "Filter" %}</button>
+                <a href="{% url 'explorer_logs' %}{% if query_id %}?query_id={{ query_id }}{% endif %}" class="btn btn-secondary">{% translate "Clear" %}</a>
+            </div>
+        </form>
         <table class="table table-striped query-list">
             <thead>
                 <tr>
@@ -50,7 +72,7 @@
             <div class="pagination">
                 <span>
                     {% if page_obj.has_previous %}
-                        <a href="?page={{ page_obj.previous_page_number }}"><i class="bi-arrow-left-square"></i></a>
+                        <a href="?page={{ page_obj.previous_page_number }}{% if filter_querystring %}&{{ filter_querystring }}{% endif %}"><i class="bi-arrow-left-square"></i></a>
                     {% endif %}
                     <span class="page-current">
                         {% blocktranslate trimmed with pnum=page_obj.number anum=page_obj.paginator.num_pages %}
@@ -58,7 +80,7 @@
                         {% endblocktranslate %}
                     </span>
                     {% if page_obj.has_next %}
-                        <a href="?page={{ page_obj.next_page_number }}"><i class="bi-arrow-right-square"></i></a>
+                        <a href="?page={{ page_obj.next_page_number }}{% if filter_querystring %}&{{ filter_querystring }}{% endif %}"><i class="bi-arrow-right-square"></i></a>
                     {% endif %}
                 </span>
             </div>

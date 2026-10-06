@@ -12,7 +12,7 @@ from explorer.ee.db_connections.utils import (
 from explorer.ee.db_connections.create_sqlite import parse_to_sqlite
 from explorer.schema import clear_schema_cache
 from explorer.app_settings import EXPLORER_MAX_UPLOAD_SIZE
-from explorer.ee.db_connections.forms import DatabaseConnectionForm
+from explorer.ee.db_connections.forms import DatabaseConnectionForm, MISSING_DRIVER
 from explorer.utils import delete_from_s3
 from explorer.views.auth import PermissionRequiredMixin
 from explorer.views.mixins import ExplorerContextMixin
@@ -180,5 +180,7 @@ class DatabaseConnectionValidateView(PermissionRequiredMixin, View):
                 return JsonResponse({"success": False, "error": str(e)})
             except DatabaseError as e:
                 return JsonResponse({"success": False, "error": str(e)})
+        elif form.has_error("engine", code=MISSING_DRIVER):
+            return JsonResponse({"success": False, "error": form.errors["engine"][0]})
         else:
             return JsonResponse({"success": False, "error": "Invalid form data"})

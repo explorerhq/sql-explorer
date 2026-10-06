@@ -1,11 +1,25 @@
 import os
 import json
+import logging
+from django.core.exceptions import ImproperlyConfigured
 from django.db import models, DatabaseError, connections, transaction
 from django.db.utils import load_backend
 from explorer.app_settings import EXPLORER_CONNECTIONS
 from explorer.ee.db_connections.utils import quick_hash, uploaded_db_local_path
 from django.core.cache import cache
 from django_cryptography.fields import encrypt
+
+logger = logging.getLogger(__name__)
+
+# The package that provides each engine's driver, so error messages can say what to install
+DRIVER_PACKAGES = {
+    "django.db.backends.postgresql": "psycopg",
+    "django.db.backends.mysql": "mysqlclient",
+    "django.db.backends.oracle": "oracledb",
+    "django_cockroachdb": "django-cockroachdb",
+    "mssql": "mssql-django",
+    "django_snowflake": "django-snowflake",
+}
 
 
 class DatabaseConnectionManager(models.Manager):
@@ -88,6 +102,25 @@ class DatabaseConnection(models.Model):
                 finally:
                     cache.delete(cache_key)
 
+    @classmethod
+    def missing_driver_message(cls, engine):
+        """Returns an explanation if the driver for this engine can't be loaded, or None if it can."""
+        if not engine or engine == cls.DJANGO:
+            return None
+        try:
+            load_backend(engine)
+        except ImproperlyConfigured as e:
+            logger.info(f"Database driver for {engine} could not be loaded: {e}")
+            return cls._driver_error_message(engine)
+        return None
+
+    @classmethod
+    def _driver_error_message(cls, engine):
+        label = " / ".join(name for value, name in cls.DATABASE_ENGINES if value == engine) or engine
+        package = DRIVER_PACKAGES.get(engine)
+        install = f" Install the '{package}' package on the server to use it." if package else ""
+        return f"The database driver for {label} isn't installed.{install}"
+
     @property
     def is_upload(self):
         return self.engine == self.SQLITE and self.host
@@ -141,6 +174,9 @@ class DatabaseConnection(models.Model):
         try:
             backend = load_backend(self.engine)
             return backend.DatabaseWrapper(connection_settings, self.alias)
+        except ImproperlyConfigured as e:
+            # load_backend raises this when the engine's driver isn't installed
+            raise DatabaseError(self._driver_error_message(self.engine)) from e
         except DatabaseError as e:
             raise DatabaseError(f"Failed to create explorer connection: {e}") from e
 
