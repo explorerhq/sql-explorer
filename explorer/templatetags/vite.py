@@ -9,6 +9,8 @@ from explorer import app_settings, get_version
 register = template.Library()
 
 VITE_OUTPUT_DIR = staticfiles_storage.url("explorer/")
+if not VITE_OUTPUT_DIR.endswith("/"):
+    VITE_OUTPUT_DIR += "/"
 VITE_DEV_DIR = "explorer/src/"
 VITE_SERVER_HOST = getattr(settings, "VITE_SERVER_HOST", "localhost")
 VITE_SERVER_PORT = getattr(settings, "VITE_SERVER_PORT", "5173")
