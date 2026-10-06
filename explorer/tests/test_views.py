@@ -838,6 +838,28 @@ class TestQueryLog(TestCase):
         resp = self.client.get(reverse("explorer_logs"))
         self.assertContains(resp, "select 12345;")
 
+    def test_filter_logs_by_connection(self):
+        other_conn = DatabaseConnection.objects.create(
+            alias="filter_conn", engine="django.db.backends.sqlite3", name=":memory:"
+        )
+        QueryLogFactory(sql="select default conn;")
+        QueryLogFactory(sql="select other conn;", database_connection_id=other_conn.id)
+        resp = self.client.get(f"{reverse('explorer_logs')}?connection={other_conn.id}")
+        self.assertContains(resp, "select other conn;")
+        self.assertNotContains(resp, "select default conn;")
+        # an invalid connection value is ignored and shows everything
+        resp = self.client.get(f"{reverse('explorer_logs')}?connection=notanid")
+        self.assertContains(resp, "select other conn;")
+        self.assertContains(resp, "select default conn;")
+
+    def test_filter_logs_run_by_me(self):
+        other = User.objects.create_superuser("other", "other@other.com", "pwd")
+        QueryLogFactory(sql="select mine;", run_by_user=self.user)
+        QueryLogFactory(sql="select theirs;", run_by_user=other)
+        resp = self.client.get(f"{reverse('explorer_logs')}?run_by_me=1")
+        self.assertContains(resp, "select mine;")
+        self.assertNotContains(resp, "select theirs;")
+
     def test_admin_required(self):
         self.client.logout()
         resp = self.client.get(reverse("explorer_logs"))
