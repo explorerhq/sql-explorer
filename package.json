@@ -8,10 +8,9 @@
     "preview": "export APP_VERSION=$(python -c 'from explorer import __version__; print(__version__)') && npx vite preview --config vite.config.mjs"
   },
   "devDependencies": {
-    "sass": "~1.69.0",
-    "vite": "^5.4.6",
-    "vite-plugin-copy": "^0.1.6",
-    "vite-plugin-static-copy": "^1.0.5"
+    "sass": "^1.105.1",
+    "vite": "^7.3.6",
+    "vite-plugin-static-copy": "^4.1.1"
   },
   "repository": {
     "type": "git",

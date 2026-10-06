@@ -7,6 +7,9 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 Unreleased
 ===========================
+* Frontend dependencies updated to clear ``npm audit`` advisories, including DOMPurify 3.4 (XSS fixes; used to
+  sanitize AI Assistant output), Vite 7, and current Sass. Building the frontend now requires Node 22.
+
 * `#713`_: Connections whose database driver isn't installed (e.g. MySQL without ``mysqlclient``) can no longer be
   saved, and are marked "(driver not installed)" in the engine dropdown. Existing ones, and unreachable databases, now
   show a readable error in the schema pane, Test connection, and query runs instead of a 500.
