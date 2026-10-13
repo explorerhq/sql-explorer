@@ -287,6 +287,32 @@ To be able to access your s3 objects in all regions through presigned urls, expl
    EXPLORER_S3_SIGNATURE_VERSION = 's3v4'
 
 
+S3 parameters on objects
+************************
+
+Default: ``{'ServerSideEncryption': 'AES256'}``
+
+Use this to set parameters on all objects.
+
+To view a full list of possible parameters (there are many) see the `Boto3 docs for uploading files`_; an incomplete list includes: ``CacheControl``, ``SSEKMSKeyId``, ``StorageClass``, ``Tagging`` and ``Metadata``.
+
+.. code-block:: python
+
+   # --- SERVER SIDE ENCRYPTION SETTINGS ---
+   # Use AES256 for SSE-S3
+   EXPLORER_S3_OBJECT_PARAMETERS = {
+       'ServerSideEncryption': 'AES256',
+       'CacheControl': 'max-age=86400',
+       'ContentDisposition': 'attachment',
+   }
+
+   # ALTERNATIVE: For SSE-KMS
+   EXPLORER_S3_OBJECT_PARAMETERS = {
+       'ServerSideEncryption': 'aws:kms',
+       'SSEKMSKeyId': 'your-kms-key-id', # Optional
+   }
+
+
 From email
 **********
 
