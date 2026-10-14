@@ -48,7 +48,7 @@ jobs:
         run: tox run -f py$(echo ${{ matrix.python-version }} | tr -d .)
 
       - name: Upload coverage data
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-data-${{ matrix.python-version }}
           path: '.coverage*'
@@ -85,7 +85,7 @@ jobs:
           python -m coverage report
 
       - name: Upload HTML report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: html-report
           path: htmlcov
