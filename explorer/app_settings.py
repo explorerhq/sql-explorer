@@ -29,6 +29,7 @@ EXPLORER_SQL_BLACKLIST = getattr(
         # DDL
         "ALTER",
         "CREATE",
+        "CREATE OR REPLACE",
         "DROP",
         "RENAME",
         "TRUNCATE",
