@@ -8,7 +8,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 Unreleased
 ===========================
 * `#722`_: The query list (home page) no longer loads the entire query log history on every view. Run counts and
-  last runs are computed in SQL, so the page stays fast as logs accumulate (300k logs: ~9.7s -> ~0.9s).
+  last runs are computed in SQL, so the page stays fast as logs accumulate (300k logs: ~9.7s -> ~0.9s). The query
+  list and query log pages also no longer run an extra database query per row.
 
 * `#713`_: Connections whose database driver isn't installed (e.g. MySQL without ``mysqlclient``) can no longer be
   saved, and are marked "(driver not installed)" in the engine dropdown. Existing ones, and unreachable databases, now

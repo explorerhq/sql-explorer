@@ -143,7 +143,7 @@ class ListQueryLogView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
             kwargs["database_connection_id"] = connection_id
         if self.request.GET.get("run_by_me") and self.request.user.is_authenticated:
             kwargs["run_by_user"] = self.request.user
-        return QueryLog.objects.filter(**kwargs).all()
+        return QueryLog.objects.filter(**kwargs).select_related("run_by_user", "database_connection")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

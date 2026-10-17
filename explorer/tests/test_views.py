@@ -911,6 +911,21 @@ class TestQueryLog(TestCase):
         self.assertContains(resp, "select other conn;")
         self.assertContains(resp, "select default conn;")
 
+    def test_log_page_query_count_does_not_grow_with_rows(self):
+        def count_sql_for_logs():
+            with CaptureQueriesContext(connection) as ctx:
+                self.client.get(reverse("explorer_logs"))
+            return len(ctx.captured_queries)
+
+        QueryLogFactory(run_by_user=self.user)
+        baseline = count_sql_for_logs()
+        for i in range(5):
+            conn = DatabaseConnection.objects.create(alias=f"logconn{i}", engine="django.db.backends.sqlite3",
+                                                     name=":memory:")
+            user = User.objects.create_user(f"logger{i}", f"logger{i}@example.com", "pwd")
+            QueryLogFactory(run_by_user=user, database_connection_id=conn.id)
+        self.assertEqual(count_sql_for_logs(), baseline)
+
     def test_filter_logs_run_by_me(self):
         other = User.objects.create_superuser("other", "other@other.com", "pwd")
         QueryLogFactory(sql="select mine;", run_by_user=self.user)
