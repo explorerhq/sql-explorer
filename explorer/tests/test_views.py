@@ -1,6 +1,7 @@
 import importlib
 import json
 import time
+from datetime import timedelta
 import unittest
 import os
 from unittest.mock import Mock, patch, MagicMock
@@ -10,11 +11,13 @@ from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
-from django.db import DatabaseError, OperationalError
+from django.db import DatabaseError, OperationalError, connection
 from django.forms.models import model_to_dict
 from django.shortcuts import redirect
 from django.test import TestCase
+from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
+from django.utils import timezone
 
 from explorer import app_settings
 from explorer.forms import QueryForm
@@ -76,6 +79,62 @@ class TestQueryListView(TestCase):
             q.log()
         resp = self.client.get(reverse("explorer_index"))
         self.assertContains(resp, "4</td>")
+
+    def _log_at(self, run_at, **kwargs):
+        # run_at is auto_now_add, so set it after creation
+        ql = QueryLogFactory(**kwargs)
+        QueryLog.objects.filter(pk=ql.pk).update(run_at=run_at)
+        ql.refresh_from_db()
+        return ql
+
+    def _list_row(self, resp, query):
+        return next(o for o in resp.context["object_list"] if not o["is_header"] and o["id"] == query.id)
+
+    def test_last_run_status(self):
+        never_run = SimpleQueryFactory(title="never run")
+        failed = SimpleQueryFactory(title="failed last")
+        self._log_at(timezone.now() - timedelta(days=1), query=failed, success=True)
+        last = self._log_at(timezone.now(), query=failed, success=False)
+        resp = self.client.get(reverse("explorer_index"))
+
+        row = self._list_row(resp, never_run)
+        self.assertEqual(row["run_count"], 0)
+        self.assertTrue(row["ran_successfully"])
+        self.assertEqual(row["last_run_at"], never_run.created_at)
+
+        row = self._list_row(resp, failed)
+        self.assertEqual(row["run_count"], 2)
+        self.assertFalse(row["ran_successfully"])
+        self.assertEqual(row["last_run_at"], last.run_at)
+
+    def test_recently_viewed_is_latest_run_of_distinct_queries(self):
+        q1 = SimpleQueryFactory(title="first")
+        q2 = SimpleQueryFactory(title="second")
+        other_user = User.objects.create_user("other", "other@other.com", "pwd")
+        now = timezone.now()
+        self._log_at(now - timedelta(minutes=3), query=q1, run_by_user=self.user)
+        self._log_at(now - timedelta(minutes=2), query=q2, run_by_user=self.user)
+        latest_q1 = self._log_at(now - timedelta(minutes=1), query=q1, run_by_user=self.user)
+        self._log_at(now, query=q2, run_by_user=other_user)
+        resp = self.client.get(reverse("explorer_index"))
+        recent = resp.context["recent_queries"]
+        self.assertEqual([ql.query_id for ql in recent], [q1.id, q2.id])
+        self.assertEqual(recent[0].id, latest_q1.id)
+
+    def test_query_count_does_not_grow_with_queries_or_logs(self):
+        def count_sql_for_index():
+            with CaptureQueriesContext(connection) as ctx:
+                self.client.get(reverse("explorer_index"))
+            return len(ctx.captured_queries)
+
+        q = SimpleQueryFactory(title="one")
+        QueryLogFactory(query=q, run_by_user=self.user)
+        baseline = count_sql_for_index()
+        for i in range(5):
+            q = SimpleQueryFactory(title=f"more {i}")
+            for _ in range(3):
+                QueryLogFactory(query=q, run_by_user=self.user)
+        self.assertEqual(count_sql_for_index(), baseline)
 
 
 class TestQueryCreateView(TestCase):
@@ -851,6 +910,21 @@ class TestQueryLog(TestCase):
         resp = self.client.get(f"{reverse('explorer_logs')}?connection=notanid")
         self.assertContains(resp, "select other conn;")
         self.assertContains(resp, "select default conn;")
+
+    def test_log_page_query_count_does_not_grow_with_rows(self):
+        def count_sql_for_logs():
+            with CaptureQueriesContext(connection) as ctx:
+                self.client.get(reverse("explorer_logs"))
+            return len(ctx.captured_queries)
+
+        QueryLogFactory(run_by_user=self.user)
+        baseline = count_sql_for_logs()
+        for i in range(5):
+            conn = DatabaseConnection.objects.create(alias=f"logconn{i}", engine="django.db.backends.sqlite3",
+                                                     name=":memory:")
+            user = User.objects.create_user(f"logger{i}", f"logger{i}@example.com", "pwd")
+            QueryLogFactory(run_by_user=user, database_connection_id=conn.id)
+        self.assertEqual(count_sql_for_logs(), baseline)
 
     def test_filter_logs_run_by_me(self):
         other = User.objects.create_superuser("other", "other@other.com", "pwd")

@@ -1,6 +1,7 @@
 import re
 from collections import Counter
 
+from django.db.models import Count, Max, OuterRef, Q, Subquery
 from django.forms.models import model_to_dict
 from django.views.generic import ListView
 
@@ -17,22 +18,25 @@ class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
     model = Query
 
     def recently_viewed(self):
-        qll = QueryLog.objects.filter(
-            run_by_user=self.request.user, query_id__isnull=False
-        ).order_by(
-            "-run_at"
-        ).select_related("query")
-
-        ret = []
-        tracker = []
-        for ql in qll:
-            if len(ret) == app_settings.EXPLORER_RECENT_QUERY_COUNT:
-                break
-
-            if ql.query_id not in tracker:
-                ret.append(ql)
-                tracker.append(ql.query_id)
-        return ret
+        # The most recent run of each of the user's N most recently run queries. Done in the database: iterating the
+        # user's logs in Python loaded every one of them, which got slow as logs accumulated.
+        latest_runs = (
+            QueryLog.objects.filter(run_by_user=self.request.user, query_id__isnull=False)
+            .values("query_id")
+            .annotate(last_run_at=Max("run_at"))
+            .order_by("-last_run_at")[:app_settings.EXPLORER_RECENT_QUERY_COUNT]
+        )
+        latest_runs = list(latest_runs)
+        if not latest_runs:
+            return []
+        match = Q()
+        for run in latest_runs:
+            match |= Q(query_id=run["query_id"], run_at=run["last_run_at"])
+        logs = {
+            ql.query_id: ql
+            for ql in QueryLog.objects.filter(match, run_by_user=self.request.user).select_related("query")
+        }
+        return [logs[run["query_id"]] for run in latest_runs if run["query_id"] in logs]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -44,18 +48,16 @@ class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
         return context
 
     def get_queryset(self):
-        if app_settings.EXPLORER_PERMISSION_VIEW(self.request):
-            qs = (
-                Query.objects.prefetch_related(
-                    "created_by_user", "querylog_set"
-                ).all()
-            )
-        else:
-            qs = (
-                Query.objects.prefetch_related(
-                    "created_by_user", "querylog_set"
-                ).filter(pk__in=allowed_query_pks(self.request.user.id))
-            )
+        # Run counts and the last run are computed in the database rather than by prefetching every QueryLog, which
+        # loaded the entire log history into memory on each page view.
+        last_log = QueryLog.objects.filter(query=OuterRef("pk")).order_by("-run_at")
+        qs = Query.objects.select_related("created_by_user", "database_connection").annotate(
+            run_count=Count("querylog"),
+            last_run_at=Subquery(last_log.values("run_at")[:1]),
+            last_run_success=Subquery(last_log.values("success")[:1]),
+        ).order_by("title")  # Meta.ordering isn't applied once the query has an aggregate
+        if not app_settings.EXPLORER_PERMISSION_VIEW(self.request):
+            qs = qs.filter(pk__in=allowed_query_pks(self.request.user.id))
         return qs
 
     def _build_queries_and_headers(self):
@@ -108,16 +110,16 @@ class ListQueryView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
                 })
                 rendered_headers.append(header)
 
-            lrl = q.last_run_log()
             model_dict.update({
                 "is_in_category": headers[header] > 1,
                 "collapse_target": collapse_target,
                 "created_at": q.created_at,
                 "is_header": False,
-                "run_count": q.querylog_set.count(),
+                "run_count": q.run_count,
                 "connection_name": str(q.database_connection),
-                "ran_successfully": lrl.success,
-                "last_run_at": lrl.run_at,
+                # Matches Query.last_run_log(): a never-run query shows its creation time as a successful "run"
+                "ran_successfully": q.last_run_success if q.last_run_at else True,
+                "last_run_at": q.last_run_at or q.created_at,
                 "created_by_user":
                     str(q.created_by_user) if q.created_by_user else None,
                 "is_favorite": q.id in query_favorites_for_user
@@ -141,7 +143,7 @@ class ListQueryLogView(PermissionRequiredMixin, ExplorerContextMixin, ListView):
             kwargs["database_connection_id"] = connection_id
         if self.request.GET.get("run_by_me") and self.request.user.is_authenticated:
             kwargs["run_by_user"] = self.request.user
-        return QueryLog.objects.filter(**kwargs).all()
+        return QueryLog.objects.filter(**kwargs).select_related("run_by_user", "database_connection")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
