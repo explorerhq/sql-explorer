@@ -152,6 +152,11 @@ class TestSqlBlacklist(TestCase):
         passes, words = passes_blacklist(sql)
         self.assertFalse(passes)
 
+    def test_ddl_create_or_replace(self):
+        sql = "CREATE OR REPLACE VIEW foo AS SELECT 1;"
+        passes, words = passes_blacklist(sql)
+        self.assertFalse(passes)
+
     def test_ddl_drop(self):
         sql = "DROP TABLE films, distributors;"
         passes, words = passes_blacklist(sql)
