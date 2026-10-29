@@ -288,6 +288,32 @@ class TestQueryDetailView(TestCase):
         )
         self.assertTemplateUsed(resp, "admin/login.html")
 
+    def test_url_supplied_params_do_not_autorun(self):
+        # Params in the URL travel with the link, so viewing it must not execute their SQL.
+        query = SimpleQueryFactory(sql="select 'MARKER$$p:x$$' as v;")
+        resp = self.client.get(
+            reverse("query_detail", kwargs={"query_id": query.id}),
+            {"params": "p:x"}
+        )
+        self.assertNotContains(resp, "MARKERx")
+
+    def test_url_supplied_params_do_not_autorun_even_when_autorun_enabled(self):
+        query = SimpleQueryFactory(sql="select 'MARKER$$p:x$$' as v;")
+        with self.settings(EXPLORER_AUTORUN_QUERY_WITH_PARAMS=True):
+            resp = self.client.get(
+                reverse("query_detail", kwargs={"query_id": query.id}),
+                {"params": "p:x"}
+            )
+        self.assertNotContains(resp, "MARKERx")
+
+    def test_query_without_url_params_still_autoruns(self):
+        # The documented default behaviour is unaffected when the link carries no params.
+        query = SimpleQueryFactory(sql="select 'MARKER' as v;")
+        resp = self.client.get(
+            reverse("query_detail", kwargs={"query_id": query.id})
+        )
+        self.assertContains(resp, "MARKER")
+
     def test_admin_required_with_explorer_no_permission_setting(self):
         self.client.logout()
         query = SimpleQueryFactory()

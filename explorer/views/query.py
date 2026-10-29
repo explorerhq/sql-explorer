@@ -97,6 +97,11 @@ class QueryView(PermissionRequiredMixin, ExplorerContextMixin, View):
         params = query.available_params()
         if not app_settings.EXPLORER_AUTORUN_QUERY_WITH_PARAMS and params:
             show = False
+        # Parameters carried in the URL come with the link, not from the person who opened it.
+        # Running them on a plain page view turns any shared query link into a way to execute
+        # SQL in the visitor's session, so require an explicit action (Save & Run) instead.
+        if url_get_params(request):
+            show = False
         try:
             vm = query_viewmodel(
                 request,

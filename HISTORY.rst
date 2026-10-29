@@ -7,6 +7,12 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 Unreleased
 ===========================
+* **Security fix.** A query link carrying parameters (``?params=id:5``) ran the query on a plain
+  page view. The parameter values travel with the link rather than coming from the person who
+  opened it, so a shared link could execute SQL in that person's session without them taking any
+  action. Parameterized queries loaded from the URL now wait for an explicit "Save & Run". Queries
+  with no URL parameters, and the ``EXPLORER_AUTORUN_QUERY_WITH_PARAMS`` behaviour, are unchanged.
+
 * `#722`_: The query list (home page) no longer loads the entire query log history on every view. Run counts and
   last runs are computed in SQL, so the page stays fast as logs accumulate (300k logs: ~9.7s -> ~0.9s). The query
   list and query log pages also no longer run an extra database query per row.
