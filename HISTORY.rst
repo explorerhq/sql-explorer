@@ -7,6 +7,10 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 Unreleased
 ===========================
+* **Security fix.** ``connections/create_upload/`` had no permission check, so anyone, including
+  anonymous visitors, could load the upload page and see the list of uploaded database aliases and
+  ids. It now requires ``EXPLORER_PERMISSION_CONNECTIONS`` like the rest of the connection views.
+
 * `#722`_: The query list (home page) no longer loads the entire query log history on every view. Run counts and
   last runs are computed in SQL, so the page stays fast as logs accumulate (300k logs: ~9.7s -> ~0.9s). The query
   list and query log pages also no longer run an extra database query per row.

@@ -101,7 +101,8 @@ class DatabaseConnectionCreateView(PermissionRequiredMixin, ExplorerContextMixin
     success_url = reverse_lazy("explorer_connections")
 
 
-class DatabaseConnectionUploadCreateView(TemplateView):
+class DatabaseConnectionUploadCreateView(PermissionRequiredMixin, ExplorerContextMixin, TemplateView):
+    permission_required = "connections_permission"
     template_name = "connections/connection_upload.html"
 
     def get_context_data(self, **kwargs):
