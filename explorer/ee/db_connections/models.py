@@ -169,7 +169,7 @@ class DatabaseConnection(models.Model):
 
         if self.extras:
             extras_dict = json.loads(self.extras) if isinstance(self.extras, str) else self.extras
-            connection_settings.update(extras_dict)
+            connection_settings.update(self._allowed_extras(extras_dict))
 
         try:
             backend = load_backend(self.engine)
@@ -179,6 +179,28 @@ class DatabaseConnection(models.Model):
             raise DatabaseError(self._driver_error_message(self.engine)) from e
         except DatabaseError as e:
             raise DatabaseError(f"Failed to create explorer connection: {e}") from e
+
+    def _allowed_extras(self, extras_dict):
+        """
+        Drop the keys that would re-point this connection at the wrong database.
+
+        ``extras`` is free-form JSON entered by whoever manages the connection, and it is
+        merged *after* the computed settings. For an upload-backed connection that means
+        ``NAME`` would win over the tenant's own local copy of their uploaded SQLite file,
+        letting one user read another user's database by naming its path -- or point
+        ``HOST``/``USER``/``PASSWORD`` somewhere unrelated, since those are decrypted from
+        the encrypted model fields into the settings above.
+        """
+        pinned = {"ENGINE"}
+        if self.is_upload:
+            pinned |= {"NAME", "HOST", "USER", "PASSWORD"}
+        ignored = pinned & set(extras_dict)
+        if ignored:
+            logger.warning(
+                f"Ignoring {sorted(ignored)} in extras for connection '{self.alias}': "
+                f"these are managed by Explorer."
+            )
+        return {k: v for k, v in extras_dict.items() if k not in pinned}
 
     def save(self, *args, **kwargs):
         # If this instance is marked as default, unset the default on all other instances
