@@ -3,7 +3,7 @@ from time import time
 import uuid
 
 from django.conf import settings
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ImproperlyConfigured, ValidationError
 from django.db import DatabaseError, models, transaction
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -94,7 +94,7 @@ class Query(models.Model):
         return passes_blacklist(self.final_sql())
 
     def final_sql(self):
-        return swap_params(self.sql, self.available_params())
+        return swap_params(self.sql, self.available_params())[0]
 
     def execute_query_only(self):
         # check blacklist every time sql is run to catch parameterized SQL
@@ -110,7 +110,7 @@ class Query(models.Model):
             )
         conn = self.database_connection or default_db_connection()
         return QueryResult(
-            self.final_sql(), conn.as_django_connection()
+            self.sql, conn.as_django_connection(), params=self.available_params()
         )
 
     def execute_with_logging(self, executing_user):
@@ -266,12 +266,62 @@ class QueryFavorite(models.Model):
         unique_together = ["query", "user"]
 
 
+def _placeholder_for(connection):
+    """
+    A bind placeholder for the given connection's DB-API paramstyle.
+
+    Values are positional, so the placeholder only depends on how many came before it.
+    """
+    paramstyle = getattr(connection, "paramstyle", None) or "format"
+    if paramstyle == "qmark":
+        return lambda n: "?"
+    if paramstyle in ("format", "pyformat"):
+        return lambda n: "%s"
+    if paramstyle == "numeric":
+        return lambda n: f":{n}"
+    raise ImproperlyConfigured(
+        f"Explorer does not support the '{paramstyle}' paramstyle. "
+        f"Refusing to interpolate query parameters into SQL."
+    )
+
+
+def _escape_literal_percents(sql, paramstyle):
+    """
+    Escape literal ``%`` in SQL that is about to be executed with bound parameters.
+
+    Drivers using "format"/"pyformat" run the query through ``%`` interpolation once values
+    are supplied, so a literal ``%`` in the query text (the common ``LIKE '%foo%'``) would
+    otherwise be read as a placeholder. Without bound values the driver passes the SQL
+    through untouched, which is why this is only applied when binding happens.
+    """
+    if paramstyle not in ("format", "pyformat"):
+        return sql
+    out = []
+    ix = 0
+    while ix < len(sql):
+        char = sql[ix]
+        if char == "%":
+            following = sql[ix + 1:ix + 2]
+            # Leave the placeholders we just emitted alone.
+            if following == "s":
+                out.append("%s")
+                ix += 2
+                continue
+            out.append("%%")
+            ix += 1
+            continue
+        out.append(char)
+        ix += 1
+    return "".join(out)
+
+
 class QueryResult:
 
-    def __init__(self, sql, connection):
+    def __init__(self, sql, connection, params=None):
 
         self.sql = sql
         self.connection = connection
+        self.params = params
 
         cursor, duration = self.execute_query()
 
@@ -348,9 +398,14 @@ class QueryResult:
         cursor = self.connection.cursor()
         start_time = time()
 
+        placeholder = _placeholder_for(self.connection)
+        sql, bound = swap_params(self.sql, self.params, bind=placeholder)
+        if bound:
+            sql = _escape_literal_percents(sql, getattr(self.connection, "paramstyle", "format"))
+
         try:
             with transaction.atomic(self.connection.alias):
-                cursor.execute(self.sql)
+                cursor.execute(sql, bound or None)
         except DatabaseError as e:
             cursor.close()
             raise e

@@ -7,6 +7,17 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 Unreleased
 ===========================
+* **Security fix.** Query parameters (``$$foo$$``) were interpolated into the SQL as raw text. Because
+  parameter values are taken from the request (``?params=foo:value``, the documented way to share a
+  parameterized query), anyone who could get a user to open a link could inject arbitrary SQL into a
+  saved query, including queries they had no permission to edit. Parameters are now passed to the
+  database as bound parameters and never become part of the SQL text.
+
+  This changes what a parameter can be: values are now always data, so a query that relied on a
+  parameter carrying a SQL fragment (for example ``ORDER BY $$sort$$`` or ``LIMIT $$n$$`` written as a
+  bare token) must be edited to use a real column or value. Numeric-looking values are still bound
+  numerically, so ``WHERE id = $$id$$`` continues to compare numbers.
+
 * `#722`_: The query list (home page) no longer loads the entire query log history on every view. Run counts and
   last runs are computed in SQL, so the page stays fast as logs accumulate (300k logs: ~9.7s -> ~0.9s). The query
   list and query log pages also no longer run an extra database query per row.
