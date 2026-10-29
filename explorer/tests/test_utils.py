@@ -193,21 +193,46 @@ class TestParams(TestCase):
         sql = "please Swap $$this$$ and $$THat$$"
         expected = "please Swap here and there"
         params = {"this": "here", "that": "there"}
-        got = swap_params(sql, params)
+        got, bound = swap_params(sql, params)
         self.assertEqual(got, expected)
+        self.assertEqual(bound, [])
 
     def test_empty_params_does_nothing(self):
         sql = "please swap $$this$$ and $$that$$"
         params = None
-        got = swap_params(sql, params)
+        got, bound = swap_params(sql, params)
         self.assertEqual(got, sql)
+        self.assertEqual(bound, [])
 
     def test_non_string_param_gets_swapper(self):
         sql = "please swap $$this$$"
         expected = "please swap 1"
         params = {"this": 1}
-        got = swap_params(sql, params)
+        got, bound = swap_params(sql, params)
         self.assertEqual(got, expected)
+        self.assertEqual(bound, [])
+
+    def test_quoted_param_becomes_bare_placeholder(self):
+        got, bound = swap_params("select '$$foo$$'", {"foo": "bar"}, bind=lambda n: "?")
+        self.assertEqual(got, "select ?")
+        self.assertEqual(bound, ["bar"])
+
+    def test_bare_param_becomes_placeholder(self):
+        got, bound = swap_params("select * from t limit $$n$$", {"n": "5"}, bind=lambda n: "?")
+        self.assertEqual(got, "select * from t limit ?")
+        self.assertEqual(bound, [5])
+
+    def test_bind_placeholders_are_positional(self):
+        got, bound = swap_params(
+            "$$a$$, $$b$$", {"a": "1", "b": "2"}, bind=lambda n: f":{n}"
+        )
+        self.assertEqual(got, ":1, :2")
+        self.assertEqual(bound, [1, 2])
+
+    def test_bind_does_not_treat_value_as_replacement_template(self):
+        got, bound = swap_params("select '$$p$$'", {"p": r"C:\path\1"}, bind=lambda n: "?")
+        self.assertEqual(got, "select ?")
+        self.assertEqual(bound, [r"C:\path\1"])
 
     def _assertSwap(self, tuple):
         self.assertEqual(extract_params(tuple[0]), tuple[1])

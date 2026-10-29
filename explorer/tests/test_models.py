@@ -138,6 +138,43 @@ class TestQueryModel(TestCase):
         with self.assertRaises(ValidationError):
             q.execute_query_only()
 
+    def test_quoted_param_is_bound_not_interpolated(self):
+        q = SimpleQueryFactory(sql="select '$$who$$' as who;")
+        q.params = {"who": "x' OR '1'='1"}
+        qr = q.execute_query_only()
+        self.assertEqual(qr.data, [["x' OR '1'='1"]])
+
+    def test_bare_param_is_bound_not_interpolated(self):
+        q = SimpleQueryFactory(sql="select 1 where 'a' = $$v$$;")
+        q.params = {"v": "'a' union select name from sqlite_master --"}
+        self.assertEqual(q.execute_query_only().data, [])
+
+    def test_param_is_inert_even_when_blacklist_does_not_catch_it(self):
+        # /*!...*/ is executable in MySQL but the blacklist does not see the keyword, so this
+        # asserts the bind, not the blacklist, is what keeps the value out of the SQL.
+        payload = "x'; /*!50000DELETE*/ FROM explorer_query; -- "
+        q = SimpleQueryFactory(sql="select '$$v$$' as v;")
+        q.params = {"v": payload}
+        self.assertTrue(q.passes_blacklist()[0])
+        self.assertEqual(q.execute_query_only().data, [[payload]])
+        self.assertTrue(Query.objects.exists())
+
+    def test_numeric_param_is_bound_with_its_original_type(self):
+        q = SimpleQueryFactory(sql="select 6870+4 where 1=$$n:1$$;")
+        self.assertEqual(q.execute_query_only().data, [[6874]])
+
+    def test_escape_literal_percents_leaves_placeholders_intact(self):
+        from explorer.models import _escape_literal_percents
+        self.assertEqual(
+            _escape_literal_percents("select * from t where n like '%a%' and id = %s", "format"),
+            "select * from t where n like '%%a%%' and id = %s"
+        )
+        # qmark drivers never interpolate, so their SQL is left alone.
+        self.assertEqual(
+            _escape_literal_percents("select '100%' where 1 = ?", "qmark"),
+            "select '100%' where 1 = ?"
+        )
+
     def test_query_will_execute_with_null_database_connection(self):
         q = SimpleQueryFactory(sql="select 1;")
         q.database_connection_id = None

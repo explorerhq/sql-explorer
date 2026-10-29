@@ -4,6 +4,7 @@ import time
 from datetime import timedelta
 import unittest
 import os
+from urllib.parse import quote
 from unittest.mock import Mock, patch, MagicMock
 from unittest import skipIf
 
@@ -458,7 +459,17 @@ class TestDownloadView(TestCase):
             "foo:123"
         )
         resp = self.client.get(url)
-        self.assertContains(resp, "'123'")
+        self.assertContains(resp, "123")
+
+    def test_params_in_url_cannot_inject_sql(self):
+        # Regression: parameter values come from the URL, so they must be bound, not interpolated.
+        q = SimpleQueryFactory(sql="select '$$who$$' as who;")
+        url = "{}?params={}".format(
+            reverse("download_query", kwargs={"query_id": q.id}),
+            quote("who:') union select 1 where '1'='1", safe="")
+        )
+        resp = self.client.get(url)
+        self.assertNotContains(resp, "django_migrations")
 
     def test_download_defaults_to_csv(self):
         query = SimpleQueryFactory()

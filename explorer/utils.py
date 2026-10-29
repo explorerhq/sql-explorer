@@ -61,13 +61,56 @@ def param(name):
     return f"{EXPLORER_PARAM_TOKEN}{name}{EXPLORER_PARAM_TOKEN}"
 
 
-def swap_params(sql, params):
+def _param_regex(name, placeholder=None):
+    token = rf"\$\${re.escape(str(name))}(?:\|([^\$\:]+))?(?:\:([^\$]+))?\$\$"
+    if placeholder is None:
+        return re.compile(token, re.I)
+    # A parameter written as '$$id$$' (quoted, as the docs recommend) has to become a bind
+    # placeholder *without* its quotes, otherwise the driver sees the literal string "?".
+    return re.compile(rf"""(['"]){token}\1|{token}""", re.I)
+
+
+def _bindable(value):
+    """
+    Coerce a parameter value to the type it would have had as literal SQL.
+
+    Parameters arrive as strings from the URL. Binding them as strings would make
+    ``WHERE id = $$id$$`` compare a number to text, so numeric-looking values are bound
+    numerically instead.
+    """
+    if isinstance(value, str):
+        for converter in (int, float):
+            try:
+                return converter(value)
+            except ValueError:
+                continue
+    return value
+
+
+def swap_params(sql, params, bind=None):
+    """
+    Substitute ``$$name$$`` tokens in ``sql``.
+
+    With no ``bind`` argument the values are interpolated straight into the SQL text. That is
+    only safe for display (logging, the blacklist check). Values come from the request
+    (``?params=name:value``), so anything that will be *executed* must pass ``bind``.
+
+    :param bind: callable taking the number of values bound so far and returning that driver's
+                 bind placeholder. When given, values are collected instead of interpolated.
+    :return: ``(sql, bound_values)``; ``bound_values`` is empty when ``bind`` is None.
+    """
     p = params.items() if params else {}
+    bound = []
+
+    def replace(match, value):
+        if bind is None:
+            return str(value)
+        bound.append(_bindable(value))
+        return bind(len(bound))
+
     for k, v in p:
-        fmt_k = re.escape(str(k).lower())
-        regex = re.compile(rf"\$\${fmt_k}(?:\|([^\$\:]+))?(?:\:([^\$]+))?\$\$", re.I)
-        sql = regex.sub(str(v), sql)
-    return sql
+        sql = _param_regex(k, bind).sub(lambda m, v=v: replace(m, v), sql)
+    return sql, bound
 
 
 def extract_params(text):
