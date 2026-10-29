@@ -1275,6 +1275,20 @@ class SimpleViewTests(TestCase):
             port=""
         )
 
+    def test_database_connection_upload_view_requires_permission(self):
+        self.client.logout()
+        response = self.client.get(reverse("explorer_upload_create"))
+        self.assertTemplateUsed(response, "admin/login.html")
+
+    def test_database_connection_upload_view_hides_connections_from_unauthorized_users(self):
+        self.client.logout()
+        response = self.client.get(reverse("explorer_upload_create"))
+        self.assertNotContains(response, "test_alias")
+
+    def test_database_connection_upload_view_allows_staff(self):
+        response = self.client.get(reverse("explorer_upload_create"))
+        self.assertEqual(response.status_code, 200)
+
     def test_database_connection_detail_view(self):
         response = self.client.get(reverse("explorer_connection_detail", args=[self.connection.pk]))
         self.assertEqual(response.status_code, 200)
