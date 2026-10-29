@@ -101,6 +101,10 @@ parameters before hitting "Save & Run"
 
     EXPLORER_AUTORUN_QUERY_WITH_PARAMS = False
 
+Note that queries whose parameters arrive in the URL (``?params=id:5``) are never run on a plain
+page view, regardless of this setting. Those parameters come with the link rather than from the
+person who opened it, so the query waits for an explicit "Save & Run".
+
 There are a handful of features (snapshots, emailing queries) that
 rely on Celery and the dependencies in optional-requirements.txt. If
 you have Celery installed, set ``EXPLORER_TASKS_ENABLED=True`` in your
