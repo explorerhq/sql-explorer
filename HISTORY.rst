@@ -7,6 +7,12 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 Unreleased
 ===========================
+* **Security fix.** ``DatabaseConnection.extras`` is free-form JSON merged into the connection
+  settings *after* the computed ones, so for an uploaded connection it could override ``NAME`` and
+  point the connection at another user's database file, or replace the ``USER``/``PASSWORD``/``HOST``
+  that were decrypted from the model. ``ENGINE``, and for uploads ``NAME``/``HOST``/``USER``/``PASSWORD``,
+  can no longer be set through ``extras``; a warning is logged when they are ignored.
+
 * `#722`_: The query list (home page) no longer loads the entire query log history on every view. Run counts and
   last runs are computed in SQL, so the page stays fast as logs accumulate (300k logs: ~9.7s -> ~0.9s). The query
   list and query log pages also no longer run an extra database query per row.

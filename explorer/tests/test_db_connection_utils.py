@@ -82,6 +82,64 @@ class TestDjangoStyleConnection(TestCase):
         self.assertEqual(args[0]["sslmode"], "require")
         self.assertEqual(args[0]["connect_timeout"], 10)
 
+    @patch("explorer.ee.db_connections.models.load_backend")
+    @patch("explorer.utils.get_s3_bucket")
+    def test_upload_connection_name_cannot_be_overridden_by_extras(self, mock_get_s3_bucket, mock_load_backend):
+        # An upload's NAME is the tenant's own local copy of their file. extras is merged
+        # after the computed settings, so it must not be able to re-point it.
+        mock_load_backend.return_value = MagicMock()
+        conn = DatabaseConnection(
+            name="mine_1.db",
+            alias="mine",
+            engine=DatabaseConnection.SQLITE,
+            host="user_dbs/user_1/mine_1.db",
+            extras='{"NAME": "/tmp/other_tenant.db"}'
+        )
+        conn.download_sqlite_if_needed = lambda: None
+
+        conn.as_django_connection()
+
+        settings_dict = mock_load_backend.return_value.DatabaseWrapper.call_args[0][0]
+        self.assertEqual(settings_dict["NAME"], conn.local_name)
+        self.assertNotIn("other_tenant", settings_dict["NAME"])
+
+    @patch("explorer.ee.db_connections.models.load_backend")
+    @patch("explorer.utils.get_s3_bucket")
+    def test_upload_connection_credentials_cannot_be_overridden_by_extras(self, mock_get_s3_bucket, mock_load_backend):
+        mock_load_backend.return_value = MagicMock()
+        conn = DatabaseConnection(
+            name="mine_1.db",
+            alias="mine",
+            engine=DatabaseConnection.SQLITE,
+            host="user_dbs/user_1/mine_1.db",
+            user="real_user",
+            extras='{"USER": "someone_else", "PASSWORD": "stolen", "HOST": "evil.example.com"}'
+        )
+        conn.download_sqlite_if_needed = lambda: None
+
+        conn.as_django_connection()
+
+        settings_dict = mock_load_backend.return_value.DatabaseWrapper.call_args[0][0]
+        self.assertEqual(settings_dict["USER"], "real_user")
+        self.assertIsNone(settings_dict["HOST"])
+        self.assertNotEqual("stolen", settings_dict["PASSWORD"])
+
+    @patch("explorer.ee.db_connections.models.load_backend")
+    def test_extras_still_apply_to_non_upload_connections(self, mock_load_backend):
+        # Something like OPTIONS is legitimate and must keep working.
+        mock_load_backend.return_value = MagicMock()
+        conn = DatabaseConnection(
+            name="mydb",
+            alias="mydb",
+            engine="django.db.backends.postgresql",
+            extras='{"OPTIONS": {"sslmode": "require"}}'
+        )
+
+        conn.as_django_connection()
+
+        options = mock_load_backend.return_value.DatabaseWrapper.call_args[0][0]["OPTIONS"]
+        self.assertEqual(options, {"sslmode": "require"})
+
 
 @skipIf(not EXPLORER_USER_UPLOADS_ENABLED, "User uploads not enabled")
 class TestPandasToSQLite(TestCase):
