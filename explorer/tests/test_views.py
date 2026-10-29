@@ -436,6 +436,67 @@ class TestQueryDetailView(TestCase):
         self.assertContains(resp, "superchicken")
 
 
+class TestTokenAuthScope(TestCase):
+    """
+    A valid API token authenticates a caller, but must not widen which queries it can read.
+    """
+
+    def test_token_reaches_shared_queries(self):
+        shared = SimpleQueryFactory(sql="select 'shared';")
+        with self.settings(EXPLORER_TOKEN_AUTH_ENABLED=True,
+                           EXPLORER_USER_QUERY_VIEWS={99: [shared.id]}):
+            resp = self.client.get(
+                reverse("download_query", kwargs={"query_id": shared.id}),
+                **{"HTTP_X_API_TOKEN": EXPLORER_TOKEN}
+            )
+            self.assertEqual(200, resp.status_code)
+            self.assertIn("shared", resp.content.decode())
+
+    def test_token_cannot_reach_unshared_queries(self):
+        shared = SimpleQueryFactory(sql="select 'shared';")
+        private = SimpleQueryFactory(sql="select 'private';")
+        with self.settings(EXPLORER_TOKEN_AUTH_ENABLED=True,
+                           EXPLORER_USER_QUERY_VIEWS={99: [shared.id]}):
+            resp = self.client.get(
+                reverse("download_query", kwargs={"query_id": private.id}),
+                **{"HTTP_X_API_TOKEN": EXPLORER_TOKEN}
+            )
+            self.assertNotContains(resp, "private")
+
+    def test_token_cannot_stream_unshared_queries(self):
+        shared = SimpleQueryFactory(sql="select 'shared';")
+        private = SimpleQueryFactory(sql="select 'private';")
+        with self.settings(EXPLORER_TOKEN_AUTH_ENABLED=True,
+                           EXPLORER_USER_QUERY_VIEWS={99: [shared.id]}):
+            resp = self.client.get(
+                reverse("stream_query", kwargs={"query_id": private.id}),
+                HTTP_X_API_TOKEN=EXPLORER_TOKEN
+            )
+            self.assertNotContains(resp, "private")
+
+    def test_wrong_token_is_rejected(self):
+        q = SimpleQueryFactory(sql="select 'shared';")
+        with self.settings(EXPLORER_TOKEN_AUTH_ENABLED=True,
+                           EXPLORER_USER_QUERY_VIEWS={99: [q.id]}):
+            resp = self.client.get(
+                reverse("download_query", kwargs={"query_id": q.id}),
+                HTTP_X_API_TOKEN="wrong-token"
+            )
+            self.assertNotContains(resp, "shared")
+
+    def test_token_is_unscoped_when_no_shared_queries_configured(self):
+        # Documented behaviour for installs using the token as a data API: with no
+        # EXPLORER_USER_QUERY_VIEWS there is nothing to scope the token to.
+        q = SimpleQueryFactory(sql="select 'anything';")
+        with self.settings(EXPLORER_TOKEN_AUTH_ENABLED=True,
+                           EXPLORER_USER_QUERY_VIEWS={}):
+            resp = self.client.get(
+                reverse("stream_query", kwargs={"query_id": q.id}),
+                HTTP_X_API_TOKEN=EXPLORER_TOKEN
+            )
+            self.assertEqual(200, resp.status_code)
+
+
 class TestDownloadView(TestCase):
     def setUp(self):
         self.query = SimpleQueryFactory(sql="select 1;")

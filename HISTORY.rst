@@ -7,6 +7,12 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 Unreleased
 ===========================
+* **Security fix.** A valid API token bypassed ``EXPLORER_PERMISSION_VIEW`` entirely on
+  ``<query_id>/download`` and ``<query_id>/stream``, so any token holder could read *any* saved
+  query by walking ids, not just the ones shared with them. When ``EXPLORER_USER_QUERY_VIEWS`` is
+  configured, a token is now limited to the queries listed there. Installs that do not configure
+  it keep the previous behaviour, which is what the token-as-data-API documentation describes.
+
 * `#722`_: The query list (home page) no longer loads the entire query log history on every view. Run counts and
   last runs are computed in SQL, so the page stays fast as logs accumulate (300k logs: ~9.7s -> ~0.9s). The query
   list and query log pages also no longer run an extra database query per row.
