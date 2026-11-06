@@ -28,6 +28,7 @@ Disallowed words in SQL queries to prevent destructive actions.
         # DDL
         'ALTER',
         'CREATE',
+        'CREATE OR REPLACE',
         'DROP',
         'RENAME',
         'TRUNCATE',
